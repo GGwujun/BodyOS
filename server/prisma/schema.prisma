@@ -1,0 +1,199 @@
+// Body OS — Prisma schema(PostgreSQL)
+// 9 实体,均 User 中心化。对齐 design/diagrams/01-Core-ER 与 app/src/services/types.ts
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  nickname  String
+  avatar    String?
+  timezone  String   @default("Asia/Shanghai")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile       UserProfile?
+  goals         Goal[]
+  foodLogs      FoodLog[]
+  activities    ActivityRecord[]
+  summaries     DailySummary[]
+  measurements  BodyMeasurement[]
+  dataSources   DataSource[]
+  conversations AIConversation[]
+  analytics     AnalyticsEvent[]
+}
+
+model UserProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gender          String   @default("male") // male|female|other
+  birthDate       DateTime?
+  heightCm        Float?
+  weightKg        Float?
+  activityLevel   String   @default("moderate") // sedentary|light|moderate|active|very_active
+  dietPreference  String?
+  trainingPref    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Goal {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         String // fat_loss|muscle_gain|maintain|endurance
+  targetValue  Float
+  unit         String
+  durationWeeks Int?
+  startDate    DateTime @default(now())
+  progress     Float    @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model FoodLog {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date          DateTime  @db.Date
+  meal          String // breakfast|lunch|dinner|snack
+  items         Json // FoodItem[]
+  totalCalories Float
+  proteinG      Float     @default(0)
+  carbG         Float     @default(0)
+  fatG          Float     @default(0)
+  fiberG        Float     @default(0)
+  source        String    @default("manual") // manual|ai_text|ai_image
+  loggedAt      DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  deletedAt     DateTime?
+
+  @@index([userId, date])
+  @@index([userId, meal])
+}
+
+model ActivityRecord {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date         DateTime  @db.Date
+  type         String
+  durationMin  Int?
+  calories     Float
+  steps        Int?
+  startedAt    DateTime
+  source       String    @default("manual") // manual|ai_text|wechat|apple_health|mi|huami
+  provider     String?
+  externalId   String?
+  deduplicated Boolean   @default(false)
+  confidence   Float?
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  @@unique([userId, provider, externalId])
+  @@index([userId, date])
+}
+
+model DailySummary {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date             DateTime @db.Date
+  bodyScore        Float?
+  energyScore      Float?
+  nutritionScore   Float?
+  activityScore    Float?
+  recoveryScore    Float?
+  goalScore        Float?
+  intakeCalories   Float    @default(0)
+  burnCalories     Float?
+  netCalories      Float?
+  bmr              Float?
+  tdee             Float?
+  steps            Int      @default(0)
+  activeCalories   Float    @default(0)
+  exerciseCalories Float    @default(0)
+  nutrition        Json     @default("{\"proteinG\":0,\"carbG\":0,\"fatG\":0,\"fiberG\":0}")
+  engineVersion    String   @default("v1")
+  recalculatedAt   DateTime @default(now())
+
+  @@unique([userId, date])
+}
+
+model BodyMeasurement {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  measuredAt DateTime
+  weightKg   Float?
+  bodyFatPct Float?
+  muscleKg   Float?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, measuredAt])
+}
+
+model DataSource {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider    String // wechat|apple_health|mi|huami
+  name        String
+  status      String    @default("disconnected") // disconnected|connecting|connected|syncing|synced|error
+  cursor      String?
+  lastSyncAt  DateTime?
+  lastError   String?
+  permissions Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, provider])
+}
+
+model SyncRawRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  provider   String
+  externalId String
+  payload    Json
+  fetchedAt  DateTime @default(now())
+
+  @@unique([userId, provider, externalId])
+  @@index([userId, provider, fetchedAt])
+}
+
+model AIConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String // user|assistant
+  content   String
+  context   Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+/// 埋点事件(docs/03)
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String   // 事件名,如 home_view / ai_food_parse_confirm
+  category  String   // 激活 / 首页 / AI / 数据源
+  props     Json?    // 事件附加属性
+  occurredAt DateTime @default(now())
+
+  @@index([userId, name, occurredAt])
+  @@index([occurredAt])
+}

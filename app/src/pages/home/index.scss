@@ -1,0 +1,55 @@
+@import '../../styles/variables.scss';
+
+.home-page { min-height: 100vh; padding: 18px 16px 92px; background: #f6f8fa; color: #111827; box-sizing: border-box; }
+.home-header { height: 44px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.home-header__date { display: flex; align-items: baseline; gap: 10px; }
+.home-date { font-size: 15px; font-weight: 600; }
+.home-week { font-size: 12px; color: #687280; }
+.home-notice { margin-bottom: 10px; padding: 9px 12px; border-radius: 10px; color: #ef4444; background: #fff1f2; font-size: 12px; }
+.dashboard-card { margin-bottom: 12px; padding: 15px; border: 1px solid #e5e9ee; border-radius: 16px; background: #fff; box-shadow: 0 2px 8px rgba(17, 24, 39, .035); }
+.card-heading { display: flex; align-items: center; justify-content: space-between; font-size: 15px; font-weight: 600; }
+.score-card { padding-bottom: 0; }
+.score-main { height: 142px; display: flex; align-items: center; justify-content: center; }
+.score-ring { --score: 0deg; width: 124px; height: 124px; padding: 7px; border-radius: 50%; background: conic-gradient(#10b981 var(--score), #e5e9ee 0); box-sizing: border-box; transform: rotate(-90deg); }
+.score-ring__inner { width: 100%; height: 100%; border-radius: 50%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(90deg); }
+.score-number { font-size: 40px; line-height: 44px; font-weight: 700; letter-spacing: -1px; }
+.score-label { font-size: 12px; color: #374151; }
+.score-trend { height: 34px; margin-top: -5px; display: flex; align-items: center; justify-content: space-between; }
+.trend-copy { font-size: 11px; color: #87909d; }
+.trend-up { color: #10b981; }
+.trend-bars { width: 138px; height: 28px; display: flex; align-items: flex-end; gap: 4px; }
+.trend-bar { width: 5px; border-radius: 3px 3px 0 0; background: #7ddfbd; }
+.score-dimensions { height: 58px; margin: 0 -15px; display: flex; border-top: 1px solid #eef1f4; }
+.score-dimension { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+.score-dimension + .score-dimension::before { content: ''; position: absolute; left: 0; top: 14px; width: 1px; height: 30px; background: #eef1f4; }
+.dimension-label { font-size: 11px; color: #7b8491; }
+.dimension-value { margin-top: 1px; font-size: 19px; font-weight: 700; }
+.dimension-unit { margin-left: 1px; color: #9aa1aa; font-size: 9px; }
+.dimension-value--green { color: #10b981; }
+.dimension-value--amber { color: #f59e0b; }
+.dimension-value--slate { color: #5b6572; }
+.section-title { font-size: 15px; font-weight: 600; }
+.energy-metrics { display: flex; justify-content: space-between; margin-top: 13px; }
+.energy-metric { display: flex; align-items: baseline; flex-wrap: wrap; width: 31%; }
+.metric-label { width: 100%; margin-bottom: 3px; color: #7c8591; font-size: 11px; }
+.metric-value { font-size: 19px; font-weight: 700; letter-spacing: -.4px; }
+.metric-value--accent { color: #10b981; }
+.metric-unit { margin-left: 3px; color: #7c8591; font-size: 10px; }
+.energy-track, .goal-track { position: relative; height: 5px; margin-top: 14px; overflow: hidden; border-radius: 999px; background: #e8ecef; }
+.energy-track__fill, .goal-track__fill { height: 100%; border-radius: inherit; background: #10b981; }
+.energy-track__marker { position: absolute; left: 63%; top: 50%; width: 9px; height: 9px; border: 2px solid #fff; border-radius: 50%; background: #374151; transform: translate(-50%, -50%); }
+.activity-stats { display: flex; gap: 76px; margin-top: 13px; }
+.activity-value { font-size: 19px; font-weight: 700; }
+.activity-unit { margin-left: 4px; color: #7c8591; font-size: 10px; }
+.activity-chart { height: 46px; margin-top: 8px; display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1px solid #edf0f2; }
+.activity-bar { width: 5px; min-height: 2px; border-radius: 3px 3px 0 0; background: #a9ead2; }
+.chart-axis { display: flex; justify-content: space-between; margin-top: 4px; color: #939ba6; font-size: 9px; }
+.goal-row { margin-top: 12px; display: flex; align-items: baseline; gap: 18px; }
+.goal-name { font-size: 14px; font-weight: 600; }
+.goal-meta { color: #7b8491; font-size: 10px; }
+.goal-percent { color: #66707d; font-size: 11px; }
+.goal-detail { margin-top: 8px; display: flex; align-items: center; justify-content: space-between; }
+.goal-caption { color: #7b8491; font-size: 10px; }
+.goal-track { margin-top: 6px; }
+
+@media (min-width: 600px) { .home-page { max-width: 430px; margin: 0 auto; } }

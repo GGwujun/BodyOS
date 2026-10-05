@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: Body OS API
+  version: 0.2.0
+paths:
+  /api/v1/me:
+    get:
+      summary: Get current user
+  /api/v1/profile:
+    get:
+      summary: Get profile
+    put:
+      summary: Update profile
+  /api/v1/goals:
+    get:
+      summary: List goals
+    post:
+      summary: Create goal
+  /api/v1/food-logs:
+    get:
+      summary: List food logs
+    post:
+      summary: Create food log
+  /api/v1/ai/food/parse:
+    post:
+      summary: Parse food text/image
+  /api/v1/activities:
+    get:
+      summary: List activities
+    post:
+      summary: Create activity
+  /api/v1/ai/activity/parse:
+    post:
+      summary: Parse activity text
+  /api/v1/body-measurements:
+    get:
+      summary: List body measurements
+    post:
+      summary: Create body measurement
+  /api/v1/daily-summary:
+    get:
+      summary: Get daily summary
+  /api/v1/ai/daily-analysis:
+    post:
+      summary: Generate daily analysis
+  /api/v1/ai/weekly-analysis:
+    post:
+      summary: Generate weekly report
+  /api/v1/ai/chat:
+    post:
+      summary: AI coach chat
+  /api/v1/data-sources:
+    get:
+      summary: List data sources
+  /api/v1/data-sources/{provider}/connect:
+    post:
+      summary: Connect provider
+  /api/v1/data-sources/{provider}/sync:
+    post:
+      summary: Trigger incremental sync

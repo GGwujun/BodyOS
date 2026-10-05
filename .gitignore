@@ -1,0 +1,29 @@
+# 依赖
+node_modules/
+
+# 构建产物与缓存
+app/dist/
+server/dist/
+app/.swc/
+
+# 环境变量与密钥（.env.example 保留作为模板）
+server/.env
+.env
+.env.local
+.env.*.local
+
+# 数据库备份与本地运行数据
+server/backups/
+
+# 日志
+*.log
+npm-debug.log*
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 本地脚本缓存
+.claude/

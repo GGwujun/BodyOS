@@ -1,0 +1,64 @@
+@import './variables.scss';
+
+/* 卡片容器 */
+@mixin card {
+  background: $color-bg-soft;
+  border-radius: $radius-card;
+  padding: $space-4;
+  box-shadow: $shadow-card;
+}
+
+/* 页面安全边距 */
+@mixin safe-padding {
+  padding-left: $safe-margin;
+  padding-right: $safe-margin;
+}
+
+/* 主按钮 */
+@mixin btn-primary {
+  background: $color-primary;
+  color: $color-text-inverse;
+  border-radius: $radius-pill;
+  font-size: $fs-body;
+  font-weight: $fw-medium;
+  box-shadow: $shadow-primary;
+}
+
+/* 次按钮 */
+@mixin btn-secondary {
+  background: $color-bg;
+  color: $color-primary;
+  border: 1px solid $color-primary;
+  border-radius: $radius-pill;
+  font-size: $fs-body;
+  font-weight: $fw-medium;
+}
+
+/* 单行省略 */
+@mixin ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 文本截断至 N 行 */
+@mixin ellipsis-lines($lines: 2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+}
+
+/* flex 居中 */
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

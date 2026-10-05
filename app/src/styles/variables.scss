@@ -1,0 +1,75 @@
+/**
+ * Body OS 视觉 Token
+ * 来源:design/00-视觉方向总览.png + docs/01-UED-页面规格.md
+ * 设计基准 375×812,8pt spacing system,卡片圆角 16px,安全边距 16px
+ */
+
+/* ============ 色彩 ============ */
+/* 品牌主色 — 健康/活力,用于关键操作与选中态 */
+$color-primary: #2ecc71;
+$color-primary-dark: #27ae60;
+$color-primary-light: #a9dfbf;
+
+/* 辅色 */
+$color-info: #3498db;    /* 蓝色 — AI/科技感模块 */
+$color-warning: #f39c12; /* 橙色 — 数值/强调 */
+$color-danger: #e74c3c;  /* 红色 — 警示/未连接 */
+
+/* 中性灰阶 */
+$color-bg: #ffffff;        /* 页面基底 */
+$color-bg-soft: #f8f8f8;   /* 卡片背景 */
+$color-fill: #f0f0f0;      /* 浅灰填充/分割 */
+$color-border: #e0e0e0;    /* 卡片边框 */
+$color-text-secondary: #888888;
+$color-text-primary: #333333;
+$color-text-inverse: #ffffff;
+
+/* 语义别名 */
+$color-success: $color-primary;
+$color-link: $color-info;
+
+/* ============ 字体层级(苹方) ============ */
+$font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue',
+  Helvetica, 'Segoe UI', Arial, sans-serif;
+
+$fs-display: 32px; /* Body Score 等超大数值 */
+$fs-title: 24px;   /* 页面主标题 */
+$fs-h1: 20px;      /* 模块标题 */
+$fs-h2: 18px;      /* 关键信息/数据标签 */
+$fs-body: 16px;    /* 正文 */
+$fs-caption: 14px; /* 次要文字 */
+$fs-mini: 12px;    /* 辅助说明 */
+
+$fw-bold: 600;     /* 苹方 Bold */
+$fw-medium: 500;   /* 苹方 Medium */
+$fw-regular: 400;  /* 苹方 Regular */
+
+$line-height-base: 1.5;
+$line-height-tight: 1.25;
+
+/* ============ 间距(8pt system) ============ */
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;  /* 卡片内边距 / 页面安全边距 */
+$space-5: 20px;
+$space-6: 24px;  /* 模块间距 */
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+
+/* ============ 圆角 ============ */
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-card: 16px;   /* 卡片圆角 */
+$radius-lg: 20px;
+$radius-pill: 9999px; /* 胶囊按钮/Tag */
+
+/* ============ 阴影 ============ */
+$shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+$shadow-elevated: 0 4px 20px rgba(0, 0, 0, 0.10);
+$shadow-primary: 0 4px 16px rgba(46, 204, 113, 0.30);
+
+/* ============ 布局 ============ */
+$safe-margin: 16px; /* 页面左右安全边距 */
+$tabbar-height: 50px;

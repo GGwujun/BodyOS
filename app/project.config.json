@@ -1,0 +1,19 @@
+{
+  "miniprogramRoot": "./dist",
+  "projectname": "bodyos-mini",
+  "description": "Body OS — AI 健身小程序",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "enhance": false,
+    "compileHotReLoad": false,
+    "postcss": false,
+    "minified": false,
+    "bigPackageSizeSupport": true
+  },
+  "compileType": "miniprogram",
+  "simulator": "wechat",
+  "simulatorType": "wechat",
+  "condition": {}
+}
