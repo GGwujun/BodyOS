@@ -37,7 +37,10 @@ export async function chat(
     messages: messages.map((m) => ({ role: m.role, content: m.content })),
     temperature: opts.temperature ?? 0.3,
     top_p: opts.topP ?? 0.9,
-    max_tokens: opts.maxTokens ?? 1024
+    max_tokens: opts.maxTokens ?? 1024,
+    // glm-4.6 是推理模型,默认先输出 thinking 块,可能耗尽 max_tokens 导致无正文。
+    // 本项目的结构化解析与教练对话不需要推理,显式关闭。
+    thinking: { type: 'disabled' }
   };
 
   const res = await fetch(url, {
@@ -51,18 +54,26 @@ export async function chat(
   });
 
   if (!res.ok) {
-    await res.body?.cancel().catch(() => undefined);
+    // 读取并透出提供方错误详情(如 key 失效/额度不足),便于定位配置问题
+    let detail = '';
+    try {
+      const errBody = (await res.json()) as { error?: { message?: string } | string };
+      detail = typeof errBody.error === 'string' ? errBody.error : (errBody.error?.message ?? '');
+    } catch { /* 非 JSON 响应体时忽略 */ }
     if (res.status === 429) throw new Error('AI 服务额度不足或正在限流，请检查服务额度后重试');
-    throw new Error(`AI 服务请求失败（${res.status}），请稍后重试或检查服务配置`);
+    throw new Error(detail
+      ? `AI 服务请求失败（${res.status}）：${detail}`
+      : `AI 服务请求失败（${res.status}），请稍后重试或检查服务配置`);
   }
 
   const data = (await res.json()) as {
     content?: { type: string; text?: string }[];
+    stop_reason?: string;
     error?: { message?: string };
   };
   if (data.error) throw new Error(`智谱返回错误: ${data.error.message}`);
   const text = data.content?.find((c) => c.type === 'text')?.text;
-  if (!text) throw new Error('智谱返回为空');
+  if (!text) throw new Error(`智谱返回为空(stop_reason=${data.stop_reason ?? 'unknown'})`);
   return text;
 }
 
