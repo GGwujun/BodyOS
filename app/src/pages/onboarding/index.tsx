@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { View, Text, Button, Input } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import { Passed, Circle } from '@taroify/icons';
 import Screen from '@/components/Screen';
 import { userApi } from '@/services';
+import { track, trackNow } from '@/services/analytics';
 import { toast } from '@/utils/ui';
 import './index.scss';
 
@@ -23,6 +24,7 @@ export default function Onboarding() {
   const [target, setTarget] = useState('');
   const unit = goal === 'endurance' ? '分钟/周' : 'kg';
   const targetLabel = goal === 'fat_loss' ? '计划减少的体重' : goal === 'muscle_gain' ? '计划增加的体重' : goal === 'maintain' ? '希望维持的体重' : '每周目标运动时长';
+  useDidShow(() => { track('onboarding_start', 'activation'); });
   const submit = async () => {
     if (saving) return;
     const value = Number(target);
@@ -30,6 +32,7 @@ export default function Onboarding() {
     setSaving(true);
     try {
       await userApi.createGoal({ type: goal, targetValue: value, unit, durationWeeks: weeks, isActive: true });
+      trackNow('onboarding_complete', 'activation', { goal, weeks, target: value });
       toast('目标已设置'); Taro.switchTab({ url: '/pages/home/index' });
     } catch { toast('保存失败', 'error'); } finally { setSaving(false); }
   };
