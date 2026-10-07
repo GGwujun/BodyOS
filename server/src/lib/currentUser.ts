@@ -21,11 +21,11 @@ export function getUserId(res: Response): string {
   return ((res.locals as Record<string, unknown> | undefined)?.userId as string | undefined) ?? DEV_USER_ID;
 }
 
-/** 签发不透明随机令牌(32 字节 hex),有效期 30 天 */
-export async function issueToken(userId: string): Promise<string> {
+/** 签发不透明随机令牌(32 字节 hex),有效期 30 天;一并保存微信 session_key(解密加密数据用) */
+export async function issueToken(userId: string, sessionKey?: string): Promise<string> {
   const token = randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000);
-  await prisma.authToken.create({ data: { token, userId, expiresAt } });
+  await prisma.authToken.create({ data: { token, userId, sessionKey: sessionKey ?? null, expiresAt } });
   return token;
 }
 
@@ -42,6 +42,7 @@ export async function attachUser(req: Request, res: Response, next: NextFunction
       return;
     }
     (res.locals as Record<string, unknown>).userId = auth.userId;
+    (res.locals as Record<string, unknown>).sessionKey = auth.sessionKey;
     next();
   } catch (error) {
     next(error);

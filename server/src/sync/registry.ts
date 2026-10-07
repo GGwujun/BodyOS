@@ -1,9 +1,13 @@
 import type { HealthProviderAdapter } from './types';
+import { createWechatAdapter, WECHAT_PROVIDER } from './adapters/wechat';
 
 /**
  * Provider 注册表。新增真实 provider 只需实现 HealthProviderAdapter 并在此注册。
+ * 注册即视为"已支持"(available),连接/同步按钮对该 provider 可见。
  */
-const REGISTRY: Record<string, () => HealthProviderAdapter> = {};
+const REGISTRY: Record<string, () => HealthProviderAdapter> = {
+  [WECHAT_PROVIDER]: createWechatAdapter
+};
 
 const PROVIDER_NAMES: Record<string, string> = {
   wechat: '微信运动',

@@ -65,7 +65,7 @@ router.post('/wechat', async (req, res, next) => {
     });
     const isNewUser = user.createdAt.getTime() > Date.now() - 60 * 1000;
 
-    const token = await issueToken(user.id);
+    const token = await issueToken(user.id, session.session_key);
     return ok(res, { token, userId: user.id, isNewUser });
   } catch (error) { next(error); }
 });

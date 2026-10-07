@@ -15,6 +15,14 @@ export const syncProvider = (provider: Provider) =>
     method: 'POST'
   });
 
+/** POST /data-sources/wechat/sync — 推送微信运动加密步数包,后端解密入库 */
+export const syncWechatRun = (encryptedData: string, iv: string) =>
+  request<{ status: SyncStatus; lastSyncAt: string; syncedCount: number }>({
+    url: '/data-sources/wechat/sync',
+    method: 'POST',
+    data: { encryptedData, iv }
+  });
+
 /** DELETE-like:断开(用 POST 断开端点,小程序避免 DELETE 语义问题) */
 export const disconnectProvider = (provider: Provider) =>
   request<DataSource>({ url: `/data-sources/${provider}/disconnect`, method: 'POST' });

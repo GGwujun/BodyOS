@@ -39,6 +39,8 @@ model AuthToken {
   token     String   @unique
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// 微信 session_key(解密 getWeRunData 等加密数据用;随登录轮换)
+  sessionKey String?
   createdAt DateTime @default(now())
   expiresAt DateTime
 

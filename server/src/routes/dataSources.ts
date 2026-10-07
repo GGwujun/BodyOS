@@ -3,7 +3,8 @@ import { prisma } from '../db';
 import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 import { getAdapter, isSupported, providerName, KNOWN_PROVIDERS, presentDataSource } from '../sync/registry';
-import { runSync } from '../sync/syncService';
+import { runSync, runPushSync } from '../sync/syncService';
+import { decryptWeRunData, weRunToRecords, WECHAT_PROVIDER } from '../sync/adapters/wechat';
 
 const router = Router();
 
@@ -32,13 +33,30 @@ router.post('/:provider/connect', async (req, res) => {
   return ok(res, ds);
 });
 
-/** POST /data-sources/:provider/sync — 触发增量同步 */
+/** POST /data-sources/:provider/sync — 触发增量同步;微信运动为客户端推送式 */
 router.post('/:provider/sync', async (req, res) => {
   const { provider } = req.params;
   if (!isSupported(provider)) return err(res, 400, '未支持的 provider');
+  const userId = getUserId(res);
 
   try {
-    const result = await runSync(getUserId(res), provider);
+    let result;
+    if (provider === WECHAT_PROVIDER) {
+      const { encryptedData, iv } = (req.body ?? {}) as { encryptedData?: string; iv?: string };
+      if (!encryptedData || !iv) {
+        return err(res, 400, '缺少微信运动数据，请在小程序端发起同步', { affectsData: false });
+      }
+      const sessionKey = (res.locals as Record<string, unknown>).sessionKey as string | undefined;
+      if (!sessionKey) {
+        return err(res, 401, '登录会话已更新，请重新进入后再同步', { affectsData: false });
+      }
+      const stepList = decryptWeRunData(sessionKey, iv, encryptedData);
+      const profile = await prisma.userProfile.findUnique({ where: { userId } });
+      result = await runPushSync(userId, provider, weRunToRecords(stepList, profile?.weightKg ?? null));
+    } else {
+      result = await runSync(userId, provider);
+    }
+
     if (result.status === 'error') {
       return err(res, 502, `同步失败: ${result.error}`, { affectsData: false, code: 502 });
     }

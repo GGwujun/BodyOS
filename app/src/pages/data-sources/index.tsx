@@ -31,7 +31,14 @@ export default function DataSources() {
   const onSync = async (provider: Provider) => {
     track('datasource_sync_start', 'datasource', { provider });
     await act(provider, async () => {
-      await dataSourceApi.syncProvider(provider);
+      if (provider === 'wechat') {
+        // 微信运动:小程序端取加密步数包,推送后端用 session_key 解密入库
+        if (process.env.TARO_ENV !== 'weapp') throw new Error('微信运动同步请使用小程序');
+        const werun = await Taro.getWeRunData();
+        await dataSourceApi.syncWechatRun(werun.encryptedData, werun.iv);
+      } else {
+        await dataSourceApi.syncProvider(provider);
+      }
       track('datasource_sync_success', 'datasource', { provider });
     });
   };

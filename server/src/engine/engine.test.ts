@@ -126,7 +126,8 @@ test('chat input requires a nonblank latest user message', () => {
 });
 
 test('unavailable adapters cannot expose legacy connections as operational', () => {
-  const result = presentDataSource('wechat', {status:'connected',lastSyncAt:new Date('2026-01-01'),permissions:null,lastError:null});
+  // wechat 已真实接入(可用),用未接入的 huami 验证同一防线
+  const result = presentDataSource('huami', {status:'connected',lastSyncAt:new Date('2026-01-01'),permissions:null,lastError:null});
   assert.equal(result.available, false);
   assert.equal(result.status, 'disconnected');
   assert.equal(result.lastSyncAt, null);
