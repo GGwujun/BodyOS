@@ -9,7 +9,7 @@
   /* 顶部进度条 */
   .step-row { display: flex; align-items: center; gap: 10px; color: $color-primary; font-size: 11px; }
   .step-row .step-track { height: 4px; flex: 1; background: $color-fill; border-radius: $radius-pill; overflow: hidden; }
-  .step-track .step-bar { width: 34%; height: 100%; background: $color-primary-gradient; border-radius: $radius-pill; }
+  .step-track .step-bar { height: 100%; background: $color-primary-gradient; border-radius: $radius-pill; }
 
   .onboarding-head { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 2px; }
   .onboarding-head text:first-child { font-size: 24px; font-weight: 700; color: $color-text-primary; letter-spacing: .3px; }

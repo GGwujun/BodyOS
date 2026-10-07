@@ -103,7 +103,7 @@ export default function WeightPage() {
           : bmiPoints.length
             ? <LineChart canvasId="bmi-curve" height={180} color="#f59e0b" points={bmiPoints} />
             : <Text className="chart-empty">暂无体重记录，记录后即可查看 BMI 变化</Text>}
-        <Text className="chart-note fs-mini">按当前身高计算；BMI 正常范围 {BMI_NORMAL_RANGE}（中国成人标准）</Text>
+        {!!heightCm && <Text className="chart-note fs-mini">按当前身高计算；BMI 正常范围 {BMI_NORMAL_RANGE}（中国成人标准）</Text>}
       </View>
 
       <WeightSheet open={sheetOpen} onClose={() => setSheetOpen(false)} onSaved={() => { track('weight_record_save', 'other'); void refresh(); }} />

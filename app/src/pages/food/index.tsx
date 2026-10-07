@@ -35,6 +35,8 @@ export default function Food() {
   const [resultConf, setResultConf] = useState<number | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [logs, setLogs] = useState<FoodLog[]>([]);
+  const [logsLoading, setLogsLoading] = useState(false);
+  const [logsError, setLogsError] = useState('');
   const [manualOpen, setManualOpen] = useState(false);
   const [manualName, setManualName] = useState('');
   const [manualKcal, setManualKcal] = useState('');
@@ -64,11 +66,15 @@ export default function Food() {
   };
 
   const loadLogs = useCallback(async () => {
+    setLogsLoading(true);
     try {
       const r = await foodApi.listFoodLogs(today);
       setLogs(r.items);
+      setLogsError('');
     } catch (e) {
-      void e;
+      setLogsError((e as { message?: string })?.message || '加载失败');
+    } finally {
+      setLogsLoading(false);
     }
   }, [today]);
 
@@ -136,7 +142,8 @@ export default function Food() {
   const totalKcal = items.reduce((s, i) => s + (Number(i.calories) || 0), 0);
 
   const save = async () => {
-    if (saving || items.length === 0) return;
+    if (saving) return;
+    if (items.length === 0) { toast('请先添加至少一种食物', 'none'); return; }
     if (items.some(item => !item.name.trim() || !Number.isFinite(item.calories) || item.calories < 0)) {
       toast('请检查食物名称和热量', 'none'); return;
     }
@@ -347,7 +354,9 @@ export default function Food() {
       {/* 当日记录:按餐次分组 */}
       <View className="card">
         <Text className="fs-h1">今日记录</Text>
-        {logs.length === 0 && <Text className="fs-mini text-secondary">还没有记录</Text>}
+        {logsLoading && logs.length === 0 && <Text className="fs-mini text-secondary">正在加载…</Text>}
+        {logsError && <Text className="fs-mini text-secondary" onClick={() => { setLogsError(''); void loadLogs(); }}>今日记录加载失败，点击重试</Text>}
+        {!logsLoading && !logsError && logs.length === 0 && <Text className="fs-mini text-secondary">还没有记录</Text>}
         {MEALS.map((m) => {
           const group = logs.filter((l) => l.meal === m.key);
           if (group.length === 0) return null;
@@ -378,7 +387,3 @@ export default function Food() {
   );
 }
 
-function mealLabel(meal: string): string {
-  const m: Record<string, string> = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' };
-  return m[meal] ?? meal;
-}

@@ -8,6 +8,7 @@ import Screen from '@/components/Screen';
 import { RoutePath } from '@/constants/routes';
 import { userApi } from '@/services';
 import type { Goal, Profile } from '@/services/types';
+import { ASSESSMENTS } from '@/data/assessments';
 import { toast } from '@/utils/ui';
 import './index.scss';
 import { todayStr } from '@/utils/date';
@@ -17,7 +18,7 @@ const GENDERS=[{key:'other',label:'未提供 / 其他'},{key:'male',label:'男'}
 const ACTIVITY=[{key:'sedentary',label:'久坐'},{key:'light',label:'轻度活动'},{key:'moderate',label:'中度活动'},{key:'active',label:'高度活动'},{key:'very_active',label:'非常活跃'}];
 const goalLabel:Record<string,string>={fat_loss:'减脂',muscle_gain:'增肌',maintain:'维持',endurance:'耐力'};
 export default function ProfilePage(){
-  const go=(p:RoutePath)=>Taro.navigateTo({url:`/pages/${p.split('/')[1]}/index`});
+  const go=(p:RoutePath)=>Taro.navigateTo({url:`/${p}`});
   const {data:profile,refresh:refreshProfile}=useAsync<Profile>(()=>userApi.getProfile(),[]);
   const {data:goals}=useAsync<Goal[]>(()=>userApi.listGoals(),[]);
   const {data:me,refresh:refreshMe}=useAsync(()=>userApi.getMe(),[]);
@@ -66,7 +67,7 @@ export default function ProfilePage(){
   };
   const groups=[
     [{label:'我的目标',icon:<Aim/>,value:goal?goalLabel[goal.type]??goal.type:'未设置'},{label:'身体数据',icon:<RecordsOutlined/>,value:profile?.weightKg?`${profile.weightKg} kg`:''},{label:'本周报告',icon:<CalendarOutlined/>,value:''},{label:'饮食偏好',icon:<LikeOutlined/>,value:profile?.dietPreference||''}],
-    [{label:'健康工具箱',icon:<AppsOutlined/>,value:'小工具 · 测评 · 百科'},{label:'健康测评',icon:<Award/>,value:'10 套测评'}],
+    [{label:'健康工具箱',icon:<AppsOutlined/>,value:'小工具 · 测评 · 百科'},{label:'健康测评',icon:<Award/>,value:`${ASSESSMENTS.length} 套测评`}],
     [{label:'关于轻身记',icon:<InfoOutlined/>,value:''}]
   ];
   const showAbout=()=>Taro.showModal({title:'关于轻身记',content:'轻身记 v1.0.0\n\n记录饮食、运动与身体数据，看清每一天的变化。\n\n数据安全：所有数据仅用于你的身体管理和分析，不会提供给第三方。',showCancel:false});

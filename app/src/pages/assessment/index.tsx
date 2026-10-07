@@ -90,7 +90,7 @@ export default function Assessment() {
           {lastMap[a.id]
             ? <Text className="as-score">上次 {lastMap[a.id].score} 分</Text>
             : <Text className="as-score as-score--empty">未测评</Text>}
-          <Text className="as-go">开始评测 ›</Text>
+          <Text className="as-go">{lastMap[a.id] ? '重新评测 ›' : '开始评测 ›'}</Text>
         </View>
       </View>
     ))}

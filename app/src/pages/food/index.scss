@@ -12,7 +12,7 @@
     background: $color-bg-card; border: 1px solid $color-border;
     border-radius: $radius-md; box-shadow: $shadow-card;
   }
-  .mode-tabs text {
+  .mode-tabs text, .mode-tabs taro-text-core {
     flex: 1; text-align: center; padding: 7px 0;
     font-size: 13px; color: $color-text-secondary;
     border-radius: 9px;

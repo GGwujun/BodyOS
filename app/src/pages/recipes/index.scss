@@ -1,5 +1,19 @@
 @import '../../styles/variables.scss';
 
+/* ============ 详情弹层(固定定位,必须放在页面类外层,避免嵌套 padding 导致定位偏移) ============ */
+.recipes-mask {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .45); z-index: 1000;
+  display: flex; align-items: flex-end;
+}
+.recipes-detail-sheet {
+  width: 100%; max-height: 82vh; overflow-y: auto;
+  background: #fff; border-radius: $radius-lg $radius-lg 0 0;
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
 /* ============ 推荐食谱 ============ */
 .recipes-page {
   background: $color-bg;
@@ -38,19 +52,7 @@
   .recipe-tag { font-size: 11px; color: $color-text-tertiary; background: $color-fill; border-radius: $radius-pill; padding: 3px 9px; }
   .tag-meal { color: $color-primary-dark; background: $color-primary-bg; }
 
-  /* 详情弹层 */
-  .mask {
-    position: fixed; inset: 0;
-    background: rgba(15, 23, 42, .45); z-index: 1000;
-    display: flex; align-items: flex-end;
-  }
-  .detail-sheet {
-    width: 100%; max-height: 82vh; overflow-y: auto;
-    background: #fff; border-radius: $radius-lg $radius-lg 0 0;
-    padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
-    box-sizing: border-box;
-    display: flex; flex-direction: column; gap: 12px;
-  }
+  /* 详情弹层(定位样式在页面类外层) */
   .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto; }
   .detail-head { display: flex; align-items: center; gap: 12px; }
   .detail-name { font-size: 18px; font-weight: 700; color: $color-text-primary; }
@@ -87,12 +89,6 @@
   .qa-card { background: rgba(16, 185, 129, .06); }
   .qa-q { font-size: 13px; font-weight: 700; color: $color-primary-dark; line-height: 1.6; }
   .qa-a { font-size: 12px; color: $color-text-secondary; line-height: 1.75; }
-
-  .macro-bar { display: flex; align-items: center; gap: 8px; }
-  .macro-bar__label { width: 52px; font-size: 11px; color: $color-text-secondary; flex-shrink: 0; }
-  .macro-bar__track { flex: 1; height: 6px; border-radius: $radius-pill; background: #e6ebf1; overflow: hidden; }
-  .macro-bar__fill { height: 100%; border-radius: $radius-pill; transition: width .3s ease; }
-  .macro-bar__value { width: 40px; text-align: right; font-size: 11px; color: $color-text-tertiary; flex-shrink: 0; }
 
   .meal-pick-label { display: block; font-size: 13px; font-weight: 700; color: $color-text-primary; margin-top: 2px; }
   .meal-pick { display: flex; gap: 6px; }

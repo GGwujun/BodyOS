@@ -26,6 +26,7 @@ export default function Record() {
   const food=data?.food;
   const acts=data?.acts;
   const sources=data?.sources;
+  const availableSources=(sources ?? []).filter((s) => s.available).slice(0, 4);
   const [showWeight, setShowWeight] = useState(false);
   const [showWater, setShowWater] = useState(false);
   useTabBarMask(showWeight || showWater);
@@ -79,11 +80,15 @@ export default function Record() {
   const [water, setWater] = useState<WaterStatus | null>(null);
   const [addingWater, setAddingWater] = useState(false);
   const [customMl, setCustomMl] = useState('');
-  useEffect(() => {
-    if (!showWater) return;
+  const [waterFailed, setWaterFailed] = useState(false);
+  const loadWater = () => {
+    setWaterFailed(false);
     waterApi.getWater(todayStr())
       .then(setWater)
-      .catch(() => setWater(null));
+      .catch(() => { setWater(null); setWaterFailed(true); });
+  };
+  useEffect(() => {
+    if (showWater) loadWater();
   }, [showWater]);
   const addWater = (amountMl: number) => {
     if (addingWater) return;
@@ -115,10 +120,11 @@ export default function Record() {
     <Text className="section-kicker">自动采集数据</Text>
     {loading&&<Text className="record-empty">正在加载记录和数据源…</Text>}
     {error&&<View className="record-load-error"><Text>加载失败：{error}</Text><Button onClick={()=>load()}>重新加载</Button></View>}
-    <View className="source-card">{(sources ?? []).filter((s) => s.available).slice(0, 4).map((source, index) => {
+    {!loading && !error && availableSources.length > 0 && <View className="source-card">{availableSources.map((source, index) => {
       const connected = source.status === 'synced' || source.status === 'connected';
       return <View className="source-row" key={source.provider} onClick={() => go(RoutePath.DataSources)}><View className={`source-icon s${index}`}><ClockOutlined /></View><View className="source-copy"><Text>{source.name}</Text><Text>{sourceStatusLabel(source.status,source.lastSyncAt)}</Text></View>{connected ? <Passed className="source-ok" /> : <View className="source-empty" />}</View>;
-    })}{sources?.length === 0 && <Text className="record-empty">暂无数据源，点击前往连接</Text>}</View>
+    })}</View>}
+    {!loading && !error && availableSources.length === 0 && <Text className="record-empty" onClick={() => go(RoutePath.DataSources)}>暂无数据源，点击前往连接</Text>}
     {(food?.items?.length || acts?.items?.length) ? <View className="recent-card"><Text className="recent-title">今天的记录</Text>
       {(food?.items ?? []).slice(0, 2).map((item) => <View className="recent-line" key={item.id}><Text>{mealLabel(item.meal)}</Text><Text>{Math.round(item.totalCalories)} kcal</Text></View>)}
       {(acts?.items ?? []).slice(0, 2).map((item) => <View className="recent-line" key={item.id}><Text>{item.type}</Text><Text>{Math.round(item.calories)} kcal</Text></View>)}
@@ -127,6 +133,7 @@ export default function Record() {
 
     {showWater && <View className="mask" onClick={() => !addingWater && setShowWater(false)}><View className="weight-sheet" catchMove onClick={(e) => e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">喝水打卡</Text>
       <View className="water-status"><Text className="water-amount">{water ? water.amountMl : '—'}</Text><Text className="water-goal">/ {water?.goalMl ?? 1500} ml</Text>{water != null && water.amountMl >= water.goalMl && water.goalMl > 0 && <Text className="water-done">已达标</Text>}</View>
+      {waterFailed && <Text className="history-empty" onClick={loadWater}>今日水量加载失败，点击重试</Text>}
       <View className="water-bar"><View className="water-bar__fill" style={{ width: `${waterPct}%` }} /></View>
       <Text className="water-pct">今日目标已完成 {waterPct}%</Text>
       <View className="water-chips">{[100, 200, 250, 300].map((ml) => <Text key={ml} className={`water-chip${addingWater ? ' is-busy' : ''}`} onClick={() => addWater(ml)}>+{ml} ml</Text>)}</View>

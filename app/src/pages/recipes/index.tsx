@@ -69,8 +69,8 @@ export default function Recipes() {
     </View>
 
     {detail && (
-      <View className="mask" onClick={() => !saving && setDetail(null)}>
-        <View className="detail-sheet" catchMove onClick={(e) => e.stopPropagation()}>
+      <View className="recipes-mask" onClick={() => !saving && setDetail(null)}>
+        <View className="recipes-detail-sheet" catchMove onClick={(e) => e.stopPropagation()}>
           <View className="sheet-handle" />
           <View className="detail-head">
             <View className="col flex-1">

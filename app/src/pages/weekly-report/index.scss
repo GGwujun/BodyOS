@@ -3,7 +3,7 @@
 /* ============ 本周报告页 ============ */
 .weekly-report-page {
   background: $color-bg;
-  padding: 4px 16px calc(24px + env(safe-area-inset-bottom));
+  padding: 4px 0 calc(24px + env(safe-area-inset-bottom));
   gap: 12px;
 
   /* 周评分卡:品牌渐变(与我的页 hero 同源) */

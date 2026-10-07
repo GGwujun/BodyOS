@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Input, Button, Picker } from '@tarojs/components';
+import Taro from '@tarojs/taro';
 import { useAsync } from '@/hooks/useAsync';
 import Screen from '@/components/Screen';
 import { userApi } from '@/services';
@@ -8,9 +9,10 @@ import './index.scss';
 /**
  * 健康小工具:BMI 与体脂率计算(本地公式估算,结果仅供参考)
  * 身高/体重/性别/出生日期自动预填个人资料
+ * 支持 ?tab=bmi|bfr 直达(工具箱深链)
  */
 export default function Tools() {
-  const [tab, setTab] = useState<'bmi' | 'bfr'>('bmi');
+  const [tab, setTab] = useState<'bmi' | 'bfr'>(Taro.getCurrentInstance().router?.params?.tab === 'bfr' ? 'bfr' : 'bmi');
   const { data: profile } = useAsync(() => userApi.getProfile(), []);
 
   const [height, setHeight] = useState('');
@@ -131,7 +133,7 @@ export default function Tools() {
       {bfr != null && bfrLevel && (
         <View className="result-card">
           <View className="result-main"><Text className="result-value">{bfr.value.toFixed(1)}<Text className="result-unit">%</Text></Text><Text className={`pill pill--${bfrLevel.tone}`}>{bfrLevel.label}</Text></View>
-          <Text className="fs-mini text-secondary">{bfr.method} · {gender === 'male' ? '男性' : '女性'}健康体脂率约 {bfrRange.low}% ~ {bfrRange.high}%(世界卫生组织建议)</Text>
+          <Text className="fs-mini text-secondary">{bfr.method} · {gender === 'male' ? '男性' : '女性'}健康体脂率约 {bfrRange.low}% ~ {bfrRange.high}%(通用参考区间)</Text>
           <View className="advice">
             {bfrLevel.advice.map((s, i) => <Text key={i} className="advice-item">· {s}</Text>)}
           </View>

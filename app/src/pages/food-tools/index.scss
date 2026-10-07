@@ -10,12 +10,12 @@
     background: $color-bg-card; border: 1px solid $color-border;
     border-radius: $radius-md; box-shadow: $shadow-card;
   }
-  .seg text {
+  .seg .seg-item {
     flex: 1; text-align: center; padding: 7px 0;
     font-size: 13px; color: $color-text-secondary;
     border-radius: 9px;
   }
-  .seg .active { background: $color-primary; color: #fff; font-weight: $fw-bold; }
+  .seg .seg-item.active { background: $color-primary; color: #fff; font-weight: $fw-bold; }
 
   /* 对比 */
   .cmp-pickers { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; }

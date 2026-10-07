@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { View, Text, Input } from '@tarojs/components';
+import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { FOOD_LIBRARY } from '@/data/foods';
 import type { FoodEntry } from '@/data/foods';
@@ -7,14 +8,18 @@ import './index.scss';
 
 /**
  * 食物小工具 — 对比 / 估重参考 / 红黑榜(纯静态工具)
+ * 支持 ?tab=compare|estimate|list 直达(工具箱深链)
  */
 export default function FoodTools() {
-  const [tab, setTab] = useState<'compare' | 'estimate' | 'list'>('compare');
+  const initial = Taro.getCurrentInstance().router?.params?.tab;
+  const [tab, setTab] = useState<'compare' | 'estimate' | 'list'>(
+    initial === 'estimate' || initial === 'list' ? initial : 'compare'
+  );
 
   return <Screen className="ft-page">
     <View className="seg">
       {([{ key: 'compare', label: '食物对比' }, { key: 'estimate', label: '估重参考' }, { key: 'list', label: '红黑榜' }] as const).map((t) => (
-        <Text key={t.key} className={tab === t.key ? 'active' : ''} onClick={() => setTab(t.key)}>{t.label}</Text>
+        <Text key={t.key} className={`seg-item${tab === t.key ? ' active' : ''}`} onClick={() => setTab(t.key)}>{t.label}</Text>
       ))}
     </View>
 
@@ -60,6 +65,7 @@ function Compare() {
 function FoodPicker({ label, picked, onPick }: { label: string; picked: FoodEntry | null; onPick: (f: FoodEntry | null) => void }) {
   const [kw, setKw] = useState('');
   const [open, setOpen] = useState(false);
+  const [refocus, setRefocus] = useState(false);
   const hits = useMemo(() => {
     const k = kw.trim();
     if (!k) return [];
@@ -68,8 +74,8 @@ function FoodPicker({ label, picked, onPick }: { label: string; picked: FoodEntr
   return <View className="picker-box">
     <Text className="picker-label">{label}</Text>
     {picked
-      ? <View className="picker-chosen" onClick={() => { onPick(null); setOpen(true); setKw(''); }}>{picked.name} · 点击重选</View>
-      : <Input className="picker-input" placeholder="搜索食物" value={kw}
+      ? <View className="picker-chosen" onClick={() => { onPick(null); setOpen(true); setKw(''); setRefocus(true); }}>{picked.name} · 点击重选</View>
+      : <Input className="picker-input" placeholder="搜索食物" value={kw} focus={refocus}
           onInput={(e) => { setKw(e.detail.value); setOpen(true); }}
           onFocus={() => setOpen(true)} />}
     {open && hits.length > 0 && (

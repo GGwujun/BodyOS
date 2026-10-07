@@ -14,6 +14,7 @@ import { BMI_NORMAL_RANGE, ageOf, bmiBand, bmiOf, calcBmr, calcTdee } from '@/ut
 import './index.scss';
 
 const GOAL_LABELS: Record<string, string> = { fat_loss: '减脂', muscle_gain: '增肌', maintain: '维持', endurance: '提升体能' };
+const UNIT_LABELS: Record<string, string> = { kg: '公斤', '分钟/周': '分钟/周' };
 
 interface MealSlot {
   key: 'breakfast' | 'lunch' | 'dinner';
@@ -153,7 +154,7 @@ export default function PlanPage() {
                 <View className="info-row">
                   <Text className="ir-label">{isChange ? `${dirLabel}目标` : '目标体重'}</Text>
                   <Text className="ir-value ir-value--green">
-                    {isChange ? `${fmtKg(startWeight)} ➜➜ ${fmtKg(plan?.targetWeight)}` : fmtKg(goal.targetValue)} 公斤
+                    {isChange ? `${fmtKg(startWeight)} ➜ ${fmtKg(plan?.targetWeight)}` : fmtKg(goal.targetValue)} 公斤
                   </Text>
                 </View>
               )}
@@ -206,9 +207,9 @@ export default function PlanPage() {
                   <Text className="p-col__value">{fmtKg(startWeight)}<Text className="p-col__unit">公斤</Text></Text>
                 </View>
                 {isChange ? (
-                  <View className="p-col p-col--hit">
-                    <Text className="p-col__label p-col__label--green">已{dirLabel}</Text>
-                    <Text className="p-col__value p-col__value--green">{fmtKg(plan?.doneKg, 2)}<Text className="p-col__unit">公斤</Text></Text>
+                  <View className="p-col">
+                    <Text className="p-col__label p-col__label--green">{(plan?.doneKg ?? 0) >= 0 ? `已${dirLabel}` : '较初始'}</Text>
+                    <Text className="p-col__value p-col__value--green">{fmtKg(Math.abs(plan?.doneKg ?? 0), 2)}<Text className="p-col__unit">公斤</Text></Text>
                   </View>
                 ) : (
                   <View className="p-col">
@@ -222,7 +223,7 @@ export default function PlanPage() {
                 </View>
               </View>
               {startWeight == null && <Text className="progress-note">目标开始时暂无体重记录，记录一次即可生成初始体重。</Text>}
-              <Text className="pending-link" onClick={() => { track('plan_record_open', 'other'); setSheetOpen(true); }}>待记录 »</Text>
+              <Text className="pending-link" onClick={() => { track('plan_record_open', 'other'); setSheetOpen(true); }}>记一次体重 »</Text>
             </View>
           )}
 
@@ -287,7 +288,7 @@ export default function PlanPage() {
                 <View className="pl-row" key={g.id}>
                   <View className="pl-row__main">
                     <Text className="pl-row__name">{GOAL_LABELS[g.type] ?? g.type} · {g.durationWeeks ? `${g.durationWeeks} 周` : '未设周期'}</Text>
-                    <Text className="pl-row__meta">{g.startDate.slice(0, 10).replace(/-/g, '/')} 开始 · 目标 {g.targetValue} {g.unit}</Text>
+                    <Text className="pl-row__meta">{g.startDate.slice(0, 10).replace(/-/g, '/')} 开始 · 目标 {g.targetValue} {UNIT_LABELS[g.unit] ?? g.unit}</Text>
                   </View>
                   <Text className="pl-row__state">已结束</Text>
                 </View>

@@ -18,6 +18,10 @@ export default function Exercise() {
   const [aiText, setAiText] = useState('');
   const [parsing, setParsing] = useState(false);
   const [mode, setMode] = useState<'manual' | 'sync' | 'devices'>('sync');
+  // 列表按模式过滤(同步模式显示设备来源,手动模式显示手动/描述来源),统计口径与列表保持一致
+  const shownActivities = mode === 'sync'
+    ? activities.filter((a) => !['manual', 'ai_text'].includes(a.source ?? 'manual'))
+    : activities.filter((a) => ['manual', 'ai_text'].includes(a.source ?? 'manual'));
 
   // 手动记录表单
   const [showForm, setShowForm] = useState(false);
@@ -223,13 +227,13 @@ export default function Exercise() {
       <Text className="section-title">运动历史</Text>
       {loading&&<Text>正在加载运动记录…</Text>}
       {error&&<View className="card"><Text>加载失败：{error}</Text><Button onClick={()=>load()}>重新加载</Button></View>}
-      {!loading&&!error&&<View className="card history-card">
+      {!loading&&!error&&<View className="card">
         <View className="between">
           <Text className="fs-h1">今日运动</Text>
-          <Text className="fs-mini text-secondary">{activities.length} 条</Text>
+          <Text className="fs-mini text-secondary">{shownActivities.length} 条</Text>
         </View>
-        {activities.filter(a => mode === 'sync' ? !['manual','ai_text'].includes(a.source ?? 'manual') : ['manual','ai_text'].includes(a.source ?? 'manual')).length === 0 && <Text className="fs-mini text-secondary">当前分类还没有运动记录</Text>}
-        {activities.filter(a => mode === 'sync' ? !['manual','ai_text'].includes(a.source ?? 'manual') : ['manual','ai_text'].includes(a.source ?? 'manual')).map((a) => (
+        {shownActivities.length === 0 && <Text className="fs-mini text-secondary">当前分类还没有运动记录</Text>}
+        {shownActivities.map((a) => (
           <View key={a.id} className="ex-item">
             <View className="col flex-1">
               <Text className="fs-caption">

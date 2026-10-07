@@ -72,7 +72,7 @@ export default function WeeklyReport() {
             <Text className="fs-mini">综合 {data.score} /100 · 继续保持</Text>
           </View>
 
-          <View className="card metrics-card">
+          <View className="card">
             <Text className="fs-h1">关键数据</Text>
             {data.changes.length === 0 && <Text className="fs-mini text-secondary">暂无变化数据</Text>}
             {data.changes.map((c, i) => (
@@ -85,7 +85,7 @@ export default function WeeklyReport() {
 
           <View className="card win-card">
             <Text className="fs-h1 text-brand"><GoldCoinOutlined /> 做得好</Text>
-            {data.wins.length === 0 && <Text className="fs-mini text-secondary">本周继续努力</Text>}
+            {data.wins.length === 0 && <Text className="fs-mini text-secondary">{isCurrentWeek ? '本周继续努力' : '当期暂无亮点'}</Text>}
             {data.wins.map((w, i) => (
               <Text key={i} className="fs-caption">· {w}</Text>
             ))}

@@ -35,7 +35,7 @@ export default function FoodRank() {
       <Text className="fs-h1">常见奶茶饮品热量(中杯约 500ml)</Text>
       <Text className="fs-mini text-secondary">数值为门店常见配方估算,选小杯、去掉奶盖奶油能再省 80~150 千卡。</Text>
       <View className="tea-legend">
-        <Text>标准糖</Text><Text>七分糖</Text><Text>三分糖</Text><Text>无糖</Text>
+        <Text className="tea-legend-item">标准糖</Text><Text className="tea-legend-item">七分糖</Text><Text className="tea-legend-item">三分糖</Text><Text className="tea-legend-item">无糖</Text>
       </View>
       {TEA_LIST.map((t) => (
         <View className="tea-row" key={t.name}>
