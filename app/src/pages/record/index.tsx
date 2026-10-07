@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, Input, Button } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
-import { ArrowRight, CartOutlined, FireOutlined, BalanceOutlined, Passed, ClockOutlined } from '@taroify/icons';
+import { ArrowRight, CartOutlined, FireOutlined, BalanceOutlined, Passed, ClockOutlined, Delete } from '@taroify/icons';
 import Screen from '@/components/Screen';
 import { RoutePath } from '@/constants/routes';
 import { foodApi, activityApi, dataSourceApi, bodyApi } from '@/services';
+import type { BodyMeasurement } from '@/services/types';
 import { useAsync } from '@/hooks/useAsync';
 import { useTabBarMask } from '@/hooks/useTabBarMask';
 import { toast } from '@/utils/ui';
@@ -31,11 +32,37 @@ export default function Record() {
   const [savingWeight,setSavingWeight]=useState(false);
   const weightSubmission=useRef(createSubmissionGate());
   useDidShow(() => { load(); });
+
+  // 体重历史:弹层每次打开都拉最新(含刚保存的)
+  const [history, setHistory] = useState<BodyMeasurement[] | null>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState('');
+  useEffect(() => {
+    if (!showWeight) return;
+    setHistoryLoading(true);
+    bodyApi.listBodyMeasurements()
+      .then((r) => setHistory(r.items))
+      .catch(() => setHistory(null))
+      .finally(() => setHistoryLoading(false));
+  }, [showWeight]);
+  const removeHistory = async (id: string) => {
+    const { confirm } = await Taro.showModal({ title: '删除记录', content: '确定删除这条体重记录吗？' });
+    if (!confirm) return;
+    setDeletingId(id);
+    try {
+      await bodyApi.deleteBodyMeasurement(id);
+      setHistory((list) => list?.filter((m) => m.id !== id) ?? null);
+      toast('已删除');
+    } catch (e) {
+      toast((e as {message?:string})?.message || '删除失败，请重试', 'error');
+    } finally { setDeletingId(''); }
+  };
+
   const saveWeight = () => weightSubmission.current(async () => {
     const value = Number(weight);
     if (!weight.trim() || !Number.isFinite(value) || value <= 0) return toast('请输入大于 0 的体重', 'none');
     setSavingWeight(true);
-    try { await bodyApi.createBodyMeasurement({ measuredAt: nowISO(), weightKg: value }); toast('已记录'); setShowWeight(false); setWeight(''); load(); }
+    try { await bodyApi.createBodyMeasurement({ measuredAt: nowISO(), weightKg: value }); toast('已记录'); setShowWeight(false); setWeight(''); setHistory(null); load(); }
     catch(e) { toast((e as {message?:string})?.message || '保存失败，请重试', 'error'); }
     finally { setSavingWeight(false); }
   });
@@ -60,7 +87,8 @@ export default function Record() {
       {(food?.items ?? []).slice(0, 2).map((item) => <View className="recent-line" key={item.id}><Text>{mealLabel(item.meal)}</Text><Text>{Math.round(item.totalCalories)} kcal</Text></View>)}
       {(acts?.items ?? []).slice(0, 2).map((item) => <View className="recent-line" key={item.id}><Text>{item.type}</Text><Text>{Math.round(item.calories)} kcal</Text></View>)}
     </View> : null}
-    {showWeight && <View className="mask" onClick={() => !savingWeight&&setShowWeight(false)}><View className="weight-sheet" catchMove onClick={(e) => e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">记录体重</Text><View className="weight-input-row"><Input className="weight-input" type="digit" placeholder="请输入体重" disabled={savingWeight} value={weight} onInput={(e) => setWeight(e.detail.value)} focus/><Text className="weight-unit">kg</Text></View><Button className="sheet-save" loading={savingWeight} disabled={savingWeight} onClick={saveWeight}>{savingWeight?'正在保存…':'保存记录'}</Button></View></View>}
+    {showWeight && <View className="mask" onClick={() => !savingWeight&&setShowWeight(false)}><View className="weight-sheet" catchMove onClick={(e) => e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">记录体重</Text><View className="weight-input-row"><Input className="weight-input" type="digit" placeholder="请输入体重" disabled={savingWeight} value={weight} onInput={(e) => setWeight(e.detail.value)} focus/><Text className="weight-unit">kg</Text></View><Button className="sheet-save" loading={savingWeight} disabled={savingWeight} onClick={saveWeight}>{savingWeight?'正在保存…':'保存记录'}</Button><View className="history-block"><Text className="history-title">历史记录</Text>{historyLoading && <Text className="history-empty">正在加载…</Text>}{!historyLoading && history?.length === 0 && <Text className="history-empty">还没有体重记录</Text>}{history == null && !historyLoading && <Text className="history-empty">历史加载失败，重新打开可重试</Text>}<View className="history-list">{(history ?? []).map((m) => <View className="history-row" key={m.id}><Text className="history-date">{fmtMeasured(m.measuredAt)}</Text><Text className="history-value">{m.weightKg != null ? `${m.weightKg} kg` : '—'}</Text><Text className={`history-del${deletingId === m.id ? ' is-busy' : ''}`} onClick={() => deletingId !== m.id && removeHistory(m.id)}><Delete size={16} /></Text></View>)}</View></View></View></View>}
   </Screen>;
 }
 function mealLabel(meal: string): string { return ({ breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' } as Record<string, string>)[meal] ?? meal; }
+function fmtMeasured(iso: string): string { const d = new Date(iso); const p = (n: number) => String(n).padStart(2, '0'); return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }

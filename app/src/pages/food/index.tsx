@@ -35,6 +35,7 @@ export default function Food() {
   const [manualOpen, setManualOpen] = useState(false);
   const [manualName, setManualName] = useState('');
   const [manualKcal, setManualKcal] = useState('');
+  const [editId, setEditId] = useState<string | null>(null);
 
   const loadLogs = useCallback(async () => {
     try {
@@ -114,10 +115,16 @@ export default function Food() {
     }
     setSaving(true);
     try {
-      await foodApi.createFoodLog({ meal, items, source });
-      track('ai_food_parse_confirm', 'ai', { items: items.length });
-      toast('已保存');
+      if (editId) {
+        await foodApi.updateFoodLog(editId, { meal, items });
+        toast('已更新');
+      } else {
+        await foodApi.createFoodLog({ meal, items, source });
+        track('ai_food_parse_confirm', 'ai', { items: items.length });
+        toast('已保存');
+      }
       setState('idle');
+      setEditId(null);
       setText('');
       setItems([]);
       await loadLogs();
@@ -127,6 +134,20 @@ export default function Food() {
     } finally {
       setSaving(false);
     }
+  };
+
+  /** 编辑已保存的记录:载入本餐编辑器 */
+  const onEditLog = (log: FoodLog) => {
+    setEditId(log.id);
+    setMeal(log.meal);
+    setSource(log.source);
+    setItems(log.items.map((it) => ({ ...it })));
+    setState('need_confirm');
+  };
+  const cancelEdit = () => {
+    setEditId(null);
+    setItems([]);
+    setState('idle');
   };
 
   const onDeleteLog = async (id: string) => {
@@ -208,10 +229,10 @@ export default function Food() {
       {state === 'need_confirm' && (
         <View className="card">
           <View className="between">
-            <Text className="fs-h1">本餐待保存</Text>
+            <Text className="fs-h1">{editId ? '正在编辑记录' : '本餐待保存'}</Text>
             <Text className="fs-mini text-brand">合计 {Math.round(totalKcal)} kcal</Text>
           </View>
-          {source !== 'manual' && <Text className="fs-mini text-secondary">
+          {!editId && source !== 'manual' && <Text className="fs-mini text-secondary">
             置信度 {Math.round(resultConf * 100)}%{resultConf < 0.8 ? ' · 部分为估算,建议核对份量' : ' · 热量来自食物库'}
           </Text>}
           {items.map((it, i) => (
@@ -242,8 +263,9 @@ export default function Food() {
               <Button size="mini" className="btn btn--primary" onClick={addManual}>加</Button>
             </View>
           )}
+          {editId && <Text className="add-manual" onClick={cancelEdit}>取消编辑</Text>}
           <Button className="btn btn--primary btn--block mt-3" loading={saving} onClick={save}>
-            保存到{MEALS.find((m) => m.key === meal)?.label}
+            {editId ? '保存修改' : `保存到${MEALS.find((m) => m.key === meal)?.label}`}
           </Button>
         </View>
       )}
@@ -255,21 +277,35 @@ export default function Food() {
         </View>
       )}
 
-      {/* 当日记录 */}
+      {/* 当日记录:按餐次分组 */}
       <View className="card">
         <Text className="fs-h1">今日记录</Text>
         {logs.length === 0 && <Text className="fs-mini text-secondary">还没有记录</Text>}
-        {logs.map((log) => (
-          <View key={log.id} className="log-item">
-            <View className="col flex-1">
-              <Text className="fs-caption">
-                {mealLabel(log.meal)} · {(log.items as { name: string }[]).map((i) => i.name).join('、')}
-              </Text>
-              <Text className="fs-mini text-secondary">{Math.round(log.totalCalories)} kcal</Text>
+        {MEALS.map((m) => {
+          const group = logs.filter((l) => l.meal === m.key);
+          if (group.length === 0) return null;
+          const subtotal = group.reduce((s, l) => s + l.totalCalories, 0);
+          return (
+            <View key={m.key} className="meal-group">
+              <View className="between">
+                <Text className="fs-caption text-secondary">{m.label}</Text>
+                <Text className="fs-mini text-secondary">{Math.round(subtotal)} kcal</Text>
+              </View>
+              {group.map((log) => (
+                <View key={log.id} className="log-item">
+                  <View className="col flex-1">
+                    <Text className="fs-caption">
+                      {(log.items as { name: string }[]).map((i) => i.name).join('、')}
+                    </Text>
+                    <Text className="fs-mini text-secondary">{Math.round(log.totalCalories)} kcal</Text>
+                  </View>
+                  <Text className="fs-mini text-brand" onClick={() => onEditLog(log)}>编辑</Text>
+                  <Text className="edit-del" onClick={() => onDeleteLog(log.id)}>删除</Text>
+                </View>
+              ))}
             </View>
-            <Text className="edit-del" onClick={() => onDeleteLog(log.id)}>删除</Text>
-          </View>
-        ))}
+          );
+        })}
       </View>
     </Screen>
   );

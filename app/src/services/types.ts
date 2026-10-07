@@ -160,6 +160,8 @@ export interface WeeklyAnalysis {
   wins: string[];
   issues: string[];
   actions: string[];
+  /** 命中服务端周缓存时为 true */
+  cached?: boolean;
 }
 
 /* ============ AI 教练 ============ */

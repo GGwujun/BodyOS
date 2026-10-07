@@ -26,6 +26,7 @@ export default function Exercise() {
   const [calories, setCalories] = useState('');
   const [savingManual,setSavingManual]=useState(false);
   const manualSubmission=useRef(createSubmissionGate());
+  const [editId, setEditId] = useState<string | null>(null);
 
   usePullDownRefresh(async () => {
     await load();
@@ -80,24 +81,51 @@ export default function Exercise() {
     }
     setSavingManual(true);
     try {
-      await activityApi.createActivity({
-        type: EX_TYPES[typeIdx],
-        durationMin: dur,
-        calories: cal,
-        startedAt: nowISO(),
-        source: 'manual'
-      });
-      toast('已添加');
+      if (editId) {
+        await activityApi.updateActivity(editId, {
+          type: EX_TYPES[typeIdx],
+          durationMin: dur,
+          calories: cal
+        });
+        toast('已更新');
+        setEditId(null);
+      } else {
+        await activityApi.createActivity({
+          type: EX_TYPES[typeIdx],
+          durationMin: dur,
+          calories: cal,
+          startedAt: nowISO(),
+          source: 'manual'
+        });
+        toast('已添加');
+      }
       setDuration('');
       setCalories('');
       setShowForm(false);
       await load();
     } catch (e) {
-      toast((e as {message?:string})?.message || '添加失败，请重试', 'error');
+      toast((e as {message?:string})?.message || (editId ? '更新失败，请重试' : '添加失败，请重试'), 'error');
     } finally {
       setSavingManual(false);
     }
   });
+
+  /** 编辑已保存的运动:载入手动表单 */
+  const onEditActivity = (a: { id: string; type: string; durationMin?: number; calories: number }) => {
+    const idx = EX_TYPES.indexOf(a.type);
+    setTypeIdx(idx >= 0 ? idx : EX_TYPES.length - 1);
+    setDuration(a.durationMin != null ? String(a.durationMin) : '');
+    setCalories(String(Math.round(a.calories)));
+    setEditId(a.id);
+    setMode('manual');
+    setShowForm(true);
+  };
+  const cancelEdit = () => {
+    setEditId(null);
+    setDuration('');
+    setCalories('');
+    setShowForm(false);
+  };
 
   const onDelete = async (id: string) => {
     const ok = await confirmDelete('删除这条运动记录?', '删除后今日消耗将重新计算。');
@@ -135,7 +163,7 @@ export default function Exercise() {
       {/* 手动记录 */}
       <View className="card manual-card">
         <View className="between" onClick={() => setShowForm((v) => !v)}>
-          <Text className="fs-h1"><Edit /> 手动记录</Text>
+          <Text className="fs-h1"><Edit /> {editId ? '编辑运动记录' : '手动记录'}</Text>
           <Text className="fs-mini text-secondary">{showForm ? '收起' : '展开'}</Text>
         </View>
         {showForm && (
@@ -165,8 +193,9 @@ export default function Exercise() {
                 onInput={(e) => setCalories(e.detail.value)}
               />
             </View>
+            {editId && <Text className="fs-mini text-secondary" style={{ textDecoration: 'underline', padding: '6px 0', display: 'block' }} onClick={cancelEdit}>取消编辑</Text>}
             <Button className="btn btn--primary btn--block mt-3" loading={savingManual} disabled={savingManual} onClick={addManual}>
-              {savingManual?'正在保存…':'添加'}
+              {savingManual?'正在保存…':editId?'保存修改':'添加'}
             </Button>
           </View>
         )}
@@ -194,6 +223,7 @@ export default function Exercise() {
               <Text className="fs-mini text-secondary">来源:{sourceLabel(a.source)}</Text>
             </View>
             <Text className="fs-h2 text-info">{Math.round(a.calories)} kcal</Text>
+            <Text className="fs-mini text-brand" onClick={() => onEditActivity(a)}>编辑</Text>
             <Text className="ex-del" onClick={() => onDelete(a.id)}>删除</Text>
           </View>
         ))}

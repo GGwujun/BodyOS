@@ -1,17 +1,40 @@
+import { useState } from 'react';
 import { Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
-import { ArrowRight } from '@taroify/icons';
+import { ArrowRight, ArrowDown } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import { RoutePath, TAB_PAGES } from '@/constants/routes';
 import { summaryApi } from '@/services';
 import { track } from '@/services/analytics';
 import { todayStr } from '@/utils/date';
+import type { DailyAnalysis } from '@/services/types';
 import './index.scss';
 
 
 export default function Home() {
   const today = todayStr();
   const { data, loading, error, refresh } = useAsync(() => summaryApi.getDailySummary(todayStr()), []);
+
+  // 今日解读:懒加载,用户展开才调用(控制成本);当日结果缓存不再重复请求
+  const [insightOpen, setInsightOpen] = useState(false);
+  const [insight, setInsight] = useState<DailyAnalysis | null>(null);
+  const [insightLoading, setInsightLoading] = useState(false);
+  const [insightError, setInsightError] = useState('');
+  const toggleInsight = async () => {
+    if (insightOpen) { setInsightOpen(false); return; }
+    setInsightOpen(true);
+    if (insight || insightLoading) return;
+    setInsightLoading(true);
+    setInsightError('');
+    track('daily_ai_click', 'home');
+    try {
+      setInsight(await summaryApi.dailyAnalysis(today));
+    } catch (e) {
+      setInsightError(e instanceof Error ? e.message : '解读生成失败,请稍后重试');
+    } finally {
+      setInsightLoading(false);
+    }
+  };
   useDidShow(() => { track('home_view', 'home'); void refresh(); });
 
   const go = (path: RoutePath) => TAB_PAGES.includes(path)
@@ -84,6 +107,41 @@ export default function Home() {
         <View className="goal-row"><Text className={`goal-name${data?.goal ? '' : ' is-empty'}`}>{goalLabel(data?.goal?.type)}</Text><Text className="goal-meta">{data?.goal?.durationWeeks ? `${data.goal.durationWeeks} 周计划` : ''}</Text></View>
         <View className="goal-detail"><Text className="goal-caption">{data?.goal ? '根据记录更新目标进度' : '设置目标后开始记录进度'}</Text><Text className={`goal-percent${data?.goal ? '' : ' is-empty'}`}>{data?.goal ? `${goalProgress}%` : '—'}</Text></View>
         <View className="goal-track"><View className="goal-track__fill" style={{ width: `${goalProgress}%` }} /></View>
+      </View>
+
+      <View className="dashboard-card insight-card" onClick={toggleInsight}>
+        <View className="insight-head">
+          <Text className="section-title">今日解读</Text>
+          <View className={`insight-chevron${insightOpen ? ' is-open' : ''}`}><ArrowDown size={16} color="#94a3b8" /></View>
+        </View>
+        {!insightOpen && <Text className="insight-hint">结合今天的记录,给出一段身体信号解读与建议</Text>}
+        {insightOpen && insightLoading && <Text className="insight-loading">正在生成解读…</Text>}
+        {insightOpen && !insightLoading && insightError && <Text className="insight-error">{insightError}</Text>}
+        {insightOpen && !insightLoading && insight && (
+          <View className="insight-body">
+            <Text className="insight-summary">{insight.summary}</Text>
+            {insight.highlights.length > 0 && (
+              <View className="insight-tags">
+                {insight.highlights.map((h, i) => <Text key={i} className="insight-tag insight-tag--good">{h}</Text>)}
+              </View>
+            )}
+            {insight.issues.length > 0 && (
+              <View className="insight-tags">
+                {insight.issues.map((s, i) => <Text key={i} className="insight-tag insight-tag--warn">{s}</Text>)}
+              </View>
+            )}
+            {insight.actions.length > 0 && (
+              <View className="insight-actions">
+                {insight.actions.map((a, i) => (
+                  <View key={i} className="insight-action">
+                    <Text className="insight-action__title">{i + 1}. {a.title}</Text>
+                    <Text className="insight-action__reason">{a.reason}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        )}
       </View>
     </View>
   );

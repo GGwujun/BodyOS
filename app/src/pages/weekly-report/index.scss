@@ -17,6 +17,20 @@
   .score-value { font-size: 46px; font-weight: 700; color: #fff; line-height: 1.15; letter-spacing: 1px; }
   .score-card .fs-mini, .score-card .fs-caption { color: rgba(255, 255, 255, .85); }
 
+  /* 往期切换 */
+  .week-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    background: $color-bg-card; border: 1px solid $color-border; border-radius: $radius-md;
+    padding: 10px 16px; font-size: 22px; color: $color-text-primary;
+    box-shadow: $shadow-card;
+  }
+  .week-label { font-size: 14px; font-weight: $fw-bold; color: $color-text-primary; }
+  .week-arrow-disabled { color: #cbd5e1; font-size: 22px; }
+  .cache-row {
+    display: flex; align-items: center; justify-content: center; gap: 2px;
+  }
+  .regen-link { display: flex; align-items: center; gap: 3px; color: $color-primary; }
+
   /* 关键数据行 */
   .report-row {
     display: flex; justify-content: space-between; align-items: center;

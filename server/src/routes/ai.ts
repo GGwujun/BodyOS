@@ -60,20 +60,37 @@ router.post('/daily-analysis', wrap(async (req, res) => {
   }
 }));
 
-/** POST /ai/weekly-analysis — 后端取 7 天汇总后生成周报 */
+/** POST /ai/weekly-analysis — 后端取 7 天汇总后生成周报;结果按周落库,同周不重复调用模型 */
 router.post('/weekly-analysis', wrap(async (req, res) => {
   const weekStart = (req.body?.weekStart as string) || addDays(todayStr(), -6);
   if (!isValidDateStr(weekStart)) return err(res, 400, 'weekStart 格式应为 YYYY-MM-DD');
+  const userId = getUserId(res);
   try {
+    // 同周已有周报直接返回(传 regenerate:true 可强制重生成)
+    if (!req.body?.regenerate) {
+      const cached = await prisma.weeklyReport.findUnique({
+        where: { userId_weekStart: { userId, weekStart: toDate(weekStart) } }
+      });
+      if (cached) return ok(res, { ...(cached.content as Record<string, unknown>), cached: true });
+    }
+
+    // 保证今天有最新汇总(用户当天没开过首页时,周报会缺今天的数据)
+    await recomputeDaily(userId, todayStr());
+
     const days = Array.from({ length: 7 }, (_, i) => toDate(addDays(weekStart, i)));
     const summaries = await prisma.dailySummary.findMany({
-      where: { userId: getUserId(res), date: { in: days } }
+      where: { userId, date: { in: days } }
     });
     const goal = await prisma.goal.findFirst({
-      where: { userId: getUserId(res), isActive: true },
+      where: { userId, isActive: true },
       orderBy: { createdAt: 'desc' }
     });
     const result = await weeklyAnalysis({ summaries, goal });
+    await prisma.weeklyReport.upsert({
+      where: { userId_weekStart: { userId, weekStart: toDate(weekStart) } },
+      create: { userId, weekStart: toDate(weekStart), content: result as never },
+      update: { content: result as never, generatedAt: new Date() }
+    });
     return ok(res, result);
   } catch (e) {
     return err(res, 500, isUserError(e) ? e.message : fallbackMessage('ai/weekly-analysis', e), { affectsData: false });

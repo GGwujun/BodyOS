@@ -84,4 +84,8 @@
     border-bottom: 1px solid $color-divider; font-size: 13px;
   }
   .log-item:last-child { border-bottom: 0; }
+
+  /* 按餐次分组 */
+  .meal-group { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  .meal-group .log-item { border-bottom: none; background: $color-bg-soft; border-radius: $radius-md; padding: 10px 12px; }
 }

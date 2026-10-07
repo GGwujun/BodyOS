@@ -9,6 +9,6 @@ export const getDailySummary = (date: string) =>
 export const dailyAnalysis = (date: string) =>
   request<DailyAnalysis>({ url: '/ai/daily-analysis', method: 'POST', data: { date }, ai: true });
 
-/** POST /ai/weekly-analysis — 周报 */
-export const weeklyAnalysis = (weekStart: string) =>
-  request<WeeklyAnalysis>({ url: '/ai/weekly-analysis', method: 'POST', data: { weekStart }, ai: true });
+/** POST /ai/weekly-analysis — 周报(同周命中服务端缓存;regenerate 强制重生成) */
+export const weeklyAnalysis = (weekStart: string, regenerate = false) =>
+  request<WeeklyAnalysis>({ url: '/ai/weekly-analysis', method: 'POST', data: { weekStart, regenerate }, ai: true });

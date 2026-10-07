@@ -96,4 +96,19 @@
     background: $color-primary !important; color: #fff !important;
     border-radius: $radius-md !important; font-size: 15px !important;
   }
+
+  /* 体重历史 */
+  .history-block { margin-top: 22px; }
+  .history-title { display: block; font-size: 13px; font-weight: 700; color: $color-text-primary; }
+  .history-empty { display: block; margin-top: 10px; font-size: 12px; color: $color-text-tertiary; }
+  .history-list { max-height: 220px; overflow-y: auto; }
+  .history-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 0; border-bottom: 1px solid $color-divider;
+    &:last-child { border-bottom: none; }
+  }
+  .history-date { flex: 1; font-size: 12px; color: $color-text-secondary; }
+  .history-value { font-size: 14px; font-weight: 600; color: $color-text-primary; }
+  .history-del { color: $color-text-tertiary; padding: 4px 6px; }
+  .history-del.is-busy { opacity: .4; }
 }

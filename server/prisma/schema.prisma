@@ -30,6 +30,7 @@ model User {
   conversations AIConversation[]
   analytics     AnalyticsEvent[]
   authTokens    AuthToken[]
+  weeklyReports WeeklyReport[]
 }
 
 /// 登录令牌(不透明随机串;签发后 30 天过期,客户端存本地)
@@ -214,4 +215,16 @@ model AnalyticsEvent {
 
   @@index([userId, name, occurredAt])
   @@index([occurredAt])
+}
+
+/// 周报缓存:按 userId+weekStart 落库,同一周不重复调用模型
+model WeeklyReport {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekStart   DateTime @db.Date
+  content     Json     // 周报结构化结果(score/grade/changes/wins/issues/actions)
+  generatedAt DateTime @default(now())
+
+  @@unique([userId, weekStart])
 }
