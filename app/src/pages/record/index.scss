@@ -24,6 +24,8 @@
   .entry-icon.mint { background: #d9f6e9; color: $color-primary; }
   .entry-icon.blue { background: #e8efff; color: $color-info; }
   .entry-icon.dark { background: #e9edf2; color: #1e293b; }
+  .entry-icon.sky { background: #e0f2fe; color: #0369a1; }
+  .entry-emoji { font-size: 20px; line-height: 1; }
   .entry-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
   .entry-name { font-size: 16px; font-weight: 700; color: $color-text-primary; }
   .entry-desc { color: $color-text-secondary; font-size: 12px; }
@@ -111,4 +113,27 @@
   .history-value { font-size: 14px; font-weight: 600; color: $color-text-primary; }
   .history-del { color: $color-text-tertiary; padding: 4px 6px; }
   .history-del.is-busy { opacity: .4; }
+
+  /* 喝水打卡弹层 */
+  .water-status { display: flex; align-items: baseline; gap: 6px; margin: 18px 0 10px; }
+  .water-amount { font-size: 36px; font-weight: 700; color: $color-primary-dark; }
+  .water-goal { font-size: 13px; color: $color-text-secondary; }
+  .water-done { font-size: 11px; color: $color-success; background: rgba(16,185,129,.1); border-radius: $radius-pill; padding: 2px 8px; margin-left: 6px; }
+  .water-bar { height: 8px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
+  .water-bar__fill { height: 100%; border-radius: $radius-pill; background: linear-gradient(90deg, #38bdf8, #0ea5e9); transition: width .3s ease; }
+  .water-pct { display: block; margin-top: 6px; font-size: 11px; color: $color-text-tertiary; }
+  .water-chips { display: flex; gap: 8px; margin-top: 16px; }
+  .water-chip {
+    flex: 1; text-align: center; padding: 10px 0;
+    background: rgba(14, 165, 233, .08); color: #0369a1;
+    border: 1px solid rgba(14, 165, 233, .25); border-radius: $radius-md;
+    font-size: 13px; font-weight: 600;
+  }
+  .water-chip.is-busy { opacity: .5; }
+  .water-custom { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .water-custom-input {
+    flex: 1; font-size: 14px; padding: 8px 0;
+    color: $color-text-primary; border-bottom: 2px solid #0ea5e9;
+  }
+  .water-reset { display: block; margin-top: 14px; font-size: 11px; color: $color-text-tertiary; text-decoration: underline; }
 }

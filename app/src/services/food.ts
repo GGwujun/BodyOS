@@ -1,5 +1,5 @@
 import { request } from './request';
-import type { FoodItem, FoodLog, FoodParseInput, FoodParseResult, PageResult } from './types';
+import type { FoodItem, FoodLog, FoodParseInput, FoodParseResult, FrequentFood, PageResult } from './types';
 
 /** 创建/编辑饮食记录入参(后端据此自行计算 totalCalories 与营养汇总) */
 export interface FoodLogInput {
@@ -12,6 +12,10 @@ export interface FoodLogInput {
 /** GET /food-logs?date=YYYY-MM-DD */
 export const listFoodLogs = (date: string) =>
   request<PageResult<FoodLog>>({ url: `/food-logs?date=${encodeURIComponent(date)}` });
+
+/** GET /food-logs/frequent — 常用食物(近 30 天频次聚合) */
+export const listFrequentFoods = () =>
+  request<{ items: FrequentFood[] }>({ url: '/food-logs/frequent' });
 
 /** POST /food-logs */
 export const createFoodLog = (data: FoodLogInput) =>

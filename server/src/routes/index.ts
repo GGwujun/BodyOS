@@ -11,6 +11,7 @@ import trendsRoutes from './trends';
 import dataSourcesRoutes from './dataSources';
 import analyticsRoutes from './analytics';
 import authRoutes from './auth';
+import waterRoutes from './water';
 import { attachUser } from '../lib/currentUser';
 
 const router = Router();
@@ -30,5 +31,6 @@ router.use('/daily-summary', summaryRoutes);
 router.use('/trends', trendsRoutes);
 router.use('/data-sources', dataSourcesRoutes);
 router.use('/analytics', analyticsRoutes);
+router.use('/water', waterRoutes);
 
 export default router;

@@ -12,8 +12,15 @@
 /* 日期头 */
 .home-header { height: 40px; display: flex; align-items: center; margin-bottom: 12px; }
 .home-header__date { display: flex; align-items: baseline; gap: 8px; }
+.home-greeting { font-size: 13px; color: $color-primary; font-weight: $fw-bold; }
 .home-date { font-size: 17px; font-weight: $fw-bold; letter-spacing: .2px; }
 .home-week { font-size: 12px; color: $color-text-tertiary; }
+
+/* 步数目标进度 */
+.steps-progress { margin-top: 12px; display: flex; flex-direction: column; gap: 5px; }
+.steps-progress__track { height: 6px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
+.steps-progress__fill { height: 100%; border-radius: $radius-pill; background: linear-gradient(90deg, #38bdf8, #0ea5e9); transition: width .4s ease; }
+.steps-progress__label { font-size: 11px; color: $color-text-tertiary; }
 
 /* 错误提示:柔和圆角 + 状态点 */
 .home-notice {
@@ -142,6 +149,14 @@
 .insight-chevron { display: flex; transition: transform .25s ease; }
 .insight-chevron.is-open { transform: rotate(180deg); }
 .insight-hint { margin-top: 8px; font-size: 11px; color: $color-text-tertiary; }
+
+/* 水分速览行 */
+.water-line {
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid $color-divider;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.water-line__label { font-size: 12px; color: $color-text-secondary; }
+.water-line__action { font-size: 12px; color: #0369a1; }
 .insight-loading { margin-top: 14px; font-size: 12px; color: $color-text-secondary; }
 .insight-error { margin-top: 14px; font-size: 12px; color: $color-warning; }
 .insight-body { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }

@@ -40,6 +40,54 @@ router.get('/', wrap(async (req, res) => {
   return ok(res, pageResult(items, total, q));
 }));
 
+/** GET /food-logs/frequent — 常用食物库:按近 30 天记录频次聚合(一键再记) */
+router.get('/frequent', wrap(async (req, res) => {
+  const userId = getUserId(res);
+  const thirtyAgo = new Date(Date.now() - 30 * 86400_000);
+  const logs = await prisma.foodLog.findMany({
+    where: { userId, deletedAt: null, date: { gte: thirtyAgo } },
+    select: { items: true }
+  });
+
+  type ItemRow = { name: string; amount: string; calories: number; proteinG: number; carbG: number; fatG: number };
+  const byName = new Map<string, { name: string; count: number; cal: number; p: number; c: number; f: number; amounts: Map<string, number> }>();
+  for (const log of logs) {
+    const items = (log.items as unknown as ItemRow[]) ?? [];
+    for (const it of items) {
+      if (!it?.name) continue;
+      const name = String(it.name).trim().slice(0, 50);
+      if (!name) continue;
+      let agg = byName.get(name);
+      if (!agg) { agg = { name, count: 0, cal: 0, p: 0, c: 0, f: 0, amounts: new Map() }; byName.set(name, agg); }
+      agg.count++;
+      agg.cal += Number(it.calories) || 0;
+      agg.p += Number(it.proteinG) || 0;
+      agg.c += Number(it.carbG) || 0;
+      agg.f += Number(it.fatG) || 0;
+      const amount = String(it.amount ?? '').slice(0, 30);
+      agg.amounts.set(amount, (agg.amounts.get(amount) ?? 0) + 1);
+    }
+  }
+
+  const frequent = [...byName.values()]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 20)
+    .map((a) => {
+      const commonAmount = [...a.amounts.entries()].sort((x, y) => y[1] - x[1])[0]?.[0] ?? '1 份';
+      const r = (v: number) => Math.round(v / a.count);
+      return {
+        name: a.name,
+        count: a.count,
+        amount: commonAmount,
+        calories: r(a.cal),
+        proteinG: r(a.p),
+        carbG: r(a.c),
+        fatG: r(a.f)
+      };
+    });
+  return ok(res, { items: frequent });
+}));
+
 /** POST /food-logs */
 router.post('/', wrap(async (req, res) => {
   const parsed = CreateFoodLogSchema.safeParse(req.body);

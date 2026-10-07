@@ -18,7 +18,7 @@ export async function recomputeDaily(userId: string, dateStr = todayStr()) {
 
   // 1-3,5,6 并行查询(消除串行等待);连续记录天数一次查 distinct date(消除逐天 N+1)
   const fourteenAgo = new Date(date.getTime() - 14 * 86400_000);
-  const [profile, foodLogs, activities, goal, measurements, recentFoodRows] = await Promise.all([
+  const [profile, foodLogs, activities, goal, measurements, recentFoodRows, waterLog] = await Promise.all([
     prisma.userProfile.findUnique({ where: { userId } }),
     prisma.foodLog.findMany({ where: { userId, date, deletedAt: null } }),
     prisma.activityRecord.findMany({ where: { userId, date, deletedAt: null } }),
@@ -31,7 +31,8 @@ export async function recomputeDaily(userId: string, dateStr = todayStr()) {
       where: { userId, deletedAt: null, date: { gte: fourteenAgo, lte: date } },
       select: { date: true },
       distinct: ['date']
-    })
+    }),
+    prisma.waterLog.findUnique({ where: { userId_date: { userId, date } } })
   ]);
 
   const gender = profile?.gender ?? 'male';
@@ -65,7 +66,8 @@ export async function recomputeDaily(userId: string, dateStr = todayStr()) {
     const observed = {
       bodyScore:null,energyScore:null,nutritionScore:null,activityScore:null,recoveryScore:null,goalScore:null,
       intakeCalories,burnCalories:null,netCalories:null,bmr:null,tdee:null,
-      steps,activeCalories,exerciseCalories,nutrition,engineVersion:ENGINE_VERSION,recalculatedAt:new Date()
+      steps,activeCalories,exerciseCalories,waterMl:waterLog?.amountMl ?? 0,
+      nutrition,engineVersion:ENGINE_VERSION,recalculatedAt:new Date()
     };
     return prisma.dailySummary.upsert({
       where:{userId_date:{userId,date}},create:{userId,date,...observed},update:observed
@@ -151,7 +153,7 @@ export async function recomputeDaily(userId: string, dateStr = todayStr()) {
       recoveryScore: scores.recoveryScore, goalScore: scores.goalScore,
       intakeCalories, burnCalories: energy.burnCalories, netCalories: energy.netCalories,
       bmr: energy.bmr, tdee: energy.tdee,
-      steps, activeCalories, exerciseCalories,
+      steps, activeCalories, exerciseCalories, waterMl: waterLog?.amountMl ?? 0,
       nutrition, engineVersion: ENGINE_VERSION, recalculatedAt: new Date()
     },
     update: {
@@ -160,7 +162,7 @@ export async function recomputeDaily(userId: string, dateStr = todayStr()) {
       recoveryScore: scores.recoveryScore, goalScore: scores.goalScore,
       intakeCalories, burnCalories: energy.burnCalories, netCalories: energy.netCalories,
       bmr: energy.bmr, tdee: energy.tdee,
-      steps, activeCalories, exerciseCalories,
+      steps, activeCalories, exerciseCalories, waterMl: waterLog?.amountMl ?? 0,
       nutrition, engineVersion: ENGINE_VERSION, recalculatedAt: new Date()
     }
   });

@@ -136,6 +136,8 @@ export interface DailySummary {
   steps?: number;
   activeCalories?: number;
   exerciseCalories?: number;
+  /** 当日水分合计(毫升) */
+  waterMl?: number;
   nutrition: {
     proteinG: number;
     carbG: number;
@@ -178,6 +180,25 @@ export interface ChatInput {
 export interface ChatResult {
   reply: string;
   references?: { type: string; id: ID; label: string }[];
+}
+
+/* ============ 水分打卡 ============ */
+export interface WaterStatus {
+  date: string;
+  amountMl: number;
+  goalMl: number;
+}
+
+/* ============ 常用食物库 ============ */
+/** 近 30 天高频食物(按记录次数聚合,均值营养) */
+export interface FrequentFood {
+  name: string;
+  count: number;
+  amount: string;
+  calories: number;
+  proteinG: number;
+  carbG: number;
+  fatG: number;
 }
 
 /* ============ 数据源 ============ */

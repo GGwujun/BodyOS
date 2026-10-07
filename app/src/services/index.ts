@@ -10,3 +10,4 @@ export * as summaryApi from './summary';
 export * as trendsApi from './trends';
 export * as aiApi from './ai';
 export * as dataSourceApi from './dataSources';
+export * as waterApi from './water';

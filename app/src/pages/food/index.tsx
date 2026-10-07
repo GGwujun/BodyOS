@@ -4,7 +4,7 @@ import Taro, { usePullDownRefresh } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { foodApi } from '@/services';
 import { track } from '@/services/analytics';
-import type { FoodItem, FoodLog } from '@/services/types';
+import type { FoodItem, FoodLog, FrequentFood } from '@/services/types';
 import { confirmDelete, toast } from '@/utils/ui';
 import { todayStr } from '@/utils/date';
 import { Photograph, BulbOutlined } from '@taroify/icons';
@@ -36,6 +36,15 @@ export default function Food() {
   const [manualName, setManualName] = useState('');
   const [manualKcal, setManualKcal] = useState('');
   const [editId, setEditId] = useState<string | null>(null);
+
+  // 常用食物库:首次切到该 tab 懒加载(近 30 天频次聚合)
+  const [frequent, setFrequent] = useState<FrequentFood[] | null>(null);
+  useEffect(() => {
+    if (mode !== 'frequent' || frequent !== null) return;
+    foodApi.listFrequentFoods()
+      .then((r) => setFrequent(r.items))
+      .catch(() => setFrequent([]));
+  }, [mode, frequent]);
 
   const loadLogs = useCallback(async () => {
     try {
@@ -166,7 +175,7 @@ export default function Food() {
 
   return (
     <Screen className="food-page">
-      <View className="mode-tabs">{([{key:'ai',label:'快速识别'},{key:'manual',label:'手动添加'},{key:'frequent',label:'再次添加'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
+      <View className="mode-tabs">{([{key:'ai',label:'快速识别'},{key:'manual',label:'手动添加'},{key:'frequent',label:'常用食物'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
 
       {/* 餐次选择 */}
       <View className="meal-tabs">
@@ -214,12 +223,28 @@ export default function Food() {
         </View>
       </View>}
       {mode === 'frequent' && <View className="card">
-        <Text className="fs-h1">从今日记录再次添加</Text>
-        <Text className="fs-mini text-secondary">常吃的食物会出现在这里，一键加入本餐。</Text>
-        {logs.length === 0 && <Text className="fs-mini text-secondary">保存饮食记录后，可在这里再次添加。</Text>}
-        {Array.from(new Map(logs.flatMap(log => log.items).map(item => [item.name, item])).values()).map(item => <View className="edit-item" key={item.name}>
-          <Text>{item.name} · {item.calories} kcal</Text>
-          <Button size="mini" onClick={() => { setItems(prev => [...prev, {...item}]); setState('need_confirm'); }}>加入本餐</Button>
+        <Text className="fs-h1">常用食物</Text>
+        <Text className="fs-mini text-secondary">根据你近 30 天的记录自动沉淀，一键加入本餐。</Text>
+        {frequent === null && <Text className="fs-mini text-secondary">正在加载…</Text>}
+        {frequent !== null && frequent.length === 0 && <>
+          <Text className="fs-mini text-secondary">还没有常用食物,多记录几天就会出现在这里。</Text>
+          {logs.length > 0 && <Text className="fs-h2" style={{ display: 'block', marginTop: 10 }}>今日吃过</Text>}
+        </>}
+        {(frequent ?? []).map((f) => <View className="edit-item" key={f.name}>
+          <View className="col flex-1">
+            <Text className="fs-caption">{f.name} · 约 {f.calories} kcal</Text>
+            <Text className="fs-mini text-secondary">{f.amount || '1 份'} · 近 30 天 {f.count} 次</Text>
+          </View>
+          <Button size="mini" onClick={() => {
+            setSource('manual');
+            setResultConf(null);
+            setItems(prev => [...prev, { name: f.name, amount: f.amount || '1 份', calories: f.calories, proteinG: f.proteinG, carbG: f.carbG, fatG: f.fatG }]);
+            setState('need_confirm');
+          }}>加入本餐</Button>
+        </View>)}
+        {frequent !== null && frequent.length === 0 && Array.from(new Map(logs.flatMap(log => log.items).map(item => [item.name, item])).values()).map(item => <View className="edit-item" key={item.name}>
+          <Text className="fs-caption">{item.name} · {item.calories} kcal</Text>
+          <Button size="mini" onClick={() => { setSource('manual'); setResultConf(null); setItems(prev => [...prev, {...item}]); setState('need_confirm'); }}>加入本餐</Button>
         </View>)}
       </View>}
 

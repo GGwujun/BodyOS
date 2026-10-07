@@ -4,8 +4,8 @@ import Taro, { useDidShow } from '@tarojs/taro';
 import { ArrowRight, CartOutlined, FireOutlined, BalanceOutlined, Passed, ClockOutlined, Delete } from '@taroify/icons';
 import Screen from '@/components/Screen';
 import { RoutePath } from '@/constants/routes';
-import { foodApi, activityApi, dataSourceApi, bodyApi } from '@/services';
-import type { BodyMeasurement } from '@/services/types';
+import { foodApi, activityApi, dataSourceApi, bodyApi, waterApi } from '@/services';
+import type { BodyMeasurement, WaterStatus } from '@/services/types';
 import { useAsync } from '@/hooks/useAsync';
 import { useTabBarMask } from '@/hooks/useTabBarMask';
 import { toast } from '@/utils/ui';
@@ -27,7 +27,8 @@ export default function Record() {
   const acts=data?.acts;
   const sources=data?.sources;
   const [showWeight, setShowWeight] = useState(false);
-  useTabBarMask(showWeight);
+  const [showWater, setShowWater] = useState(false);
+  useTabBarMask(showWeight || showWater);
   const [weight, setWeight] = useState('');
   const [savingWeight,setSavingWeight]=useState(false);
   const weightSubmission=useRef(createSubmissionGate());
@@ -67,13 +68,47 @@ export default function Record() {
     finally { setSavingWeight(false); }
   });
   const entries = [
-    { label: '饮食记录', desc: '记录你吃的食物和营养', path: RoutePath.Food, icon: <CartOutlined />, tone: 'mint' },
-    { label: '运动记录', desc: '记录运动和消耗', path: RoutePath.Exercise, icon: <FireOutlined />, tone: 'blue' },
-    { label: '体重记录', desc: '记录体重和身体数据', path: null, icon: <BalanceOutlined />, tone: 'dark' }
+    { label: '饮食记录', desc: '记录你吃的食物和营养', path: RoutePath.Food, sheet: null, icon: <CartOutlined />, tone: 'mint' },
+    { label: '运动记录', desc: '记录运动和消耗', path: RoutePath.Exercise, sheet: null, icon: <FireOutlined />, tone: 'blue' },
+    { label: '体重记录', desc: '记录体重和身体数据', path: null, sheet: 'weight', icon: <BalanceOutlined />, tone: 'dark' },
+    { label: '喝水打卡', desc: '记录每日饮水进度', path: null, sheet: 'water', icon: <Text className="entry-emoji">💧</Text>, tone: 'sky' }
   ];
+
+  // 喝水打卡弹层
+  const [water, setWater] = useState<WaterStatus | null>(null);
+  const [addingWater, setAddingWater] = useState(false);
+  const [customMl, setCustomMl] = useState('');
+  useEffect(() => {
+    if (!showWater) return;
+    waterApi.getWater(todayStr())
+      .then(setWater)
+      .catch(() => setWater(null));
+  }, [showWater]);
+  const addWater = (amountMl: number) => {
+    if (addingWater) return;
+    setAddingWater(true);
+    waterApi.addWater(amountMl, todayStr())
+      .then((w) => { setWater(w); toast(`+${amountMl} ml`); })
+      .catch((e) => toast((e as {message?:string})?.message || '打卡失败，请重试', 'error'))
+      .finally(() => setAddingWater(false));
+  };
+  const addCustomWater = () => {
+    const v = Number(customMl);
+    if (!customMl.trim() || !Number.isInteger(v) || v <= 0 || v > 2000) return toast('请输入 1-2000 的整数毫升', 'none');
+    setCustomMl('');
+    addWater(v);
+  };
+  const resetWater = async () => {
+    const { confirm } = await Taro.showModal({ title: '清零重记', content: '把今天的饮水记录清零吗？' });
+    if (!confirm) return;
+    try { setWater(await waterApi.setWater(0, todayStr())); toast('已清零'); }
+    catch (e) { toast((e as {message?:string})?.message || '操作失败', 'error'); }
+  };
+  const waterPct = water ? Math.min(100, Math.round((water.amountMl / Math.max(water.goalMl, 1)) * 100)) : 0;
+
   return <Screen className="record-page">
     <View className="record-header"><Text>今天要记录什么？</Text></View>
-    <View className="entry-list">{entries.map((item) => <View key={item.label} className="entry-card" onClick={() => item.path ? go(item.path) : setShowWeight(true)}>
+    <View className="entry-list">{entries.map((item) => <View key={item.label} className="entry-card" onClick={() => item.path ? go(item.path) : item.sheet === 'weight' ? setShowWeight(true) : setShowWater(true)}>
       <View className={`entry-icon ${item.tone}`}>{item.icon}</View><View className="entry-copy"><Text className="entry-name">{item.label}</Text><Text className="entry-desc">{item.desc}</Text></View><ArrowRight className="entry-arrow" />
     </View>)}</View>
     <Text className="section-kicker">自动采集数据</Text>
@@ -88,6 +123,15 @@ export default function Record() {
       {(acts?.items ?? []).slice(0, 2).map((item) => <View className="recent-line" key={item.id}><Text>{item.type}</Text><Text>{Math.round(item.calories)} kcal</Text></View>)}
     </View> : null}
     {showWeight && <View className="mask" onClick={() => !savingWeight&&setShowWeight(false)}><View className="weight-sheet" catchMove onClick={(e) => e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">记录体重</Text><View className="weight-input-row"><Input className="weight-input" type="digit" placeholder="请输入体重" disabled={savingWeight} value={weight} onInput={(e) => setWeight(e.detail.value)} focus/><Text className="weight-unit">kg</Text></View><Button className="sheet-save" loading={savingWeight} disabled={savingWeight} onClick={saveWeight}>{savingWeight?'正在保存…':'保存记录'}</Button><View className="history-block"><Text className="history-title">历史记录</Text>{historyLoading && <Text className="history-empty">正在加载…</Text>}{!historyLoading && history?.length === 0 && <Text className="history-empty">还没有体重记录</Text>}{history == null && !historyLoading && <Text className="history-empty">历史加载失败，重新打开可重试</Text>}<View className="history-list">{(history ?? []).map((m) => <View className="history-row" key={m.id}><Text className="history-date">{fmtMeasured(m.measuredAt)}</Text><Text className="history-value">{m.weightKg != null ? `${m.weightKg} kg` : '—'}</Text><Text className={`history-del${deletingId === m.id ? ' is-busy' : ''}`} onClick={() => deletingId !== m.id && removeHistory(m.id)}><Delete size={16} /></Text></View>)}</View></View></View></View>}
+
+    {showWater && <View className="mask" onClick={() => !addingWater && setShowWater(false)}><View className="weight-sheet" catchMove onClick={(e) => e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">喝水打卡</Text>
+      <View className="water-status"><Text className="water-amount">{water ? water.amountMl : '—'}</Text><Text className="water-goal">/ {water?.goalMl ?? 1500} ml</Text>{water != null && water.amountMl >= water.goalMl && water.goalMl > 0 && <Text className="water-done">已达标</Text>}</View>
+      <View className="water-bar"><View className="water-bar__fill" style={{ width: `${waterPct}%` }} /></View>
+      <Text className="water-pct">今日目标已完成 {waterPct}%</Text>
+      <View className="water-chips">{[100, 200, 250, 300].map((ml) => <Text key={ml} className={`water-chip${addingWater ? ' is-busy' : ''}`} onClick={() => addWater(ml)}>+{ml} ml</Text>)}</View>
+      <View className="water-custom"><Input className="water-custom-input" type="number" placeholder="自定义毫升数" value={customMl} onInput={(e) => setCustomMl(e.detail.value)} /><Button size="mini" disabled={addingWater} onClick={addCustomWater}>添加</Button></View>
+      {water != null && water.amountMl > 0 && <Text className="water-reset" onClick={resetWater}>记错了？清零重记</Text>}
+    </View></View>}
   </Screen>;
 }
 function mealLabel(meal: string): string { return ({ breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' } as Record<string, string>)[meal] ?? meal; }

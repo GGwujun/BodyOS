@@ -49,6 +49,7 @@ export default function Home() {
     <View className="home-page">
       <View className="home-header">
         <View className="home-header__date">
+          <Text className="home-greeting">{greeting()}</Text>
           <Text className="home-date">{formatDate(today)}</Text>
           <Text className="home-week">{weekday(today)}</Text>
         </View>
@@ -88,6 +89,10 @@ export default function Home() {
           <View className="energy-track__marker" />
         </View>
         <Text className="energy-hint">绿色为已摄入进度，圆点是消耗参考线</Text>
+        <View className="water-line" onClick={() => go(RoutePath.Record)}>
+          <Text className="water-line__label">💧 今日水分 {data?.waterMl ? `${format(data.waterMl)} ml` : '未记录'}</Text>
+          <Text className="water-line__action">去打卡</Text>
+        </View>
       </View>
 
       <View className="dashboard-card activity-card" onClick={() => go(RoutePath.Exercise)}>
@@ -96,6 +101,12 @@ export default function Home() {
           <View><Text className={`activity-value${data?.steps == null ? ' is-empty' : ''}`}>{format(data?.steps)}</Text><Text className="activity-unit">步</Text></View>
           <View><Text className={`activity-value${data?.activeCalories == null ? ' is-empty' : ''}`}>{format(data?.activeCalories)}</Text><Text className="activity-unit">kcal</Text></View>
         </View>
+        {data?.steps != null && (
+          <View className="steps-progress">
+            <View className="steps-progress__track"><View className="steps-progress__fill" style={{ width: `${Math.min(100, Math.round(((data.steps ?? 0) / 8000) * 100))}%` }} /></View>
+            <Text className="steps-progress__label">{format(data.steps)} / 8,000 步</Text>
+          </View>
+        )}
         {data?.steps == null && data?.activeCalories == null && (
           <View className="activity-empty">
             <Text className="activity-empty__title">今日暂无活动数据</Text>
@@ -164,5 +175,6 @@ function EnergyMetric({ label, value, accent = false }: { label: string; value: 
 }
 
 function formatDate(date: string) { const [, month, day] = date.split('-').map(Number); return `${month}月${day}日`; }
+function greeting() { const h = new Date().getHours(); if (h < 5) return '夜深了'; if (h < 9) return '早上好'; if (h < 12) return '上午好'; if (h < 14) return '中午好'; if (h < 18) return '下午好'; return '晚上好'; }
 function weekday(date: string) { return `星期${'日一二三四五六'[new Date(`${date}T00:00:00`).getDay()]}`; }
 function goalLabel(type?: string) { return ({ fat_loss: '减脂', muscle_gain: '增肌', maintain: '维持', endurance: '提升体能' } as Record<string, string>)[type ?? ''] ?? '尚未设置目标'; }
