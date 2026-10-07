@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, View } from '@tarojs/components';
+import { Picker, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { ArrowRight, ArrowDown } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
@@ -13,7 +13,10 @@ import './index.scss';
 
 export default function Home() {
   const today = todayStr();
-  const { data, loading, error, refresh } = useAsync(() => summaryApi.getDailySummary(todayStr()), []);
+  // 顶部日期条:默认今天,可切换查看本周任意一天/历史日期
+  const [viewDate, setViewDate] = useState(today);
+  const isToday = viewDate === today;
+  const { data, loading, error, refresh } = useAsync(() => summaryApi.getDailySummary(viewDate), [viewDate]);
 
   // 今日解读:懒加载,用户展开才调用(控制成本);当日结果缓存不再重复请求
   const [insightOpen, setInsightOpen] = useState(false);
@@ -44,14 +47,44 @@ export default function Home() {
   const scoreTone = !hasScore ? '暂无评估' : score >= 80 ? '状态良好' : score >= 60 ? '状态一般' : '有待提升';
   const goalProgress = Math.max(0, Math.min(100, Math.round((data?.goal?.progress ?? 0) * 100)));
   const format = (value?: number | null) => value == null ? '—' : Math.round(value).toLocaleString();
+  const dayLabel = isToday ? '今日' : formatDate(viewDate);
+  const switchDate = (d: string) => {
+    if (d === viewDate) return;
+    track('home_date_switch', 'home', { to: d });
+    setViewDate(d);
+  };
 
   return (
     <View className="home-page">
       <View className="home-header">
         <View className="home-header__date">
           <Text className="home-greeting">{greeting()}</Text>
-          <Text className="home-date">{formatDate(today)}</Text>
-          <Text className="home-week">{weekday(today)}</Text>
+          <Text className="home-date">{formatDate(viewDate)}</Text>
+          <Text className="home-week">{weekday(viewDate)}</Text>
+        </View>
+      </View>
+
+      {/* 日期条:今天(可展开日历) + 本周七日切换,绿色为选中 */}
+      <View className="date-strip">
+        {isToday ? (
+          <Picker mode="date" end={today} value={today} onChange={(e) => switchDate(String(e.detail.value))}>
+            <View className="strip-today">今天 <Text className="strip-caret">▾</Text></View>
+          </Picker>
+        ) : (
+          <View className="strip-today is-back" onClick={() => switchDate(today)}>回今天</View>
+        )}
+        <View className="strip-days">
+          {weekDays(viewDate, today).map((d) => (
+            <View
+              key={d.dateStr}
+              className={`strip-day${d.dateStr === viewDate ? ' active' : ''}${d.isFuture ? ' future' : ''}${d.isToday ? ' today' : ''}`}
+              onClick={() => !d.isFuture && switchDate(d.dateStr)}
+            >
+              <Text className="strip-day__label">{d.label}</Text>
+              <Text className="strip-day__num">{d.dayNum}</Text>
+              {d.isToday && <View className="strip-day__dot" />}
+            </View>
+          ))}
         </View>
       </View>
 
@@ -78,7 +111,7 @@ export default function Home() {
       </View>
 
       <View className="dashboard-card energy-card">
-        <Text className="section-title">今日能量</Text>
+        <Text className="section-title">{dayLabel}能量</Text>
         <View className="energy-metrics">
           <EnergyMetric label="摄入" value={format(data?.intakeCalories)} />
           <EnergyMetric label="消耗" value={format(data?.burnCalories)} />
@@ -89,14 +122,14 @@ export default function Home() {
           <View className="energy-track__marker" />
         </View>
         <Text className="energy-hint">绿色为已摄入进度，圆点是消耗参考线</Text>
-        <View className="water-line" onClick={() => go(RoutePath.Record)}>
-          <Text className="water-line__label">💧 今日水分 {data?.waterMl ? `${format(data.waterMl)} ml` : '未记录'}</Text>
-          <Text className="water-line__action">去打卡</Text>
+        <View className="water-line" onClick={() => isToday && go(RoutePath.Record)}>
+          <Text className="water-line__label">💧 {dayLabel}水分 {data?.waterMl ? `${format(data.waterMl)} ml` : '未记录'}</Text>
+          {isToday && <Text className="water-line__action">去打卡</Text>}
         </View>
       </View>
 
       <View className="dashboard-card activity-card" onClick={() => go(RoutePath.Exercise)}>
-        <Heading title="今日活动" />
+        <Heading title={`${dayLabel}活动`} />
         <View className="activity-stats">
           <View><Text className={`activity-value${data?.steps == null ? ' is-empty' : ''}`}>{format(data?.steps)}</Text><Text className="activity-unit">步</Text></View>
           <View><Text className={`activity-value${data?.activeCalories == null ? ' is-empty' : ''}`}>{format(data?.activeCalories)}</Text><Text className="activity-unit">kcal</Text></View>
@@ -109,7 +142,7 @@ export default function Home() {
         )}
         {data?.steps == null && data?.activeCalories == null && (
           <View className="activity-empty">
-            <Text className="activity-empty__title">今日暂无活动数据</Text>
+            <Text className="activity-empty__title">{dayLabel}暂无活动数据</Text>
             <Text className="activity-empty__hint">去「运动-自动同步」拉取步数，或记录一次运动</Text>
           </View>
         )}
@@ -122,7 +155,8 @@ export default function Home() {
         <View className="goal-track"><View className="goal-track__fill" style={{ width: `${goalProgress}%` }} /></View>
       </View>
 
-      <View className="dashboard-card insight-card" onClick={toggleInsight}>
+      {/* 今日解读仅对当天开放(按需调用控制成本) */}
+      {isToday && <View className="dashboard-card insight-card" onClick={toggleInsight}>
         <View className="insight-head">
           <Text className="section-title">今日解读</Text>
           <View className={`insight-chevron${insightOpen ? ' is-open' : ''}`}><ArrowDown size={16} color="#94a3b8" /></View>
@@ -155,7 +189,7 @@ export default function Home() {
             )}
           </View>
         )}
-      </View>
+      </View>}
     </View>
   );
 }
@@ -175,6 +209,19 @@ function EnergyMetric({ label, value, accent = false }: { label: string; value: 
 }
 
 function formatDate(date: string) { const [, month, day] = date.split('-').map(Number); return `${month}月${day}日`; }
+/** 锚点日期所在周(周一至周日)的七天,供日期条渲染 */
+function weekDays(anchor: string, today: string) {
+  const d = new Date(`${anchor}T00:00:00`);
+  const mon = new Date(d);
+  mon.setDate(d.getDate() + (d.getDay() === 0 ? -6 : 1 - d.getDay()));
+  return Array.from({ length: 7 }, (_, i) => {
+    const cur = new Date(mon);
+    cur.setDate(mon.getDate() + i);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const dateStr = `${cur.getFullYear()}-${pad(cur.getMonth() + 1)}-${pad(cur.getDate())}`;
+    return { dateStr, label: '一二三四五六日'[i], dayNum: cur.getDate(), isToday: dateStr === today, isFuture: dateStr > today };
+  });
+}
 function greeting() { const h = new Date().getHours(); if (h < 5) return '夜深了'; if (h < 9) return '早上好'; if (h < 12) return '上午好'; if (h < 14) return '中午好'; if (h < 18) return '下午好'; return '晚上好'; }
 function weekday(date: string) { return `星期${'日一二三四五六'[new Date(`${date}T00:00:00`).getDay()]}`; }
 function goalLabel(type?: string) { return ({ fat_loss: '减脂', muscle_gain: '增肌', maintain: '维持', endurance: '提升体能' } as Record<string, string>)[type ?? ''] ?? '尚未设置目标'; }

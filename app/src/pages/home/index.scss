@@ -16,6 +16,41 @@
 .home-date { font-size: 17px; font-weight: $fw-bold; letter-spacing: .2px; }
 .home-week { font-size: 12px; color: $color-text-tertiary; }
 
+/* 日期条:今天 + 本周七日圆钮(参考同类健康应用的顶部日期选择) */
+.date-strip {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px; padding: 10px 12px;
+  background: $color-bg-card; border: 1px solid $color-border;
+  border-radius: $radius-card; box-shadow: $shadow-card;
+}
+.strip-today {
+  flex-shrink: 0; display: flex; align-items: center; gap: 3px;
+  font-size: 12px; font-weight: $fw-bold; color: $color-primary;
+  background: rgba(16, 185, 129, .1);
+  border-radius: $radius-pill; padding: 7px 13px;
+}
+.strip-today.is-back { background: $color-primary; color: #fff; }
+.strip-caret { font-size: 10px; line-height: 1; }
+.strip-days { flex: 1; display: flex; justify-content: space-between; }
+.strip-day {
+  position: relative; width: 38px; height: 46px;
+  border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  box-sizing: border-box;
+}
+.strip-day.today .strip-day__label { color: $color-primary; }
+.strip-day.future { opacity: .35; }
+.strip-day.active { background: $color-primary; }
+.strip-day.active .strip-day__label { color: rgba(255, 255, 255, .85); }
+.strip-day.active .strip-day__num { color: #fff; }
+.strip-day__label { font-size: 11px; color: $color-text-secondary; line-height: 1; }
+.strip-day__num { font-size: 14px; font-weight: 600; color: $color-text-primary; line-height: 1; }
+.strip-day__dot {
+  position: absolute; bottom: 4px; left: 50%; margin-left: -1.5px;
+  width: 3px; height: 3px; border-radius: 50%; background: $color-primary;
+}
+.strip-day.active .strip-day__dot { background: #fff; }
+
 /* 步数目标进度 */
 .steps-progress { margin-top: 12px; display: flex; flex-direction: column; gap: 5px; }
 .steps-progress__track { height: 6px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
