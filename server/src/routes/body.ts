@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { USER_ID } from '../lib/currentUser';
+import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 import { parsePage, pageResult } from '../lib/pagination';
 
@@ -18,7 +18,7 @@ export const CreateBodySchema = z.object({
 router.get('/', async (req, res, next) => {
   try {
   const q = parsePage(req);
-  const where = { userId: USER_ID };
+  const where = { userId: getUserId(res) };
   const [items, total] = await Promise.all([
     prisma.bodyMeasurement.findMany({
       where,
@@ -40,7 +40,7 @@ router.post('/', async (req, res, next) => {
   try {
   const createMeasurement = prisma.bodyMeasurement.create({
     data: {
-      userId: USER_ID,
+      userId: getUserId(res),
       measuredAt: new Date(parsed.data.measuredAt),
       weightKg: parsed.data.weightKg ?? null,
       bodyFatPct: parsed.data.bodyFatPct ?? null,
@@ -49,8 +49,8 @@ router.post('/', async (req, res, next) => {
   });
 
   const updateProfile = parsed.data.weightKg != null ? prisma.userProfile.upsert({
-      where: { userId: USER_ID },
-      create: { userId: USER_ID, weightKg: parsed.data.weightKg },
+      where: { userId: getUserId(res) },
+      create: { userId: getUserId(res), weightKg: parsed.data.weightKg },
       update: { weightKg: parsed.data.weightKg }
     }) : null;
   const [measurement] = updateProfile
@@ -65,7 +65,7 @@ router.post('/', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
   const m = await prisma.bodyMeasurement.findUnique({ where: { id: req.params.id } });
-  if (!m || m.userId !== USER_ID) {
+  if (!m || m.userId !== getUserId(res)) {
     return err(res, 404, '记录不存在', { affectsData: false });
   }
   await prisma.bodyMeasurement.delete({ where: { id: req.params.id } });

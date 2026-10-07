@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { USER_ID } from '../lib/currentUser';
+import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 import { parsePage, pageResult } from '../lib/pagination';
 import { toDate, todayStr, toDateStr } from '../lib/date';
@@ -25,7 +25,7 @@ export const CreateActivitySchema = z.object({
 router.get('/', async (req, res) => {
   const dateStr = (req.query.date as string) || todayStr();
   const q = parsePage(req);
-  const where = { userId: USER_ID, date: toDate(dateStr), deletedAt: null };
+  const where = { userId: getUserId(res), date: toDate(dateStr), deletedAt: null };
   const [items, total] = await Promise.all([
     prisma.activityRecord.findMany({ where, orderBy: { startedAt: 'desc' }, skip: q.skip, take: q.take }),
     prisma.activityRecord.count({ where })
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
 
   const activity = await prisma.activityRecord.create({
     data: {
-      userId: USER_ID,
+      userId: getUserId(res),
       date: toDate(dateStr),
       type: parsed.data.type,
       durationMin: parsed.data.durationMin,
@@ -57,26 +57,26 @@ router.post('/', async (req, res) => {
     }
   });
 
-  const summary = await recomputeDaily(USER_ID, dateStr);
+  const summary = await recomputeDaily(getUserId(res), dateStr);
   return ok(res, { activity, summary });
 });
 
 /** DELETE /activities/:id — 软删除 + 重算 */
 router.delete('/:id', async (req, res) => {
   const activity = await prisma.activityRecord.findUnique({ where: { id: req.params.id } });
-  if (!activity || activity.userId !== USER_ID) {
+  if (!activity || activity.userId !== getUserId(res)) {
     return err(res, 404, '记录不存在', { affectsData: false });
   }
   const dateStr = toDateStr(activity.date);
   await prisma.activityRecord.update({ where: { id: req.params.id }, data: { deletedAt: new Date() } });
-  const summary = await recomputeDaily(USER_ID, dateStr);
+  const summary = await recomputeDaily(getUserId(res), dateStr);
   return ok(res, { deleted: true, recalculated: summary });
 });
 
 /** PUT /activities/:id — 编辑条目后重算 */
 router.put('/:id', async (req, res) => {
   const existing = await prisma.activityRecord.findUnique({ where: { id: req.params.id } });
-  if (!existing || existing.userId !== USER_ID) {
+  if (!existing || existing.userId !== getUserId(res)) {
     return err(res, 404, '记录不存在', { affectsData: false });
   }
   const parsed = CreateActivitySchema.partial().safeParse(req.body);
@@ -93,7 +93,7 @@ router.put('/:id', async (req, res) => {
   delete data.externalId;
 
   const updated = await prisma.activityRecord.update({ where: { id: req.params.id }, data });
-  const summary = await recomputeDaily(USER_ID, toDateStr(updated.date));
+  const summary = await recomputeDaily(getUserId(res), toDateStr(updated.date));
   return ok(res, { activity: updated, summary });
 });
 

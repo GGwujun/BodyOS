@@ -1,21 +1,21 @@
 import { Router } from 'express';
 import { ProfileSchema } from '../lib/profileValidation';
 import { prisma } from '../db';
-import { USER_ID } from '../lib/currentUser';
+import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 
 const router = Router();
 
-async function ensureProfile() {
+async function ensureProfile(userId: string) {
   return (
-    (await prisma.userProfile.findUnique({ where: { userId: USER_ID } })) ??
-    (await prisma.userProfile.create({ data: { userId: USER_ID, gender:'other' } }))
+    (await prisma.userProfile.findUnique({ where: { userId } })) ??
+    (await prisma.userProfile.create({ data: { userId, gender: 'other' } }))
   );
 }
 
 /** GET /profile */
 router.get('/', async (_req, res) => {
-  const profile = await ensureProfile();
+  const profile = await ensureProfile(getUserId(res));
   return ok(res, profile);
 });
 
@@ -27,8 +27,8 @@ router.put('/', async (req, res) => {
   if (parsed.data.birthDate) data.birthDate = new Date(parsed.data.birthDate);
 
   const profile = await prisma.userProfile.upsert({
-    where: { userId: USER_ID },
-    create: { userId: USER_ID, gender:'other', ...data } as never,
+    where: { userId: getUserId(res) },
+    create: { userId: getUserId(res), gender:'other', ...data } as never,
     update: data as never
   });
   return ok(res, profile);

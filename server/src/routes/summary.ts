@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '../db';
-import { USER_ID } from '../lib/currentUser';
+import { getUserId } from '../lib/currentUser';
 import { ok } from '../lib/http';
 import { toDate, todayStr } from '../lib/date';
 import { recomputeDaily } from '../engine';
@@ -30,19 +30,19 @@ router.get('/', async (req, res) => {
   const date = toDate(dateStr);
 
   let summary = await prisma.dailySummary.findUnique({
-    where: { userId_date: { userId: USER_ID, date } }
+    where: { userId_date: { userId: getUserId(res), date } }
   });
 
   const isToday = dateStr === todayStr();
-  const profile = await prisma.userProfile.findUnique({where:{userId:USER_ID},select:{updatedAt:true}});
+  const profile = await prisma.userProfile.findUnique({where:{userId:getUserId(res)},select:{updatedAt:true}});
   // 无汇总 → 必须重算;今日且超过 TTL → 重算保持新鲜;其余直接用缓存值
   if (summaryNeedsRefresh(summary?.recalculatedAt ?? null, profile?.updatedAt ?? null, isToday, recentlyRecomputed(dateStr))) {
-    summary = await recomputeDaily(USER_ID, dateStr);
+    summary = await recomputeDaily(getUserId(res), dateStr);
     recomputeCache.set(dateStr, { at: Date.now(), summaryId: summary.id });
   }
 
   const goal = await prisma.goal.findFirst({
-    where: { userId: USER_ID, isActive: true },
+    where: { userId: getUserId(res), isActive: true },
     orderBy: { createdAt: 'desc' }
   });
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '../db';
-import { USER_ID } from '../lib/currentUser';
+import { getUserId } from '../lib/currentUser';
 import { ok } from '../lib/http';
 import { toDate, todayStr, toDateStr, addDays } from '../lib/date';
 import { recomputeDaily } from '../engine';
@@ -23,19 +23,19 @@ trendsRouter.get('/', async (req, res, next) => {
   const days = Array.from({ length: range }, (_, i) => toDate(addDays(start, i)));
 
   // 确保今天有汇总
-  await recomputeDaily(USER_ID, end);
+  await recomputeDaily(getUserId(res), end);
 
   const [summaries, measurements, foodDates, activityDates] = await Promise.all([
     prisma.dailySummary.findMany({
-      where: { userId: USER_ID, date: { in: days } },
+      where: { userId: getUserId(res), date: { in: days } },
       orderBy: { date: 'asc' }
     }),
     prisma.bodyMeasurement.findMany({
-      where: { userId: USER_ID, measuredAt: measurementWindow(start, end) },
+      where: { userId: getUserId(res), measuredAt: measurementWindow(start, end) },
       orderBy: { measuredAt: 'asc' }
     }),
-    prisma.foodLog.findMany({where:{userId:USER_ID,deletedAt:null,date:{in:days}},select:{date:true},distinct:['date']}),
-    prisma.activityRecord.findMany({where:{userId:USER_ID,deletedAt:null,date:{in:days}},select:{date:true},distinct:['date']})
+    prisma.foodLog.findMany({where:{userId:getUserId(res),deletedAt:null,date:{in:days}},select:{date:true},distinct:['date']}),
+    prisma.activityRecord.findMany({where:{userId:getUserId(res),deletedAt:null,date:{in:days}},select:{date:true},distinct:['date']})
   ]);
 
   const weights = measurements

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { USER_ID } from '../lib/currentUser';
+import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 import { toDate, todayStr, toDateStr, addDays } from '../lib/date';
 import { recomputeDaily } from '../engine';
@@ -46,7 +46,7 @@ router.post('/activity/parse', async (req, res) => {
 router.post('/daily-analysis', async (req, res) => {
   const dateStr = (req.body?.date as string) || todayStr();
   try {
-    const summary = await recomputeDaily(USER_ID, dateStr);
+    const summary = await recomputeDaily(getUserId(res), dateStr);
     const result = await dailyAnalysis(summary);
     return ok(res, result);
   } catch (e) {
@@ -60,10 +60,10 @@ router.post('/weekly-analysis', async (req, res) => {
   try {
     const days = Array.from({ length: 7 }, (_, i) => toDate(addDays(weekStart, i)));
     const summaries = await prisma.dailySummary.findMany({
-      where: { userId: USER_ID, date: { in: days } }
+      where: { userId: getUserId(res), date: { in: days } }
     });
     const goal = await prisma.goal.findFirst({
-      where: { userId: USER_ID, isActive: true },
+      where: { userId: getUserId(res), isActive: true },
       orderBy: { createdAt: 'desc' }
     });
     const result = await weeklyAnalysis({ summaries, goal });
@@ -81,15 +81,15 @@ router.post('/chat', async (req, res) => {
   try {
   // Saved server data is authoritative; caller context cannot replace health facts.
   const today = todayStr();
-    const profile = await prisma.userProfile.findUnique({where:{userId:USER_ID}});
-    const summary = await recomputeDaily(USER_ID, today);
+    const profile = await prisma.userProfile.findUnique({where:{userId:getUserId(res)}});
+    const summary = await recomputeDaily(getUserId(res), today);
     const goal = await prisma.goal.findFirst({
-      where: { userId: USER_ID, isActive: true },
+      where: { userId: getUserId(res), isActive: true },
       orderBy: { createdAt: 'desc' }
     });
     const recent = await prisma.dailySummary.findMany({
       where: {
-        userId: USER_ID,
+        userId: getUserId(res),
         date: { in: [0, 1, 2].map((d) => toDate(addDays(today, -d))) }
       },
       orderBy: { date: 'asc' }
@@ -117,7 +117,7 @@ router.post('/chat', async (req, res) => {
 
     // History includes only persisted turns. The current message is appended in memory.
     const conversations = await prisma.aIConversation.findMany({
-      where: { userId: USER_ID },
+      where: { userId: getUserId(res) },
       orderBy: { createdAt: 'desc' },
       take: 10,
       select: { role: true, content: true }
@@ -129,8 +129,8 @@ router.post('/chat', async (req, res) => {
 
     const reply = await completeCoachTurn(history, userContent, context, response =>
       prisma.$transaction(async tx => {
-        await tx.aIConversation.create({data:{userId:USER_ID,role:'user',content:userContent}});
-        await tx.aIConversation.create({data:{userId:USER_ID,role:'assistant',content:response,context:context as never}});
+        await tx.aIConversation.create({data:{userId:getUserId(res),role:'user',content:userContent}});
+        await tx.aIConversation.create({data:{userId:getUserId(res),role:'assistant',content:response,context:context as never}});
       })
     );
     return ok(res, { reply });
@@ -143,7 +143,7 @@ router.post('/chat', async (req, res) => {
 router.get('/chat/history', async (req, res) => {
   const limit = Math.min(50, Number(req.query.limit) || 20);
   const messages = await prisma.aIConversation.findMany({
-    where: { userId: USER_ID },
+    where: { userId: getUserId(res) },
     orderBy: { createdAt: 'desc' },
     take: limit
   });

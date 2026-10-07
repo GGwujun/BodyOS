@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { USER_ID } from '../lib/currentUser';
+import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 import { toDate, todayStr } from '../lib/date';
 
@@ -19,7 +19,7 @@ router.post('/track', async (req, res) => {
   if (!parsed.success) return err(res, 400, '参数错误');
   const event = await prisma.analyticsEvent.create({
     data: {
-      userId: USER_ID,
+      userId: getUserId(res),
       name: parsed.data.name,
       category: parsed.data.category,
       props: (parsed.data.props ?? null) as never
@@ -34,7 +34,7 @@ router.post('/track-batch', async (req, res) => {
   if (!arr.success) return err(res, 400, '参数错误');
   await prisma.analyticsEvent.createMany({
     data: arr.data.map((e) => ({
-      userId: USER_ID,
+      userId: getUserId(res),
       name: e.name,
       category: e.category,
       props: (e.props ?? null) as never
@@ -63,7 +63,7 @@ router.get('/metrics', async (_req, res) => {
       prisma.analyticsEvent.count({ where: { name: 'home_view', occurredAt: { gte: day7 } } }),
       prisma.foodLog.groupBy({
         by: ['date'],
-        where: { userId: USER_ID, deletedAt: null, date: { gte: weekAgo } },
+        where: { userId: getUserId(res), deletedAt: null, date: { gte: weekAgo } },
         _count: { _all: true }
       }),
       countSince('ai_food_parse_start', weekAgo),

@@ -26,4 +26,7 @@ app.listen(env.port, () => {
   if (!env.zhipuApiKey) {
     console.warn('   ⚠️  未配置 ZHIPU_API_KEY,AI 接口将不可用。请在 .env 设置后重启。');
   }
+  if (!env.wechatAppId || !env.wechatAppSecret) {
+    console.warn('   ⚠️  未配置 WECHAT_APPID/WECHAT_APP_SECRET,登录回落开发用户 u_1。');
+  }
 });

@@ -10,8 +10,14 @@ import summaryRoutes from './summary';
 import trendsRoutes from './trends';
 import dataSourcesRoutes from './dataSources';
 import analyticsRoutes from './analytics';
+import authRoutes from './auth';
+import { attachUser } from '../lib/currentUser';
 
 const router = Router();
+
+// 鉴权:Bearer 令牌解析为 res.locals.userId;auth 路由本身不依赖登录态
+router.use(attachUser);
+router.use('/auth', authRoutes);
 
 router.use('/ai', aiRoutes);
 router.use('/me', meRoutes);

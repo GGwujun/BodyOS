@@ -17,6 +17,8 @@ model User {
   timezone  String   @default("Asia/Shanghai")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  /// 微信 openid(静默登录换取);本地开发用户无 openid
+  openid    String?  @unique
 
   profile       UserProfile?
   goals         Goal[]
@@ -27,6 +29,20 @@ model User {
   dataSources   DataSource[]
   conversations AIConversation[]
   analytics     AnalyticsEvent[]
+  authTokens    AuthToken[]
+}
+
+/// 登录令牌(不透明随机串;签发后 30 天过期,客户端存本地)
+model AuthToken {
+
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([userId])
 }
 
 model UserProfile {

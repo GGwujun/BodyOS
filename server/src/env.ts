@@ -12,4 +12,9 @@ export const env = {
   zhipuBaseUrl: process.env.ZHIPU_BASE_URL || 'https://open.bigmodel.cn/api/anthropic',
   zhipuModel: process.env.ZHIPU_MODEL || 'glm-4.6',
 
+  // 微信小程序登录(注册后在管理后台"开发管理-开发设置"获取)
+  // 未配置时 /auth/wechat 回落开发用户 u_1,便于本地调试
+  wechatAppId: process.env.WECHAT_APPID || '',
+  wechatAppSecret: process.env.WECHAT_APP_SECRET || '',
+
 };

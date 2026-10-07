@@ -19,6 +19,8 @@ export interface RequestOptions {
   ai?: boolean;
   /** 是否直接返回原始 res(不按 ApiResponse 解包) */
   raw?: boolean;
+  /** 内部:401 自愈重试标记,防止无限循环 */
+  retried?: boolean;
 }
 
 const TOKEN_KEY = 'bodyos_token';
@@ -55,6 +57,15 @@ export async function request<T = unknown>(opts: RequestOptions): Promise<T> {
       header: buildHeader(header),
       timeout: ai ? config.aiTimeout : config.timeout
     });
+
+    // 登录过期自愈:清 token → 重新静默登录 → 原请求重试一次(仅业务接口,防循环)
+    if (res.statusCode === 401 && !url.startsWith('/auth') && !opts.retried) {
+      clearToken();
+      const { ensureLogin } = await import('./login');
+      if (await ensureLogin(true)) {
+        return request<T>({ ...opts, retried: true });
+      }
+    }
 
     if (res.statusCode >= 400) {
       throw responseError(res.statusCode,res.data);
