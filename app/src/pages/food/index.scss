@@ -1,94 +1,87 @@
+@import '../../styles/variables.scss';
+
+/* ============ 饮食记录页 ============ */
 .food-page {
-.food-input {
-  width: 100%;
-  min-height: 80px;
-  margin-top: 12px;
-  padding: 12px;
-  background: #ffffff;
-  border-radius: 12px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
+  background: $color-bg;
+  padding: 4px 16px calc(24px + env(safe-area-inset-bottom));
+  gap: 12px;
 
-.meal-tabs {
-  display: flex;
-  gap: 8px;
-}
+  /* 模式切换(白底胶囊分段) */
+  .mode-tabs {
+    display: flex; padding: 3px;
+    background: $color-bg-card; border: 1px solid $color-border;
+    border-radius: $radius-md; box-shadow: $shadow-card;
+  }
+  .mode-tabs text {
+    flex: 1; text-align: center; padding: 7px 0;
+    font-size: 13px; color: $color-text-secondary;
+    border-radius: 9px;
+  }
+  .mode-tabs .active { background: $color-primary; color: #fff; font-weight: $fw-bold; }
 
-.meal-tab {
-  flex: 1;
-  text-align: center;
-  padding: 8px 0;
-  border-radius: 9999px;
-  font-size: 14px;
-  color: #888;
-  background: #f8f8f8;
-}
+  /* 餐次胶囊 */
+  .meal-tabs { display: flex; gap: 6px; }
+  .meal-tab {
+    flex: 1; text-align: center; padding: 7px 0;
+    border-radius: $radius-pill; font-size: 12px;
+    color: $color-text-secondary; background: $color-bg-card;
+    border: 1px solid $color-border;
+  }
+  .meal-tab.active {
+    background: $color-primary-bg; color: $color-primary-dark;
+    border-color: #b5ecd6; font-weight: $fw-bold;
+  }
 
-.meal-tab.active {
-  background: rgba(46, 204, 113, 0.12);
-  color: #2ecc71;
-  font-weight: 500;
-}
+  /* 描述输入面板(品牌浅绿) */
+  .food-prompt {
+    background: $color-primary-bg;
+    border: 1px solid #c9f0dd; border-radius: $radius-card;
+    padding: 14px;
+  }
+  .prompt-title {
+    display: flex; align-items: center; gap: 6px;
+    color: $color-primary-dark; font-size: 13px; font-weight: $fw-bold;
+  }
+  .food-input {
+    width: 100%; min-height: 64px; margin-top: 8px; padding: 8px 2px;
+    background: transparent; border: 0; font-size: 14px; box-sizing: border-box;
+  }
 
-.edit-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
+  .photo-btn, .parse-btn {
+    border: 0 !important; border-radius: $radius-pill !important;
+    font-size: 12px !important; height: 34px !important;
+    line-height: 34px !important; padding: 0 16px !important;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .photo-btn { background: #fff !important; color: $color-primary-dark !important; }
+  .parse-btn { background: $color-primary !important; color: #fff !important; }
 
-.edit-name {
-  flex: 1;
-  font-size: 15px;
-  background: transparent;
-}
+  /* 识别中 */
+  .ai-card { background: #f0f6ff; border-color: #d9e7fb; }
 
-.edit-kcal {
-  width: 64px;
-  font-size: 14px;
-  text-align: right;
-  background: #f8f8f8;
-  border-radius: 8px;
-  padding: 4px 8px;
-}
+  /* 待保存/今日记录 列表行 */
+  .edit-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid $color-divider;
+  }
+  .edit-item:last-child { border-bottom: 0; }
+  .edit-name { flex: 1; font-size: 14px; background: transparent; }
+  .edit-kcal {
+    width: 68px; font-size: 13px; text-align: right;
+    background: $color-bg-soft; border-radius: $radius-sm; padding: 5px 8px;
+  }
+  .edit-del { color: $color-danger; font-size: 13px; padding: 4px 8px; }
+  .add-manual {
+    display: block; padding: 11px 0; text-align: center;
+    color: $color-primary; font-size: 13px;
+    border: 1px dashed #bfe6d5; border-radius: $radius-md;
+    margin-top: 10px; background: $color-bg-soft;
+  }
+  .manual-row { display: flex; gap: 8px; align-items: center; padding: 8px 0; }
 
-.edit-del {
-  color: #e74c3c;
-  font-size: 14px;
-  padding: 4px 8px;
-}
-
-.add-manual {
-  display: block;
-  padding: 10px 0;
-  color: #2ecc71;
-  font-size: 14px;
-  text-align: center;
-}
-
-.manual-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 8px 0;
-}
-
-.log-item {
-  display: flex;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.log-item:last-child {
-  border-bottom: none;
-}
-
-.ai-card {
-  background: rgba(52, 152, 219, 0.08);
-}
-
-& {background:#fff;padding:14px 14px 32px;gap:13px;box-sizing:border-box}.page-nav{display:flex;align-items:center;justify-content:space-between;height:34px;font-size:19px;color:#111827}.page-nav text{font-weight:700}.mode-tabs{height:37px;display:flex;border-bottom:1px solid #e9edf0}.mode-tabs text{flex:1;text-align:center;font-size:12px;color:#6e7987;padding-top:9px;position:relative}.mode-tabs .active{color:#10b981;font-weight:700}.mode-tabs .active:after{content:'';position:absolute;bottom:-1px;left:30%;right:30%;height:2px;background:#10b981}.meal-tabs{gap:6px}.meal-tab{font-size:11px;padding:6px 0;background:#f5f7f8}.meal-tab.active{background:#e9fbf3;color:#0a9e70}.food-prompt{background:#dcf8eb;border:1px solid #c2f1dc;border-radius:13px;padding:13px}.prompt-title{display:flex;align-items:center;gap:6px;color:#087f5b;font-size:13px;font-weight:700}.food-input{background:transparent;min-height:54px;margin-top:7px;padding:5px;font-size:13px}.photo-btn,.parse-btn{border:0!important;border-radius:18px!important;font-size:11px!important;height:32px!important;line-height:32px!important;padding:0 14px!important}.photo-btn{background:#fff!important;color:#10b981!important}.parse-btn{background:#10b981!important;color:#fff!important}.card{border:1px solid #e8ecef;border-radius:13px!important;box-shadow:none!important}.edit-item{padding:10px 0}.add-manual{color:#10b981}.log-item{font-size:12px}
+  .log-item {
+    display: flex; align-items: center; padding: 11px 0;
+    border-bottom: 1px solid $color-divider; font-size: 13px;
+  }
+  .log-item:last-child { border-bottom: 0; }
 }

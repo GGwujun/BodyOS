@@ -52,7 +52,8 @@ view, text {
 
 /* ============ 卡片 ============ */
 .card {
-  background: $color-bg-soft;
+  background: $color-bg-card;
+  border: 1px solid $color-border;
   border-radius: $radius-card;
   padding: $space-4;
   box-shadow: $shadow-card;

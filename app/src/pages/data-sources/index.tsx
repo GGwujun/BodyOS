@@ -6,7 +6,7 @@ import { track } from '@/services/analytics';
 import type { DataSource, Provider, SyncStatus } from '@/services/types';
 import { useRef, useState } from 'react';
 import Taro from '@tarojs/taro';
-import { ArrowLeft, Passed, LinkOutlined, ShieldOutlined, Replay, Wechat, Like } from '@taroify/icons';
+import { Passed, LinkOutlined, ShieldOutlined, Replay, Wechat, Like } from '@taroify/icons';
 import './index.scss';
 
 /** 08 Data Sources */
@@ -49,8 +49,6 @@ export default function DataSources() {
 
   return (
     <Screen className="data-sources-page">
-      <View className="ds-nav"><ArrowLeft onClick={() => Taro.navigateBack().catch(() => Taro.switchTab({url:'/pages/profile/index'}))} /><Text className="ds-title">数据来源管理</Text><View className="ds-nav-space" /></View>
-
       {loading && <Text className="fs-caption text-secondary">加载中…</Text>}
       {error && <View className="ds-error"><Text>数据来源加载失败：{error}</Text><Button size="mini" onClick={refresh}>重新加载</Button></View>}
       {actionError && <View className="ds-error">{actionError}</View>}

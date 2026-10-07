@@ -6,7 +6,7 @@ import { activityApi } from '@/services';
 import { useAsync } from '@/hooks/useAsync';
 import { confirmDelete, toast } from '@/utils/ui';
 import { todayStr, nowISO } from '@/utils/date';
-import { ArrowLeft, Ellipsis, FireOutlined, Edit } from '@taroify/icons';
+import { FireOutlined, Edit } from '@taroify/icons';
 import './index.scss';
 import { createSubmissionGate } from '@/utils/submissionGate';
 
@@ -113,7 +113,6 @@ export default function Exercise() {
 
   return (
     <Screen className="exercise-page">
-      <View className="page-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>运动记录</Text><Ellipsis /></View>
       <View className="mode-tabs">{([{key:'manual',label:'手动记录'},{key:'sync',label:'自动同步'},{key:'devices',label:'智能设备'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => { setMode(tab.key); if(tab.key === 'manual') setShowForm(true); }}>{tab.label}</Text>)}</View>
       {mode === 'devices' && <View className="card"><Text className="fs-h1">设备与数据连接</Text><Text>查看支持的数据来源及连接状态。</Text><Button onClick={() => Taro.navigateTo({url:'/pages/data-sources/index'})}>管理数据来源</Button></View>}
       {mode === 'sync' && <View className="card"><Text className="fs-h1">今日自动同步</Text><Text>展示设备或数据源导入的运动记录。</Text><Button onClick={load}>刷新同步记录</Button></View>}

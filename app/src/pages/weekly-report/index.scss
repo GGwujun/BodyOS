@@ -1,13 +1,48 @@
+@import '../../styles/variables.scss';
+
+/* ============ 本周报告页 ============ */
 .weekly-report-page {
-.score-card { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
-.score-value { font-size: 44px; font-weight: 600; color: #2ecc71; line-height: 1.1; }
+  background: $color-bg;
+  padding: 4px 16px calc(24px + env(safe-area-inset-bottom));
+  gap: 12px;
 
-.report-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-.report-row:last-child { border-bottom: none; }
+  /* 周评分卡:品牌渐变(与我的页 hero 同源) */
+  .score-card {
+    border: 0; border-radius: $radius-card; padding: 20px 18px;
+    background: $color-primary-gradient; color: #fff;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    position: relative; overflow: hidden;
+    box-shadow: $shadow-primary;
+  }
+  .score-value { font-size: 46px; font-weight: 700; color: #fff; line-height: 1.15; letter-spacing: 1px; }
+  .score-card .fs-mini, .score-card .fs-caption { color: rgba(255, 255, 255, .85); }
 
-.win-card { background: rgba(46, 204, 113, 0.06); display: flex; flex-direction: column; gap: 6px; }
-.issue-card { background: rgba(243, 156, 18, 0.06); display: flex; flex-direction: column; gap: 6px; }
-.ai-card { background: rgba(52, 152, 219, 0.08); display: flex; flex-direction: column; gap: 6px; }
+  /* 关键数据行 */
+  .report-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 0; border-bottom: 1px solid $color-divider; font-size: 13px;
+  }
+  .report-row:last-child { border-bottom: none; }
+  .report-row .fs-caption { display: flex; align-items: center; gap: 6px; color: $color-text-secondary; }
+  .fs-h1 { display: flex; align-items: center; gap: 6px; font-size: 15px; }
 
-& {background:#f7f9fb;padding:14px 14px 32px;gap:11px;box-sizing:border-box}.report-nav{height:34px;display:flex;align-items:center;justify-content:space-between;color:#111827}.report-nav text:nth-child(2){font-size:19px;font-weight:700}.report-nav text:last-child{font-size:11px;color:#657180}.score-card{border:0;border-radius:15px;padding:16px;background:linear-gradient(135deg,#3478f6,#69c4f2);color:#fff;display:flex;flex-direction:column;gap:2px;position:relative;overflow:hidden}.score-value{font-size:42px;color:#fff}.score-card .fs-mini,.score-card .fs-caption{color:#fff}.card{border:1px solid #e7ebef;border-radius:13px!important;box-shadow:none!important}.metrics-card .report-row{font-size:12px}.report-row .fs-caption{display:flex;align-items:center;gap:6px}.win-card{background:#fff}.issue-card{background:#fff}.ai-card{background:#fff;color:#596575;line-height:1.6}.fs-h1{display:flex;align-items:center;gap:6px}.error-panel{margin-top:90px;background:#fff;border:1px solid #e7ebef;border-radius:15px;padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;color:#10b981;font-size:34px}.error-title{font-size:17px;font-weight:700;color:#182230}.error-copy{font-size:12px;color:#7b8794}.retry{margin-top:7px;background:#10b981;color:#fff;font-size:13px;padding:9px 24px;border-radius:18px}
+  .win-card { display: flex; flex-direction: column; gap: 6px; }
+  .issue-card { display: flex; flex-direction: column; gap: 6px; }
+  .ai-card { display: flex; flex-direction: column; gap: 6px; color: #475569; line-height: 1.7; }
+
+  /* 失败面板 */
+  .error-panel {
+    margin-top: 90px; background: $color-bg-card;
+    border: 1px solid $color-border; border-radius: $radius-card;
+    padding: 32px 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    color: $color-primary; font-size: 34px;
+    box-shadow: $shadow-card;
+  }
+  .error-title { font-size: 17px; font-weight: 700; color: $color-text-primary; }
+  .error-copy { font-size: 12px; color: $color-text-secondary; }
+  .retry {
+    margin-top: 8px; background: $color-primary; color: #fff;
+    font-size: 13px; padding: 9px 28px; border-radius: $radius-pill;
+  }
 }

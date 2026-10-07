@@ -7,7 +7,7 @@ import { track } from '@/services/analytics';
 import type { FoodItem, FoodLog } from '@/services/types';
 import { confirmDelete, toast } from '@/utils/ui';
 import { todayStr } from '@/utils/date';
-import { ArrowLeft, Ellipsis, Photograph, BulbOutlined } from '@taroify/icons';
+import { Photograph, BulbOutlined } from '@taroify/icons';
 import './index.scss';
 
 type Meal = 'breakfast' | 'lunch' | 'dinner' | 'snack';
@@ -143,7 +143,6 @@ export default function Food() {
 
   return (
     <Screen className="food-page">
-      <View className="page-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>饮食记录</Text><Ellipsis /></View>
       <View className="mode-tabs">{([{key:'ai',label:'快速识别'},{key:'manual',label:'手动添加'},{key:'frequent',label:'常用食物'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
 
       {/* 餐次选择 */}

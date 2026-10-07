@@ -1,13 +1,101 @@
+@import '../../styles/variables.scss';
+
+/* ============ 我的页 ============ */
 .profile-page {
-  .edit-sheet taro-button-core.sheet-cancel, .edit-sheet button.sheet-cancel {
-    color: #374151;
-    background: #f3f4f6;
+  background: $color-bg;
+  padding: 0 16px calc(24px + env(safe-area-inset-bottom));
+  gap: 12px;
+
+  /* 品牌渐变 hero(与 Logo 同源:emerald 渐变) */
+  .profile-hero {
+    margin: 0 -16px; padding: 30px 20px 54px;
+    background: $color-primary-gradient;
+    display: flex; align-items: center; gap: 14px; position: relative;
   }
-  .body-sheet { max-height:90vh; overflow-y:auto; padding-bottom:calc(20px + env(safe-area-inset-bottom)); }
-  .diet-help { display:block; margin:12px 0; font-size:13px; line-height:1.6; color:#687280; }
-  .diet-input { width:100%; height:120px; padding:12px; border:1px solid #e5e7eb; border-radius:12px; box-sizing:border-box; font-size:15px; }
-  .diet-count { display:block; text-align:right; font-size:12px; color:#687280; margin:8px 0; }
-  .diet-error { display:block; color:#dc2645; font-size:13px; }
-  .menu-value { max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-& {background:#f7f9fb;padding:0 14px 32px;gap:12px;box-sizing:border-box}.profile-hero{margin:0 -14px;background:linear-gradient(125deg,#d9fbec,#b8f1df);padding:30px 18px 48px;display:flex;align-items:center;gap:12px;position:relative}.avatar{width:58px;height:58px;border-radius:50%;background:#fff;color:#10b981;display:flex;align-items:center;justify-content:center;font-size:31px;border:2px solid rgba(255,255,255,.8)}.hero-copy{display:flex;flex-direction:column;gap:6px;flex:1}.hero-copy view{display:flex;align-items:center;gap:7px}.user-name{font-size:20px;font-weight:700;color:#13202e}.goal-pill{font-size:10px;background:rgba(16,185,129,.14);color:#087f5b;padding:3px 7px;border-radius:9px}.user-id{font-size:11px;color:#536274}.edit-icon{font-size:20px;color:#526274}.stat-card{margin-top:-34px;z-index:2;background:#fff;border-radius:13px;display:flex;box-shadow:0 4px 12px rgba(31,41,55,.06)}.stat-card view{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px;border-right:1px solid #edf0f2}.stat-card view:last-child{border-right:0}.stat-card text:first-child{font-size:10px;color:#7a8695}.stat-card text:last-child{font-size:16px;font-weight:700;color:#151e2a}.menu-card{background:#fff;border:1px solid #e7ebef;border-radius:13px;overflow:hidden}.menu-row{height:45px;display:flex;align-items:center;padding:0 13px;border-bottom:1px solid #edf0f2;color:#7f8a98;font-size:15px}.menu-row:last-child{border-bottom:0}.menu-icon{width:25px;color:#10b981;font-size:16px;display:flex}.menu-label{flex:1;color:#27313e;font-size:13px}.menu-value{font-size:11px;color:#8994a2;margin-right:5px}.mask{position:fixed;inset:0;background:rgba(15,23,42,.42);z-index:1000;display:flex;align-items:flex-end}.edit-sheet{width:100%;background:#fff;border-radius:22px 22px 0 0;padding:22px 18px 38px;box-sizing:border-box}.sheet-title{font-size:19px;font-weight:700}.field-row{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid #edf0f2;font-size:13px}.form-input{text-align:right;width:140px}.picker-value{color:#10b981}.sheet-save{margin-top:18px;background:#10b981!important;color:#fff!important;border-radius:13px!important;font-size:15px!important}
+  .avatar {
+    width: 58px; height: 58px; border-radius: 50%;
+    background: rgba(255, 255, 255, .92); color: $color-primary-dark;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; border: 2px solid rgba(255, 255, 255, .65);
+    flex-shrink: 0;
+  }
+  .hero-copy { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .hero-copy view { display: flex; align-items: center; gap: 8px; }
+  .user-name { font-size: 20px; font-weight: 700; color: #fff; }
+  .goal-pill {
+    font-size: 10px; background: rgba(255, 255, 255, .22);
+    color: #fff; padding: 3px 8px; border-radius: $radius-sm;
+  }
+  .user-id { font-size: 11px; color: rgba(255, 255, 255, .8); }
+  .edit-icon { font-size: 19px; color: #fff; }
+
+  /* 悬浮统计卡(压在 hero 上) */
+  .stat-card {
+    margin-top: -36px; z-index: 2; position: relative;
+    background: $color-bg-card; border-radius: $radius-card;
+    display: flex; box-shadow: 0 6px 18px rgba(15, 23, 42, .07);
+  }
+  .stat-card view {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 14px 0; gap: 5px; border-right: 1px solid $color-divider;
+  }
+  .stat-card view:last-child { border-right: 0; }
+  .stat-card text:first-child { font-size: 11px; color: $color-text-secondary; }
+  .stat-card text:last-child { font-size: 16px; font-weight: 700; color: $color-text-primary; }
+
+  /* 菜单组 */
+  .menu-card {
+    background: $color-bg-card; border: 1px solid $color-border;
+    border-radius: $radius-card; overflow: hidden;
+    box-shadow: $shadow-card;
+  }
+  .menu-row {
+    min-height: 48px; display: flex; align-items: center;
+    padding: 0 14px; border-bottom: 1px solid $color-divider;
+  }
+  .menu-row:last-child { border-bottom: 0; }
+  .menu-icon { width: 26px; color: $color-primary; font-size: 17px; display: flex; margin-right: 4px; }
+  .menu-label { flex: 1; color: $color-text-primary; font-size: 14px; }
+  .menu-value { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: $color-text-tertiary; margin-right: 6px; }
+  .menu-row taroify-icon, .menu-row .taroify-icon { color: $color-text-tertiary; font-size: 14px; }
+
+  /* 底部弹层 */
+  .mask {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, .45); z-index: 1000;
+    display: flex; align-items: flex-end;
+  }
+  .edit-sheet {
+    width: 100%; background: #fff;
+    border-radius: $radius-lg $radius-lg 0 0;
+    padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+  }
+  .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
+  .sheet-title { display: block; font-size: 18px; font-weight: 700; color: $color-text-primary; }
+  .body-sheet { max-height: 88vh; overflow-y: auto; }
+  .diet-help { display: block; margin: 10px 0 14px; font-size: 12px; line-height: 1.6; color: $color-text-secondary; }
+  .field-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid $color-divider; font-size: 14px;
+  }
+  .form-input { text-align: right; width: 150px; font-size: 14px; }
+  .picker-value { color: $color-primary-dark; font-size: 14px; }
+  .diet-input {
+    width: 100%; height: 120px; padding: 12px;
+    border: 1px solid $color-border; border-radius: $radius-md;
+    background: $color-bg-soft; box-sizing: border-box; font-size: 14px;
+  }
+  .diet-count { display: block; text-align: right; font-size: 11px; color: $color-text-tertiary; margin: 6px 0 4px; }
+  .diet-error { display: block; color: $color-danger; font-size: 12px; margin-bottom: 6px; }
+  .sheet-save {
+    margin-top: 14px; height: 44px;
+    background: $color-primary !important; color: #fff !important;
+    border-radius: $radius-md !important; font-size: 15px !important;
+  }
+  .edit-sheet taro-button-core.sheet-cancel, .edit-sheet button.sheet-cancel {
+    margin-top: 10px; height: 44px;
+    color: $color-text-secondary; background: $color-fill;
+    border-radius: $radius-md !important; font-size: 15px !important;
+  }
 }

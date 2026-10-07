@@ -27,3 +27,6 @@ Thumbs.db
 
 # 本地脚本缓存
 .claude/
+
+# 微信开发者工具个人配置(本机私有)
+app/project.private.config.json

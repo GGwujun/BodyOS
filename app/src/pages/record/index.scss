@@ -1,5 +1,99 @@
+@import '../../styles/variables.scss';
+
+/* ============ 记录页 ============ */
 .record-page {
-  .record-load-error { padding: 14px; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; color: #b42318; font-size: 13px; }
-  .record-load-error button, .record-load-error taro-button-core { margin-top: 10px; color: #087f5b; background: #ecfdf5; font-size: 14px; }
-& {background:#f7f9fb;padding:22px 14px 32px;gap:14px;box-sizing:border-box}.record-header{padding:0 2px 5px;font-size:26px;line-height:1;font-weight:700;color:#111827}.entry-list{display:flex;flex-direction:column;gap:9px}.entry-card{background:#fff;border:1px solid #e8edf0;border-radius:14px;padding:15px 14px;display:flex;align-items:center;box-shadow:0 3px 10px rgba(31,41,55,.035)}.entry-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;margin-right:13px}.entry-icon.mint{background:#dcf8eb;color:#10b981}.entry-icon.blue{background:#e7efff;color:#3875ed}.entry-icon.dark{background:#e9edf2;color:#152334}.entry-copy{display:flex;flex-direction:column;gap:4px;flex:1}.entry-name{font-size:16px;color:#111827;font-weight:700}.entry-desc{color:#7c8795;font-size:12px}.entry-arrow{color:#a1aab5;font-size:17px}.section-kicker{text-align:center;color:#697586;font-size:12px;margin:7px 0 0}.source-card,.recent-card{border:1px solid #e8edf0;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 3px 10px rgba(31,41,55,.035)}.source-row{display:flex;align-items:center;padding:11px 13px;border-bottom:1px solid #edf0f2}.source-row:last-child{border-bottom:0}.source-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-right:10px;color:#10b981;background:#e7fbf2;font-size:17px}.source-icon.s1{color:#3875ed;background:#edf2ff}.source-icon.s2{color:#6654e8;background:#f0edff}.source-icon.s3{color:#ef4961;background:#ffedf0}.source-copy{flex:1;display:flex;flex-direction:column;gap:2px;font-size:13px;color:#17202d}.source-copy text:last-child{font-size:10px;color:#8a95a3}.source-ok{color:#10b981;font-size:18px}.source-empty{width:15px;height:15px;border:1px solid #a9b3bf;border-radius:50%}.record-empty{padding:18px;color:#8994a3;font-size:12px}.recent-card{padding:13px}.recent-title{font-size:14px;font-weight:700}.recent-line{display:flex;justify-content:space-between;padding-top:10px;font-size:12px;color:#667281}.mask{position:fixed;inset:0;background:rgba(15,23,42,.42);z-index:1000;display:flex;align-items:flex-end}.weight-sheet{width:100%;background:#fff;border-radius:22px 22px 0 0;padding:22px 18px 38px;box-sizing:border-box}.sheet-title{font-size:19px;font-weight:700}.weight-input-row{display:flex;align-items:baseline;gap:8px;margin:20px 0}.weight-input{flex:1;font-size:34px;color:#10b981;border-bottom:2px solid #10b981;padding:8px 0}.sheet-save{background:#10b981!important;color:#fff!important;border-radius:13px!important;font-size:15px!important}
+  background: $color-bg;
+  padding: 4px 16px calc(24px + env(safe-area-inset-bottom));
+  gap: 14px;
+
+  .record-header { padding: 0 2px 2px; font-size: 24px; line-height: 1.35; font-weight: 700; color: $color-text-primary; }
+
+  /* 三个入口卡 */
+  .entry-list { display: flex; flex-direction: column; gap: 10px; }
+  .entry-card {
+    background: $color-bg-card; border: 1px solid $color-border;
+    border-radius: $radius-card; padding: 16px;
+    display: flex; align-items: center;
+    box-shadow: $shadow-card;
+  }
+  .entry-icon {
+    width: 46px; height: 46px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-right: 14px; flex-shrink: 0;
+  }
+  .entry-icon.mint { background: #d9f6e9; color: $color-primary; }
+  .entry-icon.blue { background: #e8efff; color: $color-info; }
+  .entry-icon.dark { background: #e9edf2; color: #1e293b; }
+  .entry-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .entry-name { font-size: 16px; font-weight: 700; color: $color-text-primary; }
+  .entry-desc { color: $color-text-secondary; font-size: 12px; }
+  .entry-arrow { color: $color-text-tertiary; font-size: 16px; }
+
+  .section-kicker { text-align: center; color: $color-text-tertiary; font-size: 11px; letter-spacing: 3px; margin: 2px 0 -2px; }
+
+  /* 数据源卡 */
+  .source-card, .recent-card {
+    border: 1px solid $color-border; border-radius: $radius-card;
+    overflow: hidden; background: $color-bg-card;
+    box-shadow: $shadow-card;
+  }
+  .source-row { display: flex; align-items: center; padding: 12px 14px; border-bottom: 1px solid $color-divider; }
+  .source-row:last-child { border-bottom: 0; }
+  .source-icon {
+    width: 32px; height: 32px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 12px; color: $color-primary; background: $color-primary-bg; font-size: 16px;
+  }
+  .source-icon.s1 { color: $color-info; background: #eef3ff; }
+  .source-icon.s2 { color: #6d5ae8; background: #f1eeff; }
+  .source-icon.s3 { color: #ef4961; background: #ffeef1; }
+  .source-copy { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: $color-text-primary; }
+  .source-copy text:last-child { font-size: 11px; color: $color-text-tertiary; }
+  .source-ok { color: $color-primary; font-size: 18px; }
+  .source-empty { width: 9px; height: 9px; border: 1.5px solid #b6c0cc; border-radius: 50%; margin-right: 3px; }
+
+  .record-empty { padding: 20px; text-align: center; color: $color-text-tertiary; font-size: 12px; }
+
+  /* 加载失败 */
+  .record-load-error {
+    padding: 16px; background: $color-bg-card;
+    border: 1px solid $color-border; border-radius: $radius-card;
+    color: #dc2626; font-size: 13px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .record-load-error button, .record-load-error taro-button-core {
+    margin: 0; padding: 0; height: 38px; line-height: 38px;
+    color: $color-primary-dark; background: $color-primary-bg;
+    font-size: 13px; border-radius: $radius-sm;
+  }
+
+  /* 今天的记录 */
+  .recent-card { padding: 14px 16px; }
+  .recent-title { font-size: 14px; font-weight: 700; color: $color-text-primary; }
+  .recent-line { display: flex; justify-content: space-between; margin-top: 10px; font-size: 13px; color: $color-text-secondary; }
+
+  /* 体重底部弹层 */
+  .mask {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, .45); z-index: 1000;
+    display: flex; align-items: flex-end;
+  }
+  .weight-sheet {
+    width: 100%; background: #fff;
+    border-radius: $radius-lg $radius-lg 0 0;
+    padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+  }
+  .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
+  .sheet-title { display: block; font-size: 18px; font-weight: 700; color: $color-text-primary; }
+  .weight-input-row { display: flex; align-items: baseline; gap: 8px; margin: 20px 0 24px; }
+  .weight-input {
+    flex: 1; font-size: 34px; font-weight: 600;
+    color: $color-primary-dark; border-bottom: 2px solid $color-primary; padding: 8px 0;
+  }
+  .weight-unit { font-size: 15px; color: $color-text-secondary; }
+  .sheet-save {
+    background: $color-primary !important; color: #fff !important;
+    border-radius: $radius-md !important; font-size: 15px !important;
+  }
 }

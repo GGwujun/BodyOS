@@ -3,8 +3,7 @@ import { useAsync } from '@/hooks/useAsync';
 import Screen from '@/components/Screen';
 import { request } from '@/services/request';
 import type { WeeklyAnalysis } from '@/services/types';
-import Taro from '@tarojs/taro';
-import { ArrowLeft, FireOutlined, GoldCoinOutlined, BarChartOutlined, BulbOutlined } from '@taroify/icons';
+import { FireOutlined, GoldCoinOutlined, BarChartOutlined, BulbOutlined } from '@taroify/icons';
 import './index.scss';
 
 /** 06 Weekly Report — 周评分 / 变化 / Wins / Issues / 下周行动 */
@@ -22,7 +21,6 @@ export default function WeeklyReport() {
   if (loading) {
     return (
       <Screen className="weekly-report-page">
-        <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>本周报告</Text><Text>本周</Text></View>
         <View className="card">
           <Text className="fs-caption text-secondary">正在生成本周报告…</Text>
         </View>
@@ -33,7 +31,6 @@ export default function WeeklyReport() {
   if (error || !data) {
     return (
       <Screen className="weekly-report-page">
-        <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>本周报告</Text><Text>本周</Text></View>
         <View className="error-panel">
           <BulbOutlined />
           <Text className="error-title">周报暂时无法生成</Text>
@@ -46,8 +43,6 @@ export default function WeeklyReport() {
 
   return (
     <Screen className="weekly-report-page">
-      <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>本周报告</Text><Text>本周</Text></View>
-
       <View className="score-card">
         <Text className="fs-caption">本周评分</Text>
         <Text className="score-value">{data.grade || '—'}</Text>

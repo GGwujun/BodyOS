@@ -1,3 +1,52 @@
+@import '../../styles/variables.scss';
+
+/* ============ 目标设置(引导)页 ============ */
 .onboarding-page {
-& {background:#fff;padding:20px 16px 32px;gap:14px;box-sizing:border-box}.step-row{display:flex;align-items:center;gap:10px;color:#10b981;font-size:11px}.step-row .step-track{height:4px;flex:1;background:#e7ebef;border-radius:3px}.step-track .step-bar{width:34%;height:100%;background:#10b981;border-radius:3px}.onboarding-head{display:flex;flex-direction:column;gap:7px;margin:10px 0}.onboarding-head text:first-child{font-size:25px;font-weight:700;color:#111827}.onboarding-head text:last-child{font-size:12px;color:#7a8593}.goal-list{display:flex;flex-direction:column;gap:9px}.goal-option{height:66px;border:1px solid #e1e6ea;border-radius:13px;padding:0 13px;display:flex;align-items:center;color:#a0a9b5}.goal-option.active{border-color:#10b981;background:#f0fcf7;color:#10b981}.goal-option .goal-copy{flex:1;display:flex;flex-direction:column;gap:4px}.goal-option text:first-child{font-size:15px;font-weight:700;color:#202a36}.goal-option text:last-child{font-size:11px;color:#768290}.duration-title{font-size:12px;font-weight:700;color:#26303c;margin-top:3px}.duration-row{display:flex;gap:7px}.duration-row text{flex:1;text-align:center;border:1px solid #e2e7eb;border-radius:15px;padding:7px 0;font-size:11px;color:#6d7885}.duration-row .active{background:#10b981;color:#fff;border-color:#10b981}.next-btn{margin-top:auto;width:100%;background:#10b981!important;color:#fff!important;border-radius:12px!important;font-size:14px!important}.step-dots{display:flex;justify-content:center;gap:10px;height:5px}.step-dots view{width:26px;height:4px;border-radius:3px;background:#dfe5e9}.step-dots .active{background:#10b981}
+  background: $color-bg;
+  padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+  gap: 14px;
+
+  /* 顶部进度条 */
+  .step-row { display: flex; align-items: center; gap: 10px; color: $color-primary; font-size: 11px; }
+  .step-row .step-track { height: 4px; flex: 1; background: $color-fill; border-radius: $radius-pill; overflow: hidden; }
+  .step-track .step-bar { width: 34%; height: 100%; background: $color-primary-gradient; border-radius: $radius-pill; }
+
+  .onboarding-head { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 2px; }
+  .onboarding-head text:first-child { font-size: 24px; font-weight: 700; color: $color-text-primary; letter-spacing: .3px; }
+  .onboarding-head text:last-child { font-size: 12px; color: $color-text-secondary; }
+
+  /* 目标选项 */
+  .goal-list { display: flex; flex-direction: column; gap: 10px; }
+  .goal-option {
+    min-height: 68px; border: 1.5px solid $color-border;
+    border-radius: $radius-card; padding: 0 14px;
+    display: flex; align-items: center; background: $color-bg-card;
+    color: $color-text-tertiary; box-shadow: $shadow-card;
+  }
+  .goal-option.active { border-color: $color-primary; background: $color-primary-bg; }
+  .goal-option .goal-copy { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .goal-option text:first-child { font-size: 15px; font-weight: $fw-bold; color: $color-text-primary; }
+  .goal-option.active text:first-child { color: $color-primary-dark; }
+  .goal-option text:last-child { font-size: 11px; color: $color-text-secondary; }
+
+  /* 周期选择 */
+  .duration-title { font-size: 12px; font-weight: $fw-bold; color: #334155; margin-top: 4px; }
+  .duration-row { display: flex; gap: 8px; }
+  .duration-row text {
+    flex: 1; text-align: center; border: 1px solid $color-border;
+    border-radius: $radius-pill; padding: 8px 0; font-size: 12px;
+    color: $color-text-secondary; background: $color-bg-card;
+  }
+  .duration-row .active { background: $color-primary; color: #fff; border-color: $color-primary; font-weight: $fw-bold; }
+
+  /* 底部按钮与步骤点 */
+  .next-btn {
+    margin-top: auto; width: 100%; height: 46px;
+    background: $color-primary !important; color: #fff !important;
+    border-radius: $radius-md !important; font-size: 15px !important;
+    box-shadow: $shadow-primary;
+  }
+  .step-dots { display: flex; justify-content: center; gap: 8px; height: 5px; }
+  .step-dots view { width: 26px; height: 4px; border-radius: $radius-pill; background: $color-fill; }
+  .step-dots .active { background: $color-primary; }
 }
