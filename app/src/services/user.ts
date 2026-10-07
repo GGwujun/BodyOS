@@ -15,8 +15,9 @@ export const getProfile = () => request<Profile>({ url: '/profile' });
 export const updateProfile = (data: Partial<Profile>) =>
   request<Profile>({ url: '/profile', method: 'PUT', data });
 
-/** GET /goals */
-export const listGoals = () => request<Goal[]>({ url: '/goals' });
+/** GET /goals — all=true 时包含已归档的历史方案 */
+export const listGoals = (all = false) =>
+  request<Goal[]>({ url: `/goals${all ? '?all=1' : ''}` });
 
 export interface GoalInput {
   type: 'fat_loss' | 'muscle_gain' | 'maintain' | 'endurance';

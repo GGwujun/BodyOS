@@ -1,0 +1,117 @@
+@import '../../styles/variables.scss';
+
+/* ============ 体重管理方案页 ============ */
+.plan-page {
+  .status-hint { display: block; text-align: center; margin: 40px 0; font-size: 13px; color: $color-text-secondary; }
+
+  .guide-card { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .guide-copy { line-height: 1.7; }
+
+  /* ---- 方案信息卡 ---- */
+  .info-head { display: flex; align-items: center; justify-content: space-between; }
+  .info-bmi { display: flex; align-items: center; gap: 8px; }
+  .info-bmi__text { font-size: 14px; font-weight: 600; color: $color-text-primary; }
+  .pill { padding: 2px 10px; border-radius: $radius-pill; font-size: 11px; font-weight: 600; }
+  .tone-blue { color: #0369a1; background: rgba(14, 165, 233, .12); }
+  .tone-green { color: $color-primary; background: rgba(16, 185, 129, .1); }
+  .tone-amber { color: $color-warning; background: rgba(245, 158, 11, .12); }
+  .tone-red { color: #dc2626; background: rgba(220, 38, 38, .1); }
+  .history-link { font-size: 13px; font-weight: 600; color: $color-primary; }
+  .info-note { margin-top: 7px; font-size: 11px; color: $color-text-tertiary; line-height: 1.6; }
+
+  .info-rows { margin-top: 14px; display: flex; flex-direction: column; }
+  .info-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 0; border-bottom: 1px solid $color-divider;
+  }
+  .ir-label { font-size: 13px; color: $color-text-secondary; }
+  .ir-value { font-size: 14px; font-weight: 600; color: $color-text-primary; }
+  .ir-value--green { color: $color-primary; }
+
+  .plan-ops { display: flex; margin-top: 16px; }
+  .op-btn { flex: 1; }
+  .op-btn + .op-btn { margin-left: 10px; }
+  .op-btn--danger {
+    background: rgba(231, 76, 60, .08);
+    color: $color-danger;
+    border: 1px solid rgba(231, 76, 60, .35);
+  }
+
+  /* ---- 体重变化进度卡 ---- */
+  .progress-card { display: flex; flex-direction: column; }
+  .timeline { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+  .timeline-date { flex-shrink: 0; font-size: 11px; color: $color-text-tertiary; }
+  .timeline-track {
+    flex: 1; position: relative; height: 1px;
+    background: repeating-linear-gradient(90deg, #cbd5e1 0 6px, transparent 6px 12px);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .timeline-pill {
+    position: relative; padding: 4px 12px;
+    background: rgba(59, 130, 246, .1); color: #2563eb;
+    border-radius: $radius-pill; font-size: 11px; font-weight: 600;
+  }
+  .progress-track {
+    height: 8px; margin-top: 16px;
+    border-radius: $radius-pill; background: $color-fill; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: $radius-pill;
+    background: $color-primary; transition: width .4s ease;
+  }
+  .progress-cols { display: flex; margin-top: 16px; }
+  .p-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .p-col__label { font-size: 11px; color: $color-text-tertiary; padding: 2px 10px; border-radius: $radius-pill; }
+  .p-col__label--green { color: $color-primary; background: rgba(16, 185, 129, .1); }
+  .p-col__value { font-size: 20px; font-weight: 700; color: $color-text-primary; }
+  .p-col__value--green { color: $color-primary; }
+  .p-col__unit { margin-left: 2px; font-size: 10px; font-weight: 400; color: $color-text-tertiary; }
+  .progress-note { margin-top: 12px; font-size: 11px; color: $color-text-tertiary; line-height: 1.6; }
+  .pending-link { display: block; margin-top: 12px; text-align: center; font-size: 13px; font-weight: 600; color: $color-warning; }
+
+  /* ---- 每日摄入建议 + 食谱推荐 ---- */
+  .diet-card { display: flex; flex-direction: column; gap: 10px; }
+  .diet-lead { font-size: 14px; color: $color-text-primary; line-height: 1.6; }
+  .diet-lead__num { font-size: 22px; font-weight: 700; color: $color-primary; }
+  .diet-note { font-size: 11px; color: $color-text-tertiary; line-height: 1.6; }
+
+  .meal-block { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .meal-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .meal-name { font-size: 13px; font-weight: 700; color: $color-text-primary; }
+  .meal-budget { font-size: 11px; color: $color-text-tertiary; }
+  .meal-empty { font-size: 12px; color: $color-text-tertiary; }
+  .meal-recipe {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 10px 12px; background: #f0fdf4; border: 1px solid #dcfce7;
+    border-radius: $radius-md;
+  }
+  .mr-main { display: flex; flex-direction: column; gap: 2px; }
+  .mr-name { font-size: 13px; font-weight: 600; color: $color-text-primary; }
+  .mr-meta { font-size: 11px; color: $color-text-secondary; }
+  .mr-flag { flex-shrink: 0; font-size: 10px; color: $color-warning; background: rgba(245, 158, 11, .12); padding: 2px 8px; border-radius: $radius-pill; }
+}
+
+/* ---- 历史方案弹层(全屏遮罩,不能嵌在 .plan-page 内以免继承 padding) ---- */
+.pl-mask {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .45); z-index: 1000;
+  display: flex; align-items: flex-end;
+}
+.pl-sheet {
+  width: 100%; background: #fff;
+  border-radius: $radius-lg $radius-lg 0 0;
+  padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+.pl-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
+.pl-title { display: block; font-size: 18px; font-weight: 700; color: $color-text-primary; }
+.pl-empty { display: block; margin-top: 14px; font-size: 12px; color: $color-text-tertiary; }
+.pl-list { margin-top: 8px; max-height: 320px; overflow-y: auto; }
+.pl-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 0; border-bottom: 1px solid $color-divider;
+}
+.pl-row__main { display: flex; flex-direction: column; gap: 3px; }
+.pl-row__name { font-size: 13px; font-weight: 600; color: $color-text-primary; }
+.pl-row__meta { font-size: 11px; color: $color-text-tertiary; }
+.pl-row__state { flex-shrink: 0; font-size: 11px; color: $color-text-tertiary; background: $color-bg-soft; padding: 2px 10px; border-radius: $radius-pill; }

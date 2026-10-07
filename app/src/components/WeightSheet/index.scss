@@ -1,0 +1,26 @@
+@import '../../styles/variables.scss';
+
+/* 记录体重底部弹层(体重数据页/方案页共用) */
+.ws-mask {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .45); z-index: 1000;
+  display: flex; align-items: flex-end;
+}
+.ws-sheet {
+  width: 100%; background: #fff;
+  border-radius: $radius-lg $radius-lg 0 0;
+  padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+.ws-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
+.ws-title { display: block; font-size: 18px; font-weight: 700; color: $color-text-primary; }
+.ws-input-row { display: flex; align-items: baseline; gap: 8px; margin: 20px 0 24px; }
+.ws-input {
+  flex: 1; font-size: 34px; font-weight: 600;
+  color: $color-primary-dark; border-bottom: 2px solid $color-primary; padding: 8px 0;
+}
+.ws-unit { font-size: 15px; color: $color-text-secondary; }
+.ws-save {
+  background: $color-primary !important; color: #fff !important;
+  border-radius: $radius-md !important; font-size: 15px !important;
+}

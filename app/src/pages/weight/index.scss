@@ -1,0 +1,65 @@
+@import '../../styles/variables.scss';
+
+/* ============ 体重数据页 ============ */
+.weight-page {
+  .status-hint { display: block; text-align: center; margin: 40px 0; font-size: 13px; color: $color-text-secondary; }
+
+  /* 无目标引导卡 */
+  .guide-card { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .guide-copy { line-height: 1.7; }
+
+  /* 顶部大卡:进度环 + 三联数据 */
+  .hero-top { display: flex; align-items: center; gap: 18px; }
+  .wp-ring {
+    --pct: 0deg;
+    flex-shrink: 0;
+    width: 124px; height: 124px; padding: 8px;
+    border-radius: 50%;
+    background: conic-gradient($color-primary var(--pct), $color-fill 0);
+    box-sizing: border-box; transform: rotate(-90deg);
+  }
+  .wp-ring__inner {
+    width: 100%; height: 100%; border-radius: 50%; background: #fff;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transform: rotate(90deg);
+  }
+  .wp-ring__num { font-size: 26px; line-height: 30px; font-weight: 700; color: $color-text-primary; }
+  .wp-ring__label { margin-top: 2px; font-size: 10px; color: $color-text-secondary; }
+  .wp-ring__sub { margin-top: 4px; font-size: 11px; font-weight: 600; color: $color-primary; }
+
+  .hero-nums { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .hero-num { display: flex; align-items: baseline; justify-content: space-between; }
+  .hn-label { font-size: 13px; color: $color-text-secondary; }
+  .hn-pair { display: flex; align-items: baseline; gap: 3px; }
+  .hn-value { font-size: 19px; font-weight: 700; color: $color-text-primary; }
+  .hn-value--green { color: $color-primary; }
+  .hn-unit { font-size: 10px; color: $color-text-tertiary; }
+
+  /* BMI 行 */
+  .bmi-line {
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid $color-divider;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .bmi-head { display: flex; align-items: center; gap: 8px; }
+  .bmi-text { font-size: 14px; font-weight: 600; color: $color-text-primary; }
+  .bmi-pill { padding: 2px 10px; border-radius: $radius-pill; font-size: 11px; font-weight: 600; }
+  .tone-blue { color: #0369a1; background: rgba(14, 165, 233, .12); }
+  .tone-green { color: $color-primary; background: rgba(16, 185, 129, .1); }
+  .tone-amber { color: $color-warning; background: rgba(245, 158, 11, .12); }
+  .tone-red { color: #dc2626; background: rgba(220, 38, 38, .1); }
+  .bmi-note { font-size: 11px; color: $color-text-tertiary; line-height: 1.6; }
+
+  .hero-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .hero-btn { flex: 1; }
+
+  /* 曲线卡(Screen 自带 16px 卡片间距) */
+  .chart-card { display: flex; flex-direction: column; gap: 10px; }
+  .chart-empty {
+    padding: 30px 12px; text-align: center;
+    font-size: 12px; color: $color-text-tertiary; line-height: 1.7;
+    border: 1px dashed #dbe2ea; border-radius: $radius-md;
+    background: $color-bg-soft;
+  }
+  .chart-note { line-height: 1.6; }
+}

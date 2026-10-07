@@ -53,6 +53,8 @@ export interface Goal {
   durationWeeks?: number;
   startDate: string;
   progress?: number;
+  /** 列表默认只返回进行中目标;?all=1 时含归档 */
+  isActive?: boolean;
 }
 
 /* ============ 饮食 ============ */

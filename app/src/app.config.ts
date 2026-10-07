@@ -18,7 +18,9 @@ export default defineAppConfig({
     'pages/food-rank/index',
     'pages/ingredient/index',
     'pages/qa/index',
-    'pages/toolbox/index'
+    'pages/toolbox/index',
+    'pages/weight/index',
+    'pages/plan/index'
   ],
   window: {
     backgroundTextStyle: 'dark',

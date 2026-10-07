@@ -16,10 +16,11 @@ const CreateGoalSchema = z.object({
   isActive: z.boolean().optional()
 });
 
-/** GET /goals */
-router.get('/', wrap(async (_req, res) => {
+/** GET /goals — ?all=1 时包含已归档的历史方案 */
+router.get('/', wrap(async (req, res) => {
+  const includeArchived = req.query.all === '1';
   const goals = await prisma.goal.findMany({
-    where: { userId: getUserId(res), isActive: true },
+    where: { userId: getUserId(res), ...(includeArchived ? {} : { isActive: true }) },
     orderBy: { createdAt: 'desc' }
   });
   return ok(res, goals);

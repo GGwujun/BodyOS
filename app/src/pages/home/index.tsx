@@ -148,7 +148,7 @@ export default function Home() {
         )}
       </View>
 
-      <View className="dashboard-card goal-card" onClick={() => Taro.navigateTo({ url: '/pages/onboarding/index' })}>
+      <View className="dashboard-card goal-card" onClick={() => Taro.navigateTo({ url: '/pages/weight/index' })}>
         <Heading title="当前目标" />
         <View className="goal-row"><Text className={`goal-name${data?.goal ? '' : ' is-empty'}`}>{goalLabel(data?.goal?.type)}</Text><Text className="goal-meta">{data?.goal?.durationWeeks ? `${data.goal.durationWeeks} 周计划` : ''}</Text></View>
         <View className="goal-detail"><Text className="goal-caption">{data?.goal ? '根据记录更新目标进度' : '设置目标后开始记录进度'}</Text><Text className={`goal-percent${data?.goal ? '' : ' is-empty'}`}>{data?.goal ? `${goalProgress}%` : '—'}</Text></View>
