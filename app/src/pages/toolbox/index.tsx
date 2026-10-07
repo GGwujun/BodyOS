@@ -32,7 +32,7 @@ const SECTIONS: { title: string; items: ToolItem[] }[] = [
       { name: '体重数据', desc: '目标进度 · 曲线', emoji: '📉', url: '/pages/weight/index' },
       { name: '体重管理方案', desc: '方案 · 代谢 · 食谱', emoji: '🗂', url: '/pages/plan/index' },
       { name: '推荐食谱', desc: '三餐照着吃', emoji: '🍱', url: '/pages/recipes/index' },
-      { name: '生活方式测评', desc: '5 套专业测评', emoji: '📋', url: '/pages/assessment/index' }
+      { name: '健康测评', desc: '10 套专业测评', emoji: '📋', url: '/pages/assessment/index' }
     ]
   },
   {

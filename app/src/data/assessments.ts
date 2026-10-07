@@ -1,7 +1,8 @@
 /**
- * 测评中心 — 5 套生活方式测评,通用数据模型
- * 计分:每题选项 0~3 分(多选题为所选选项求和),总分折算 0~100
+ * 测评中心 — 10 套健康测评,通用数据模型
+ * 计分:每题选项 0~3 分(多选题为所选选项求和),总分折算 0~100,分数越高状态越好
  * 结果按固定分档给出,仅供参考,不构成医学建议
+ * 血糖/血压为生活方式风险评估,不能替代测量与诊疗
  */
 
 export interface AssessOption {
@@ -321,9 +322,288 @@ const EXERCISE: AssessmentDef = {
   ],
 };
 
-export const ASSESSMENTS: AssessmentDef[] = [LIFESTYLE, SLEEP, DIET, STRESS, EXERCISE];
+/* ============ 6. 脱发测评 ============ */
+const HAIR: AssessmentDef = {
+  id: 'hair', name: '脱发测评', tagline: '发现问题,提前防脱', emoji: '💇', color: '#eee9fe',
+  dimLabels: { rest: '作息压力', nutrition: '饮食营养', care: '洗护习惯', signal: '脱发信号' },
+  dimAdvice: {
+    rest: ['尽量 23 点前入睡,熬夜与压力是掉发的放大器', '睡前半小时远离工作消息,给神经降降速'],
+    nutrition: ['每天保证一个鸡蛋加一份肉或豆制品,头发的主要原料是蛋白质', '主食别一刀切不吃,粗细搭配比完全断碳更护发'],
+    care: ['温水洗头、指腹按摩,少用指甲抓挠头皮', '烫染间隔拉长到半年以上,吹风机离头皮 15 厘米以上'],
+    signal: ['连续记录掉发与头皮状态,变化明显时带着记录去就诊', '家族史叠加作息差,更建议每年让皮肤科看一次头皮'],
+  },
+  questions: [
+    { dim: 'signal', title: '最近三个月,你感觉掉发量有什么变化?', options: [
+      { label: '没有明显变化', score: 3 }, { label: '略有增多,但没有成撮', score: 2 },
+      { label: '明显增多,发缝变宽', score: 1 }, { label: '出现成撮脱落或局部斑块', score: 0 }] },
+    { dim: 'rest', title: '最近一个月的精神状态?', options: [
+      { label: '比较轻松', score: 3 }, { label: '偶尔紧张', score: 2 },
+      { label: '长期紧绷', score: 1 }, { label: '压力大到影响睡眠', score: 0 }] },
+    { dim: 'rest', title: '平均几点入睡?', options: [
+      { label: '23 点前', score: 3 }, { label: '23 点 ~ 1 点', score: 2 },
+      { label: '1 ~ 2 点', score: 1 }, { label: '2 点以后', score: 0 }] },
+    { dim: 'rest', title: '每周熬夜(超过凌晨 1 点)几次?', options: [
+      { label: '基本没有', score: 3 }, { label: '1 ~ 2 次', score: 2 },
+      { label: '3 ~ 4 次', score: 1 }, { label: '几乎天天', score: 0 }] },
+    { dim: 'nutrition', title: '以下符合你日常饮食的有?(可多选)', multi: true, options: [
+      { label: '每天都有蛋、肉、鱼或豆制品', score: 2 },
+      { label: '常吃深色蔬菜和水果', score: 2 },
+      { label: '常吃坚果、粗粮', score: 1 },
+      { label: '正在节食或长期吃很少', score: 0 },
+      { label: '常吃高油高糖零食', score: 0 }] },
+    { dim: 'nutrition', title: '主食吃得怎么样?', options: [
+      { label: '粗细搭配,顿顿适量', score: 3 }, { label: '以米饭面条为主', score: 2 },
+      { label: '偶尔不吃主食', score: 1 }, { label: '长期不吃主食', score: 0 }] },
+    { dim: 'care', title: '过去一年烫发、染发几次?', options: [
+      { label: '0 次', score: 3 }, { label: '1 次', score: 2 },
+      { label: '2 ~ 3 次', score: 1 }, { label: '3 次以上', score: 0 }] },
+    { dim: 'care', title: '平时怎么打理头发?', options: [
+      { label: '披散或松扎,少加热', score: 3 }, { label: '偶尔紧扎或高温吹整', score: 2 },
+      { label: '经常紧扎马尾或脏辫', score: 1 }, { label: '经常高温卷烫、强力定型', score: 0 }] },
+    { dim: 'signal', title: '头皮状态怎么样?', options: [
+      { label: '清爽无不适', score: 3 }, { label: '偶尔头痒或有头屑', score: 2 },
+      { label: '长期油腻、头痒或屑多', score: 1 }, { label: '有红疹、疼痛或痘', score: 0 }] },
+    { dim: 'signal', title: '直系亲属(父母、兄妹)有明显脱发吗?', options: [
+      { label: '没有', score: 3 }, { label: '不清楚', score: 2 },
+      { label: '父辈一方有', score: 1 }, { label: '父母双方都有', score: 0 }] },
+  ],
+  bands: [
+    { min: 80, label: '头发状态在线', tone: 'green', copy: '目前没有明显的脱发风险,作息与洗护都在线,继续保持。',
+      tips: ['保持规律作息与均衡的蛋白质摄入', '烫染一年不超过 2 次,给头发留出恢复期'] },
+    { min: 60, label: '大体稳定', tone: 'green', copy: '整体稳定,但有几个细节正在悄悄透支发量,趁早补上。',
+      tips: ['优先改进得分最低的维度,先睡眠后饮食', '洗头用温水、指腹按摩,减少拉扯和高温'] },
+    { min: 40, label: '需要关注', tone: 'amber', copy: '多个风险因素叠加,掉发量可能已经在悄悄增加。',
+      tips: ['先稳睡眠:固定入睡时间,连续熬夜是掉发的放大器', '每天保证蛋白质与适量主食,别用节食换体重'] },
+    { min: 0, label: '建议尽快就诊', tone: 'red', copy: '掉发信号比较明显,生活习惯之外可能还有其他原因,别硬扛。',
+      tips: ['建议到正规医院皮肤科面诊,先明确原因', '斑块状脱发或成撮脱落,越早处理越好', '不要轻信生发偏方与三无产品'] },
+  ],
+};
+
+/* ============ 7. 抗衰护肤测评 ============ */
+const SKIN: AssessmentDef = {
+  id: 'skin', name: '抗衰护肤测评', tagline: '科学护肤,延缓衰老', emoji: '✨', color: '#ffedd5',
+  dimLabels: { sun: '防晒', rest: '作息压力', care: '清洁保湿', habit: '生活习惯' },
+  dimAdvice: {
+    sun: ['把防晒霜放在玄关,出门前 15 分钟涂好', '阴天与冬天也要防,紫外线全年在线'],
+    rest: ['固定入睡时间,把睡前手机换成纸质书', '高压时段用运动泄压,比硬扛对皮肤友好'],
+    care: ['精简三步:温和清洁、保湿、防晒,先坚持四周', '带妆回家第一件事是卸妆,别等到睡前'],
+    habit: ['每周设一个无糖日,奶茶先换无糖茶', '戒烟或远离二手烟,是抗衰回报率最高的一步'],
+  },
+  questions: [
+    { dim: 'sun', title: '白天出门的防晒习惯?', options: [
+      { label: '全年做防晒(防晒霜或帽子伞)', score: 3 }, { label: '只在夏天或大太阳时防', score: 2 },
+      { label: '偶尔想起来才防', score: 1 }, { label: '几乎从不防晒', score: 0 }] },
+    { dim: 'sun', title: '长时间户外活动后会?', options: [
+      { label: '及时补涂并做晒后舒缓', score: 3 }, { label: '正常清洁休息', score: 2 },
+      { label: '偶尔补涂', score: 1 }, { label: '持续暴晒也不做防护', score: 0 }] },
+    { dim: 'rest', title: '平均每晚睡多久?', options: [
+      { label: '7 ~ 8 小时', score: 3 }, { label: '6 ~ 7 小时', score: 2 },
+      { label: '不足 6 小时', score: 1 }, { label: '昼夜颠倒', score: 0 }] },
+    { dim: 'rest', title: '最近一个月的压力与情绪?', options: [
+      { label: '轻松平稳', score: 3 }, { label: '偶尔烦躁', score: 2 },
+      { label: '长期紧绷', score: 1 }, { label: '焦虑到影响睡眠', score: 0 }] },
+    { dim: 'habit', title: '奶茶、甜饮料、甜点的频率?', options: [
+      { label: '几乎不碰', score: 3 }, { label: '每周 1 ~ 2 次', score: 2 },
+      { label: '每周 3 次以上', score: 1 }, { label: '几乎每天', score: 0 }] },
+    { dim: 'habit', title: '吸烟或长期处在二手烟环境?', options: [
+      { label: '都没有', score: 3 }, { label: '偶尔接触', score: 2 },
+      { label: '经常接触二手烟', score: 1 }, { label: '本人吸烟', score: 0 }] },
+    { dim: 'habit', title: '每周运动几次(每次 30 分钟以上)?', options: [
+      { label: '3 次以上', score: 3 }, { label: '1 ~ 2 次', score: 2 },
+      { label: '偶尔动一动', score: 1 }, { label: '几乎不运动', score: 0 }] },
+    { dim: 'care', title: '卸妆与洁面做得如何?', options: [
+      { label: '认真但不过度清洁', score: 3 }, { label: '简单洗一下', score: 2 },
+      { label: '频繁去角质或强力清洁', score: 1 }, { label: '经常带妆入睡', score: 0 }] },
+    { dim: 'care', title: '日常护肤怎么安排?', options: [
+      { label: '基础清洁加保湿坚持在做', score: 3 }, { label: '多种功效产品叠着用', score: 2 },
+      { label: '想起来才涂', score: 1 }, { label: '基本不护肤', score: 0 }] },
+    { dim: 'care', title: '所处环境与饮水情况?', options: [
+      { label: '注意保湿,每天喝水 1500ml 以上', score: 3 }, { label: '喝水看心情', score: 2 },
+      { label: '皮肤干了才补救', score: 1 }, { label: '长期干燥环境又很少喝水', score: 0 }] },
+  ],
+  bands: [
+    { min: 80, label: '抗衰基础扎实', tone: 'green', copy: '防晒、作息、护理都在线,衰老速度大概率被你放慢了。',
+      tips: ['防晒是一年四季的事,阴天紫外线也不弱', '保持精简护肤,功效型产品宁少勿多'] },
+    { min: 60, label: '方向对,细节拉分', tone: 'green', copy: '基础尚可,还有几个几乎白捡的加分项。',
+      tips: ['把防晒从夏天扩展到全年,是性价比最高的抗衰', '睡前少刷半小时手机,皮肤和睡眠都会回馈你'] },
+    { min: 40, label: '有习惯在拖后腿', tone: 'amber', copy: '有几个习惯正在加速皮肤老化,现在改还来得及。',
+      tips: ['先做减法:戒烟、减糖、别带妆入睡', '再做加法:每天保湿加防晒,坚持四周再评估'] },
+    { min: 0, label: '需要认真干预', tone: 'red', copy: '多个加速老化的因素叠加,皮肤问题可能已经显现。',
+      tips: ['从防晒和睡眠两件事开始,两周就能感到变化', '若出现持续红肿、色斑快速变化,及时到皮肤科就诊'] },
+  ],
+};
+
+/* ============ 8. 护眼测评(成人) ============ */
+const EYE: AssessmentDef = {
+  id: 'eye', name: '护眼测评(成人)', tagline: '眼睛很重要,却常被忽视', emoji: '👁', color: '#fef9c3',
+  dimLabels: { time: '用眼强度', rest: '休息护眼', env: '环境症状', life: '生活支持' },
+  dimAdvice: {
+    time: ['给屏幕时间设硬上限,工作 40 分钟必休息', '睡前刷手机改成听内容,黑暗中亮屏最伤眼'],
+    rest: ['把 20-20-20 设成循环提醒:每 20 分钟看 6 米外 20 秒', '休息时真的看远处,而不是换一块屏幕'],
+    env: ['屏幕亮度跟随环境光,别在黑暗里看屏', '干涩时主动多眨眼,明显时可用不含防腐剂的人工泪液'],
+    life: ['白天多出门走走,自然光对眼睛和节律都有好处', '深色蔬菜与蛋黄常吃,每年验光一次并建档'],
+  },
+  questions: [
+    { dim: 'time', title: '每天看屏幕(手机加电脑)的总时长?', options: [
+      { label: '4 小时以内', score: 3 }, { label: '4 ~ 6 小时', score: 2 },
+      { label: '6 ~ 8 小时', score: 1 }, { label: '8 小时以上', score: 0 }] },
+    { dim: 'time', title: '通常连续用眼多久休息一次?', options: [
+      { label: '每 30 ~ 40 分钟', score: 3 }, { label: '1 小时左右', score: 2 },
+      { label: '半天想起来才歇', score: 1 }, { label: '从不主动休息', score: 0 }] },
+    { dim: 'time', title: '睡前关灯后还玩手机吗?', options: [
+      { label: '从不', score: 3 }, { label: '偶尔', score: 2 },
+      { label: '经常', score: 1 }, { label: '每晚如此', score: 0 }] },
+    { dim: 'rest', title: '知道「20-20-20」法则吗(每 20 分钟看 6 米外 20 秒)?', options: [
+      { label: '知道,经常这样做', score: 3 }, { label: '知道,但做不到', score: 1 },
+      { label: '今天第一次听说', score: 0 }] },
+    { dim: 'rest', title: '工作学习间隙会?', options: [
+      { label: '远眺、闭目或做眼保健操', score: 3 }, { label: '起身走动,眼睛继续盯屏', score: 2 },
+      { label: '偶尔换个姿势', score: 1 }, { label: '一直盯着不动', score: 0 }] },
+    { dim: 'env', title: '用眼时的环境光线?', options: [
+      { label: '充足均匀,屏幕不反光', score: 3 }, { label: '时好时坏', score: 2 },
+      { label: '偏暗或屏幕反光刺眼', score: 1 }, { label: '经常关灯看屏幕', score: 0 }] },
+    { dim: 'env', title: '眼睛干涩、酸胀、视物模糊的频率?', options: [
+      { label: '几乎没有', score: 3 }, { label: '偶尔', score: 2 },
+      { label: '经常', score: 1 }, { label: '每天如此', score: 0 }] },
+    { dim: 'life', title: '每周白天在户外的累计时长?', options: [
+      { label: '7 小时以上', score: 3 }, { label: '3 ~ 7 小时', score: 2 },
+      { label: '1 ~ 3 小时', score: 1 }, { label: '几乎不出门', score: 0 }] },
+    { dim: 'life', title: '深色蔬菜(菠菜、胡萝卜、玉米)和蛋黄吃得多吗?', options: [
+      { label: '经常吃', score: 3 }, { label: '每周两三次', score: 2 },
+      { label: '偶尔吃', score: 1 }, { label: '几乎不吃', score: 0 }] },
+    { dim: 'life', title: '验光或眼科检查的频率?', options: [
+      { label: '每年定期检查', score: 3 }, { label: '感觉不对才去', score: 2 },
+      { label: '两三年没查过', score: 1 }, { label: '从没查过', score: 0 }] },
+  ],
+  bands: [
+    { min: 80, label: '用眼习惯优秀', tone: 'green', copy: '用眼节奏和休息习惯都在线,继续守护这扇窗。',
+      tips: ['保持 20-20-20 的节奏与白天户外时间', '每年一次验光,把视力变化记进档案'] },
+    { min: 60, label: '尚可,别透支', tone: 'green', copy: '大体可以,但屏幕时间和休息自觉性还差一点。',
+      tips: ['给手机设屏幕使用提醒,到点就远眺', '睡前刷手机换成听内容,眼睛和睡眠都受益'] },
+    { min: 40, label: '眼疲劳风险高', tone: 'amber', copy: '眼睛长期超负荷,干涩酸胀可能已经是信号。',
+      tips: ['把连续用眼切成 40 分钟一段,配一杯水的提醒', '干涩明显时用不含防腐剂的人工泪液,并多眨眼'] },
+    { min: 0, label: '建议做次检查', tone: 'red', copy: '用眼负担明显偏重,视力与视疲劳风险都在上升。',
+      tips: ['建议做一次全面眼科检查,排查屈光与干眼问题', '出现视力骤降、视野缺损、眼前闪光感,立即就医'] },
+  ],
+};
+
+/* ============ 9. 血糖管理测评 ============ */
+const SUGAR: AssessmentDef = {
+  id: 'blood-sugar', name: '血糖管理测评', tagline: '管理血糖,没那么难', emoji: '🩸', color: '#fae8ff',
+  dimLabels: { diet: '饮食结构', sport: '运动习惯', rest: '作息压力', risk: '风险因素' },
+  dimAdvice: {
+    diet: ['主食的三分之一换成杂豆、燕麦或糙米', '含糖饮料先减半,再过渡到无糖替代', '三餐规律,把夜宵挪到第二天早餐'],
+    sport: ['每周至少 150 分钟中等强度运动,快走就算数', '久坐设 45 分钟起身提醒,接水、爬楼梯都行'],
+    rest: ['睡够 7 小时,睡眠不足会直接影响血糖波动', '压力大时优先补睡眠,别用吃东西解压'],
+    risk: ['有家族史更要保持健康体重,每年查空腹血糖', '腰围超标先减 5%,身体的血糖负担会明显减轻', '空腹血糖曾偏高,建议复查并加做糖化血红蛋白'],
+  },
+  questions: [
+    { dim: 'diet', title: '主食怎么吃?', options: [
+      { label: '粗细搭配,顿顿适量', score: 3 }, { label: '以米饭面条为主,偶尔粗粮', score: 2 },
+      { label: '常常不吃主食', score: 1 }, { label: '顿顿精米白面还吃得多', score: 0 }] },
+    { dim: 'diet', title: '含糖饮料(奶茶、可乐、果汁)的频率?', options: [
+      { label: '几乎不喝', score: 3 }, { label: '每周 1 ~ 2 次', score: 2 },
+      { label: '每周 3 次以上', score: 1 }, { label: '几乎每天', score: 0 }] },
+    { dim: 'diet', title: '三餐规律吗?', options: [
+      { label: '规律三餐,七八分饱', score: 3 }, { label: '基本规律,偶尔吃多', score: 2 },
+      { label: '常跳过正餐吃零食', score: 1 }, { label: '常吃夜宵或深夜进食', score: 0 }] },
+    { dim: 'sport', title: '每周中等强度运动(快走、慢跑等)累计?', options: [
+      { label: '150 分钟以上', score: 3 }, { label: '75 ~ 150 分钟', score: 2 },
+      { label: '不足 75 分钟', score: 1 }, { label: '几乎不运动', score: 0 }] },
+    { dim: 'sport', title: '工作日连续久坐的时间?', options: [
+      { label: '3 小时以内', score: 3 }, { label: '3 ~ 6 小时', score: 2 },
+      { label: '6 ~ 8 小时', score: 1 }, { label: '8 小时以上', score: 0 }] },
+    { dim: 'rest', title: '每晚睡眠情况?', options: [
+      { label: '7 小时以上且规律', score: 3 }, { label: '6 ~ 7 小时', score: 2 },
+      { label: '不足 6 小时', score: 1 }, { label: '昼夜颠倒或质量很差', score: 0 }] },
+    { dim: 'rest', title: '长期压力和情绪状态?', options: [
+      { label: '平稳', score: 3 }, { label: '偶尔紧张', score: 2 },
+      { label: '长期紧绷', score: 1 }, { label: '已影响睡眠和饮食', score: 0 }] },
+    { dim: 'risk', title: '以下情况你有吗?(可多选)', multi: true, options: [
+      { label: '直系亲属有糖尿病', score: 0 },
+      { label: 'BMI 超过 24 或腰围超标(男 ≥90cm、女 ≥85cm)', score: 0 },
+      { label: '年龄超过 45 岁', score: 0 },
+      { label: '生过 4 公斤以上的巨大儿(女性)', score: 0 },
+      { label: '以上都没有', score: 3, exclusive: true }] },
+    { dim: 'risk', title: '最近一次体检的空腹血糖?', options: [
+      { label: '正常', score: 3 }, { label: '没测过或不记得', score: 2 },
+      { label: '在 6.1 ~ 7.0 之间', score: 0 }, { label: '达到或超过 7.0,或被告知血糖异常', score: 0 }] },
+    { dim: 'risk', title: '出现过这些情况吗(多饮多尿、不明原因消瘦、餐前心慌手抖)?', options: [
+      { label: '从来没有', score: 3 }, { label: '偶尔单项,很快缓解', score: 2 },
+      { label: '常有一两项反复出现', score: 1 }, { label: '多项同时且持续存在', score: 0 }] },
+  ],
+  bands: [
+    { min: 80, label: '防线稳固', tone: 'green', copy: '饮食、运动、作息都在正轨,血糖管理的主动权在你手里。',
+      tips: ['保持粗细搭配与餐后散步的习惯', '每年体检关注空腹血糖与糖化血红蛋白'] },
+    { min: 60, label: '大方向可以', tone: 'green', copy: '整体不错,把短板补上会更稳。',
+      tips: ['含糖饮料换成无糖茶或气泡水,是最容易的一步', '每周定一个运动闹钟,先动起来再加量'] },
+    { min: 40, label: '风险在累积', tone: 'amber', copy: '再不干预,这些习惯会慢慢抬高血糖风险。',
+      tips: ['主食减掉三分之一精米白面,换成杂豆燕麦', '久坐每 45 分钟起身活动 3 分钟', '建议近期做一次空腹血糖检测'] },
+    { min: 0, label: '建议尽快检查', tone: 'red', copy: '风险因素与信号偏多,需要认真对待。本测评只评估生活方式,不能替代血糖检测。',
+      tips: ['建议尽快到内分泌科或社区医院查空腹血糖与糖化血红蛋白', '若已确诊,请遵医嘱管理,本测评不能替代任何治疗', '出现明显多饮多尿、体重快速下降,立即就医'] },
+  ],
+};
+
+/* ============ 10. 血压管理测评 ============ */
+const PRESSURE: AssessmentDef = {
+  id: 'blood-pressure', name: '血压管理测评', tagline: '找对问题,管理更轻松', emoji: '🩺', color: '#dbeafe',
+  dimLabels: { salt: '饮食控盐', sport: '运动习惯', rest: '作息情绪', risk: '风险因素' },
+  dimAdvice: {
+    salt: ['买个限盐勺,全家每天盐控制在 5 克以内', '外卖与腌制品减半,汤底酱料别吃完', '补钾有助控压:每天蔬菜约一斤、水果半斤'],
+    sport: ['每天快走 30 分钟、每周 5 天,控压从脚开始', '体重减 5%,对血压是实打实的减负'],
+    rest: ['睡够且规律,打鼾严重建议排查睡眠呼吸暂停', '情绪上头时先深呼吸 10 次再说话,给血压一点缓冲'],
+    risk: ['家里备一台电子血压计,早晚各测一次并记录', '吸烟饮酒减到最少,需要时寻求戒烟门诊帮助', '测出偏高别拖,尽早让医生评估'],
+  },
+  questions: [
+    { dim: 'salt', title: '你的口味?', options: [
+      { label: '清淡,少盐少酱', score: 3 }, { label: '一般', score: 2 },
+      { label: '偏咸', score: 1 }, { label: '重口,无咸不欢', score: 0 }] },
+    { dim: 'salt', title: '外卖、加工食品(香肠火腿、咸菜酱料)的频率?', options: [
+      { label: '每周 2 次以内', score: 3 }, { label: '每周 3 ~ 5 次', score: 2 },
+      { label: '每周 6 次以上', score: 1 }, { label: '几乎每天', score: 0 }] },
+    { dim: 'salt', title: '新鲜蔬菜水果每天吃够吗?(蔬菜约一斤、水果半斤)', options: [
+      { label: '基本达标', score: 3 }, { label: '只吃其中一样', score: 2 },
+      { label: '常常没有', score: 1 }, { label: '几乎不吃', score: 0 }] },
+    { dim: 'sport', title: '每周运动情况?', options: [
+      { label: '5 次以上,每次 30 分钟', score: 3 }, { label: '每周 3 ~ 4 次', score: 2 },
+      { label: '每周 1 ~ 2 次', score: 1 }, { label: '几乎不动', score: 0 }] },
+    { dim: 'sport', title: '体重与腰围?', options: [
+      { label: '都在正常范围', score: 3 }, { label: '不清楚', score: 2 },
+      { label: '有一项超标', score: 1 }, { label: '都超标', score: 0 }] },
+    { dim: 'rest', title: '每晚睡眠情况?', options: [
+      { label: '7 小时以上且规律', score: 3 }, { label: '6 ~ 7 小时', score: 2 },
+      { label: '不足 6 小时', score: 1 }, { label: '昼夜颠倒或常失眠', score: 0 }] },
+    { dim: 'rest', title: '情绪状态?', options: [
+      { label: '平稳', score: 3 }, { label: '偶尔急躁', score: 2 },
+      { label: '常焦虑易怒', score: 1 }, { label: '长期高压', score: 0 }] },
+    { dim: 'risk', title: '以下情况你有吗?(可多选)', multi: true, options: [
+      { label: '吸烟', score: 0 },
+      { label: '每周饮酒 3 次以上', score: 0 },
+      { label: '直系亲属有高血压', score: 0 },
+      { label: '打鼾严重或白天嗜睡', score: 0 },
+      { label: '以上都没有', score: 3, exclusive: true }] },
+    { dim: 'risk', title: '最近半年测过血压吗?', options: [
+      { label: '定期自测且正常', score: 3 }, { label: '体检时测过,正常', score: 2 },
+      { label: '半年内没测过', score: 2 }, { label: '测过偏高,没重视', score: 0 }] },
+    { dim: 'risk', title: '出现过头晕、头痛、心悸这类情况吗?', options: [
+      { label: '很少', score: 3 }, { label: '偶尔,休息就好', score: 2 },
+      { label: '时常出现', score: 1 }, { label: '频繁且影响生活', score: 0 }] },
+  ],
+  bands: [
+    { min: 80, label: '基础扎实', tone: 'green', copy: '控盐、运动、作息都在线,血压大概率被你稳稳管住。',
+      tips: ['保持限盐节奏,外卖汤底别喝完', '家里备一台电子血压计,定期自测'] },
+    { min: 60, label: '基础尚可', tone: 'green', copy: '大方向没问题,把短板补上更稳。',
+      tips: ['下厨用限盐勺,酱油蚝油减半试试', '每天快走 30 分钟,是性价比最高的控压运动之一'] },
+    { min: 40, label: '该认真干预了', tone: 'amber', copy: '多个危险因素叠加,血压风险正在抬头。本测评只评估生活方式,不能替代血压测量。',
+      tips: ['先把盐降下来:少外卖、少酱料、少吃腌制品', '戒烟限酒对血压的影响立竿见影', '建议近期测一次血压并记录'] },
+    { min: 0, label: '建议尽快测量', tone: 'red', copy: '危险因素与不适信号偏多,别再拖了。',
+      tips: ['尽快到社区医院或内科测血压,必要时做动态血压监测', '若收缩压 ≥140 或舒张压 ≥90,应就医评估并遵医嘱', '已确诊高血压者请规律服药,本测评不能替代治疗'] },
+  ],
+};
+
+export const ASSESSMENTS: AssessmentDef[] = [LIFESTYLE, SLEEP, DIET, STRESS, EXERCISE, HAIR, SKIN, EYE, SUGAR, PRESSURE];
 
 /** 预计用时文案 */
 export function estimateMinutes(q: AssessQuestion[]): string {
-  return `${Math.max(1, Math.round(q.length / 5))} ~ ${Math.max(2, Math.round(q.length / 4))} 分钟`;
+  return `${Math.max(1, Math.round(q.length / 3))} ~ ${Math.max(2, Math.round(q.length / 2))} 分钟`;
 }

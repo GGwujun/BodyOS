@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '生活方式测评',
+  navigationBarTitleText: '健康测评',
 });

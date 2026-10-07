@@ -14,7 +14,7 @@ const readLast = (id: string): LastResult | null => {
 };
 
 /**
- * 测评中心 — 5 套生活方式测评:列表 → 答题(支持多选) → 结果
+ * 测评中心 — 健康测评:列表 → 答题(支持多选) → 结果
  */
 export default function Assessment() {
   const [phase, setPhase] = useState<'list' | 'quiz' | 'result'>('list');
@@ -74,7 +74,7 @@ export default function Assessment() {
       <View className="card intro-card">
         <Text className="intro-emoji">🧭</Text>
         <Text className="intro-title">测评中心</Text>
-        <Text className="intro-copy">5 套生活方式测评,凭最近的真实状态作答,即时出结果。结果按固定规则计算,仅供参考。</Text>
+        <Text className="intro-copy">{ASSESSMENTS.length} 套健康测评,凭最近的真实状态作答,即时出结果。结果按固定规则计算,仅供参考,血糖/血压类测评不能替代测量与诊疗。</Text>
       </View>
     )}
 
