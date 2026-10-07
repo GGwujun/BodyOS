@@ -51,7 +51,11 @@
   .pill--red { color: $color-danger; background: $color-danger-bg; }
 
   .advice { display: flex; flex-direction: column; gap: 6px; }
+  .advice-dim { font-size: 12px; font-weight: 700; color: $color-primary-dark; }
   .advice-item { font-size: 12px; color: $color-text-secondary; line-height: 1.6; }
+
+  .guide-lead { font-size: 13px; font-weight: 700; color: $color-text-primary; }
+  .guide-note { display: block; margin-top: 7px; font-size: 12px; color: $color-text-secondary; line-height: 1.75; }
 
   .tip-card {
     margin-top: 16px; padding: 14px;

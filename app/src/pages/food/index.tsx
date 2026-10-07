@@ -9,6 +9,7 @@ import { track } from '@/services/analytics';
 import type { FoodItem, FoodLog, FrequentFood } from '@/services/types';
 import { confirmDelete, toast } from '@/utils/ui';
 import { todayStr } from '@/utils/date';
+import { fileToBase64 } from '@/utils/file';
 import { Photograph, BulbOutlined } from '@taroify/icons';
 import './index.scss';
 
@@ -233,6 +234,7 @@ export default function Food() {
       {mode === 'library' && <View className="card">
         <Text className="fs-h1">食物库</Text>
         <Text className="fs-mini text-secondary">180+ 种常见食物,热量按常见份量估算,一键加入本餐。</Text>
+        <Text className="lib-tool-link" onClick={() => Taro.navigateTo({ url: '/pages/food-tools/index' })}>小工具:食物对比 · 估重参考 · 红黑榜 ›</Text>
         <Input className="lib-search" placeholder="搜索食物名称,如:鸡胸肉" value={libKw} onInput={(e) => setLibKw(e.detail.value)} />
         <View className="lib-chips">
           {FOOD_CATEGORIES.map((c) => <Text key={c} className={`lib-chip${libCat === c ? ' active' : ''}`} onClick={() => setLibCat(c)}>{c}</Text>)}
@@ -379,13 +381,4 @@ export default function Food() {
 function mealLabel(meal: string): string {
   const m: Record<string, string> = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' };
   return m[meal] ?? meal;
-}
-
-async function fileToBase64(filePath: string): Promise<string> {
-  const fs = Taro.getFileSystemManager();
-  const base64 = fs.readFileSync(filePath, 'base64');
-  // 按扩展名推断 mime,避免 png 被标成 jpeg
-  const ext = filePath.split('.').pop()?.toLowerCase() ?? '';
-  const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
-  return `data:${mime};base64,${base64}`;
 }

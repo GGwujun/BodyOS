@@ -81,10 +81,15 @@ export default function Recipes() {
           </View>
 
           <View className="nutri-card">
-            <Text className="nutri-title">营养估算(整餐)</Text>
-            <MacroBar label="蛋白质" grams={detail.proteinG} color="#0284c7" />
-            <MacroBar label="碳水" grams={detail.carbG} color="#d97706" />
-            <MacroBar label="脂肪" grams={detail.fatG} color="#e11d48" />
+            <Text className="nutri-title">营养估算与供能比(整餐)</Text>
+            <View className="nutri-main">
+              <Donut protein={detail.proteinG} carb={detail.carbG} fat={detail.fatG} kcal={detail.calories} />
+              <View className="nutri-legend">
+                <LegendRow label="碳水" color="#d97706" grams={detail.carbG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'carb')} />
+                <LegendRow label="蛋白质" color="#0284c7" grams={detail.proteinG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'protein')} />
+                <LegendRow label="脂肪" color="#e11d48" grams={detail.fatG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'fat')} />
+              </View>
+            </View>
           </View>
 
           <View className="nutri-card">
@@ -94,6 +99,12 @@ export default function Recipes() {
           <View className="nutri-card">
             <Text className="nutri-title">做法</Text>
             {detail.steps.map((s, i) => <Text key={i} className="nutri-line">{i + 1}. {s}</Text>)}
+          </View>
+
+          <View className="nutri-card qa-card">
+            <Text className="nutri-title">营养问答</Text>
+            <Text className="qa-q">Q: {detail.qa.q}</Text>
+            <Text className="qa-a">{detail.qa.a}</Text>
           </View>
 
           <Text className="meal-pick-label">记入餐次</Text>
@@ -109,12 +120,31 @@ export default function Recipes() {
   </Screen>;
 }
 
-function MacroBar({ label, grams, color }: { label: string; grams: number; color: string }) {
-  const pct = Math.min(100, Math.round((grams / 70) * 100));
-  return <View className="macro-bar">
-    <Text className="macro-bar__label">{label}</Text>
-    <View className="macro-bar__track"><View className="macro-bar__fill" style={{ width: `${pct}%`, background: color }} /></View>
-    <Text className="macro-bar__value">{grams}g</Text>
+function energyShare(protein: number, carb: number, fat: number, kind: 'protein' | 'carb' | 'fat'): number {
+  const p = protein * 4, c = carb * 4, f = fat * 9;
+  const total = Math.max(1, p + c + f);
+  const v = kind === 'protein' ? p : kind === 'carb' ? c : f;
+  return Math.round((v / total) * 100);
+}
+
+/** 供能比环形图:碳水/蛋白/脂肪三段,中心为总千卡 */
+function Donut({ protein, carb, fat, kcal }: { protein: number; carb: number; fat: number; kcal: number }) {
+  const cPct = energyShare(protein, carb, fat, 'carb');
+  const proteinEnd = cPct + energyShare(protein, carb, fat, 'protein');
+  const bg = `conic-gradient(#d97706 0% ${cPct}%, #0284c7 ${cPct}% ${proteinEnd}%, #e11d48 ${proteinEnd}% 100%)`;
+  return <View className="donut" style={{ background: bg }}>
+    <View className="donut__inner">
+      <Text className="donut__kcal">{kcal}</Text>
+      <Text className="donut__unit">千卡</Text>
+    </View>
+  </View>;
+}
+
+function LegendRow({ label, color, grams, pct }: { label: string; color: string; grams: number; pct: number }) {
+  return <View className="legend-row">
+    <View className="legend-dot" style={{ background: color }} />
+    <Text className="legend-label">{label}</Text>
+    <Text className="legend-pct">{pct}% · {grams}g</Text>
   </View>;
 }
 

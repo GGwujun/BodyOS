@@ -64,6 +64,30 @@
   .nutri-title { font-size: 13px; font-weight: 700; color: $color-text-primary; }
   .nutri-line { font-size: 12px; color: $color-text-secondary; line-height: 1.7; }
 
+  /* 供能比环形图 + 图例 */
+  .nutri-main { display: flex; align-items: center; gap: 18px; }
+  .donut {
+    width: 108px; height: 108px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .donut__inner {
+    width: 78px; height: 78px; border-radius: 50%; background: #fff;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .donut__kcal { font-size: 21px; font-weight: 700; line-height: 24px; color: $color-text-primary; }
+  .donut__unit { font-size: 10px; color: $color-text-tertiary; }
+  .nutri-legend { flex: 1; display: flex; flex-direction: column; gap: 9px; }
+  .legend-row { display: flex; align-items: center; gap: 7px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+  .legend-label { font-size: 12px; color: $color-text-primary; }
+  .legend-pct { margin-left: auto; font-size: 12px; color: $color-text-secondary; }
+
+  /* 营养问答 */
+  .qa-card { background: rgba(16, 185, 129, .06); }
+  .qa-q { font-size: 13px; font-weight: 700; color: $color-primary-dark; line-height: 1.6; }
+  .qa-a { font-size: 12px; color: $color-text-secondary; line-height: 1.75; }
+
   .macro-bar { display: flex; align-items: center; gap: 8px; }
   .macro-bar__label { width: 52px; font-size: 11px; color: $color-text-secondary; flex-shrink: 0; }
   .macro-bar__track { flex: 1; height: 6px; border-radius: $radius-pill; background: #e6ebf1; overflow: hidden; }

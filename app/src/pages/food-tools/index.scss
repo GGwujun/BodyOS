@@ -1,0 +1,92 @@
+@import '../../styles/variables.scss';
+
+/* ============ 食物小工具 ============ */
+.ft-page {
+  background: $color-bg;
+  gap: 12px;
+
+  .seg {
+    display: flex; padding: 3px;
+    background: $color-bg-card; border: 1px solid $color-border;
+    border-radius: $radius-md; box-shadow: $shadow-card;
+  }
+  .seg text {
+    flex: 1; text-align: center; padding: 7px 0;
+    font-size: 13px; color: $color-text-secondary;
+    border-radius: 9px;
+  }
+  .seg .active { background: $color-primary; color: #fff; font-weight: $fw-bold; }
+
+  /* 对比 */
+  .cmp-pickers { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; }
+  .picker-box { flex: 1; position: relative; display: flex; flex-direction: column; gap: 6px; }
+  .picker-label { font-size: 11px; color: $color-text-tertiary; }
+  .picker-input {
+    padding: 9px 12px; background: $color-bg-soft;
+    border-radius: $radius-md; font-size: 13px;
+  }
+  .picker-chosen {
+    padding: 9px 12px; background: $color-primary-bg;
+    border: 1px solid #b5ecd6; border-radius: $radius-md;
+    font-size: 13px; color: $color-primary-dark; font-weight: $fw-bold;
+  }
+  .picker-hits {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 30;
+    background: #fff; border: 1px solid $color-border;
+    border-radius: $radius-md; box-shadow: 0 6px 18px rgba(15, 23, 42, .12);
+    overflow: hidden;
+  }
+  .picker-hit {
+    display: block; padding: 9px 12px;
+    font-size: 12px; color: $color-text-primary;
+    border-bottom: 1px solid $color-divider;
+  }
+  .picker-hit:last-child { border-bottom: 0; }
+  .cmp-vs { align-self: center; font-size: 12px; font-weight: 700; color: $color-text-tertiary; padding-top: 14px; }
+
+  .cmp-result { margin-top: 22px; display: flex; flex-direction: column; gap: 2px; }
+  .cmp-head { display: flex; justify-content: space-between; padding-bottom: 8px; }
+  .cmp-name { font-size: 14px; font-weight: 700; color: $color-text-primary; }
+  .cmp-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 0; border-bottom: 1px solid $color-divider;
+  }
+  .cmp-row:last-of-type { border-bottom: 0; }
+  .cmp-cell { flex: 1; font-size: 13px; color: $color-text-primary; }
+  .cmp-cell:first-child { text-align: left; }
+  .cmp-cell:last-child { text-align: right; }
+  .cmp-win {
+    margin-left: 5px; font-size: 10px; color: $color-success;
+    background: rgba(16, 185, 129, .12); border-radius: $radius-pill; padding: 2px 7px;
+  }
+  .cmp-label { width: 64px; text-align: center; font-size: 11px; color: $color-text-tertiary; flex-shrink: 0; }
+  .cmp-note {
+    margin-top: 10px; padding: 10px 12px; border-radius: $radius-md;
+    background: $color-bg-soft; font-size: 12px; color: $color-text-secondary; line-height: 1.7;
+  }
+
+  /* 估重参考 */
+  .est-sec { display: block; color: $color-primary-dark; }
+  .ref-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 0; border-bottom: 1px solid $color-divider;
+  }
+  .ref-row:last-child { border-bottom: 0; }
+  .ref-icon { font-size: 22px; width: 36px; text-align: center; flex-shrink: 0; }
+  .ref-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .ref-name { font-size: 13px; font-weight: 700; color: $color-text-primary; }
+  .ref-desc { font-size: 11px; color: $color-text-secondary; line-height: 1.6; }
+
+  /* 红黑榜 */
+  .gr-sec {
+    margin-top: 12px; padding: 13px 14px;
+    border-radius: $radius-md; display: flex; flex-direction: column; gap: 4px;
+  }
+  .gr-sec--green { background: rgba(16, 185, 129, .07); }
+  .gr-sec--red { background: rgba(239, 68, 68, .06); }
+  .gr-title { font-size: 13px; font-weight: 700; color: $color-text-primary; margin-bottom: 4px; }
+  .gr-row { padding: 6px 0; border-bottom: 1px dashed rgba(15, 23, 42, .08); }
+  .gr-row:last-child { border-bottom: 0; }
+  .gr-name { display: block; font-size: 13px; font-weight: 600; color: $color-text-primary; }
+  .gr-note { display: block; margin-top: 2px; font-size: 11px; color: $color-text-secondary; line-height: 1.6; }
+}

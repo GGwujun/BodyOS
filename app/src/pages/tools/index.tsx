@@ -93,10 +93,25 @@ export default function Tools() {
           <View className="result-main"><Text className="result-value">{bmi.toFixed(1)}</Text><Text className={`pill pill--${bmiLevel.tone}`}>{bmiLevel.label}</Text></View>
           <Text className="fs-mini text-secondary">中国成人标准:偏瘦 &lt; 18.5,正常 18.5 ~ 23.9,超重 24 ~ 27.9,肥胖 ≥ 28</Text>
           <View className="advice">
-            {bmiLevel.advice.map((s, i) => <Text key={i} className="advice-item">· {s}</Text>)}
+            <Text className="advice-dim">饮食建议</Text>
+            {bmiLevel.diet.map((s, i) => <Text key={i} className="advice-item">· {s}</Text>)}
+            <Text className="advice-dim mt-2">运动建议</Text>
+            {bmiLevel.exercise.map((s, i) => <Text key={i} className="advice-item">· {s}</Text>)}
           </View>
         </View>
       )}
+      <View className="tip-card">
+        <Text className="fs-h2">计算规则与举例</Text>
+        <Text className="tip-copy">公式:BMI = 体重(kg) ÷ 身高(m)²,标准范围 18.5 ~ 23.9。</Text>
+        <Text className="tip-copy">举例:体重 70kg、身高 1.75m 的人,BMI = 70 ÷ (1.75 × 1.75) ≈ 22.9,属于正常范围。</Text>
+      </View>
+      <View className="tip-card">
+        <Text className="fs-h2">不同 BMI 的饮食与运动建议</Text>
+        <Text className="guide-note"><Text className="guide-lead">偏瘦(BMI &lt; 18.5)</Text>多吃优质蛋白(鸡胸、鱼虾、蛋奶),主食适当加量,蔬果补足维生素,两餐之间加一餐坚果或酸奶;每周 2~3 次力量练习,帮身体长肌肉而不是只长脂肪。</Text>
+        <Text className="guide-note"><Text className="guide-lead">正常(18.5 ~ 23.9)</Text>三餐规律、粗细搭配,每餐蔬菜占一半;每周 150 分钟中等强度运动维持代谢,保持体重长期稳定在正常区间。</Text>
+        <Text className="guide-note"><Text className="guide-lead">超重(24 ~ 27.9)</Text>先减含糖饮料和夜宵,主食减三分之一换成杂粮,每餐先吃蔬菜和蛋白质再吃主食;每周 150 分钟以上有氧运动,配合 2 次力量练习,每天少摄入 300~500 千卡。</Text>
+        <Text className="guide-note"><Text className="guide-lead">肥胖(BMI ≥ 28)</Text>建议咨询医生或营养科制定减重方案;从快走、游泳等护关节运动开始,逐步达到每天 6000~8000 步;每周减重 0.5~1kg 是安全节奏,坚持记录饮食与体重变化。</Text>
+      </View>
       <View className="tip-card">
         <Text className="fs-h2">什么是 BMI?</Text>
         <Text className="tip-copy">BMI(身体质量指数)= 体重(kg) ÷ 身高(m)²,是快速筛查体重是否健康的通用指标。它不能区分肌肉和脂肪,经常健身或老年人建议结合体脂率、腰围一起看。</Text>
@@ -126,6 +141,18 @@ export default function Tools() {
         <Text className="fs-h2">关于体脂率</Text>
         <Text className="tip-copy">体脂率是脂肪重量占体重的百分比,比单看体重更能反映身材变化。家用体脂秤误差较大,本工具按通用公式估算,趋势比绝对值更有参考意义。</Text>
       </View>
+      <View className="tip-card">
+        <Text className="fs-h2">科学管理体脂指南</Text>
+        <Text className="guide-lead">饮食管理</Text>
+        <Text className="guide-note">1. 控制总热量:减少精制碳水(白米面、甜食)和饱和脂肪(油炸食品),每天保持 300~500 千卡的热量缺口,减脂速度每周 0.5~1kg 为宜;</Text>
+        <Text className="guide-note">2. 均衡营养:"211 饮食法"——每餐 2 份蔬菜、1 份优质蛋白(手掌大小的鱼禽肉蛋豆)、1 份低升糖主食(杂粮饭、燕麦、薯类);</Text>
+        <Text className="guide-note">3. 减少隐形糖分:含糖饮料、风味酸奶、酱料里糖不少,看配料表选"0 糖"或低糖版本;</Text>
+        <Text className="guide-note">4. 足量蛋白:减脂期每公斤体重摄入 1.2~1.6g 蛋白质,保住肌肉才不容易反弹。</Text>
+        <Text className="guide-lead mt-2">运动管理</Text>
+        <Text className="guide-note">1. 有氧打底:每周 3~5 次、每次 30~45 分钟快走、慢跑、骑行或游泳;</Text>
+        <Text className="guide-note">2. 力量加持:每周 2~3 次抗阻训练(深蹲、俯卧撑、器械),肌肉多一公斤,每天多消耗几十千卡;</Text>
+        <Text className="guide-note">3. 日常活动:多走楼梯、少坐电梯,通勤提前一站下车,这些"零碎消耗"一个月累积可观。</Text>
+      </View>
     </View>}
 
     <Text className="tools-foot">以上结果均为公式估算,仅供参考,不能替代医学诊断。</Text>
@@ -133,10 +160,10 @@ export default function Tools() {
 }
 
 const BMI_LEVELS = [
-  { label: '偏瘦', tone: 'blue', advice: ['主食粗细搭配,适当加量,保证三餐规律', '每周 2~3 次力量练习,帮助增加体重与肌肉', '加餐可选牛奶、鸡蛋、坚果等高营养密度食物'] },
-  { label: '正常', tone: 'green', advice: ['保持当前饮食结构,蔬果蛋白质均衡摄入', '每周 150 分钟中等强度运动,维持代谢活力', '规律作息,保持体重长期稳定在正常区间'] },
-  { label: '超重', tone: 'amber', advice: ['控制精制主食与含糖饮料,增加蔬菜与优质蛋白', '每周 150 分钟以上有氧运动,配合力量练习', '每天减少 300~500 千卡摄入,循序渐进'] },
-  { label: '肥胖', tone: 'red', advice: ['建议咨询医生或营养师制定减重计划', '从快走、游泳等低冲击运动开始,保护关节', '记录饮食与体重变化,每周减重 0.5~1kg 为宜'] },
+  { label: '偏瘦', tone: 'blue', diet: ['主食粗细搭配、适当加量,保证三餐规律', '每餐都有优质蛋白:鱼禽肉蛋奶豆', '两餐之间加餐:坚果、酸奶、水果'], exercise: ['每周 2~3 次力量练习,增加肌肉量', '有氧适量即可,避免消耗过大'] },
+  { label: '正常', tone: 'green', diet: ['保持当前结构:蔬果占一半、蛋白一掌、主食一拳', '少喝含糖饮料,烹调少油少盐'], exercise: ['每周 150 分钟中等强度运动', '每周 2 次力量练习维持肌肉量', '规律作息,保持体重长期稳定'] },
+  { label: '超重', tone: 'amber', diet: ['先戒含糖饮料与夜宵,效果最直接', '主食减三分之一,换成杂粮或薯类', '每餐先吃蔬菜和蛋白质,最后吃主食'], exercise: ['每周 150 分钟以上有氧:快走、慢跑、骑行', '每周 2 次力量练习,保肌肉减脂肪', '每天少摄入 300~500 千卡,循序渐进'] },
+  { label: '肥胖', tone: 'red', diet: ['建议咨询医生或营养科制定个性化方案', '记录每一餐,看清热量从哪里来'], exercise: ['从快走、游泳等低冲击运动开始,保护关节', '逐步达到每天 6000~8000 步', '每周减重 0.5~1kg 是安全节奏'] },
 ];
 const BFR_ADVICE = {
   low: ['适当增加健康脂肪与蛋白质摄入,如坚果、鱼类', '加入抗阻训练,提升肌肉量而不是只增脂肪'],

@@ -1,0 +1,66 @@
+@import '../../styles/variables.scss';
+
+/* ============ 食物排行 · 查奶茶 ============ */
+.rank-page {
+  background: $color-bg;
+  gap: 12px;
+
+  .chips { display: flex; gap: 6px; }
+  .chip {
+    flex: 1; text-align: center; padding: 7px 0;
+    border-radius: $radius-pill; font-size: 12px;
+    color: $color-text-secondary; background: $color-bg-card;
+    border: 1px solid $color-border;
+  }
+  .chip.active {
+    background: $color-primary-bg; color: $color-primary-dark;
+    border-color: #b5ecd6; font-weight: $fw-bold;
+  }
+  .rank-hint { display: block; }
+
+  .rank-row {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 0; border-bottom: 1px solid $color-divider;
+  }
+  .rank-row:last-child { border-bottom: 0; }
+  .rank-no {
+    width: 22px; height: 22px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .rank-no--red { background: #ffe4e9; color: #be123c; }
+  .rank-no--green { background: rgba(16, 185, 129, .12); color: $color-success; }
+  .rank-no--blue { background: #e0f2fe; color: #0369a1; }
+  .rank-copy { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .rank-name { font-size: 14px; font-weight: 600; color: $color-text-primary; }
+  .rank-bar { height: 5px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
+  .rank-fill { height: 100%; border-radius: $radius-pill; }
+  .rank-fill--red { background: linear-gradient(90deg, #fb7185, #e11d48); }
+  .rank-fill--green { background: $color-primary-gradient; }
+  .rank-fill--blue { background: linear-gradient(90deg, #38bdf8, #0ea5e9); }
+  .rank-desc { font-size: 11px; color: $color-text-tertiary; }
+  .rank-value { font-size: 13px; font-weight: 700; color: $color-text-primary; flex-shrink: 0; }
+
+  /* 查奶茶 */
+  .tea-legend {
+    display: flex; margin-top: 12px; padding: 0 0 6px;
+    border-bottom: 1px solid $color-divider;
+    font-size: 11px; color: $color-text-tertiary;
+  }
+  .tea-legend text { flex: 1; text-align: center; }
+  .tea-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 0; border-bottom: 1px solid $color-divider;
+  }
+  .tea-row:last-of-type { border-bottom: 0; }
+  .tea-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .tea-name { font-size: 13px; font-weight: 600; color: $color-text-primary; }
+  .tea-note { font-size: 11px; color: $color-text-tertiary; line-height: 1.5; }
+  .tea-levels { display: flex; width: 168px; flex-shrink: 0; }
+  .tea-lv { flex: 1; text-align: center; font-size: 12px; font-weight: 600; }
+  .lv-0 { color: #be123c; }
+  .lv-1 { color: #c2410c; }
+  .lv-2 { color: #b45309; }
+  .lv-3 { color: $color-success; }
+  .tea-foot { display: block; margin-top: 10px; line-height: 1.6; }
+}

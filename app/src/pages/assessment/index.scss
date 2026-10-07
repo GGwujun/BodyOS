@@ -5,20 +5,33 @@
   background: $color-bg;
   gap: 12px;
 
-  /* 开场 */
+  /* 开场横幅 */
   .intro-card {
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-    padding: 34px 22px 26px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 26px 22px 22px; text-align: center;
   }
-  .intro-emoji { font-size: 42px; line-height: 1; }
-  .intro-title { font-size: 21px; font-weight: 700; color: $color-text-primary; }
-  .intro-copy { font-size: 13px; color: $color-text-secondary; line-height: 1.8; }
-  .intro-meta { display: flex; gap: 8px; }
-  .intro-meta text {
-    font-size: 11px; color: $color-text-tertiary;
-    background: $color-fill; border-radius: $radius-pill; padding: 4px 12px;
+  .intro-emoji { font-size: 36px; line-height: 1; }
+  .intro-title { font-size: 20px; font-weight: 700; color: $color-text-primary; }
+  .intro-copy { font-size: 12px; color: $color-text-secondary; line-height: 1.8; }
+
+  /* 测评列表行 */
+  .as-row {
+    display: flex; align-items: center; gap: 13px;
+    padding: 15px 16px;
   }
-  .intro-last { font-size: 11px; color: $color-primary-dark; background: $color-primary-bg; border-radius: $radius-pill; padding: 4px 12px; }
+  .as-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .as-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .as-name { font-size: 15px; font-weight: 700; color: $color-text-primary; }
+  .as-tag { font-size: 12px; color: $color-text-secondary; }
+  .as-meta { font-size: 11px; color: $color-text-tertiary; }
+  .as-side { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+  .as-score { font-size: 11px; color: $color-primary-dark; background: $color-primary-bg; border-radius: $radius-pill; padding: 3px 9px; }
+  .as-score--empty { color: $color-text-tertiary; background: $color-fill; }
+  .as-go { font-size: 12px; color: #ea580c; font-weight: 600; }
 
   /* 答题 */
   .quiz-card { display: flex; flex-direction: column; gap: 14px; padding-bottom: 18px; }
@@ -61,6 +74,7 @@
 
   /* 结果 */
   .result-page { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 26px 20px 20px; }
+  .result-name { font-size: 15px; font-weight: 700; color: $color-text-secondary; }
   .score-ring {
     --score: 0deg;
     width: 128px; height: 128px; padding: 9px; border-radius: 50%;

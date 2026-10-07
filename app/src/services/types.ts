@@ -189,6 +189,12 @@ export interface WaterStatus {
   goalMl: number;
 }
 
+/** 配料表解析结果 */
+export interface IngredientScanResult {
+  ingredients: string[];
+  notes: { level: 'info' | 'warn'; text: string }[];
+}
+
 /* ============ 常用食物库 ============ */
 /** 近 30 天高频食物(按记录次数聚合,均值营养) */
 export interface FrequentFood {

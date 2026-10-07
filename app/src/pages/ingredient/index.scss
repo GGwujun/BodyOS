@@ -1,0 +1,130 @@
+.ing-page {
+  .intro-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 16px;
+    text-align: center;
+  }
+
+  .intro-emoji {
+    font-size: 44px;
+    line-height: 1;
+  }
+
+  .intro-actions {
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .tip-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 26rpx;
+    font-weight: 600;
+    color: #b45309;
+  }
+
+  .ing-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ing-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1rpx solid #f1f5f9;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .ing-no {
+    flex-shrink: 0;
+    width: 40rpx;
+    height: 40rpx;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 22rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    &.is-top {
+      background: #fef3c7;
+      color: #b45309;
+      font-weight: 600;
+    }
+  }
+
+  .ing-name {
+    flex: 1;
+    font-size: 26rpx;
+    color: #1e293b;
+    word-break: break-all;
+  }
+
+  .ing-flag {
+    flex-shrink: 0;
+    font-size: 20rpx;
+    color: #b45309;
+    background: #fef3c7;
+    border-radius: 8rpx;
+    padding: 2rpx 10rpx;
+  }
+
+  .note-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12rpx 16rpx;
+    border-radius: 12rpx;
+    margin-top: 12rpx;
+
+    &--warn {
+      background: rgba(217, 119, 6, 0.08);
+
+      .note-dot { background: #ea580c; }
+      .note-text { color: #9a3412; }
+    }
+
+    &--info {
+      background: rgba(2, 132, 199, 0.06);
+
+      .note-dot { background: #0284c7; }
+      .note-text { color: #0c4a6e; }
+    }
+  }
+
+  .note-dot {
+    flex-shrink: 0;
+    width: 32rpx;
+    height: 32rpx;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 22rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .note-text {
+    flex: 1;
+    font-size: 24rpx;
+    line-height: 1.6;
+  }
+
+  .disclaimer {
+    display: block;
+    text-align: center;
+    margin-top: 4px;
+  }
+}

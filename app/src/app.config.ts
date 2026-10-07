@@ -13,7 +13,12 @@ export default defineAppConfig({
     'pages/onboarding/index',
     'pages/tools/index',
     'pages/recipes/index',
-    'pages/assessment/index'
+    'pages/assessment/index',
+    'pages/food-tools/index',
+    'pages/food-rank/index',
+    'pages/ingredient/index',
+    'pages/qa/index',
+    'pages/toolbox/index'
   ],
   window: {
     backgroundTextStyle: 'dark',

@@ -7,6 +7,7 @@ import { toDate, todayStr, toDateStr, addDays, isValidDateStr } from '../lib/dat
 import { recomputeDaily } from '../engine';
 import { parseActivity, dailyAnalysis, weeklyAnalysis } from '../ai/prompts';
 import { recognizeAndCalculate } from '../ai/foodRecognition';
+import { scanIngredients } from '../ai/ingredientScan';
 import { buildCoachContext, ChatInputSchema } from '../ai/coachContext';
 import { completeCoachTurn } from '../ai/coachTurn';
 import { wrap } from '../lib/asyncHandler';
@@ -32,6 +33,22 @@ router.post('/food/parse', wrap(async (req, res) => {
     return ok(res, result);
   } catch (e) {
     return err(res, 500, isUserError(e) ? e.message : fallbackMessage('ai/food/parse', e), { affectsData: false });
+  }
+}));
+
+/** POST /ai/ingredients/scan — 配料表照片解析(配料顺序 + 营养常识提示) */
+const IngredientScanSchema = z.object({
+  image: z.string().min(50).max(6_000_000)
+});
+
+router.post('/ingredients/scan', wrap(async (req, res) => {
+  const parsed = IngredientScanSchema.safeParse(req.body);
+  if (!parsed.success) return err(res, 400, '请上传配料表照片', { affectsData: false });
+  try {
+    const result = await scanIngredients(parsed.data.image);
+    return ok(res, result);
+  } catch (e) {
+    return err(res, 500, isUserError(e) ? e.message : fallbackMessage('ai/ingredients/scan', e), { affectsData: false });
   }
 }));
 
