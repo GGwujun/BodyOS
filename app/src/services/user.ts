@@ -4,6 +4,10 @@ import type { User, Profile, Goal } from './types';
 /** GET /me */
 export const getMe = () => request<User>({ url: '/me' });
 
+/** PUT /me — 保存昵称(头像昵称填写能力,微信不再允许自动获取) */
+export const updateMe = (data: { nickname: string }) =>
+  request<User>({ url: '/me', method: 'PUT', data });
+
 /** GET /profile */
 export const getProfile = () => request<Profile>({ url: '/profile' });
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, Button, Input } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { Passed, Circle } from '@taroify/icons';
@@ -22,8 +22,27 @@ export default function Onboarding() {
   const [saving, setSaving] = useState(false);
   const [step, setStep] = useState(1);
   const [target, setTarget] = useState('');
+  /** 已有当前目标时回显并记住 id,保存改为更新而非新建 */
+  const goalIdRef = useRef<string | null>(null);
   const unit = goal === 'endurance' ? '分钟/周' : 'kg';
   const targetLabel = goal === 'fat_loss' ? '计划减少的体重' : goal === 'muscle_gain' ? '计划增加的体重' : goal === 'maintain' ? '希望维持的体重' : '每周目标运动时长';
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const goals = await userApi.listGoals(); // 接口只返回进行中的目标
+        const active = goals[0];
+        if (cancelled || !active) return;
+        goalIdRef.current = active.id;
+        setGoal(active.type);
+        if (active.durationWeeks) setWeeks(active.durationWeeks);
+        setTarget(String(active.targetValue));
+      } catch { /* 回显失败不阻塞全新流程 */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   useDidShow(() => { track('onboarding_start', 'activation'); });
   const submit = async () => {
     if (saving) return;
@@ -31,9 +50,16 @@ export default function Onboarding() {
     if (!Number.isFinite(value) || value <= 0) { toast('请输入有效的目标数值', 'none'); return; }
     setSaving(true);
     try {
-      await userApi.createGoal({ type: goal, targetValue: value, unit, durationWeeks: weeks, isActive: true });
-      trackNow('onboarding_complete', 'activation', { goal, weeks, target: value });
-      toast('目标已设置'); Taro.switchTab({ url: '/pages/home/index' });
+      const payload = { type: goal, targetValue: value, unit, durationWeeks: weeks, isActive: true } as const;
+      if (goalIdRef.current) {
+        await userApi.updateGoal(goalIdRef.current, payload); // 修改已有目标,保留起始日期
+        toast('目标已更新');
+      } else {
+        await userApi.createGoal(payload);
+        trackNow('onboarding_complete', 'activation', { goal, weeks, target: value });
+        toast('目标已设置');
+      }
+      Taro.switchTab({ url: '/pages/home/index' });
     } catch { toast('保存失败', 'error'); } finally { setSaving(false); }
   };
   return <Screen className="onboarding-page">

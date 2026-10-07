@@ -20,13 +20,28 @@ export default function ProfilePage(){
   const go=(p:RoutePath)=>Taro.navigateTo({url:`/pages/${p.split('/')[1]}/index`});
   const {data:profile,refresh:refreshProfile}=useAsync<Profile>(()=>userApi.getProfile(),[]);
   const {data:goals}=useAsync<Goal[]>(()=>userApi.listGoals(),[]);
+  const {data:me,refresh:refreshMe}=useAsync(()=>userApi.getMe(),[]);
   const [editing,setEditing]=useState(false); const [height,setHeight]=useState(''); const [weight,setWeight]=useState(''); const [actIdx,setActIdx]=useState(2);
   const [birth,setBirth]=useState('');
   const [genderIdx,setGenderIdx]=useState(0);
   const [savingBody,setSavingBody]=useState(false);
   const [bodyError,setBodyError]=useState('');
   const [dietEditing,setDietEditing]=useState(false);
-  useTabBarMask(editing || dietEditing);
+  const [nickEditing,setNickEditing]=useState(false);
+  const [nick,setNick]=useState('');
+  const [savingNick,setSavingNick]=useState(false);
+  const [nickError,setNickError]=useState('');
+  useTabBarMask(editing || dietEditing || nickEditing);
+  const openNick=()=>{const current=me?.nickname||'';setNick(current&&current!=='微信用户'&&current!=='用户'?current:'');setNickError('');setNickEditing(true)};
+  const saveNick=async()=>{
+    if(savingNick)return;
+    const value=nick.trim();
+    if(!value){setNickError('请输入昵称，或点键盘上方一键填入微信昵称');return}
+    setSavingNick(true);setNickError('');
+    try{await userApi.updateMe({nickname:value});await refreshMe();setNickEditing(false);toast('昵称已保存')}
+    catch(e){setNickError((e as {message?:string})?.message||'保存失败，请重试')}
+    finally{setSavingNick(false)}
+  };
   const [diet,setDiet]=useState('');
   const [savingDiet,setSavingDiet]=useState(false);
   const [dietError,setDietError]=useState('');
@@ -55,10 +70,11 @@ export default function ProfilePage(){
   ];
   const showAbout=()=>Taro.showModal({title:'关于轻身记',content:'轻身记 v1.0.0\n\n记录饮食、运动与身体数据，看清每一天的变化。\n\n数据安全：所有数据仅用于你的身体管理和分析，不会提供给第三方。',showCancel:false});
   return <Screen className="profile-page">
-    <View className="profile-hero"><View className="avatar"><UserOutlined/></View><View className="hero-copy"><View><Text className="user-name">轻身记用户</Text><Text className="goal-pill">{goal?goalLabel[goal.type]??goal.type:'健康管理'}</Text></View><Text className="user-id">你的个人健康空间</Text></View><Edit className="edit-icon" onClick={openEdit}/></View>
+    <View className="profile-hero"><View className="avatar"><UserOutlined/></View><View className="hero-copy"><View onClick={openNick}><Text className="user-name">{me?.nickname||'轻身记用户'}</Text><Text className="goal-pill">{goal?goalLabel[goal.type]??goal.type:'健康管理'}</Text></View><Text className="user-id">{me?.nickname?'点击昵称可修改 · 你的个人健康空间':'点击设置昵称 · 你的个人健康空间'}</Text></View><Edit className="edit-icon" onClick={openEdit}/></View>
     <View className="stat-card"><View><Text>身高</Text><Text>{profile?.heightCm != null ? `${profile.heightCm} cm` : '未填写'}</Text></View><View><Text>体重</Text><Text>{profile?.weightKg != null ? `${profile.weightKg} kg` : '未填写'}</Text></View><View><Text>目标周期</Text><Text>{goal?.durationWeeks ? `${goal.durationWeeks}周` : '未设置'}</Text></View></View>
     {groups.map((group,index)=><View className="menu-card" key={index}>{group.map(item=><View className="menu-row" key={item.label} onClick={()=>item.label==='我的目标'?Taro.navigateTo({url:'/pages/onboarding/index'}):item.label==='身体数据'?openEdit():item.label==='本周报告'?go(RoutePath.WeeklyReport):item.label==='饮食偏好'?openDiet():showAbout()}><View className="menu-icon">{item.icon}</View><Text className="menu-label">{item.label}</Text>{item.value&&<Text className="menu-value">{item.value}</Text>}<ArrowRight/></View>)}</View>)}
     {dietEditing&&<View className="mask" onClick={()=>!savingDiet&&setDietEditing(false)}><View className="edit-sheet" catchMove onClick={e=>e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">编辑饮食偏好</Text><Text className="diet-help">填写口味、忌口及过敏原；留空可清除偏好。</Text><Textarea className="diet-input" value={diet} maxlength={500} onInput={e=>setDiet(e.detail.value)} placeholder="请输入你的饮食偏好"/><Text className="diet-count">{diet.length}/500</Text>{dietError&&<Text className="diet-error">{dietError}</Text>}<Button className="sheet-save" loading={savingDiet} disabled={savingDiet} onClick={saveDiet}>保存偏好</Button><Button className="sheet-cancel" disabled={savingDiet} onClick={()=>setDietEditing(false)}>取消</Button></View></View>}
+    {nickEditing&&<View className="mask" onClick={()=>!savingNick&&setNickEditing(false)}><View className="edit-sheet" catchMove onClick={e=>e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">设置昵称</Text><Text className="diet-help">点击键盘上方的微信昵称可一键填入。</Text><Input className="nick-input" type="nickname" value={nick} maxlength={30} onInput={e=>setNick(e.detail.value)} placeholder="输入昵称"/>{nickError&&<Text className="diet-error">{nickError}</Text>}<Button className="sheet-save" loading={savingNick} disabled={savingNick} onClick={saveNick}>保存昵称</Button><Button className="sheet-cancel" disabled={savingNick} onClick={()=>setNickEditing(false)}>取消</Button></View></View>}
     <View className="menu-card"><View className="menu-row" onClick={()=>go(RoutePath.DataSources)}><View className="menu-icon"><RecordsOutlined/></View><Text className="menu-label">数据源管理</Text><ArrowRight/></View></View>
     {editing&&<View className="mask" onClick={()=>!savingBody&&setEditing(false)}><View className="edit-sheet body-sheet" catchMove onClick={e=>e.stopPropagation()}>
       <View className="sheet-handle" />
