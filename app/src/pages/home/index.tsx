@@ -96,13 +96,15 @@ export default function Home() {
           <View><Text className={`activity-value${data?.steps == null ? ' is-empty' : ''}`}>{format(data?.steps)}</Text><Text className="activity-unit">步</Text></View>
           <View><Text className={`activity-value${data?.activeCalories == null ? ' is-empty' : ''}`}>{format(data?.activeCalories)}</Text><Text className="activity-unit">kcal</Text></View>
         </View>
-        <View className="activity-empty">
-          <Text className="activity-empty__title">今日暂无分时活动</Text>
-          <Text className="activity-empty__hint">记录运动后这里会展示活动分布</Text>
-        </View>
+        {data?.steps == null && data?.activeCalories == null && (
+          <View className="activity-empty">
+            <Text className="activity-empty__title">今日暂无活动数据</Text>
+            <Text className="activity-empty__hint">去「运动-自动同步」拉取步数，或记录一次运动</Text>
+          </View>
+        )}
       </View>
 
-      <View className="dashboard-card goal-card">
+      <View className="dashboard-card goal-card" onClick={() => Taro.navigateTo({ url: '/pages/onboarding/index' })}>
         <Heading title="当前目标" />
         <View className="goal-row"><Text className={`goal-name${data?.goal ? '' : ' is-empty'}`}>{goalLabel(data?.goal?.type)}</Text><Text className="goal-meta">{data?.goal?.durationWeeks ? `${data.goal.durationWeeks} 周计划` : ''}</Text></View>
         <View className="goal-detail"><Text className="goal-caption">{data?.goal ? '根据记录更新目标进度' : '设置目标后开始记录进度'}</Text><Text className={`goal-percent${data?.goal ? '' : ' is-empty'}`}>{data?.goal ? `${goalProgress}%` : '—'}</Text></View>

@@ -29,7 +29,7 @@ export default function Food() {
   const [state, setState] = useState<ParseState>('idle');
   const [saving, setSaving] = useState(false);
   const [items, setItems] = useState<FoodItem[]>([]);
-  const [resultConf, setResultConf] = useState<number>(0);
+  const [resultConf, setResultConf] = useState<number | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [logs, setLogs] = useState<FoodLog[]>([]);
   const [manualOpen, setManualOpen] = useState(false);
@@ -66,8 +66,8 @@ export default function Food() {
     try {
       let r;
       if (useImage) {
-        const img = await Taro.chooseImage({ count: 1, sizeType: ['compressed'] });
-        const file = img.tempFilePaths[0];
+        const media = await Taro.chooseMedia({ count: 1, mediaType: ['image'], sizeType: ['compressed'] });
+        const file = media.tempFiles[0].tempFilePath;
         const base64 = await fileToBase64(file);
         r = await foodApi.parseFood({ image: base64 });
       } else {
@@ -75,7 +75,7 @@ export default function Food() {
       }
       setItems(r.items);
       setSource(useImage ? 'ai_image' : 'ai_text');
-      setResultConf(r.confidence ?? 0);
+      setResultConf(typeof r.confidence === 'number' ? r.confidence : null);
       setState('need_confirm');
     } catch (e) {
       setErrorMsg((e as { message?: string })?.message || '识别失败');
@@ -96,6 +96,7 @@ export default function Food() {
     setManualName('');
     setManualKcal('');
     setManualOpen(false);
+    setErrorMsg('');
     setState('need_confirm');
   };
 
@@ -114,6 +115,7 @@ export default function Food() {
       toast('请检查食物名称和热量', 'none'); return;
     }
     setSaving(true);
+    setErrorMsg('');
     try {
       if (editId) {
         await foodApi.updateFoodLog(editId, { meal, items });
@@ -164,7 +166,7 @@ export default function Food() {
 
   return (
     <Screen className="food-page">
-      <View className="mode-tabs">{([{key:'ai',label:'快速识别'},{key:'manual',label:'手动添加'},{key:'frequent',label:'常用食物'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
+      <View className="mode-tabs">{([{key:'ai',label:'快速识别'},{key:'manual',label:'手动添加'},{key:'frequent',label:'再次添加'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
 
       {/* 餐次选择 */}
       <View className="meal-tabs">
@@ -213,6 +215,7 @@ export default function Food() {
       </View>}
       {mode === 'frequent' && <View className="card">
         <Text className="fs-h1">从今日记录再次添加</Text>
+        <Text className="fs-mini text-secondary">常吃的食物会出现在这里，一键加入本餐。</Text>
         {logs.length === 0 && <Text className="fs-mini text-secondary">保存饮食记录后，可在这里再次添加。</Text>}
         {Array.from(new Map(logs.flatMap(log => log.items).map(item => [item.name, item])).values()).map(item => <View className="edit-item" key={item.name}>
           <Text>{item.name} · {item.calories} kcal</Text>
@@ -232,9 +235,10 @@ export default function Food() {
             <Text className="fs-h1">{editId ? '正在编辑记录' : '本餐待保存'}</Text>
             <Text className="fs-mini text-brand">合计 {Math.round(totalKcal)} kcal</Text>
           </View>
-          {!editId && source !== 'manual' && <Text className="fs-mini text-secondary">
+          {!editId && source !== 'manual' && resultConf != null && <Text className="fs-mini text-secondary">
             置信度 {Math.round(resultConf * 100)}%{resultConf < 0.8 ? ' · 部分为估算,建议核对份量' : ' · 热量来自食物库'}
           </Text>}
+          {errorMsg && <Text className="fs-caption text-danger">保存失败：{errorMsg}</Text>}
           {items.map((it, i) => (
             <View key={i} className="edit-item">
               <Input
@@ -319,5 +323,8 @@ function mealLabel(meal: string): string {
 async function fileToBase64(filePath: string): Promise<string> {
   const fs = Taro.getFileSystemManager();
   const base64 = fs.readFileSync(filePath, 'base64');
-  return `data:image/jpeg;base64,${base64}`;
+  // 按扩展名推断 mime,避免 png 被标成 jpeg
+  const ext = filePath.split('.').pop()?.toLowerCase() ?? '';
+  const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+  return `data:${mime};base64,${base64}`;
 }

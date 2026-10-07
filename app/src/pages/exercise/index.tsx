@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { View, Text, Textarea, Button, Input, Picker } from '@tarojs/components';
 import Taro, { usePullDownRefresh } from '@tarojs/taro';
 import Screen from '@/components/Screen';
-import { activityApi } from '@/services';
+import { activityApi, dataSourceApi } from '@/services';
 import { useAsync } from '@/hooks/useAsync';
 import { confirmDelete, toast } from '@/utils/ui';
 import { todayStr, nowISO } from '@/utils/date';
@@ -139,11 +139,27 @@ export default function Exercise() {
     }
   };
 
+  // 真同步:拉微信运动加密包推后端,成功后刷新列表
+  const [syncing, setSyncing] = useState(false);
+  const syncNow = async () => {
+    if (syncing) return;
+    setSyncing(true);
+    try {
+      const r = await dataSourceApi.syncWechatRun();
+      toast(r.syncedCount > 0 ? `已同步 ${r.syncedCount} 条新记录` : '运动数据已是最新');
+      await load();
+    } catch (e) {
+      toast((e as {message?:string})?.message || '同步失败，请重试', 'error');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <Screen className="exercise-page">
-      <View className="mode-tabs">{([{key:'manual',label:'手动记录'},{key:'sync',label:'自动同步'},{key:'devices',label:'智能设备'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => { setMode(tab.key); if(tab.key === 'manual') setShowForm(true); }}>{tab.label}</Text>)}</View>
-      {mode === 'devices' && <View className="card"><Text className="fs-h1">设备与数据连接</Text><Text>查看支持的数据来源及连接状态。</Text><Button onClick={() => Taro.navigateTo({url:'/pages/data-sources/index'})}>管理数据来源</Button></View>}
-      {mode === 'sync' && <View className="card"><Text className="fs-h1">今日自动同步</Text><Text>展示设备或数据源导入的运动记录。</Text><Button onClick={load}>刷新同步记录</Button></View>}
+      <View className="mode-tabs">{([{key:'manual',label:'手动记录'},{key:'sync',label:'自动同步'},{key:'devices',label:'数据来源'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => { setMode(tab.key); if(tab.key === 'manual') setShowForm(true); }}>{tab.label}</Text>)}</View>
+      {mode === 'devices' && <View className="card"><Text className="fs-h1">数据来源</Text><Text>查看支持的数据来源及连接状态。</Text><Button onClick={() => Taro.navigateTo({url:'/pages/data-sources/index'})}>管理数据来源</Button></View>}
+      {mode === 'sync' && <View className="card"><Text className="fs-h1">今日自动同步</Text><Text>拉取微信运动步数，自动生成运动记录。</Text><Button loading={syncing} disabled={syncing} onClick={syncNow}>{syncing?'正在同步…':'立即同步'}</Button></View>}
 
       {/* AI 自然语言 */}
       {mode === 'manual' && <><View className="card ai-entry">

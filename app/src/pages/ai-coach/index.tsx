@@ -12,7 +12,7 @@ const QUICK = ['我今天吃得怎么样?', '为什么体重不降?', '晚餐推
 
 export default function AICoach() {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: '你好,我是你的 AI 教练。需要我帮你分析今日数据吗?' }
+    { role: 'assistant', content: '你好,我是你的健康教练。需要我帮你分析今日数据吗?' }
   ]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -54,8 +54,8 @@ export default function AICoach() {
 
   return (
     <Screen className="ai-coach-page">
-      <View className="coach-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>AI 教练</Text><ArrowRight /></View>
-      <View className="coach-intro"><View className="bot-face">OS</View><View><Text>Hi，我是你的 AI 教练 👋</Text><Text>有什么可以帮助你？</Text></View></View>
+      <View className="coach-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>健康教练</Text><ArrowRight /></View>
+      <View className="coach-intro"><View className="bot-face">OS</View><View><Text>Hi，我是你的健康教练 👋</Text><Text>有什么可以帮助你？</Text></View></View>
 
       <ScrollView scrollY className="chat-scroll">
         {!loaded && (
