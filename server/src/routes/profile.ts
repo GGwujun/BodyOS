@@ -4,6 +4,7 @@ import { prisma } from '../db';
 import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 import { wrap } from '../lib/asyncHandler';
+import { syncWeightMeasurement } from '../lib/weightSync';
 
 const router = Router();
 
@@ -32,6 +33,12 @@ router.put('/', wrap(async (req, res) => {
     create: { userId: getUserId(res), gender:'other', ...data } as never,
     update: data as never
   });
+
+  // 资料里保存了体重 → 同步落当天的身体测量,让趋势/体重页有据可查
+  if (parsed.data.weightKg != null) {
+    await syncWeightMeasurement(getUserId(res), parsed.data.weightKg);
+  }
+
   return ok(res, profile);
 }));
 

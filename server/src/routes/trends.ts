@@ -25,7 +25,7 @@ trendsRouter.get('/', async (req, res, next) => {
   // 确保今天有汇总
   await recomputeDaily(getUserId(res), end);
 
-  const [summaries, measurements, foodDates, activityDates] = await Promise.all([
+  const [summaries, measurements, foodDates, activityDates, latestWeight, profile] = await Promise.all([
     prisma.dailySummary.findMany({
       where: { userId: getUserId(res), date: { in: days } },
       orderBy: { date: 'asc' }
@@ -35,7 +35,13 @@ trendsRouter.get('/', async (req, res, next) => {
       orderBy: { measuredAt: 'asc' }
     }),
     prisma.foodLog.findMany({where:{userId:getUserId(res),deletedAt:null,date:{in:days}},select:{date:true},distinct:['date']}),
-    prisma.activityRecord.findMany({where:{userId:getUserId(res),deletedAt:null,date:{in:days}},select:{date:true},distinct:['date']})
+    prisma.activityRecord.findMany({where:{userId:getUserId(res),deletedAt:null,date:{in:days}},select:{date:true},distinct:['date']}),
+    // 窗口外也要能显示"当前体重":取历史最新一条带体重的测量
+    prisma.bodyMeasurement.findFirst({
+      where: { userId: getUserId(res), weightKg: { not: null } },
+      orderBy: { measuredAt: 'desc' }
+    }),
+    prisma.userProfile.findUnique({ where: { userId: getUserId(res) }, select: { weightKg: true } })
   ]);
 
   const weights = measurements
@@ -43,6 +49,8 @@ trendsRouter.get('/', async (req, res, next) => {
     .map((m) => ({ date: toDateStr(m.measuredAt), weightKg: m.weightKg as number }));
 
   // 聚合统计
+  const currentWeight =
+    weights[weights.length - 1]?.weightKg ?? latestWeight?.weightKg ?? profile?.weightKg ?? null;
   const validScores = summaries.filter((s) => s.bodyScore != null);
   const avgScore =
     validScores.length > 0
@@ -67,7 +75,7 @@ trendsRouter.get('/', async (req, res, next) => {
     weights,
     stats: {
       avgScore: avgScore == null ? null : Math.round(avgScore),
-      currentWeight: weights[weights.length - 1]?.weightKg ?? null,
+      currentWeight,
       weightChange: observedWeightChange(weights.map(row=>row.weightKg)),
       recordDays: countRecordedDays(
         foodDates.map(row=>toDateStr(row.date)),
