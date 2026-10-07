@@ -3,6 +3,7 @@ import { View, Text, Input, Button, Picker, Textarea } from '@tarojs/components'
 import Taro from '@tarojs/taro';
 import { UserOutlined, ArrowRight, Aim, RecordsOutlined, CalendarOutlined, LikeOutlined, Bell, QuestionOutlined, InfoOutlined, Edit } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
+import { useTabBarMask } from '@/hooks/useTabBarMask';
 import Screen from '@/components/Screen';
 import { RoutePath } from '@/constants/routes';
 import { userApi } from '@/services';
@@ -25,6 +26,7 @@ export default function ProfilePage(){
   const [savingBody,setSavingBody]=useState(false);
   const [bodyError,setBodyError]=useState('');
   const [dietEditing,setDietEditing]=useState(false);
+  useTabBarMask(editing || dietEditing);
   const [diet,setDiet]=useState('');
   const [savingDiet,setSavingDiet]=useState(false);
   const [dietError,setDietError]=useState('');
@@ -55,7 +57,7 @@ export default function ProfilePage(){
     <View className="profile-hero"><View className="avatar"><UserOutlined/></View><View className="hero-copy"><View><Text className="user-name">Body OS 用户</Text><Text className="goal-pill">{goal?goalLabel[goal.type]??goal.type:'健康管理'}</Text></View><Text className="user-id">你的个人健康空间</Text></View><Edit className="edit-icon" onClick={openEdit}/></View>
     <View className="stat-card"><View><Text>身高</Text><Text>{profile?.heightCm != null ? `${profile.heightCm} cm` : '未填写'}</Text></View><View><Text>体重</Text><Text>{profile?.weightKg != null ? `${profile.weightKg} kg` : '未填写'}</Text></View><View><Text>目标周期</Text><Text>{goal?.durationWeeks ? `${goal.durationWeeks}周` : '未设置'}</Text></View></View>
     {groups.map((group,index)=><View className="menu-card" key={index}>{group.map(item=><View className="menu-row" key={item.label} onClick={()=>item.label==='我的目标'?Taro.navigateTo({url:'/pages/onboarding/index'}):item.label==='身体数据'?openEdit():item.label==='我的计划'?go(RoutePath.WeeklyReport):item.label==='饮食偏好'?openDiet():undefined}><View className="menu-icon">{item.icon}</View><Text className="menu-label">{item.label}</Text>{item.value&&<Text className="menu-value">{item.value}</Text>}<ArrowRight/></View>)}</View>)}
-    {dietEditing&&<View className="mask" onClick={()=>!savingDiet&&setDietEditing(false)}><View className="edit-sheet" catchMove onClick={e=>e.stopPropagation()}><Text className="sheet-title">编辑饮食偏好</Text><Text className="diet-help">填写口味、忌口及过敏原；留空可清除偏好。</Text><Textarea className="diet-input" value={diet} maxlength={500} onInput={e=>setDiet(e.detail.value)} placeholder="请输入你的饮食偏好"/><Text className="diet-count">{diet.length}/500</Text>{dietError&&<Text className="diet-error">{dietError}</Text>}<Button className="sheet-save" loading={savingDiet} disabled={savingDiet} onClick={saveDiet}>保存偏好</Button><Button disabled={savingDiet} onClick={()=>setDietEditing(false)}>取消</Button></View></View>}
+    {dietEditing&&<View className="mask" onClick={()=>!savingDiet&&setDietEditing(false)}><View className="edit-sheet" catchMove onClick={e=>e.stopPropagation()}><Text className="sheet-title">编辑饮食偏好</Text><Text className="diet-help">填写口味、忌口及过敏原；留空可清除偏好。</Text><Textarea className="diet-input" value={diet} maxlength={500} onInput={e=>setDiet(e.detail.value)} placeholder="请输入你的饮食偏好"/><Text className="diet-count">{diet.length}/500</Text>{dietError&&<Text className="diet-error">{dietError}</Text>}<Button className="sheet-save" loading={savingDiet} disabled={savingDiet} onClick={saveDiet}>保存偏好</Button><Button className="sheet-cancel" disabled={savingDiet} onClick={()=>setDietEditing(false)}>取消</Button></View></View>}
     <View className="menu-card"><View className="menu-row" onClick={()=>go(RoutePath.DataSources)}><View className="menu-icon"><RecordsOutlined/></View><Text className="menu-label">数据源管理</Text><ArrowRight/></View></View>
     {editing&&<View className="mask" onClick={()=>!savingBody&&setEditing(false)}><View className="edit-sheet body-sheet" catchMove onClick={e=>e.stopPropagation()}>
       <Text className="sheet-title">编辑身体信息</Text>
@@ -66,7 +68,7 @@ export default function ProfilePage(){
       <Field label="体重 (kg)"><Input className="form-input" type="digit" value={weight} onInput={e=>setWeight(e.detail.value)} placeholder="请输入体重"/></Field>
       <Field label="活动水平"><Picker mode="selector" range={ACTIVITY.map(a=>a.label)} value={actIdx} onChange={e=>setActIdx(Number(e.detail.value))}><View className="picker-value">{ACTIVITY[actIdx].label}</View></Picker></Field>
       {bodyError&&<Text className="diet-error">{bodyError}</Text>}
-      <Button className="sheet-save" loading={savingBody} disabled={savingBody} onClick={save}>保存身体信息</Button><Button disabled={savingBody} onClick={()=>setEditing(false)}>取消</Button>
+      <Button className="sheet-save" loading={savingBody} disabled={savingBody} onClick={save}>保存身体信息</Button><Button className="sheet-cancel" disabled={savingBody} onClick={()=>setEditing(false)}>取消</Button>
     </View></View>}
   </Screen>;
 }

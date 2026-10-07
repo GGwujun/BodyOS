@@ -6,6 +6,7 @@ import Screen from '@/components/Screen';
 import { RoutePath } from '@/constants/routes';
 import { foodApi, activityApi, dataSourceApi, bodyApi } from '@/services';
 import { useAsync } from '@/hooks/useAsync';
+import { useTabBarMask } from '@/hooks/useTabBarMask';
 import { toast } from '@/utils/ui';
 import { todayStr, nowISO } from '@/utils/date';
 import './index.scss';
@@ -25,6 +26,7 @@ export default function Record() {
   const acts=data?.acts;
   const sources=data?.sources;
   const [showWeight, setShowWeight] = useState(false);
+  useTabBarMask(showWeight);
   const [weight, setWeight] = useState('');
   const [savingWeight,setSavingWeight]=useState(false);
   const weightSubmission=useRef(createSubmissionGate());

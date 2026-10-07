@@ -16,6 +16,6 @@
 }
 .taro_tabbar_page .screen-navigation-space { display: none; }
 
-/* A fixed modal inside the native page must also rise above the native tab bar. */
-.taro_tabbar_page:has(.profile-page > .mask),
-.taro_tabbar_page:has(.record-page > .mask) { z-index: 501; }
+/* A fixed modal inside the native page must also rise above the native tab bar.
+   H5 由 useTabBarMask 在弹层打开时加 .tabbar-mask-open；不用 :has()，WXSS 不支持。 */
+.taro_tabbar_page.tabbar-mask-open { z-index: 501; }

@@ -37,10 +37,10 @@ export default function Onboarding() {
     } catch { toast('保存失败', 'error'); } finally { setSaving(false); }
   };
   return <Screen className="onboarding-page">
-    <View className="step-row"><Text>{step} / 3</Text><View><View style={{width:`${step / 3 * 100}%`}} /></View></View>
+    <View className="step-row"><Text>{step} / 3</Text><View className="step-track"><View className="step-bar" style={{width:`${step / 3 * 100}%`}} /></View></View>
     {step === 1 && <>
     <View className="onboarding-head"><Text>你的目标是什么？</Text><Text>我们将为你定制专属计划</Text></View>
-    <View className="goal-list">{GOALS.map(item => <View key={item.key} className={`goal-option ${goal===item.key?'active':''}`} onClick={() => setGoal(item.key)}><View><Text>{item.title}</Text><Text>{item.desc}</Text></View>{goal===item.key?<Passed/>:<Circle/>}</View>)}</View>
+    <View className="goal-list">{GOALS.map(item => <View key={item.key} className={`goal-option ${goal===item.key?'active':''}`} onClick={() => setGoal(item.key)}><View className="goal-copy"><Text>{item.title}</Text><Text>{item.desc}</Text></View>{goal===item.key?<Passed/>:<Circle/>}</View>)}</View>
     <Text className="duration-title">预计达成时间</Text>
     <View className="duration-row">{DURATIONS.map(value => <Text key={value} className={weeks===value?'active':''} onClick={() => setWeeks(value)}>{value}周</Text>)}</View>
     </>}
