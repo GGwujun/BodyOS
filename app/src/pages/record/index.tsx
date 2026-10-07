@@ -71,7 +71,8 @@ export default function Record() {
     { label: '饮食记录', desc: '记录你吃的食物和营养', path: RoutePath.Food, sheet: null, icon: <CartOutlined />, tone: 'mint' },
     { label: '运动记录', desc: '记录运动和消耗', path: RoutePath.Exercise, sheet: null, icon: <FireOutlined />, tone: 'blue' },
     { label: '体重记录', desc: '记录体重和身体数据', path: null, sheet: 'weight', icon: <BalanceOutlined />, tone: 'dark' },
-    { label: '喝水打卡', desc: '记录每日饮水进度', path: null, sheet: 'water', icon: <Text className="entry-emoji">💧</Text>, tone: 'sky' }
+    { label: '喝水打卡', desc: '记录每日饮水进度', path: null, sheet: 'water', icon: <Text className="entry-emoji">💧</Text>, tone: 'sky' },
+    { label: '推荐食谱', desc: '照着吃,一键记为一餐', path: RoutePath.Recipes, sheet: null, icon: <Text className="entry-emoji">🥗</Text>, tone: 'warm' }
   ];
 
   // 喝水打卡弹层

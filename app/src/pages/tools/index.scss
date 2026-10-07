@@ -1,0 +1,67 @@
+@import '../../styles/variables.scss';
+
+/* ============ 健康小工具 ============ */
+.tools-page {
+  background: $color-bg;
+  gap: 12px;
+
+  .seg {
+    display: flex; padding: 3px;
+    background: $color-bg-card; border: 1px solid $color-border;
+    border-radius: $radius-md; box-shadow: $shadow-card;
+  }
+  .seg text {
+    flex: 1; text-align: center; padding: 7px 0;
+    font-size: 13px; color: $color-text-secondary;
+    border-radius: 9px;
+  }
+  .seg .active { background: $color-primary; color: #fff; font-weight: $fw-bold; }
+
+  .form-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 14px;
+  }
+  .form-label { width: 76px; flex-shrink: 0; font-size: 13px; color: $color-text-secondary; }
+  .form-input {
+    flex: 1; padding: 9px 12px;
+    background: $color-bg-soft; border-radius: $radius-md;
+    font-size: 14px;
+  }
+  .picker-value {
+    flex: 1; padding: 9px 12px;
+    background: $color-bg-soft; border-radius: $radius-md;
+    font-size: 14px; color: $color-text-primary;
+  }
+
+  .result-card {
+    margin-top: 16px; padding: 16px;
+    background: $color-bg-soft; border-radius: $radius-md;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .result-main { display: flex; align-items: center; gap: 12px; }
+  .result-value { font-size: 40px; font-weight: 700; line-height: 44px; color: $color-text-primary; }
+  .result-unit { font-size: 16px; font-weight: 600; color: $color-text-secondary; margin-left: 2px; }
+  .pill {
+    font-size: 12px; font-weight: $fw-bold;
+    padding: 4px 12px; border-radius: $radius-pill;
+  }
+  .pill--blue { color: #0369a1; background: #e0f2fe; }
+  .pill--green { color: $color-success; background: rgba(16, 185, 129, .12); }
+  .pill--amber { color: $color-warning; background: rgba(245, 158, 11, .14); }
+  .pill--red { color: $color-danger; background: $color-danger-bg; }
+
+  .advice { display: flex; flex-direction: column; gap: 6px; }
+  .advice-item { font-size: 12px; color: $color-text-secondary; line-height: 1.6; }
+
+  .tip-card {
+    margin-top: 16px; padding: 14px;
+    border: 1px dashed #dbe2ea; border-radius: $radius-md;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .tip-copy { font-size: 12px; color: $color-text-tertiary; line-height: 1.7; }
+
+  .tools-foot {
+    display: block; margin-top: 4px; text-align: center;
+    font-size: 11px; color: $color-text-tertiary;
+  }
+}

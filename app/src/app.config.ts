@@ -10,7 +10,10 @@ export default defineAppConfig({
     'pages/ai-coach/index',
     'pages/data-sources/index',
     'pages/profile/index',
-    'pages/onboarding/index'
+    'pages/onboarding/index',
+    'pages/tools/index',
+    'pages/recipes/index',
+    'pages/assessment/index'
   ],
   window: {
     backgroundTextStyle: 'dark',

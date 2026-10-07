@@ -10,7 +10,8 @@ export enum RoutePath {
   WeeklyReport = 'pages/weekly-report/index',
   AICoach = 'pages/ai-coach/index',
   DataSources = 'pages/data-sources/index',
-  Profile = 'pages/profile/index'
+  Profile = 'pages/profile/index',
+  Recipes = 'pages/recipes/index'
 }
 
 /** TabBar 页面(底部导航) */

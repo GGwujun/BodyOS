@@ -1,7 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { View, Text, Textarea, Button, Input } from '@tarojs/components';
 import Taro, { usePullDownRefresh } from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import { FOOD_CATEGORIES, FOOD_LIBRARY } from '@/data/foods';
+import type { FoodEntry } from '@/data/foods';
 import { foodApi } from '@/services';
 import { track } from '@/services/analytics';
 import type { FoodItem, FoodLog, FrequentFood } from '@/services/types';
@@ -23,7 +25,7 @@ type ParseState = 'idle' | 'parsing' | 'need_confirm' | 'failed';
 export default function Food() {
   const today = todayStr();
   const [meal, setMeal] = useState<Meal>('breakfast');
-  const [mode, setMode] = useState<'ai' | 'manual' | 'frequent'>('ai');
+  const [mode, setMode] = useState<'ai' | 'library' | 'manual' | 'frequent'>('ai');
   const [source, setSource] = useState<FoodLog['source']>('manual');
   const [text, setText] = useState('');
   const [state, setState] = useState<ParseState>('idle');
@@ -45,6 +47,20 @@ export default function Food() {
       .then((r) => setFrequent(r.items))
       .catch(() => setFrequent([]));
   }, [mode, frequent]);
+
+  // 内置食物库:本地静态数据,搜索 + 分类筛选
+  const [libKw, setLibKw] = useState('');
+  const [libCat, setLibCat] = useState<string>('全部');
+  const libFiltered = useMemo(() => {
+    const kw = libKw.trim();
+    return FOOD_LIBRARY.filter((f) => (libCat === '全部' || f.category === libCat) && (!kw || f.name.includes(kw)));
+  }, [libKw, libCat]);
+  const addFromLibrary = (f: FoodEntry) => {
+    setSource('manual');
+    setResultConf(null);
+    setItems((prev) => [...prev, { name: f.name, amount: f.amount, calories: f.calories, proteinG: f.proteinG, carbG: f.carbG, fatG: f.fatG }]);
+    setState('need_confirm');
+  };
 
   const loadLogs = useCallback(async () => {
     try {
@@ -175,7 +191,7 @@ export default function Food() {
 
   return (
     <Screen className="food-page">
-      <View className="mode-tabs">{([{key:'ai',label:'快速识别'},{key:'manual',label:'手动添加'},{key:'frequent',label:'常用食物'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
+      <View className="mode-tabs">{([{key:'ai',label:'快速识别'},{key:'library',label:'食物库'},{key:'frequent',label:'常用食物'},{key:'manual',label:'手动'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
 
       {/* 餐次选择 */}
       <View className="meal-tabs">
@@ -212,6 +228,26 @@ export default function Food() {
             立即识别
           </Button>
         </View>
+      </View>}
+
+      {mode === 'library' && <View className="card">
+        <Text className="fs-h1">食物库</Text>
+        <Text className="fs-mini text-secondary">180+ 种常见食物,热量按常见份量估算,一键加入本餐。</Text>
+        <Input className="lib-search" placeholder="搜索食物名称,如:鸡胸肉" value={libKw} onInput={(e) => setLibKw(e.detail.value)} />
+        <View className="lib-chips">
+          {FOOD_CATEGORIES.map((c) => <Text key={c} className={`lib-chip${libCat === c ? ' active' : ''}`} onClick={() => setLibCat(c)}>{c}</Text>)}
+        </View>
+        {libFiltered.length === 0 && <Text className="fs-mini text-secondary">没有找到相关食物,换个关键词试试。</Text>}
+        {libFiltered.slice(0, 60).map((f) => (
+          <View className="edit-item" key={`${f.category}-${f.name}`}>
+            <View className="col flex-1">
+              <Text className="fs-caption">{f.name} · 约 {f.calories} kcal</Text>
+              <Text className="fs-mini text-secondary">{f.amount} · 蛋白 {f.proteinG}g / 碳水 {f.carbG}g / 脂肪 {f.fatG}g</Text>
+            </View>
+            <Button size="mini" onClick={() => addFromLibrary(f)}>加入</Button>
+          </View>
+        ))}
+        {libFiltered.length > 60 && <Text className="lib-more fs-mini text-secondary">共 {libFiltered.length} 条,仅显示前 60 条,输入名称可精确搜索</Text>}
       </View>}
 
       {mode === 'manual' && <View className="card">

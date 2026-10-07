@@ -88,4 +88,24 @@
   /* 按餐次分组 */
   .meal-group { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
   .meal-group .log-item { border-bottom: none; background: $color-bg-soft; border-radius: $radius-md; padding: 10px 12px; }
+
+  /* 内置食物库 */
+  .lib-search {
+    width: 100%; box-sizing: border-box;
+    margin-top: 10px; padding: 9px 12px;
+    background: $color-bg-soft; border-radius: $radius-md;
+    font-size: 13px;
+  }
+  .lib-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .lib-chip {
+    font-size: 11px; padding: 5px 11px;
+    border-radius: $radius-pill;
+    background: $color-bg-soft; color: $color-text-secondary;
+    border: 1px solid transparent;
+  }
+  .lib-chip.active {
+    background: $color-primary-bg; color: $color-primary-dark;
+    border-color: #b5ecd6; font-weight: $fw-bold;
+  }
+  .lib-more { display: block; margin-top: 8px; text-align: center; }
 }
