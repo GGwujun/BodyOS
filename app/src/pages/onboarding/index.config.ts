@@ -1,1 +1,1 @@
-export default definePageConfig({ navigationStyle: 'custom' });
+export default definePageConfig({ navigationBarTitleText: '目标设置' });

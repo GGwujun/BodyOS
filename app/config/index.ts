@@ -21,7 +21,13 @@ export default defineConfig(async (merge) => {
     },
     plugins: [],
     defineConstants: {},
-    copy: { patterns: [], options: {} },
+    copy: {
+      patterns: [
+        // tabBar 图标不经过 webpack 编译,直接复制到产物目录(app.config.ts 引用)
+        { from: 'src/assets/tabbar/', to: 'dist/assets/tabbar/', ignore: ['*.html'] }
+      ],
+      options: {}
+    },
     framework: 'react',
     compiler: 'webpack5',
     cache: { enable: false },

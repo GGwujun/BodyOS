@@ -73,7 +73,7 @@ export default function Home() {
           <View><Text className="activity-value">{format(data?.activeCalories)}</Text><Text className="activity-unit">kcal</Text></View>
         </View>
         <View className="activity-chart">
-          <Text>尚无分时活动数据，点击查看运动记录</Text>
+          <Text className="activity-empty">尚无分时活动数据，点击查看运动记录</Text>
         </View>
       </View>
 

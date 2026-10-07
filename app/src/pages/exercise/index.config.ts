@@ -1,1 +1,1 @@
-export default definePageConfig({ navigationStyle: 'custom' });
+export default definePageConfig({ navigationBarTitleText: '运动记录' });

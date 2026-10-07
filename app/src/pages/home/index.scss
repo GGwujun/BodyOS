@@ -41,7 +41,8 @@
 .activity-stats { display: flex; gap: 76px; margin-top: 13px; }
 .activity-value { font-size: 19px; font-weight: 700; }
 .activity-unit { margin-left: 4px; color: #7c8591; font-size: 10px; }
-.activity-chart { height: 46px; margin-top: 8px; display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1px solid #edf0f2; }
+.activity-chart { min-height: 46px; margin-top: 8px; display: flex; align-items: center; }
+.activity-empty { font-size: 12px; color: #8b95a3; }
 .activity-bar { width: 5px; min-height: 2px; border-radius: 3px 3px 0 0; background: #a9ead2; }
 .chart-axis { display: flex; justify-content: space-between; margin-top: 4px; color: #939ba6; font-size: 9px; }
 .goal-row { margin-top: 12px; display: flex; align-items: baseline; gap: 18px; }
