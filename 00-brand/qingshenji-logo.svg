@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#34D399"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 圆角方块底 -->
+  <rect width="1024" height="1024" rx="224" fill="url(#tile)"/>
+
+  <!-- 得分环(缺口在右上,进度环形态) -->
+  <circle cx="512" cy="512" r="290" fill="none" stroke="#FFFFFF" stroke-width="44"
+          stroke-linecap="round" stroke-dasharray="1500 322"
+          transform="rotate(-45 512 512)"/>
+
+  <!-- 身体趋势曲线 -->
+  <path d="M 352 542 C 424 480 468 480 512 542 C 556 604 600 604 648 552"
+        fill="none" stroke="#FFFFFF" stroke-width="46" stroke-linecap="round"/>
+
+  <!-- 记录点 -->
+  <circle cx="728" cy="522" r="34" fill="#FFFFFF"/>
+</svg>
