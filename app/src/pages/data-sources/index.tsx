@@ -6,7 +6,7 @@ import { track } from '@/services/analytics';
 import type { DataSource, Provider, SyncStatus } from '@/services/types';
 import { useRef, useState } from 'react';
 import Taro from '@tarojs/taro';
-import { Passed, LinkOutlined, ShieldOutlined, Replay, Wechat, Like } from '@taroify/icons';
+import { Passed, ShieldOutlined, Replay, Wechat, Like, LinkOutlined } from '@taroify/icons';
 import './index.scss';
 
 /** 08 Data Sources */
@@ -31,14 +31,9 @@ export default function DataSources() {
   const onSync = async (provider: Provider) => {
     track('datasource_sync_start', 'datasource', { provider });
     await act(provider, async () => {
-      if (provider === 'wechat') {
-        // 微信运动:小程序端取加密步数包,推送后端用 session_key 解密入库
-        if (process.env.TARO_ENV !== 'weapp') throw new Error('微信运动同步请使用小程序');
-        const werun = await Taro.getWeRunData();
-        await dataSourceApi.syncWechatRun(werun.encryptedData, werun.iv);
-      } else {
-        await dataSourceApi.syncProvider(provider);
-      }
+      // 微信运动:服务层负责取加密步数包推送 + 会话过期自愈重取
+      if (provider === 'wechat') await dataSourceApi.syncWechatRun();
+      else await dataSourceApi.syncProvider(provider);
       track('datasource_sync_success', 'datasource', { provider });
     });
   };
@@ -52,7 +47,8 @@ export default function DataSources() {
     if (result.confirm) await act(provider, () => dataSourceApi.disconnectProvider(provider));
   };
 
-  const sources = data ?? [];
+  // 只展示已接入的数据源;未接入的由底部"持续接入中"提示带过,不再出占位卡片
+  const sources = (data ?? []).filter((s) => s.available);
 
   return (
     <Screen className="data-sources-page">
@@ -63,19 +59,17 @@ export default function DataSources() {
       {sources.map((s) => (
         <View key={s.provider} className="ds-card">
           <View className="provider-icon">{s.provider === 'wechat' ? <Wechat /> : s.provider === 'apple_health' ? <Like color="#f43f5e" /> : <LinkOutlined />}</View>
-          <View className="provider-copy"><Text className="provider-name">{s.name}</Text><Text className="provider-status">{!s.available ? '暂未接入' : STATUS_LABELS[s.status]}{s.available && s.lastSyncAt ? ` · ${formatTime(s.lastSyncAt)}` : ''}</Text>{s.lastError && <Text className="provider-error">{s.lastError}</Text>}</View>
+          <View className="provider-copy"><Text className="provider-name">{s.name}</Text><Text className="provider-status">{STATUS_LABELS[s.status]}{s.lastSyncAt ? ` · ${formatTime(s.lastSyncAt)}` : ''}</Text>{s.lastError && <Text className="provider-error">{s.lastError}</Text>}</View>
           <View className="provider-action">
-            {!s.available ? (
-              <Button className="connect-btn" size="mini" onClick={() => Taro.showModal({title:s.name,content:s.unavailableReason || '真实同步服务尚未接入，不会生成模拟运动记录。',showCancel:false})}>查看说明</Button>
-            ) : s.status === 'disconnected' ? (
+            {s.status === 'disconnected' ? (
               <Button disabled={busy !== null} loading={busy === s.provider} className="connect-btn" size="mini" onClick={() => onConnect(s.provider)}>连接</Button>
             ) : (
               <View className="connected-actions">{s.status === 'synced' && <Passed />}<Button disabled={busy !== null} loading={busy === s.provider} className="connect-btn" size="mini" onClick={() => onSync(s.provider)}><Replay />同步</Button><Button disabled={busy !== null} className="connect-btn" size="mini" onClick={() => onDisconnect(s.provider)}>断开</Button></View>
             )}
-            {!s.available && s.hasStoredConnection && <Button disabled={busy !== null} className="connect-btn" size="mini" onClick={() => onDisconnect(s.provider)}>清除旧连接</Button>}
           </View>
         </View>
       ))}
+      <View className="ds-more"><Text>更多数据来源持续接入中</Text></View>
       <View className="privacy-note"><ShieldOutlined /><Text>数据安全：所有数据仅用于你的身体管理和分析</Text></View>
     </Screen>
   );

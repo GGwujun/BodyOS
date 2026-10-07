@@ -8,12 +8,14 @@ import { decryptWeRunData, weRunToRecords, WECHAT_PROVIDER } from '../sync/adapt
 
 const router = Router();
 
-/** GET /data-sources — 返回所有已知 provider 的连接状态(无记录则默认 disconnected) */
+/** GET /data-sources — 已接入数据源的连接状态(未接入的不再返回,避免露出"暂未接入"占位卡片) */
 router.get('/', async (_req, res) => {
   const rows = await prisma.dataSource.findMany({ where: { userId: getUserId(res) } });
   const byProvider = new Map(rows.map((r) => [r.provider, r]));
 
-  const result = KNOWN_PROVIDERS.map((provider) => presentDataSource(provider, byProvider.get(provider)));
+  const result = KNOWN_PROVIDERS
+    .filter((provider) => isSupported(provider))
+    .map((provider) => presentDataSource(provider, byProvider.get(provider)));
   return ok(res, result);
 });
 
@@ -50,7 +52,13 @@ router.post('/:provider/sync', async (req, res) => {
       if (!sessionKey) {
         return err(res, 401, '登录会话已更新，请重新进入后再同步', { affectsData: false });
       }
-      const stepList = decryptWeRunData(sessionKey, iv, encryptedData);
+      let stepList;
+      try {
+        stepList = decryptWeRunData(sessionKey, iv, encryptedData);
+      } catch {
+        // session_key 与加密包不匹配(AES 解不开/格式错)多为登录态轮换残留,提示重试而非报内部错误
+        return err(res, 400, '步数数据已过期，请重新点击同步', { affectsData: false });
+      }
       const profile = await prisma.userProfile.findUnique({ where: { userId } });
       result = await runPushSync(userId, provider, weRunToRecords(stepList, profile?.weightKg ?? null));
     } else {

@@ -52,7 +52,7 @@ export default function Record() {
     <Text className="section-kicker">自动采集数据</Text>
     {loading&&<Text className="record-empty">正在加载记录和数据源…</Text>}
     {error&&<View className="record-load-error"><Text>加载失败：{error}</Text><Button onClick={()=>load()}>重新加载</Button></View>}
-    <View className="source-card">{(sources ?? []).slice(0, 4).map((source, index) => {
+    <View className="source-card">{(sources ?? []).filter((s) => s.available).slice(0, 4).map((source, index) => {
       const connected = source.status === 'synced' || source.status === 'connected';
       return <View className="source-row" key={source.provider} onClick={() => go(RoutePath.DataSources)}><View className={`source-icon s${index}`}><ClockOutlined /></View><View className="source-copy"><Text>{source.name}</Text><Text>{sourceStatusLabel(source.status,source.lastSyncAt)}</Text></View>{connected ? <Passed className="source-ok" /> : <View className="source-empty" />}</View>;
     })}{sources?.length === 0 && <Text className="record-empty">暂无数据源，点击前往连接</Text>}</View>

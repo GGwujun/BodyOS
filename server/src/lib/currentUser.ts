@@ -25,7 +25,11 @@ export function getUserId(res: Response): string {
 export async function issueToken(userId: string, sessionKey?: string): Promise<string> {
   const token = randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000);
-  await prisma.authToken.create({ data: { token, userId, sessionKey: sessionKey ?? null, expiresAt } });
+  await prisma.$transaction([
+    // 每次启动都静默登录会持续产生新令牌,顺手清掉该用户已过期的旧令牌
+    prisma.authToken.deleteMany({ where: { userId, expiresAt: { lt: new Date() } } }),
+    prisma.authToken.create({ data: { token, userId, sessionKey: sessionKey ?? null, expiresAt } })
+  ]);
   return token;
 }
 

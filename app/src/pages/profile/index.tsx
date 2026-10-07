@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, Input, Button, Picker, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { UserOutlined, ArrowRight, Aim, RecordsOutlined, CalendarOutlined, LikeOutlined, Bell, QuestionOutlined, InfoOutlined, Edit } from '@taroify/icons';
+import { UserOutlined, ArrowRight, Aim, RecordsOutlined, CalendarOutlined, LikeOutlined, InfoOutlined, Edit } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import { useTabBarMask } from '@/hooks/useTabBarMask';
 import Screen from '@/components/Screen';
@@ -50,13 +50,14 @@ export default function ProfilePage(){
     finally{setSavingBody(false)}
   };
   const groups=[
-    [{label:'我的目标',icon:<Aim/>,value:goal?goalLabel[goal.type]??goal.type:'未设置'},{label:'身体数据',icon:<RecordsOutlined/>,value:profile?.weightKg?`${profile.weightKg} kg`:''},{label:'我的计划',icon:<CalendarOutlined/>,value:''},{label:'饮食偏好',icon:<LikeOutlined/>,value:profile?.dietPreference||''}],
-    [{label:'通知设置',icon:<Bell/>,value:''},{label:'帮助与反馈',icon:<QuestionOutlined/>,value:''},{label:'关于轻身记',icon:<InfoOutlined/>,value:''}]
+    [{label:'我的目标',icon:<Aim/>,value:goal?goalLabel[goal.type]??goal.type:'未设置'},{label:'身体数据',icon:<RecordsOutlined/>,value:profile?.weightKg?`${profile.weightKg} kg`:''},{label:'本周报告',icon:<CalendarOutlined/>,value:''},{label:'饮食偏好',icon:<LikeOutlined/>,value:profile?.dietPreference||''}],
+    [{label:'关于轻身记',icon:<InfoOutlined/>,value:''}]
   ];
+  const showAbout=()=>Taro.showModal({title:'关于轻身记',content:'轻身记 v1.0.0\n\n记录饮食、运动与身体数据，看清每一天的变化。\n\n数据安全：所有数据仅用于你的身体管理和分析，不会提供给第三方。',showCancel:false});
   return <Screen className="profile-page">
     <View className="profile-hero"><View className="avatar"><UserOutlined/></View><View className="hero-copy"><View><Text className="user-name">轻身记用户</Text><Text className="goal-pill">{goal?goalLabel[goal.type]??goal.type:'健康管理'}</Text></View><Text className="user-id">你的个人健康空间</Text></View><Edit className="edit-icon" onClick={openEdit}/></View>
     <View className="stat-card"><View><Text>身高</Text><Text>{profile?.heightCm != null ? `${profile.heightCm} cm` : '未填写'}</Text></View><View><Text>体重</Text><Text>{profile?.weightKg != null ? `${profile.weightKg} kg` : '未填写'}</Text></View><View><Text>目标周期</Text><Text>{goal?.durationWeeks ? `${goal.durationWeeks}周` : '未设置'}</Text></View></View>
-    {groups.map((group,index)=><View className="menu-card" key={index}>{group.map(item=><View className="menu-row" key={item.label} onClick={()=>item.label==='我的目标'?Taro.navigateTo({url:'/pages/onboarding/index'}):item.label==='身体数据'?openEdit():item.label==='我的计划'?go(RoutePath.WeeklyReport):item.label==='饮食偏好'?openDiet():undefined}><View className="menu-icon">{item.icon}</View><Text className="menu-label">{item.label}</Text>{item.value&&<Text className="menu-value">{item.value}</Text>}<ArrowRight/></View>)}</View>)}
+    {groups.map((group,index)=><View className="menu-card" key={index}>{group.map(item=><View className="menu-row" key={item.label} onClick={()=>item.label==='我的目标'?Taro.navigateTo({url:'/pages/onboarding/index'}):item.label==='身体数据'?openEdit():item.label==='本周报告'?go(RoutePath.WeeklyReport):item.label==='饮食偏好'?openDiet():showAbout()}><View className="menu-icon">{item.icon}</View><Text className="menu-label">{item.label}</Text>{item.value&&<Text className="menu-value">{item.value}</Text>}<ArrowRight/></View>)}</View>)}
     {dietEditing&&<View className="mask" onClick={()=>!savingDiet&&setDietEditing(false)}><View className="edit-sheet" catchMove onClick={e=>e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">编辑饮食偏好</Text><Text className="diet-help">填写口味、忌口及过敏原；留空可清除偏好。</Text><Textarea className="diet-input" value={diet} maxlength={500} onInput={e=>setDiet(e.detail.value)} placeholder="请输入你的饮食偏好"/><Text className="diet-count">{diet.length}/500</Text>{dietError&&<Text className="diet-error">{dietError}</Text>}<Button className="sheet-save" loading={savingDiet} disabled={savingDiet} onClick={saveDiet}>保存偏好</Button><Button className="sheet-cancel" disabled={savingDiet} onClick={()=>setDietEditing(false)}>取消</Button></View></View>}
     <View className="menu-card"><View className="menu-row" onClick={()=>go(RoutePath.DataSources)}><View className="menu-icon"><RecordsOutlined/></View><Text className="menu-label">数据源管理</Text><ArrowRight/></View></View>
     {editing&&<View className="mask" onClick={()=>!savingBody&&setEditing(false)}><View className="edit-sheet body-sheet" catchMove onClick={e=>e.stopPropagation()}>

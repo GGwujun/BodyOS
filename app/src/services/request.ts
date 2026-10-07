@@ -50,6 +50,13 @@ function buildHeader(custom?: Record<string, string>): Record<string, string> {
 export async function request<T = unknown>(opts: RequestOptions): Promise<T> {
   const { url, method = 'GET', data, header, ai = false, raw = false } = opts;
   try {
+    // 小程序端无 token 时先等静默登录完成(去重,首屏并发请求只触发一次),
+    // 避免启动瞬间带着空 token 请求而读到开发用户的数据
+    if (process.env.TARO_ENV === 'weapp' && !getToken()) {
+      const { ensureLogin } = await import('./login');
+      await ensureLogin();
+    }
+
     const res = await Taro.request({
       url: url.startsWith('http') ? url : `${config.apiBase}${url}`,
       method,
@@ -62,7 +69,7 @@ export async function request<T = unknown>(opts: RequestOptions): Promise<T> {
     if (res.statusCode === 401 && !url.startsWith('/auth') && !opts.retried) {
       clearToken();
       const { ensureLogin } = await import('./login');
-      if (await ensureLogin(true)) {
+      if (await ensureLogin()) {
         return request<T>({ ...opts, retried: true });
       }
     }

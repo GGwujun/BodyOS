@@ -40,6 +40,11 @@
     border-radius: $radius-md; padding: 12px 14px; font-size: 13px;
   }
 
+  .ds-more {
+    text-align: center; font-size: 11px; color: $color-text-tertiary;
+    margin-top: 4px;
+  }
+
   .privacy-note {
     display: flex; justify-content: center; align-items: center; gap: 5px;
     color: $color-text-tertiary; font-size: 10px; margin-top: 12px;
