@@ -129,7 +129,7 @@ export default function Exercise() {
           onInput={(e) => setAiText(e.detail.value)}
         />
         <Button className="btn btn--primary btn--block mt-3" loading={parsing} onClick={parse}>
-          AI 解析
+          快速记录
         </Button>
       </View>
 
@@ -207,7 +207,7 @@ export default function Exercise() {
 function sourceLabel(source?: string): string {
   const m: Record<string, string> = {
     manual: '手动',
-    ai_text: 'AI 解析',
+    ai_text: '快捷记录',
     wechat: '微信运动',
     apple_health: 'Apple 健康',
     mi: '小米运动',

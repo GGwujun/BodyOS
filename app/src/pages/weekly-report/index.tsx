@@ -22,9 +22,9 @@ export default function WeeklyReport() {
   if (loading) {
     return (
       <Screen className="weekly-report-page">
-        <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>AI 周报</Text><Text>本周</Text></View>
+        <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>本周报告</Text><Text>本周</Text></View>
         <View className="card">
-          <Text className="fs-caption text-secondary">AI 正在生成本周报告…</Text>
+          <Text className="fs-caption text-secondary">正在生成本周报告…</Text>
         </View>
       </Screen>
     );
@@ -33,11 +33,11 @@ export default function WeeklyReport() {
   if (error || !data) {
     return (
       <Screen className="weekly-report-page">
-        <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>AI 周报</Text><Text>本周</Text></View>
+        <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>本周报告</Text><Text>本周</Text></View>
         <View className="error-panel">
           <BulbOutlined />
           <Text className="error-title">周报暂时无法生成</Text>
-          <Text className="error-copy">{error || '数据不足或未配置 AI Key。'}</Text>
+          <Text className="error-copy">{error || '数据不足，暂时无法生成报告。'}</Text>
           <Text className="retry" onClick={() => refresh()}>重新生成</Text>
         </View>
       </Screen>
@@ -46,7 +46,7 @@ export default function WeeklyReport() {
 
   return (
     <Screen className="weekly-report-page">
-      <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>AI 周报</Text><Text>本周</Text></View>
+      <View className="report-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>本周报告</Text><Text>本周</Text></View>
 
       <View className="score-card">
         <Text className="fs-caption">本周评分</Text>
@@ -86,7 +86,7 @@ export default function WeeklyReport() {
       </View>
 
       <View className="card ai-card">
-        <Text className="fs-h1 text-info"><BulbOutlined /> AI 总结与下周行动</Text>
+        <Text className="fs-h1 text-info"><BulbOutlined /> 总结与下周行动</Text>
         {data.actions.length === 0 && <Text className="fs-mini text-secondary">保持现有节奏</Text>}
         {data.actions.map((a, i) => (
           <Text key={i} className="fs-caption">

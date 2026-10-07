@@ -28,7 +28,8 @@ export async function chat(
   messages: ZhipuMessage[],
   opts: ZhipuOptions = {}
 ): Promise<string> {
-  if (!env.zhipuApiKey) throw new Error('AI 服务尚未配置，请配置有效凭据后重试');
+  // 注意:错误消息会透传到前端用户可见界面,不得出现"AI"/供应商品牌字样。
+  if (!env.zhipuApiKey) throw new Error('云端服务尚未配置，请检查服务配置后重试');
 
   const url = `${env.zhipuBaseUrl.replace(/\/$/, '')}${MESSAGES_PATH}`;
   const body = {
@@ -60,10 +61,10 @@ export async function chat(
       const errBody = (await res.json()) as { error?: { message?: string } | string };
       detail = typeof errBody.error === 'string' ? errBody.error : (errBody.error?.message ?? '');
     } catch { /* 非 JSON 响应体时忽略 */ }
-    if (res.status === 429) throw new Error('AI 服务额度不足或正在限流，请检查服务额度后重试');
+    if (res.status === 429) throw new Error('云端服务额度不足或正在限流，请稍后重试');
     throw new Error(detail
-      ? `AI 服务请求失败（${res.status}）：${detail}`
-      : `AI 服务请求失败（${res.status}），请稍后重试或检查服务配置`);
+      ? `云端服务请求失败（${res.status}）：${detail}`
+      : `云端服务请求失败（${res.status}），请稍后重试或检查服务配置`);
   }
 
   const data = (await res.json()) as {
@@ -71,9 +72,9 @@ export async function chat(
     stop_reason?: string;
     error?: { message?: string };
   };
-  if (data.error) throw new Error(`智谱返回错误: ${data.error.message}`);
+  if (data.error) throw new Error(`云端服务返回错误: ${data.error.message}`);
   const text = data.content?.find((c) => c.type === 'text')?.text;
-  if (!text) throw new Error(`智谱返回为空(stop_reason=${data.stop_reason ?? 'unknown'})`);
+  if (!text) throw new Error(`云端服务返回为空(stop_reason=${data.stop_reason ?? 'unknown'})`);
   return text;
 }
 
@@ -92,6 +93,6 @@ export async function chatJSON<T = unknown>(
   try {
     return JSON.parse(cleaned) as T;
   } catch {
-    throw new Error(`智谱返回非合法 JSON: ${cleaned.slice(0, 200)}`);
+    throw new Error(`云端服务返回非合法 JSON: ${cleaned.slice(0, 200)}`);
   }
 }

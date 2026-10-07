@@ -35,7 +35,7 @@ export default function Trends() {
       <View className="mini-grid"><View className="metric-card"><ChartTrendingOutlined/><Text>Body Score</Text><Text className="mini-value">{stats?.avgScore ?? '—'}</Text><Text className="good">近 {range} 天均分</Text></View><View className="metric-card"><BarChartOutlined/><Text>记录天数</Text><Text className="mini-value">{stats?.recordDays ?? '—'}</Text><Text className="muted">持续积累数据</Text></View></View>
       <View className="metric-card data-list"><Text className="card-title">每日 Body Score</Text>{!summaries.length && <Text>所选时间内暂无评分记录</Text>}{[...summaries].reverse().map(item => <View key={item.date}><Text>{item.date.slice(5)}</Text><Text>{item.bodyScore ?? '—'}</Text></View>)}</View>
     </>}
-    {section === 'analysis' && <View className="metric-card insight"><BulbOutlined/><Text className="card-title">今日 AI 分析</Text>{analysisError ? <Text onClick={() => retryAnalysis()}>分析失败，点击重试</Text> : <Text>{analysis?.summary ?? '正在结合你的身体数据生成分析…'}</Text>}{analysis?.actions?.map(a => <Text className="action" key={a.title}>{a.title}</Text>)}</View>}
+    {section === 'analysis' && <View className="metric-card insight"><BulbOutlined/><Text className="card-title">今日解读</Text>{analysisError ? <Text onClick={() => retryAnalysis()}>分析失败，点击重试</Text> : <Text>{analysis?.summary ?? '正在结合你的身体数据生成分析…'}</Text>}{analysis?.actions?.map(a => <Text className="action" key={a.title}>{a.title}</Text>)}</View>}
   </Screen>;
 }
 async function fetchAnalysis(): Promise<DailyAnalysis> { return request<DailyAnalysis>({url:'/ai/daily-analysis',method:'POST',data:{date:todayStr()},ai:true}); }

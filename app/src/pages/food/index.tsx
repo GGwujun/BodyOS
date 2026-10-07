@@ -144,7 +144,7 @@ export default function Food() {
   return (
     <Screen className="food-page">
       <View className="page-nav"><ArrowLeft onClick={() => Taro.navigateBack()} /><Text>饮食记录</Text><Ellipsis /></View>
-      <View className="mode-tabs">{([{key:'ai',label:'AI识别'},{key:'manual',label:'手动添加'},{key:'frequent',label:'常用食物'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
+      <View className="mode-tabs">{([{key:'ai',label:'快速识别'},{key:'manual',label:'手动添加'},{key:'frequent',label:'常用食物'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => setMode(tab.key)}>{tab.label}</Text>)}</View>
 
       {/* 餐次选择 */}
       <View className="meal-tabs">
@@ -161,7 +161,7 @@ export default function Food() {
 
       {/* 文本输入 */}
       {mode === 'ai' && <View className="food-prompt">
-        <View className="prompt-title"><BulbOutlined /><Text>告诉 AI 你吃了什么</Text></View>
+        <View className="prompt-title"><BulbOutlined /><Text>说说你吃了什么</Text></View>
         <Textarea
           className="food-input"
           placeholder="例如:一碗牛肉面、一个煎蛋、一杯豆浆"
@@ -178,7 +178,7 @@ export default function Food() {
             loading={state === 'parsing'}
             onClick={() => parse(false)}
           >
-            AI 解析
+            立即识别
           </Button>
         </View>
       </View>}
@@ -202,7 +202,7 @@ export default function Food() {
 
       {state === 'parsing' && (
         <View className="card ai-card">
-          <Text className="fs-caption text-info">AI 正在识别…</Text>
+          <Text className="fs-caption text-info">正在识别…</Text>
         </View>
       )}
 
