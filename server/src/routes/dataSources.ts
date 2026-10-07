@@ -5,11 +5,13 @@ import { ok, err } from '../lib/http';
 import { getAdapter, isSupported, providerName, KNOWN_PROVIDERS, presentDataSource } from '../sync/registry';
 import { runSync, runPushSync } from '../sync/syncService';
 import { decryptWeRunData, weRunToRecords, WECHAT_PROVIDER } from '../sync/adapters/wechat';
+import { wrap } from '../lib/asyncHandler';
+import { isUserError, fallbackMessage } from '../lib/userError';
 
 const router = Router();
 
 /** GET /data-sources — 已接入数据源的连接状态(未接入的不再返回,避免露出"暂未接入"占位卡片) */
-router.get('/', async (_req, res) => {
+router.get('/', wrap(async (_req, res) => {
   const rows = await prisma.dataSource.findMany({ where: { userId: getUserId(res) } });
   const byProvider = new Map(rows.map((r) => [r.provider, r]));
 
@@ -17,10 +19,10 @@ router.get('/', async (_req, res) => {
     .filter((provider) => isSupported(provider))
     .map((provider) => presentDataSource(provider, byProvider.get(provider)));
   return ok(res, result);
-});
+}));
 
 /** POST /data-sources/:provider/connect */
-router.post('/:provider/connect', async (req, res) => {
+router.post('/:provider/connect', wrap(async (req, res) => {
   const { provider } = req.params;
   if (!isSupported(provider)) return err(res, 400, '未支持的 provider');
 
@@ -33,10 +35,10 @@ router.post('/:provider/connect', async (req, res) => {
     update: { status: 'connected', lastError: null }
   });
   return ok(res, ds);
-});
+}));
 
 /** POST /data-sources/:provider/sync — 触发增量同步;微信运动为客户端推送式 */
-router.post('/:provider/sync', async (req, res) => {
+router.post('/:provider/sync', wrap(async (req, res) => {
   const { provider } = req.params;
   if (!isSupported(provider)) return err(res, 400, '未支持的 provider');
   const userId = getUserId(res);
@@ -66,16 +68,17 @@ router.post('/:provider/sync', async (req, res) => {
     }
 
     if (result.status === 'error') {
-      return err(res, 502, `同步失败: ${result.error}`, { affectsData: false, code: 502 });
+      console.error('[sync] provider 同步失败:', provider, result.error);
+      return err(res, 502, '同步失败，请稍后重试', { affectsData: false, code: 502 });
     }
     return ok(res, result);
   } catch (e) {
-    return err(res, 500, (e as Error).message, { affectsData: false });
+    return err(res, 500, isUserError(e) ? e.message : fallbackMessage('sync', e), { affectsData: false });
   }
-});
+}));
 
 /** POST /data-sources/:provider/disconnect */
-router.post('/:provider/disconnect', async (req, res) => {
+router.post('/:provider/disconnect', wrap(async (req, res) => {
   const { provider } = req.params;
   const ds = await prisma.dataSource.findUnique({
     where: { userId_provider: { userId: getUserId(res), provider } }
@@ -94,6 +97,6 @@ router.post('/:provider/disconnect', async (req, res) => {
     data: { status: 'disconnected' }
   });
   return ok(res, updated);
-});
+}));
 
 export default router;

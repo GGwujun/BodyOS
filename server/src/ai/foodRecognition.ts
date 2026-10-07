@@ -1,4 +1,5 @@
 import { chatJSON, type ZhipuMessage } from './zhipu';
+import { UserError } from '../lib/userError';
 import { matchFood } from '../data/foodDB';
 import { z } from 'zod';
 
@@ -48,7 +49,7 @@ async function recognize(text?: string, imageBase64?: string): Promise<Recognize
     grams:z.number().finite().positive(),
     rawAmount:z.string().optional()
   }))}).safeParse(result);
-  if (!parsed.success) throw new Error('食物识别结果不完整，请重新识别或手动输入');
+  if (!parsed.success) throw new UserError('食物识别结果不完整，请重新识别或手动输入');
   return parsed.data.items;
 }
 
@@ -79,7 +80,7 @@ export async function recognizeAndCalculate(
   imageBase64?: string
 ): Promise<FoodRecognitionResult> {
   if (!text?.trim() && !imageBase64?.trim()) {
-    throw new Error('请提供食物描述或图片');
+    throw new UserError('请提供食物描述或图片');
   }
   const recognized = await recognize(text, imageBase64);
 
@@ -142,7 +143,7 @@ async function llmEstimateNutrition(name: string, grams: number) {
     );
     return r;
   } catch {
-    throw new Error('营养估算失败，请手动输入实际营养数据');
+    throw new UserError('营养估算失败，请手动输入实际营养数据');
   }
 }
 

@@ -10,6 +10,7 @@
 import { randomBytes } from 'node:crypto';
 import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
+import { env } from '../env';
 
 /** 本地开发用户(无登录时的回落,也是历史 MVP 数据归属) */
 export const DEV_USER_ID = 'u_1';
@@ -37,7 +38,14 @@ export async function issueToken(userId: string, sessionKey?: string): Promise<s
 export async function attachUser(req: Request, res: Response, next: NextFunction): Promise<void> {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
-  if (!token) return next(); // 无令牌:回落开发用户(见 getUserId)
+  if (!token) {
+    // 无令牌回落开发用户仅限本地联调;生产环境不回落,否则任何人可匿名读写全量数据
+    if (env.nodeEnv === 'production') {
+      res.status(401).json({ code: 401, message: '请先登录', data: null });
+      return;
+    }
+    return next();
+  }
 
   try {
     const auth = await prisma.authToken.findUnique({ where: { token } });

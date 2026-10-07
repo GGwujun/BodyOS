@@ -39,8 +39,12 @@ router.post('/wechat', async (req, res, next) => {
   if (!parsed.success) return err(res, 400, parsed.error.issues[0]?.message || '参数错误', { affectsData: false });
 
   try {
-    // 本地开发回落:未配置微信凭据时签发开发用户令牌,保证链路可联调
+    // 本地开发回落:未配置微信凭据时签发开发用户令牌,保证链路可联调(生产禁用)
     if (!env.wechatAppId || !env.wechatAppSecret) {
+      if (env.nodeEnv === 'production') {
+        console.error('生产环境未配置 WECHAT_APPID/WECHAT_APP_SECRET,无法登录');
+        return err(res, 503, '登录服务暂不可用', { affectsData: false });
+      }
       console.warn('⚠️  未配置 WECHAT_APPID/WECHAT_APP_SECRET,/auth/wechat 回落开发用户 u_1');
       await prisma.user.upsert({
         where: { id: DEV_USER_ID },
@@ -53,8 +57,9 @@ router.post('/wechat', async (req, res, next) => {
 
     const session = await code2Session(parsed.data.code);
     if (!session.openid || session.errcode) {
+      // 微信 errmsg 含 rid 等服务端调试串,只留日志,客户端统一文案
       console.error('微信 code2session 失败:', session.errcode, session.errmsg);
-      return err(res, 401, session.errmsg || '微信登录失败，请重试', { affectsData: false });
+      return err(res, 401, '微信登录失败，请重新进入小程序', { affectsData: false });
     }
 
     // openid → 用户(首次登录自动建号,空目标会引导进目标设置)

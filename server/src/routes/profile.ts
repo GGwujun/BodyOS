@@ -3,6 +3,7 @@ import { ProfileSchema } from '../lib/profileValidation';
 import { prisma } from '../db';
 import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
+import { wrap } from '../lib/asyncHandler';
 
 const router = Router();
 
@@ -14,13 +15,13 @@ async function ensureProfile(userId: string) {
 }
 
 /** GET /profile */
-router.get('/', async (_req, res) => {
+router.get('/', wrap(async (_req, res) => {
   const profile = await ensureProfile(getUserId(res));
   return ok(res, profile);
-});
+}));
 
 /** PUT /profile */
-router.put('/', async (req, res) => {
+router.put('/', wrap(async (req, res) => {
   const parsed = ProfileSchema.safeParse(req.body);
   if (!parsed.success) return err(res, 400, parsed.error.issues[0]?.message || '参数错误');
   const data: Record<string, unknown> = { ...parsed.data };
@@ -32,6 +33,6 @@ router.put('/', async (req, res) => {
     update: data as never
   });
   return ok(res, profile);
-});
+}));
 
 export default router;

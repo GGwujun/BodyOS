@@ -17,4 +17,7 @@ export const env = {
   wechatAppId: process.env.WECHAT_APPID || '',
   wechatAppSecret: process.env.WECHAT_APP_SECRET || '',
 
+  // 平台指标接口(/analytics/metrics)的管理密钥;生产未配置时该接口返回 404
+  adminApiKey: process.env.ADMIN_API_KEY || '',
+
 };

@@ -3,29 +3,30 @@ import { z } from 'zod';
 import { prisma } from '../db';
 import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
+import { wrap } from '../lib/asyncHandler';
 
 const router = Router();
 
 const CreateGoalSchema = z.object({
   type: z.enum(['fat_loss', 'muscle_gain', 'maintain', 'endurance']),
-  targetValue: z.number().positive(),
-  unit: z.string(),
+  targetValue: z.number().positive().max(10_000),
+  unit: z.string().max(10),
   durationWeeks: z.number().int().positive().optional(),
   startDate: z.string().datetime().optional(),
   isActive: z.boolean().optional()
 });
 
 /** GET /goals */
-router.get('/', async (_req, res) => {
+router.get('/', wrap(async (_req, res) => {
   const goals = await prisma.goal.findMany({
     where: { userId: getUserId(res), isActive: true },
     orderBy: { createdAt: 'desc' }
   });
   return ok(res, goals);
-});
+}));
 
 /** POST /goals */
-router.post('/', async (req, res) => {
+router.post('/', wrap(async (req, res) => {
   const parsed = CreateGoalSchema.safeParse(req.body);
   if (!parsed.success) return err(res, 400, '参数错误');
   const { startDate, ...rest } = parsed.data;
@@ -42,10 +43,10 @@ router.post('/', async (req, res) => {
     });
   });
   return ok(res, goal);
-});
+}));
 
 /** PUT /goals/:id */
-router.put('/:id', async (req, res) => {
+router.put('/:id', wrap(async (req, res) => {
   const existing = await prisma.goal.findUnique({ where: { id: req.params.id } });
   if (!existing || existing.userId !== getUserId(res)) {
     return err(res, 404, '目标不存在', { affectsData: false });
@@ -63,16 +64,16 @@ router.put('/:id', async (req, res) => {
     });
   });
   return ok(res, goal);
-});
+}));
 
 /** DELETE /goals/:id — 归档(置 isActive=false) */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', wrap(async (req, res) => {
   const existing = await prisma.goal.findUnique({ where: { id: req.params.id } });
   if (!existing || existing.userId !== getUserId(res)) {
     return err(res, 404, '目标不存在', { affectsData: false });
   }
   await prisma.goal.update({ where: { id: req.params.id }, data: { isActive: false } });
   return ok(res, { archived: true });
-});
+}));
 
 export default router;

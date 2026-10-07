@@ -26,6 +26,14 @@ export function todayStr(): string {
   return toDateStr(new Date());
 }
 
+/** 校验是 YYYY-MM-DD 且为真实日历日期(防脏参数进 toDate 产生 Invalid Date 打挂 Prisma) */
+export function isValidDateStr(value: unknown): value is string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [y, m, d] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
+}
+
 /** 指定日期加减 N 天,返回新的 dateStr */
 export function addDays(dateStr: string, n: number): string {
   const d = toDate(dateStr);

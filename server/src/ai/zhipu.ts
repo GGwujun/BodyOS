@@ -1,4 +1,5 @@
 import { env } from '../env';
+import { UserError } from '../lib/userError';
 
 /**
  * 智谱 GLM 调用封装(Anthropic Messages 协议兼容端点)。
@@ -29,7 +30,8 @@ export async function chat(
   opts: ZhipuOptions = {}
 ): Promise<string> {
   // 注意:错误消息会透传到前端用户可见界面,不得出现"AI"/供应商品牌字样。
-  if (!env.zhipuApiKey) throw new Error('云端服务尚未配置，请检查服务配置后重试');
+  // 仅 UserError 的消息会原样返回客户端,其余异常由路由收敛为通用文案。
+  if (!env.zhipuApiKey) throw new UserError('云端服务尚未配置，请检查服务配置后重试');
 
   const url = `${env.zhipuBaseUrl.replace(/\/$/, '')}${MESSAGES_PATH}`;
   const body = {
@@ -44,27 +46,36 @@ export async function chat(
     thinking: { type: 'disabled' }
   };
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': env.zhipuApiKey,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify(body)
-  });
+  let res: Response;
+  try {
+    // 服务端兜底超时:客户端 60s 放弃后,这里 45s 先断开,避免挂着上游连接继续计费
+    res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': env.zhipuApiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(45_000)
+    });
+  } catch (e) {
+    if (e instanceof Error && (e.name === 'TimeoutError' || e.name === 'AbortError')) {
+      throw new UserError('云端服务响应超时，请稍后重试');
+    }
+    throw e;
+  }
 
   if (!res.ok) {
-    // 读取并透出提供方错误详情(如 key 失效/额度不足),便于定位配置问题
+    // 上游错误详情只留服务端日志,客户端统一拿通用文案(不泄漏配置/内部信息)
     let detail = '';
     try {
       const errBody = (await res.json()) as { error?: { message?: string } | string };
       detail = typeof errBody.error === 'string' ? errBody.error : (errBody.error?.message ?? '');
     } catch { /* 非 JSON 响应体时忽略 */ }
-    if (res.status === 429) throw new Error('云端服务额度不足或正在限流，请稍后重试');
-    throw new Error(detail
-      ? `云端服务请求失败（${res.status}）：${detail}`
-      : `云端服务请求失败（${res.status}），请稍后重试或检查服务配置`);
+    console.error(`[zhipu] 上游 ${res.status}:`, detail);
+    if (res.status === 429) throw new UserError('云端服务额度不足或正在限流，请稍后重试');
+    throw new UserError('云端服务请求失败，请稍后重试');
   }
 
   const data = (await res.json()) as {
@@ -72,9 +83,15 @@ export async function chat(
     stop_reason?: string;
     error?: { message?: string };
   };
-  if (data.error) throw new Error(`云端服务返回错误: ${data.error.message}`);
+  if (data.error) {
+    console.error('[zhipu] 响应体错误:', data.error.message);
+    throw new UserError('云端服务返回错误，请稍后重试');
+  }
   const text = data.content?.find((c) => c.type === 'text')?.text;
-  if (!text) throw new Error(`云端服务返回为空(stop_reason=${data.stop_reason ?? 'unknown'})`);
+  if (!text) {
+    console.error('[zhipu] 返回为空, stop_reason=', data.stop_reason);
+    throw new UserError('云端服务返回为空，请稍后重试');
+  }
   return text;
 }
 
@@ -93,6 +110,8 @@ export async function chatJSON<T = unknown>(
   try {
     return JSON.parse(cleaned) as T;
   } catch {
-    throw new Error(`云端服务返回非合法 JSON: ${cleaned.slice(0, 200)}`);
+    // 模型原始输出只留服务端日志,不外泄(可能回显提示词/乱码)
+    console.error('[zhipu] 非 JSON 返回:', cleaned.slice(0, 200));
+    throw new UserError('云端服务返回异常，请稍后重试');
   }
 }

@@ -4,15 +4,16 @@ import { prisma } from '../db';
 import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 import { parsePage, pageResult } from '../lib/pagination';
-import { toDate, todayStr, toDateStr } from '../lib/date';
+import { toDate, todayStr, toDateStr, isValidDateStr } from '../lib/date';
+import { wrap } from '../lib/asyncHandler';
 import { recomputeDaily } from '../engine';
 
 const router = Router();
 
 export const CreateActivitySchema = z.object({
-  type: z.string().trim().min(1),
-  durationMin: z.number().int().positive().optional(),
-  calories: z.number().finite().nonnegative().default(0),
+  type: z.string().trim().min(1).max(30),
+  durationMin: z.number().int().positive().max(24 * 60).optional(),
+  calories: z.number().finite().nonnegative().max(20_000).default(0),
   steps: z.number().int().nonnegative().optional(),
   startedAt: z.string().datetime(),
   source: z.string().default('manual'),
@@ -22,8 +23,9 @@ export const CreateActivitySchema = z.object({
 });
 
 /** GET /activities?date=YYYY-MM-DD */
-router.get('/', async (req, res) => {
+router.get('/', wrap(async (req, res) => {
   const dateStr = (req.query.date as string) || todayStr();
+  if (!isValidDateStr(dateStr)) return err(res, 400, 'date 格式应为 YYYY-MM-DD');
   const q = parsePage(req);
   const where = { userId: getUserId(res), date: toDate(dateStr), deletedAt: null };
   const [items, total] = await Promise.all([
@@ -31,10 +33,10 @@ router.get('/', async (req, res) => {
     prisma.activityRecord.count({ where })
   ]);
   return ok(res, pageResult(items, total, q));
-});
+}));
 
 /** POST /activities */
-router.post('/', async (req, res) => {
+router.post('/', wrap(async (req, res) => {
   const parsed = CreateActivitySchema.safeParse(req.body);
   if (!parsed.success) return err(res, 400, '参数错误');
 
@@ -59,10 +61,10 @@ router.post('/', async (req, res) => {
 
   const summary = await recomputeDaily(getUserId(res), dateStr);
   return ok(res, { activity, summary });
-});
+}));
 
 /** DELETE /activities/:id — 软删除 + 重算 */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', wrap(async (req, res) => {
   const activity = await prisma.activityRecord.findUnique({ where: { id: req.params.id } });
   if (!activity || activity.userId !== getUserId(res)) {
     return err(res, 404, '记录不存在', { affectsData: false });
@@ -71,10 +73,10 @@ router.delete('/:id', async (req, res) => {
   await prisma.activityRecord.update({ where: { id: req.params.id }, data: { deletedAt: new Date() } });
   const summary = await recomputeDaily(getUserId(res), dateStr);
   return ok(res, { deleted: true, recalculated: summary });
-});
+}));
 
 /** PUT /activities/:id — 编辑条目后重算 */
-router.put('/:id', async (req, res) => {
+router.put('/:id', wrap(async (req, res) => {
   const existing = await prisma.activityRecord.findUnique({ where: { id: req.params.id } });
   if (!existing || existing.userId !== getUserId(res)) {
     return err(res, 404, '记录不存在', { affectsData: false });
@@ -95,6 +97,6 @@ router.put('/:id', async (req, res) => {
   const updated = await prisma.activityRecord.update({ where: { id: req.params.id }, data });
   const summary = await recomputeDaily(getUserId(res), toDateStr(updated.date));
   return ok(res, { activity: updated, summary });
-});
+}));
 
 export default router;
