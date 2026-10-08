@@ -1,5 +1,72 @@
 @import './styles/global.scss';
 
+/* ============ 启动遮罩 ============
+ * 盖住冷启动的静默登录+新用户判断期(约 0.5~2s),品牌渐变底。
+ * 6s 兜底后自动收起(见 app.tsx),不会困住用户。
+ * 在全局作用域(app.scss)写 fixed 样式,避免嵌进带 padding 的页面类。
+ */
+.boot-splash {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* 品牌渐变,与主按钮/hero 一致 */
+  background: linear-gradient(160deg, #34d399, #059669);
+  color: #fff;
+}
+.boot-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.boot-logo-text {
+  font-size: 36px;
+  font-weight: 600;
+  color: #fff;
+}
+.boot-name {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #fff;
+}
+.boot-slogan {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.boot-spinner {
+  width: 28px;
+  height: 28px;
+  margin-top: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  animation: boot-spin 0.8s linear infinite;
+}
+.boot-tip {
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+@keyframes boot-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* H5 TabBar 使用与页面一致的 Taroify 图标字体；小程序端后续由原生 iconPath 接管。 */
 .weui-tabbar__item > span {
   width: 24px;
