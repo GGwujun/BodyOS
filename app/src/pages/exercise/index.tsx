@@ -25,6 +25,8 @@ export default function Exercise() {
 
   // 手动记录表单
   const [showForm, setShowForm] = useState(false);
+  /** 「手动记录」tab 仅首次进入自动展开表单,避免从编辑切回时突兀弹层 */
+  const manualTabSeen = useRef(false);
   const [typeIdx, setTypeIdx] = useState(0);
   const [duration, setDuration] = useState('');
   const [calories, setCalories] = useState('');
@@ -161,7 +163,7 @@ export default function Exercise() {
 
   return (
     <Screen className="exercise-page">
-      <View className="mode-tabs">{([{key:'manual',label:'手动记录'},{key:'sync',label:'自动同步'},{key:'devices',label:'数据来源'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => { setMode(tab.key); if(tab.key === 'manual') setShowForm(true); }}>{tab.label}</Text>)}</View>
+      <View className="mode-tabs">{([{key:'manual',label:'手动记录'},{key:'sync',label:'自动同步'},{key:'devices',label:'数据来源'}] as const).map(tab => <Text key={tab.key} className={mode === tab.key ? 'active' : ''} onClick={() => { setMode(tab.key); if(tab.key === 'manual' && !manualTabSeen.current) { manualTabSeen.current = true; setShowForm(true); } }}>{tab.label}</Text>)}</View>
       {mode === 'devices' && <View className="card"><Text className="fs-h1">数据来源</Text><Text>查看支持的数据来源及连接状态。</Text><Button onClick={() => Taro.navigateTo({url:'/pages/data-sources/index'})}>管理数据来源</Button></View>}
       {mode === 'sync' && <View className="card"><Text className="fs-h1">今日自动同步</Text><Text>拉取微信运动步数，自动生成运动记录。</Text><Button loading={syncing} disabled={syncing} onClick={syncNow}>{syncing?'正在同步…':'立即同步'}</Button></View>}
 

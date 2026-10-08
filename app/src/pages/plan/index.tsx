@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Text, View } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import WeightSheet from '@/components/WeightSheet';
 import { useAsync } from '@/hooks/useAsync';
@@ -89,6 +89,8 @@ export default function PlanPage() {
     : undefined;
 
   const refreshAll = () => { void refresh(); void refreshGoals(); };
+  // 从 onboarding 重置方案返回后方案卡不再显示已删目标
+  useDidShow(() => { refreshAll(); });
 
   const removePlan = async () => {
     if (!goal || removing) return;
@@ -126,7 +128,7 @@ export default function PlanPage() {
         <View className="card guide-card">
           <Text className="fs-h1">还没有进行中的方案</Text>
           <Text className="fs-caption guide-copy">设置目标后，这里会展示方案信息、进度时间轴和按你代谢推荐的食谱。</Text>
-          <Button className="btn btn--primary btn--block" onClick={() => { track('plan_setup_goal', 'other'); Taro.navigateTo({ url: '/pages/onboarding/index' }); }}>去设置目标</Button>
+          <Button className="btn btn--primary btn--block" onClick={() => { track('plan_setup_goal', 'other'); Taro.navigateTo({ url: '/pages/onboarding/index?from=nav' }); }}>去设置目标</Button>
         </View>
       ) : (
         <>
@@ -179,10 +181,13 @@ export default function PlanPage() {
             </View>
             {bmr != null
               ? <Text className="info-note">基础代谢按 Mifflin-St Jeor 公式估算，随体重记录更新。</Text>
-              : <Text className="info-note">在我的 → 编辑身体信息中补全性别、出生日期、身高后可估算基础代谢。</Text>}
+              : <>
+                <Text className="info-note">在我的 → 编辑身体信息中补全性别、出生日期、身高后可估算基础代谢。</Text>
+                <Text className="pending-link" onClick={() => Taro.switchTab({ url: '/pages/profile/index' })}>去完善身体信息 »</Text>
+              </>}
 
             <View className="plan-ops">
-              <Button className="btn btn--secondary op-btn" onClick={() => { track('plan_reset_click', 'other'); Taro.navigateTo({ url: '/pages/onboarding/index' }); }}>重置方案</Button>
+              <Button className="btn btn--secondary op-btn" onClick={() => { track('plan_reset_click', 'other'); Taro.navigateTo({ url: '/pages/onboarding/index?from=nav' }); }}>重置方案</Button>
               <Button className="btn op-btn op-btn--danger" disabled={removing} onClick={() => void removePlan()}>{removing ? '正在删除…' : '删除方案'}</Button>
             </View>
           </View>
@@ -231,7 +236,10 @@ export default function PlanPage() {
           <View className="card diet-card">
             <Text className="fs-h1">每日摄入建议</Text>
             {suggestKcal == null ? (
-              <Text className="diet-note">在我的 → 编辑身体信息中补全性别、出生日期、身高后，可按基础代谢估算每日摄入并推荐食谱。</Text>
+              <>
+                <Text className="diet-note">在我的 → 编辑身体信息中补全性别、出生日期、身高后，可按基础代谢估算每日摄入并推荐食谱。</Text>
+                <Text className="pending-link" onClick={() => Taro.switchTab({ url: '/pages/profile/index' })}>去完善身体信息 »</Text>
+              </>
             ) : (
               <>
                 <Text className="diet-lead">建议每日摄入约 <Text className="diet-lead__num">{suggestKcal}</Text> 千卡</Text>

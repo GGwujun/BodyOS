@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Text, View } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import LineChart from '@/components/LineChart';
 import WeightSheet from '@/components/WeightSheet';
@@ -14,6 +14,8 @@ export default function WeightPage() {
   const { plan, loading, error, refresh } = useWeightPlan();
   const [sheetOpen, setSheetOpen] = useState(false);
   useEffect(() => { track('weight_view', 'other'); }, []);
+  // 从「查看方案」删除/重置目标返回后,进度环与曲线不再显示已删数据
+  useDidShow(() => { void refresh(); });
 
   const profile = plan?.profile;
   const heightCm = profile?.heightCm ?? null;
@@ -44,7 +46,7 @@ export default function WeightPage() {
         <View className="card guide-card">
           <Text className="fs-h1">还没有体重目标</Text>
           <Text className="fs-caption guide-copy">设置一个减脂或增肌目标后，这里会展示目标进度、体重与 BMI 曲线。</Text>
-          <Button className="btn btn--primary btn--block" onClick={() => { track('weight_setup_goal', 'other'); Taro.navigateTo({ url: '/pages/onboarding/index' }); }}>去设置目标</Button>
+          <Button className="btn btn--primary btn--block" onClick={() => { track('weight_setup_goal', 'other'); Taro.navigateTo({ url: '/pages/onboarding/index?from=nav' }); }}>去设置目标</Button>
         </View>
       ) : (
         <View className="card hero-card">
@@ -92,7 +94,9 @@ export default function WeightPage() {
         <Text className="fs-h1">体重变化曲线</Text>
         {weightPoints.length
           ? <LineChart canvasId="weight-curve" height={180} color="#10b981" points={weightPoints} />
-          : <Text className="chart-empty">暂无体重记录，点上方「更新最新体重」开始记录</Text>}
+          : goal
+            ? <Text className="chart-empty">暂无体重记录，点上方「更新最新体重」开始记录</Text>
+            : <Text className="chart-empty" onClick={() => Taro.navigateTo({ url: '/pages/onboarding/index?from=nav' })}>设置目标后开始记录体重，去设置目标 ›</Text>}
         {!!weightPoints.length && <Text className="chart-note fs-mini">▲ 体重 (kg) · 最近 {weightPoints.length} 次记录</Text>}
       </View>
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Picker, Text, View } from '@tarojs/components';
-import Taro, { useDidShow } from '@tarojs/taro';
+import Taro, { useDidShow, usePullDownRefresh } from '@tarojs/taro';
 import { ArrowRight, ArrowDown } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import { RoutePath, TAB_PAGES } from '@/constants/routes';
@@ -38,7 +38,23 @@ export default function Home() {
       setInsightLoading(false);
     }
   };
+  const regenInsight = async () => {
+    setInsightLoading(true);
+    setInsightError('');
+    try {
+      setInsight(await summaryApi.dailyAnalysis(today));
+    } catch (e) {
+      setInsightError(e instanceof Error ? e.message : '解读生成失败,请稍后重试');
+    } finally {
+      setInsightLoading(false);
+    }
+  };
   useDidShow(() => { track('home_view', 'home'); void refresh(); });
+  // config 已开启 enablePullDownRefresh:下拉手势刷新当日数据
+  usePullDownRefresh(async () => {
+    await refresh();
+    Taro.stopPullDownRefresh();
+  });
 
   const go = (path: RoutePath) => TAB_PAGES.includes(path)
     ? Taro.switchTab({url:`/${path}`}) : Taro.navigateTo({url:`/${path}`});
@@ -88,9 +104,9 @@ export default function Home() {
         </View>
       </View>
 
-      {error && <View className="home-notice"><View className="notice-dot" /><Text>数据暂未更新，请稍后重试</Text></View>}
+      {error && <View className="home-notice" onClick={() => void refresh()}><View className="notice-dot" /><Text>数据暂未更新，点击重试</Text></View>}
 
-      <View className="dashboard-card score-card" onClick={() => go(RoutePath.Trends)}>
+      <View className="dashboard-card score-card" onClick={() => go(hasScore ? RoutePath.Trends : RoutePath.Record)}>
         <Heading title="身体状态" />
         <View className="score-main">
           <View className="score-ring" style={{ '--score': `${loading || !hasScore ? 0 : score * 3.6}deg` } as React.CSSProperties}>
@@ -101,7 +117,7 @@ export default function Home() {
           </View>
         </View>
         <View className="score-trend">
-          <Text className="trend-copy">{hasScore ? '综合最近的记录与身体数据' : '完善身体资料并开始记录后评估'}</Text>
+          <Text className="trend-copy">{hasScore ? '综合最近的记录与身体数据' : '记录饮食、运动后可查看身体评估'}</Text>
         </View>
         <View className="score-dimensions">
           <ScoreDimension label="能量" value={data?.energyScore} />
@@ -110,7 +126,7 @@ export default function Home() {
         </View>
       </View>
 
-      <View className="dashboard-card energy-card">
+      <View className="dashboard-card energy-card" onClick={() => go(RoutePath.Record)}>
         <Text className="section-title">{dayLabel}能量</Text>
         <View className="energy-metrics">
           <EnergyMetric label="摄入" value={format(data?.intakeCalories)} />
@@ -121,7 +137,7 @@ export default function Home() {
           <View className="energy-track__fill" style={{ width: `${Math.min(100, Math.max(0, ((data?.intakeCalories ?? 0) / Math.max(data?.burnCalories ?? 1, 1)) * 100))}%` }} />
           <View className="energy-track__marker" />
         </View>
-        <Text className="energy-hint">绿色为已摄入进度，圆点是消耗参考线</Text>
+        <Text className="energy-hint">{data?.intakeCalories ? '绿色为已摄入进度，圆点是消耗参考线' : `${dayLabel}还没有能量记录，点击去记一笔`}</Text>
         <View className="water-line" onClick={() => isToday && go(RoutePath.Record)}>
           <Text className="water-line__label">💧 {dayLabel}水分 {data?.waterMl ? `${format(data.waterMl)} ml` : '未记录'}</Text>
           {isToday && <Text className="water-line__action">去打卡</Text>}
@@ -148,7 +164,7 @@ export default function Home() {
         )}
       </View>
 
-      <View className="dashboard-card goal-card" onClick={() => Taro.navigateTo({ url: '/pages/weight/index' })}>
+      <View className="dashboard-card goal-card" onClick={() => data?.goal ? Taro.navigateTo({ url: '/pages/weight/index' }) : Taro.navigateTo({ url: '/pages/onboarding/index?from=nav' })}>
         <Heading title="当前目标" />
         <View className="goal-row"><Text className={`goal-name${data?.goal ? '' : ' is-empty'}`}>{goalLabel(data?.goal?.type)}</Text><Text className="goal-meta">{data?.goal?.durationWeeks ? `${data.goal.durationWeeks} 周计划` : ''}</Text></View>
         <View className="goal-detail"><Text className="goal-caption">{data?.goal ? '根据记录更新目标进度' : '设置目标后开始记录进度'}</Text><Text className={`goal-percent${data?.goal ? '' : ' is-empty'}`}>{data?.goal ? `${goalProgress}%` : '—'}</Text></View>
@@ -163,7 +179,7 @@ export default function Home() {
         </View>
         {!insightOpen && <Text className="insight-hint">结合今天的记录,给出一段身体信号解读与建议</Text>}
         {insightOpen && insightLoading && <Text className="insight-loading">正在生成解读…</Text>}
-        {insightOpen && !insightLoading && insightError && <Text className="insight-error">{insightError}</Text>}
+        {insightOpen && !insightLoading && insightError && <Text className="insight-error" onClick={regenInsight}>{insightError}，点击重试</Text>}
         {insightOpen && !insightLoading && insight && (
           <View className="insight-body">
             <Text className="insight-summary">{insight.summary}</Text>
@@ -189,6 +205,7 @@ export default function Home() {
             )}
           </View>
         )}
+        {insightOpen && !insightLoading && insight && <Text className="insight-regen" onClick={regenInsight}>记录有更新？重新生成 ›</Text>}
       </View>}
     </View>
   );

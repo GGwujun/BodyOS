@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { View, Text, Input, Button, Picker, Textarea } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import { UserOutlined, ArrowRight, Aim, RecordsOutlined, CalendarOutlined, LikeOutlined, InfoOutlined, Edit, AppsOutlined, Award } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import { useTabBarMask } from '@/hooks/useTabBarMask';
 import Screen from '@/components/Screen';
-import { RoutePath } from '@/constants/routes';
+import { RoutePath, TAB_PAGES } from '@/constants/routes';
 import { userApi } from '@/services';
 import type { Goal, Profile } from '@/services/types';
 import { ASSESSMENTS } from '@/data/assessments';
@@ -18,10 +18,12 @@ const GENDERS=[{key:'other',label:'未提供 / 其他'},{key:'male',label:'男'}
 const ACTIVITY=[{key:'sedentary',label:'久坐'},{key:'light',label:'轻度活动'},{key:'moderate',label:'中度活动'},{key:'active',label:'高度活动'},{key:'very_active',label:'非常活跃'}];
 const goalLabel:Record<string,string>={fat_loss:'减脂',muscle_gain:'增肌',maintain:'维持',endurance:'耐力'};
 export default function ProfilePage(){
-  const go=(p:RoutePath)=>Taro.navigateTo({url:`/${p}`});
+  const go=(p:RoutePath)=>TAB_PAGES.includes(p)?Taro.switchTab({url:`/${p}`}):Taro.navigateTo({url:`/${p}`});
   const {data:profile,refresh:refreshProfile}=useAsync<Profile>(()=>userApi.getProfile(),[]);
-  const {data:goals}=useAsync<Goal[]>(()=>userApi.listGoals(),[]);
+  const {data:goals,refresh:refreshGoals}=useAsync<Goal[]>(()=>userApi.listGoals(),[]);
   const {data:me,refresh:refreshMe}=useAsync(()=>userApi.getMe(),[]);
+  // tab 页常驻内存:从 onboarding/其他页返回时重拉,目标与资料不滞后
+  useDidShow(()=>{void refreshProfile();void refreshGoals();void refreshMe();});
   const [editing,setEditing]=useState(false); const [height,setHeight]=useState(''); const [weight,setWeight]=useState(''); const [actIdx,setActIdx]=useState(2);
   const [birth,setBirth]=useState('');
   const [genderIdx,setGenderIdx]=useState(0);
@@ -74,7 +76,7 @@ export default function ProfilePage(){
   return <Screen className="profile-page">
     <View className="profile-hero"><View className="avatar"><UserOutlined/></View><View className="hero-copy"><View onClick={openNick}><Text className="user-name">{me?.nickname||'轻身记用户'}</Text><Text className="goal-pill">{goal?goalLabel[goal.type]??goal.type:'健康管理'}</Text></View><Text className="user-id">{me?.nickname?'点击昵称可修改 · 你的个人健康空间':'点击设置昵称 · 你的个人健康空间'}</Text></View><Edit className="edit-icon" onClick={openEdit}/></View>
     <View className="stat-card"><View><Text>身高</Text><Text>{profile?.heightCm != null ? `${profile.heightCm} cm` : '未填写'}</Text></View><View><Text>体重</Text><Text>{profile?.weightKg != null ? `${profile.weightKg} kg` : '未填写'}</Text></View><View><Text>目标周期</Text><Text>{goal?.durationWeeks ? `${goal.durationWeeks}周` : '未设置'}</Text></View></View>
-    {groups.map((group,index)=><View className="menu-card" key={index}>{group.map(item=><View className="menu-row" key={item.label} onClick={()=>item.label==='我的目标'?Taro.navigateTo({url:'/pages/onboarding/index'}):item.label==='身体数据'?openEdit():item.label==='本周报告'?go(RoutePath.WeeklyReport):item.label==='饮食偏好'?openDiet():item.label==='健康工具箱'?Taro.navigateTo({url:'/pages/toolbox/index'}):item.label==='健康测评'?Taro.navigateTo({url:'/pages/assessment/index'}):showAbout()}><View className="menu-icon">{item.icon}</View><Text className="menu-label">{item.label}</Text>{item.value&&<Text className="menu-value">{item.value}</Text>}<ArrowRight/></View>)}</View>)}
+    {groups.map((group,index)=><View className="menu-card" key={index}>{group.map(item=><View className="menu-row" key={item.label} onClick={()=>item.label==='我的目标'?Taro.navigateTo({url:'/pages/onboarding/index?from=nav'}):item.label==='身体数据'?openEdit():item.label==='本周报告'?go(RoutePath.WeeklyReport):item.label==='饮食偏好'?openDiet():item.label==='健康工具箱'?Taro.navigateTo({url:'/pages/toolbox/index'}):item.label==='健康测评'?Taro.navigateTo({url:'/pages/assessment/index'}):showAbout()}><View className="menu-icon">{item.icon}</View><Text className="menu-label">{item.label}</Text>{item.value&&<Text className="menu-value">{item.value}</Text>}<ArrowRight/></View>)}</View>)}
     {dietEditing&&<View className="mask" onClick={()=>!savingDiet&&setDietEditing(false)}><View className="edit-sheet" catchMove onClick={e=>e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">编辑饮食偏好</Text><Text className="diet-help">填写口味、忌口及过敏原；留空可清除偏好。</Text><Textarea className="diet-input" value={diet} maxlength={500} onInput={e=>setDiet(e.detail.value)} placeholder="请输入你的饮食偏好"/><Text className="diet-count">{diet.length}/500</Text>{dietError&&<Text className="diet-error">{dietError}</Text>}<Button className="sheet-save" loading={savingDiet} disabled={savingDiet} onClick={saveDiet}>保存偏好</Button><Button className="sheet-cancel" disabled={savingDiet} onClick={()=>setDietEditing(false)}>取消</Button></View></View>}
     {nickEditing&&<View className="mask" onClick={()=>!savingNick&&setNickEditing(false)}><View className="edit-sheet" catchMove onClick={e=>e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">设置昵称</Text><Text className="diet-help">点击键盘上方的微信昵称可一键填入。</Text><Input className="nick-input" type="nickname" value={nick} maxlength={30} onInput={e=>setNick(e.detail.value)} placeholder="输入昵称"/>{nickError&&<Text className="diet-error">{nickError}</Text>}<Button className="sheet-save" loading={savingNick} disabled={savingNick} onClick={saveNick}>保存昵称</Button><Button className="sheet-cancel" disabled={savingNick} onClick={()=>setNickEditing(false)}>取消</Button></View></View>}
     <View className="menu-card"><View className="menu-row" onClick={()=>go(RoutePath.DataSources)}><View className="menu-icon"><RecordsOutlined/></View><Text className="menu-label">数据源管理</Text><ArrowRight/></View></View>

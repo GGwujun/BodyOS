@@ -89,12 +89,12 @@
   }
   .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
   .sheet-title { display: block; font-size: 18px; font-weight: 700; color: $color-text-primary; }
-  .weight-input-row { display: flex; align-items: baseline; gap: 8px; margin: 20px 0 24px; }
+  .weight-input-row { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 18px; }
   .weight-input {
-    flex: 1; font-size: 34px; font-weight: 600;
-    color: $color-primary-dark; border-bottom: 2px solid $color-primary; padding: 8px 0;
+    flex: 1; font-size: 24px; font-weight: 600;
+    color: $color-primary-dark; border-bottom: 2px solid $color-primary; padding: 4px 0;
   }
-  .weight-unit { font-size: 15px; color: $color-text-secondary; }
+  .weight-unit { font-size: 13px; color: $color-text-secondary; }
   .sheet-save {
     background: $color-primary !important; color: #fff !important;
     border-radius: $radius-md !important; font-size: 15px !important;

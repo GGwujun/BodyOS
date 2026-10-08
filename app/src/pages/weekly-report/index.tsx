@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { View, Text } from '@tarojs/components';
+import Taro from '@tarojs/taro';
 import { ArrowLeft, ArrowRight, Replay } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import Screen from '@/components/Screen';
@@ -55,6 +56,7 @@ export default function WeeklyReport() {
           <Text className="error-title">周报暂时无法生成</Text>
           <Text className="error-copy">{error || '数据不足，暂时无法生成报告。'}</Text>
           <Text className="retry" onClick={() => refresh()}>重新生成</Text>
+          <Text className="retry" onClick={() => Taro.switchTab({ url: '/pages/record/index' })}>去记录本周数据 ›</Text>
         </View>
       )}
 
@@ -62,7 +64,7 @@ export default function WeeklyReport() {
         <>
           {data.cached && (
             <View className="cache-row" onClick={() => setForceCount((v) => v + 1)}>
-              <Text className="fs-mini text-secondary">已生成 · </Text>
+              <Text className="fs-mini text-secondary">{isCurrentWeek ? '本周已有缓存报告，新记录后可' : '已生成 · '}</Text>
               <Text className="fs-mini text-secondary regen-link"><Replay /> 重新生成</Text>
             </View>
           )}

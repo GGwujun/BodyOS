@@ -7,7 +7,6 @@ export default defineAppConfig({
     'pages/exercise/index',
     'pages/trends/index',
     'pages/weekly-report/index',
-    'pages/ai-coach/index',
     'pages/data-sources/index',
     'pages/profile/index',
     'pages/onboarding/index',

@@ -42,13 +42,18 @@ export default function Food() {
   const [manualKcal, setManualKcal] = useState('');
   const [editId, setEditId] = useState<string | null>(null);
 
-  // 常用食物库:首次切到该 tab 懒加载(近 30 天频次聚合)
+  // 常用食物库:首次切到该 tab 懒加载(近 30 天频次聚合),失败可点击重试
   const [frequent, setFrequent] = useState<FrequentFood[] | null>(null);
+  const [frequentError, setFrequentError] = useState(false);
+  const loadFrequent = () => {
+    foodApi.listFrequentFoods()
+      .then((r) => { setFrequent(r.items); setFrequentError(false); })
+      .catch(() => { setFrequent([]); setFrequentError(true); });
+  };
   useEffect(() => {
     if (mode !== 'frequent' || frequent !== null) return;
-    foodApi.listFrequentFoods()
-      .then((r) => setFrequent(r.items))
-      .catch(() => setFrequent([]));
+    loadFrequent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, frequent]);
 
   // 内置食物库:本地静态数据,搜索 + 分类筛选
@@ -271,7 +276,8 @@ export default function Food() {
         <Text className="fs-h1">常用食物</Text>
         <Text className="fs-mini text-secondary">根据你近 30 天的记录自动沉淀，一键加入本餐。</Text>
         {frequent === null && <Text className="fs-mini text-secondary">正在加载…</Text>}
-        {frequent !== null && frequent.length === 0 && <>
+        {frequentError && <Text className="fs-mini text-secondary" onClick={loadFrequent}>常用食物加载失败，点击重试</Text>}
+        {frequent !== null && !frequentError && frequent.length === 0 && <>
           <Text className="fs-mini text-secondary">还没有常用食物,多记录几天就会出现在这里。</Text>
           {logs.length > 0 && <Text className="fs-h2" style={{ display: 'block', marginTop: 10 }}>今日吃过</Text>}
         </>}
@@ -348,6 +354,7 @@ export default function Food() {
         <View className="card">
           <Text className="fs-h2 text-danger">识别失败</Text>
           <Text className="fs-caption">{errorMsg}。未影响数据,请重试或换一种描述。</Text>
+          <Button className="btn btn--primary" style={{ marginTop: 10 }} onClick={() => parse()}>重试识别</Button>
         </View>
       )}
 

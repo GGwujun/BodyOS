@@ -15,7 +15,7 @@ export const config = {
     : 'https://api.bodyos.example.com/api/v1',
   /** 请求超时(ms) */
   timeout: 15000,
-  /** AI 接口超时(智谱响应较慢) */
+  /** 分析类接口超时(服务端生成较慢) */
   aiTimeout: 60000
 };
 

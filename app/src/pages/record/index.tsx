@@ -3,7 +3,7 @@ import { View, Text, Input, Button } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { ArrowRight, CartOutlined, FireOutlined, BalanceOutlined, Passed, ClockOutlined, Delete } from '@taroify/icons';
 import Screen from '@/components/Screen';
-import { RoutePath } from '@/constants/routes';
+import { RoutePath, TAB_PAGES } from '@/constants/routes';
 import { foodApi, activityApi, dataSourceApi, bodyApi, waterApi } from '@/services';
 import type { BodyMeasurement, WaterStatus } from '@/services/types';
 import { useAsync } from '@/hooks/useAsync';
@@ -15,7 +15,9 @@ import { sourceStatusLabel } from '@/utils/sourceStatus';
 import { createSubmissionGate } from '@/utils/submissionGate';
 
 export default function Record() {
-  const go = (p: RoutePath) => Taro.navigateTo({ url: `/pages/${p.split('/')[1]}/index` });
+  const go = (p: RoutePath) => TAB_PAGES.includes(p)
+    ? Taro.switchTab({ url: `/${p}` })
+    : Taro.navigateTo({ url: `/${p}` });
   const {data,loading,error,refresh:load}=useAsync(async()=>{
     const date=todayStr();
     const [food,acts,sources]=await Promise.all([
@@ -35,17 +37,19 @@ export default function Record() {
   const weightSubmission=useRef(createSubmissionGate());
   useDidShow(() => { load(); });
 
-  // 体重历史:弹层每次打开都拉最新(含刚保存的)
+  // 体重历史:弹层每次打开都拉最新(含刚保存的),失败可就地重试
   const [history, setHistory] = useState<BodyMeasurement[] | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [deletingId, setDeletingId] = useState('');
-  useEffect(() => {
-    if (!showWeight) return;
+  const loadHistory = () => {
     setHistoryLoading(true);
     bodyApi.listBodyMeasurements()
       .then((r) => setHistory(r.items))
       .catch(() => setHistory(null))
       .finally(() => setHistoryLoading(false));
+  };
+  useEffect(() => {
+    if (showWeight) loadHistory();
   }, [showWeight]);
   const removeHistory = async (id: string) => {
     const { confirm } = await Taro.showModal({ title: '删除记录', content: '确定删除这条体重记录吗？' });
@@ -129,7 +133,7 @@ export default function Record() {
       {(food?.items ?? []).slice(0, 2).map((item) => <View className="recent-line" key={item.id}><Text>{mealLabel(item.meal)}</Text><Text>{Math.round(item.totalCalories)} kcal</Text></View>)}
       {(acts?.items ?? []).slice(0, 2).map((item) => <View className="recent-line" key={item.id}><Text>{item.type}</Text><Text>{Math.round(item.calories)} kcal</Text></View>)}
     </View> : null}
-    {showWeight && <View className="mask" onClick={() => !savingWeight&&setShowWeight(false)}><View className="weight-sheet" catchMove onClick={(e) => e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">记录体重</Text><View className="weight-input-row"><Input className="weight-input" type="digit" placeholder="请输入体重" disabled={savingWeight} value={weight} onInput={(e) => setWeight(e.detail.value)} focus/><Text className="weight-unit">kg</Text></View><Button className="sheet-save" loading={savingWeight} disabled={savingWeight} onClick={saveWeight}>{savingWeight?'正在保存…':'保存记录'}</Button><View className="history-block"><Text className="history-title">历史记录</Text>{historyLoading && <Text className="history-empty">正在加载…</Text>}{!historyLoading && history?.length === 0 && <Text className="history-empty">还没有体重记录</Text>}{history == null && !historyLoading && <Text className="history-empty">历史加载失败，重新打开可重试</Text>}<View className="history-list">{(history ?? []).map((m) => <View className="history-row" key={m.id}><Text className="history-date">{fmtMeasured(m.measuredAt)}</Text><Text className="history-value">{m.weightKg != null ? `${m.weightKg} kg` : '—'}</Text><Text className={`history-del${deletingId === m.id ? ' is-busy' : ''}`} onClick={() => deletingId !== m.id && removeHistory(m.id)}><Delete size={16} /></Text></View>)}</View></View></View></View>}
+    {showWeight && <View className="mask" onClick={() => !savingWeight&&setShowWeight(false)}><View className="weight-sheet" catchMove onClick={(e) => e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">记录体重</Text><View className="weight-input-row"><Input className="weight-input" type="digit" placeholder="请输入体重" disabled={savingWeight} value={weight} onInput={(e) => setWeight(e.detail.value)} focus/><Text className="weight-unit">kg</Text></View><Button className="sheet-save" loading={savingWeight} disabled={savingWeight} onClick={saveWeight}>{savingWeight?'正在保存…':'保存记录'}</Button><View className="history-block"><Text className="history-title">历史记录</Text>{historyLoading && <Text className="history-empty">正在加载…</Text>}{!historyLoading && history?.length === 0 && <Text className="history-empty">还没有体重记录</Text>}{history == null && !historyLoading && <Text className="history-empty" onClick={loadHistory}>历史加载失败，点击重试</Text>}<View className="history-list">{(history ?? []).map((m) => <View className="history-row" key={m.id}><Text className="history-date">{fmtMeasured(m.measuredAt)}</Text><Text className="history-value">{m.weightKg != null ? `${m.weightKg} kg` : '—'}</Text><Text className={`history-del${deletingId === m.id ? ' is-busy' : ''}`} onClick={() => deletingId !== m.id && removeHistory(m.id)}><Delete size={16} /></Text></View>)}</View></View></View></View>}
 
     {showWater && <View className="mask" onClick={() => !addingWater && setShowWater(false)}><View className="weight-sheet" catchMove onClick={(e) => e.stopPropagation()}><View className="sheet-handle" /><Text className="sheet-title">喝水打卡</Text>
       <View className="water-status"><Text className="water-amount">{water ? water.amountMl : '—'}</Text><Text className="water-goal">/ {water?.goalMl ?? 1500} ml</Text>{water != null && water.amountMl >= water.goalMl && water.goalMl > 0 && <Text className="water-done">已达标</Text>}</View>

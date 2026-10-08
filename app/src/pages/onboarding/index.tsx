@@ -59,7 +59,13 @@ export default function Onboarding() {
         trackNow('onboarding_complete', 'activation', { goal, weeks, target: value });
         toast('目标已设置');
       }
-      Taro.switchTab({ url: '/pages/home/index' });
+      // 从二级页(我的/方案/体重)进入时返回来源页;新用户启动流程仍回首页
+      const fromNav = Taro.getCurrentInstance().router?.params?.from === 'nav';
+      if (fromNav && Taro.getCurrentPages().length > 1) {
+        Taro.navigateBack();
+      } else {
+        Taro.switchTab({ url: '/pages/home/index' });
+      }
     } catch { toast('保存失败', 'error'); } finally { setSaving(false); }
   };
   return <Screen className="onboarding-page">
