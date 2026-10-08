@@ -4,7 +4,8 @@ import { View, Text } from '@tarojs/components';
 import { userApi } from '@/services';
 import { ensureLogin } from '@/services/login';
 import { flush } from '@/services/analytics';
-import '@taroify/icons/index.css';
+// taroify 图标样式:本地化副本(字体 base64 内联),不再依赖远程 CDN 字体
+import '@/styles/taroify-icons.scss';
 import './app.scss';
 
 /**
