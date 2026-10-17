@@ -17,10 +17,11 @@ const IS_DEV = process.env.NODE_ENV === 'development';
 const DEV_API =
   process.env.TARO_ENV === 'weapp' ? 'http://192.168.31.49:3000/api/v1' : 'http://localhost:3000/api/v1';
 /**
- * 线上后端。挂在已有备案域名 dsx-family.site 的 /bodyos 路径下(HTTPS,nginx 反代到本机 3000)。
- * 微信「request 合法域名」要填 `https://ai.dsx-family.site`(只认域名,不认路径/IP)。
+ * 线上后端。独立子域 bodyos.dsx-family.site(HTTPS,nginx 反代到本机 3000)。
+ * 微信「request 合法域名」和「downloadFile 合法域名」都填 `https://bodyos.dsx-family.site`
+ * —— 合法域名只认 host,不认路径和端口。
  */
-const PROD_API = 'https://ai.dsx-family.site/bodyos/api/v1';
+const PROD_API = 'https://bodyos.dsx-family.site/api/v1';
 
 const apiBase = process.env.API_BASE || (IS_DEV ? DEV_API : PROD_API);
 
