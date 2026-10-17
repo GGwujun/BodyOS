@@ -44,6 +44,61 @@ export interface ReminderSettings {
   tzOffsetMin: number;
 }
 
+/* ---------------- 服务端下发的那一份(模板 id + 剩余额度) ---------------- */
+
+const K_REMINDER_SERVER = 'bodyos.training.reminder.server';
+
+/**
+ * 模板 id 和剩余额度都是**服务端才知道**的,但练完补领授权时来不及先发请求
+ * (微信要求 requestSubscribeMessage 紧跟用户点击),所以上一次同步到的值要留在本机。
+ */
+export interface ReminderServerState {
+  /** 服务端下发的订阅消息模板 id;空串 = 后台没配或还没同步过 */
+  tmplId: string;
+  /** 上次从服务端读到的剩余可发条数 */
+  grants: number;
+}
+
+export const EMPTY_REMINDER_SERVER: ReminderServerState = { tmplId: '', grants: 0 };
+
+export function loadReminderServer(): ReminderServerState {
+  const raw = Taro.getStorageSync(K_REMINDER_SERVER);
+  if (!raw || typeof raw !== 'object') return { ...EMPTY_REMINDER_SERVER };
+  const r = raw as Partial<ReminderServerState>;
+  return {
+    tmplId: typeof r.tmplId === 'string' ? r.tmplId : '',
+    // 额度只可能是非负整数;脏值按 0 算 —— 宁可多问一次授权,也别拿坏数据去发请求
+    grants: typeof r.grants === 'number' && Number.isFinite(r.grants) ? Math.max(0, Math.floor(r.grants)) : 0
+  };
+}
+
+export function saveReminderServer(patch: Partial<ReminderServerState>): ReminderServerState {
+  const prev = loadReminderServer();
+  const next: ReminderServerState = {
+    tmplId: patch.tmplId === undefined ? prev.tmplId : (typeof patch.tmplId === 'string' ? patch.tmplId : prev.tmplId),
+    grants: patch.grants === undefined
+      ? prev.grants
+      : (typeof patch.grants === 'number' && Number.isFinite(patch.grants) ? Math.max(0, Math.floor(patch.grants)) : prev.grants)
+  };
+  Taro.setStorageSync(K_REMINDER_SERVER, next);
+  return next;
+}
+
+/**
+ * 练完要不要顺手补领一条?三个条件缺一不可:
+ * 提醒开着、知道模板 id、而且本机记着的额度已经用光。
+ *
+ * 为什么卡在「额度为 0」而不是每次都问:一次性订阅每授权一次只多一条,
+ * 用户没勾「总是保持以上选择」时每次调用都会弹窗 —— 有额度还弹就是纯打扰。
+ * 额度为 0 时弹这一次是必要的,否则下一条提醒就发不出去了。
+ */
+export function needsReminderTopUp(
+  settings: ReminderSettings = loadReminder(),
+  server: ReminderServerState = loadReminderServer()
+): boolean {
+  return settings.enabled && !!server.tmplId && server.grants <= 0;
+}
+
 export const DEFAULT_REMINDER: ReminderSettings = {
   enabled: false,
   time: '20:00',

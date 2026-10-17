@@ -5,7 +5,9 @@ import Screen from '@/components/Screen';
 import { trainingApi } from '@/services';
 import { track } from '@/services/analytics';
 import { todayStr } from '@/utils/date';
-import { TIME_CHOICES, hasLocalReminder, hhmmText, loadReminder, saveReminder, type ReminderSettings } from '@/utils/reminder';
+import {
+  TIME_CHOICES, hasLocalReminder, hhmmText, loadReminder, saveReminder, saveReminderServer, type ReminderSettings
+} from '@/utils/reminder';
 import { toast } from '@/utils/ui';
 import { nudgeFor, NUDGE_TONES, NUDGE_TONE_DESC, NUDGE_TONE_ZH, gapText } from '../engine/nudge';
 import { loadDayNotes, noteOf, noteText, type DayNotes } from '../engine/daynote';
@@ -52,6 +54,14 @@ export default function ReminderPage() {
   const [busy, setBusy] = useState(false);
   const [dayNotes] = useState<DayNotes>(loadDayNotes);
 
+  /**
+   * 模板 id / 额度留一份在本机 —— 练完补领授权时来不及先发请求
+   * (微信要求 requestSubscribeMessage 紧跟用户点击),只能读上一次同步到的值。
+   */
+  const remember = (dto: trainingApi.ReminderDto) => {
+    saveReminderServer({ tmplId: dto.tmplId, grants: dto.grants });
+  };
+
   const today = todayStr();
   const todayNote = noteOf(dayNotes, today);
   // 今天该不该提一句 —— 直接拿本机计划与日志现算,让用户当场看到效果。
@@ -68,12 +78,16 @@ export default function ReminderPage() {
         const dto = await trainingApi.getReminder();
         setTmplId(dto.tmplId);
         setGrants(dto.grants);
+        remember(dto);
         if (hasLocalReminder()) {
           // 本机存过:设置以本机为准,服务器只是照着发 —— 顺手把服务器对齐过来。
           // (反过来做的话,离线改过设置的人一联网就会被服务器上的旧值悄悄改回去)
           const r = await pushToServer(s);
           setOnline(r.ok);
-          if (r.dto) setGrants(r.dto.grants);
+          if (r.dto) {
+            setGrants(r.dto.grants);
+            remember(r.dto);
+          }
         } else {
           // 换手机/重装:本机一片空白,这时服务器上那份才是用户最后的样子
           setS(saveReminder({ enabled: dto.enabled, tone: dto.tone, time: dto.time }));
@@ -89,7 +103,10 @@ export default function ReminderPage() {
     setS(next);
     const r = await pushToServer(next);
     setOnline(r.ok);
-    if (r.dto) setGrants(r.dto.grants);
+    if (r.dto) {
+      setGrants(r.dto.grants);
+      remember(r.dto);
+    }
   };
 
   /** 申请一次订阅消息授权。微信一次授权只能发一条 —— 所以这是「领额度」不是「开开关」 */
@@ -127,6 +144,7 @@ export default function ReminderPage() {
       try {
         const dto = await trainingApi.grantReminder(accepted);
         setGrants(dto.grants);
+        remember(dto);
         toast('设好了,到点会给你发一条');
       } catch {
         toast('授权拿到了,但没存上,稍后再开一次');
@@ -150,6 +168,7 @@ export default function ReminderPage() {
       }
       const dto = await trainingApi.grantReminder(accepted);
       setGrants(dto.grants);
+      remember(dto);
       toast('好了,又能给你发一条');
     } catch {
       setOnline(false);
@@ -165,7 +184,8 @@ export default function ReminderPage() {
         <Text className="fs-h1">训练提醒</Text>
         <Text className="fs-caption">
           小程序没法自己在后台响铃(微信的限制),所以这里做三件事:你在小程序里打开就看到提醒;
-          想要微信给你发一条消息,得你亲手点一下授权;练的过程中怎么提示你,在下面「练的时候」里定。
+          想要微信给你发一条消息,得你亲手点一下授权,一次授权只发一条;额度用完后,完成训练时
+          会再帮你补一次。练的过程中怎么提示你,在下面「练的时候」里定。
         </Text>
       </View>
 

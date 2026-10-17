@@ -111,6 +111,24 @@ ok('落到了 storage 里', store.get('bodyos.training.reminder')?.time === '07:
 const patched = R.saveReminder({ time: '21:00' });
 ok('只改一项不影响别的', patched.time === '21:00' && patched.tone === 'cheer' && patched.enabled === true);
 
+section('服务端状态:模板 id 与剩余额度(练完补领要用)');
+store.clear();
+const s0 = R.loadReminderServer();
+ok('默认:没模板、没额度', s0.tmplId === '' && s0.grants === 0);
+ok('没开提醒就不补领', R.needsReminderTopUp({ ...R.DEFAULT_REMINDER }, { tmplId: 'tpl', grants: 0 }) === false);
+ok('开着提醒 + 知道模板 + 额度为 0 → 该补', R.needsReminderTopUp({ ...R.DEFAULT_REMINDER, enabled: true }, { tmplId: 'tpl', grants: 0 }) === true);
+ok('还有额度就不打扰(别每次练完都弹授权框)', R.needsReminderTopUp({ ...R.DEFAULT_REMINDER, enabled: true }, { tmplId: 'tpl', grants: 1 }) === false);
+ok('没下过模板 id 就不问(后台没配时授权也没意义)', R.needsReminderTopUp({ ...R.DEFAULT_REMINDER, enabled: true }, { tmplId: '', grants: 0 }) === false);
+
+store.set('bodyos.training.reminder.server', { tmplId: 123, grants: -5 });
+const dirtyS = R.loadReminderServer();
+ok('坏数据降级:模板不是字符串按空、负额度按 0', dirtyS.tmplId === '' && dirtyS.grants === 0);
+store.set('bodyos.training.reminder.server', { tmplId: 'tpl', grants: 2.9 });
+ok('额度只认整数(向下取整,不四舍五入成 3)', R.loadReminderServer().grants === 2);
+const savedS = R.saveReminderServer({ grants: 3 });
+ok('只改额度不动模板 id', savedS.tmplId === 'tpl' && savedS.grants === 3);
+ok('落到了 storage 里', store.get('bodyos.training.reminder.server')?.grants === 3);
+
 section('时区偏移的符号');
 ok('getTimezoneOffset 的符号是反的,我们存的是「相对 UTC」', R.tzOffsetMin() === -new Date().getTimezoneOffset());
 ok('东八区 = 480(不是 -480)', new Date().getTimezoneOffset() !== 0 || R.tzOffsetMin() === 0);

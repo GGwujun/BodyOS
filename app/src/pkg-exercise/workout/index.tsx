@@ -48,6 +48,7 @@ import { saveTrainingProgress } from '@/utils/training-progress';
 import { progressOf } from '../engine/progress';
 import { clearDraft, draftAlreadyDone, draftBrief, loadDraft, saveDraft, type DraftRow, type WorkoutDraft } from '@/utils/workout-draft';
 import { copyText } from '@/utils/ui';
+import { refreshReminderGrant, topUpReminderGrant } from '@/utils/reminder-grant';
 import './index.scss';
 import { THEME } from '@/constants/theme';
 import { navigate } from '@/utils/nav';
@@ -628,6 +629,8 @@ export default function Workout() {
   useDidShow(() => {
     setKit(loadKit());   // 训练中跑去「我的器材」改了库存,回来立刻按新库存算
     setFavs(loadFavs()); // 动作库里刚星过的动作,回来换动作时就该排前面
+    // 这一场之间服务器可能刚发过一条提醒(额度已扣掉),练完补领前得知道真实额度
+    void refreshReminderGrant();
     if (!plan) { boot(); track('training_workout_start', 'other'); }
     // 保屏是**一次性**的:训练中退到小程序外面就失效,所以每次回到前台都重设一遍
     // (和休息计时同一个道理,不能只在挂载时设一次)。设置项在提醒页那个「练的时候」卡里。
@@ -957,6 +960,15 @@ export default function Workout() {
       });
       if (!confirm) return;
     }
+    /**
+     * 练完顺手补一条订阅额度(见 utils/reminder-grant.ts)。
+     * 放在这里而不是汇总页:微信要求 requestSubscribeMessage 紧跟用户点击,
+     * 而正常练完这一路从「完成训练」按钮到这里没有 await,还在同一次点击里;
+     * 「提前结束」那一路多了一次确认框,平台可能不认,失败也只是这次不补,不影响训练记录。
+     * 没开提醒、还有额度、或没配模板时它自己会跳过。
+     * 不 await:授权框可以边弹边存这一场。
+     */
+    void topUpReminderGrant();
     setFinishing(true);
     try {
       const durationSec = Math.max(60, Math.floor((Date.now() - startedAt.current) / 1000));
