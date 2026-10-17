@@ -16,7 +16,11 @@ const IS_DEV = process.env.NODE_ENV === 'development';
  */
 const DEV_API =
   process.env.TARO_ENV === 'weapp' ? 'http://192.168.31.49:3000/api/v1' : 'http://localhost:3000/api/v1';
-const PROD_API = 'https://api.bodyos.example.com/api/v1';
+/**
+ * 线上后端。挂在已有备案域名 dsx-family.site 的 /bodyos 路径下(HTTPS,nginx 反代到本机 3000)。
+ * 微信「request 合法域名」要填 `https://ai.dsx-family.site`(只认域名,不认路径/IP)。
+ */
+const PROD_API = 'https://ai.dsx-family.site/bodyos/api/v1';
 
 const apiBase = process.env.API_BASE || (IS_DEV ? DEV_API : PROD_API);
 
@@ -26,10 +30,7 @@ const apiBase = process.env.API_BASE || (IS_DEV ? DEV_API : PROD_API);
  * 启动时说一句,省掉那一轮。
  */
 if (!process.env.API_BASE && !IS_DEV) {
-  console.warn(
-    '[config] 后端域名还是占位符(api.bodyos.example.com),所有接口都会失败:'
-    + '开发者工具里请跑 npm run dev:weapp,或者构建时给 API_BASE=<你的地址>。'
-  );
+  console.warn(`[config] 生产接口:${PROD_API};本地联调请跑 npm run dev:weapp,或构建时给 API_BASE=<你的地址>`);
 }
 
 export const config = {
