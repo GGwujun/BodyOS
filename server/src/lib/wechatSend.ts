@@ -23,15 +23,23 @@ const SEND_URL = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send';
 export const REMIND_PAGE = 'pkg-exercise/plan-view/index';
 
 /**
- * 模板字段名 → 我们填什么。
+ * 模板字段名 → 我们填什么。**必须和后台模板逐字对应**:
+ * 后台「每日训练提醒」模板是
+ *   训练计划 {{thing5}} / 训练时间 {{time1}} / 连续训练天数 {{thing2}}
+ *   完成情况 {{thing6}} / 训练建议 {{thing3}}
+ * 少填一个字段或字段名写错,微信都会整条拒发(47003)。
  * thing* 在微信侧是「20 个以内字符」的短文本,超了整条消息会被拒,所以一律先截断。
  */
 export const REMIND_FIELDS = {
-  /** 提醒事项:今天练什么 */
-  subject: 'thing1',
-  /** 时间 */
-  when: 'time2',
-  /** 温馨提示:一句话 */
+  /** 训练计划:今天该练了 */
+  subject: 'thing5',
+  /** 训练时间:用户设定的提醒时刻 */
+  when: 'time1',
+  /** 连续训练天数:截至昨天的连续天数 */
+  streak: 'thing2',
+  /** 完成情况:到点还没练 */
+  status: 'thing6',
+  /** 训练建议:一句按语气挑的话 */
   note: 'thing3'
 } as const;
 
@@ -44,21 +52,44 @@ export function clip(text: string, max = THING_MAX): string {
   return t.length <= max ? t : `${t.slice(0, max - 1)}…`;
 }
 
-/** 「2026-10-15 20:00」这种微信 time 字段认的格式 */
-export function timeText(date: Date): string {
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())} ${p(date.getHours())}:${p(date.getMinutes())}`;
+/**
+ * 微信 time 字段的格式:`YYYY年M月D日 HH:mm`。
+ * 用用户本地日期 + 设置里的时刻拼出来,而不是拿发送那一刻 ——
+ * 轮询晚了几分钟时,消息里显示的仍该是用户定的 20:00。
+ */
+export function scheduleText(localDate: string, hhmm: string): string {
+  const [y, m, d] = localDate.split('-');
+  return `${y}年${Number(m)}月${Number(d)}日 ${hhmm}`;
+}
+
+/** 「连续训练天数」的文案;0 天不说「连续 0 天」 */
+export function streakText(days: number): string {
+  return days > 0 ? `已连续 ${days} 天` : '今天开始新的一轮';
+}
+
+export interface RemindInput {
+  subject: string;
+  note: string;
+  /** 用户本地日期 YYYY-MM-DD */
+  localDate: string;
+  /** 用户设置的提醒时刻 HH:mm */
+  time: string;
+  /** 截至昨天的连续训练天数(0 = 断过,从今天重新算) */
+  streakDays: number;
 }
 
 /**
  * 模板字段值。**服务端不知道用户今天该练哪个训练日**(计划是客户端的一坨 JSON,
  * 而且会轮转),所以推送比小程序里的卡片更短:只说「该练了」和一句按语气挑的话。
+ * 能算准的两件事照实填:昨天为止连续练了几天、今天到点还没有训练记录。
  */
-export function remindData(subject: string, note: string, at: Date): Record<string, { value: string }> {
+export function remindData(input: RemindInput): Record<string, { value: string }> {
   return {
-    [REMIND_FIELDS.subject]: { value: clip(subject) },
-    [REMIND_FIELDS.when]: { value: timeText(at) },
-    [REMIND_FIELDS.note]: { value: clip(note) }
+    [REMIND_FIELDS.subject]: { value: clip(input.subject) },
+    [REMIND_FIELDS.when]: { value: scheduleText(input.localDate, input.time) },
+    [REMIND_FIELDS.streak]: { value: streakText(input.streakDays) },
+    [REMIND_FIELDS.status]: { value: '今天还没练' },
+    [REMIND_FIELDS.note]: { value: clip(input.note) }
   };
 }
 

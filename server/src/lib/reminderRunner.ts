@@ -16,7 +16,8 @@
  */
 import { prisma } from '../db';
 import { env } from '../env';
-import { dueReminders, excusedOn, localDay, type ReminderRow } from './reminderSchedule';
+import { addDays } from './date';
+import { dueReminders, excusedOn, localDay, streakEndingOn, type ReminderRow } from './reminderSchedule';
 import { remindData, sendSubscribeMessage } from './wechatSend';
 
 /** 轮询间隔(分钟)。提醒的精度要求不高,5 分钟够用又不费资源 */
@@ -68,26 +69,28 @@ async function isExcusedToday(userId: string, localDate: string): Promise<boolea
 }
 
 /**
- * 今天已经练过了吗?日志在云端是**一条文档一个 docKey**(kind='logs'),
+ * 用户有训练记录的所有日期。日志在云端是**一条文档一个 docKey**(kind='logs'),
  * payload 就是那条 WorkoutLog,日期在 payload.date。
  *
  * 以前只查请假条:用户白天已经练完(甚至就在小程序里记完),晚上 8 点照样收到
  * 「今天该练了」—— 这是提醒功能最伤人的一种错。计划/轮转仍然不在服务端算,
- * 但「今天有没有一条日志」是个不需要计划就能回答的事实。
+ * 但「今天有没有一条日志」「昨天为止连续练了几天」都不需要计划就能回答。
  */
-async function hasTrainedOn(userId: string, localDate: string): Promise<boolean> {
+async function trainingDates(userId: string): Promise<Set<string>> {
   try {
     const docs = await prisma.trainingDoc.findMany({
       where: { userId, kind: 'logs' },
       select: { payload: true }
     });
-    return docs.some((d) => {
+    const dates = new Set<string>();
+    for (const d of docs) {
       const p = d.payload as { date?: unknown } | null;
-      return !!p && p.date === localDate;
-    });
+      if (p && typeof p.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(p.date)) dates.add(p.date);
+    }
+    return dates;
   } catch (e) {
     console.error('[训练提醒] 读训练日志失败:', e);
-    return false;
+    return new Set();
   }
 }
 
@@ -125,11 +128,23 @@ export async function runReminderTick(now: Date = new Date()): Promise<TickResul
       continue;
     }
     // 今天已经练过(有一条当天的训练日志)就闭嘴,同样不扣额度
-    if (full && (await hasTrainedOn(full.userId, userLocalDate))) {
+    const dates = full ? await trainingDates(full.userId) : new Set<string>();
+    if (full && dates.has(userLocalDate)) {
       out.skipped++;
       continue;
     }
-    const res = await sendSubscribeMessage(full?.user?.openid, remindData(PUSH_SUBJECT, pushLine(full?.tone ?? ''), now));
+    // 截至昨天连了几天 —— 今天还没练,不能把今天算进去
+    const streakDays = streakEndingOn(dates, addDays(userLocalDate, -1));
+    const res = await sendSubscribeMessage(
+      full?.user?.openid,
+      remindData({
+        subject: PUSH_SUBJECT,
+        note: pushLine(full?.tone ?? ''),
+        localDate: userLocalDate,
+        time: full?.time ?? '20:00',
+        streakDays
+      })
+    );
 
     if (res.ok) {
       out.sent++;

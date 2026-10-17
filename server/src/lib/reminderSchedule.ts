@@ -52,6 +52,32 @@ export function localDay(nowMs: number, tzOffsetMin: number): string {
   return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`;
 }
 
+/** YYYY-MM-DD 加减 N 天(纯日期,用 UTC 算,不受服务器时区影响) */
+export function shiftDay(dateStr: string, n: number): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const t = new Date(Date.UTC(y, m - 1, d + n));
+  const p = (v: number) => String(v).padStart(2, '0');
+  return `${t.getUTCFullYear()}-${p(t.getUTCMonth() + 1)}-${p(t.getUTCDate())}`;
+}
+
+/**
+ * 截至 endDay(含)连续有训练记录的天数。
+ *
+ * 提醒是在「今天还没练」的前提下发的,所以调用方传的是**昨天** ——
+ * 展示的是用户带着多少天连续记录来面对今天,而不是把今天算成已练。
+ * 数据集是用户自己的日志日期集合,缺失一天就断,不做任何补猜。
+ */
+export function streakEndingOn(dates: ReadonlySet<string>, endDay: string): number {
+  let n = 0;
+  let day = endDay;
+  // 上限只是防脏数据死循环;一人十年也不可能更长的连续记录会自然停下
+  while (n < 3660 && dates.has(day)) {
+    n++;
+    day = shiftDay(day, -1);
+  }
+  return n;
+}
+
 /** 'HH:mm' → 当天第几分钟;格式不对返回 null */
 export function hhmmToMin(v: string): number | null {
   const m = HHMM_RE.exec(v || '');

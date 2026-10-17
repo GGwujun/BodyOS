@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ReminderSchema, GrantSchema, nextLastSentOn, MAX_GRANTS } from './reminder';
-import { dueNow, dueReminders, excusedOn, hhmmToMin, localDay, type ReminderRow } from '../lib/reminderSchedule';
+import {
+  dueNow, dueReminders, excusedOn, hhmmToMin, localDay, shiftDay, streakEndingOn, type ReminderRow
+} from '../lib/reminderSchedule';
 import { PUSH_LINES, PUSH_SUBJECT, pushLine, TICK_MIN } from '../lib/reminderRunner';
-import { clip, remindData, timeText, tokenFresh, REMIND_FIELDS } from '../lib/wechatSend';
+import { clip, remindData, scheduleText, streakText, tokenFresh, REMIND_FIELDS } from '../lib/wechatSend';
 
 /** 东八区用户,本地 2026-10-15 20:00 → UTC 12:00 */
 const CN = 480;
@@ -112,12 +114,48 @@ test('微信模板字段:超长要截断,换行要清掉(整条被拒比少几�
   assert.equal(clip('第一行\n第二行'), '第一行 第二行');
   assert.equal(clip(''), '');
 
-  const data = remindData(PUSH_SUBJECT, pushLine('gentle'), new Date(2026, 9, 15, 20, 0));
-  assert.deepEqual(Object.keys(data), [REMIND_FIELDS.subject, REMIND_FIELDS.when, REMIND_FIELDS.note]);
+  const data = remindData({
+    subject: PUSH_SUBJECT,
+    note: pushLine('gentle'),
+    localDate: '2026-10-15',
+    time: '20:00',
+    streakDays: 3
+  });
+  // 五个字段一个都不能少:后台模板缺一个字段微信就整条拒发(47003)
+  assert.deepEqual(Object.keys(data), [
+    REMIND_FIELDS.subject, REMIND_FIELDS.when, REMIND_FIELDS.streak, REMIND_FIELDS.status, REMIND_FIELDS.note
+  ]);
   assert.equal(data[REMIND_FIELDS.subject].value, PUSH_SUBJECT);
   assert.equal(data[REMIND_FIELDS.note].value, PUSH_LINES.gentle);
-  assert.equal(data[REMIND_FIELDS.when].value, '2026-10-15 20:00');
-  assert.equal(timeText(new Date(2026, 0, 5, 8, 7)), '2026-01-05 08:07', '补零');
+  assert.equal(data[REMIND_FIELDS.when].value, '2026年10月15日 20:00');
+  assert.equal(data[REMIND_FIELDS.streak].value, '已连续 3 天');
+  assert.equal(data[REMIND_FIELDS.status].value, '今天还没练');
+  assert.equal(scheduleText('2026-01-05', '08:07'), '2026年1月5日 08:07', '月日不补零');
+});
+
+test('模板字段名必须和微信后台逐字一致', () => {
+  // 后台「每日训练提醒」:训练计划 thing5 / 训练时间 time1 / 连续训练天数 thing2
+  //                       完成情况 thing6 / 训练建议 thing3
+  assert.deepEqual(REMIND_FIELDS, {
+    subject: 'thing5',
+    when: 'time1',
+    streak: 'thing2',
+    status: 'thing6',
+    note: 'thing3'
+  });
+});
+
+test('连续训练天数:缺失一天就断,别把今天算进去', () => {
+  assert.equal(streakText(0), '今天开始新的一轮', '0 天不说「连续 0 天」');
+  assert.equal(streakText(12), '已连续 12 天');
+  assert.equal(shiftDay('2026-03-01', -1), '2026-02-28', '跨月');
+  assert.equal(shiftDay('2026-01-01', -1), '2025-12-31', '跨年');
+
+  const dates = new Set(['2026-10-14', '2026-10-13', '2026-10-12', '2026-10-09']);
+  assert.equal(streakEndingOn(dates, '2026-10-14'), 3, '截至昨天连了三天');
+  assert.equal(streakEndingOn(dates, '2026-10-10'), 0, '昨天没练 → 断');
+  assert.equal(streakEndingOn(dates, '2026-10-09'), 1);
+  assert.equal(streakEndingOn(new Set(), '2026-10-14'), 0, '从没练过');
 });
 
 test('请假那天不推 —— 服务器发的消息是唯一没法在客户端拦掉的那条', () => {
