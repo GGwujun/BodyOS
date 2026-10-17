@@ -8,7 +8,8 @@
     "dev:weapp": "npm run build:weapp -- --watch",
     "build:h5": "taro build --type h5",
     "dev:h5": "npm run build:h5 -- --watch",
-    "lint": "eslint src --ext .ts,.tsx"
+    "lint": "eslint src --ext .ts,.tsx",
+    "smoke": "node scripts/smoke.mjs"
   },
   "browserslist": [
     "last 3 versions",
@@ -17,6 +18,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.24.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@taroify/icons": "^1.0.6",
     "@tarojs/components": "3.6.27",
     "@tarojs/helper": "3.6.27",

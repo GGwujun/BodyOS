@@ -1,5 +1,6 @@
 import { useAsync } from './useAsync';
 import { bodyApi, userApi } from '@/services';
+import { addDays, localDayOf } from '@/utils/date';
 import type { BodyMeasurement, Goal, Profile } from '@/services/types';
 
 export interface WeightRecord {
@@ -39,13 +40,6 @@ function planKgOf(goal: Goal | null): number | null {
   return goal.targetValue > 0 ? goal.targetValue : null;
 }
 
-function addDaysStr(dateStr: string, days: number): string {
-  const d = new Date(`${dateStr}T00:00:00`);
-  d.setDate(d.getDate() + days);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
 function clamp(n: number, min: number, max: number) { return Math.max(min, Math.min(max, n)); }
 
 function derive(
@@ -56,10 +50,16 @@ function derive(
   const goal = goals?.[0] ?? null;
   const records = (items ?? [])
     .filter((m) => m.weightKg != null && m.weightKg > 0)
-    .map((m) => ({ date: m.measuredAt.slice(0, 10), weightKg: m.weightKg as number }))
-    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    // 日期一律走 localDayOf:measuredAt/startDate 都是 UTC 时间戳,
+    // 直接切前 10 位的话,早上称的那一笔会被分到昨天(周均值也会算进上一周)
+    .map((m) => ({ date: localDayOf(m.measuredAt), at: Date.parse(m.measuredAt), weightKg: m.weightKg as number }))
+    // 同一天称了两次时,再按 measuredAt 排。接口是「最新在前」,
+    // 只按 date 排的话稳定排序会把同一天的顺序原样保留,末项反而是早上那条 ——
+    // 晚上称的 69kg 被早上 70kg 盖掉,「最新体重」和进度都回到早上的数。
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.at - b.at))
+    .map(({ date, weightKg }) => ({ date, weightKg }));
 
-  const goalStart = goal ? goal.startDate.slice(0, 10) : null;
+  const goalStart = goal ? localDayOf(goal.startDate) : null;
   const latestWeight = records.length ? records[records.length - 1].weightKg : (profile?.weightKg ?? null);
 
   // 初始体重:目标日当天/之前最近一条;目标开始后才首测的,取目标期内首条;再回落资料体重
@@ -92,7 +92,7 @@ function derive(
     ? Math.round((planKg / goal.durationWeeks) * 100) / 100
     : null;
   const endDate = goal?.durationWeeks && goalStart
-    ? addDaysStr(goalStart, goal.durationWeeks * 7)
+    ? addDays(goalStart, goal.durationWeeks * 7)
     : null;
 
   return {
@@ -106,12 +106,19 @@ function derive(
 /** 体重方案数据:资料 + 进行中目标 + 体重记录 → 进度推导(体重数据页/方案页共用) */
 export function useWeightPlan() {
   const { data, loading, error, refresh } = useAsync(async () => {
-    const [profile, goals, measurements] = await Promise.all([
+    const [profile, goals] = await Promise.all([
       userApi.getProfile(),
-      userApi.listGoals(),
-      bodyApi.listBodyMeasurements({ pageSize: 100 })
+      userApi.listGoals()
     ]);
-    return derive(profile, goals, measurements.items);
+    // 翻完所有页:目标开始那段可能在 100 条之外。只取第一页时,记录一多
+    // 起始体重就会退化成「最近 100 条里最早那条」,初始/目标体重和进度一起漂。
+    const items: BodyMeasurement[] = [];
+    for (let page = 1; page <= 10; page++) {
+      const r = await bodyApi.listBodyMeasurements({ page, pageSize: 100 });
+      items.push(...r.items);
+      if (r.items.length < 100 || page * 100 >= r.total) break;
+    }
+    return derive(profile, goals, items);
   }, []);
   return { plan: data, loading, error, refresh };
 }

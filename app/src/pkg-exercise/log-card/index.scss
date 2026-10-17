@@ -1,0 +1,49 @@
+@import '../../styles/variables.scss';
+
+/* ============ 一条训练记录(计划页「最近训练」+ 训练记录页共用) ============ */
+.lc-row {
+  padding: 9px 0;
+  border-bottom: 1px solid $color-divider;
+
+  &:last-of-type { border-bottom: none; }
+}
+.lc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lc-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lc-name-line { display: flex; align-items: center; gap: 6px; }
+.lc-name { font-size: $fs-caption; color: $color-text-primary; font-weight: $fw-medium; }
+.lc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+
+.lc-tag-manual {
+  padding: 1px 6px;
+  border-radius: $radius-pill;
+  font-size: $fs-nano;
+  color: $color-text-secondary;
+  background: $color-fill;
+}
+.lc-tag-noprog {
+  padding: 1px 6px;
+  border-radius: $radius-pill;
+  font-size: $fs-nano;
+  color: $color-warning;
+  background: $color-warning-a12;
+}
+
+/* 那次训练的感受 —— 和别处那句「上次感受」同一身黄:一眼看出是本人写的话 */
+.lc-note-line {
+  display: block;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: $radius-sm;
+  background: $color-warning-bg;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+.lc-ops { display: flex; gap: 18px; padding: 8px 0 2px; }
+.lc-op { font-size: $fs-mini; color: $color-info; font-weight: $fw-medium; padding: 2px 0; }

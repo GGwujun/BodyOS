@@ -1,0 +1,295 @@
+@import '../../styles/variables.scss';
+
+/* ============ 计划编辑器(分包) ============ */
+.pe-page {
+  background: $color-bg;
+  gap: 10px;
+  padding-bottom: 30px;
+
+  .pe-intro { display: flex; flex-direction: column; gap: 4px; }
+
+  /* 训练日卡 */
+  .pe-day { display: flex; flex-direction: column; gap: 2px; }
+  .pe-day-head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px 0 8px;
+    border-bottom: 1px solid $color-divider;
+  }
+  .pe-day-title { display: flex; align-items: center; gap: 8px; }
+  .pe-day-edit { font-size: $fs-mini; color: $color-info; font-weight: $fw-medium; }
+
+  /* 动作行 */
+  .pe-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid $color-divider;
+  }
+  .pe-item:last-of-type { border-bottom: none; }
+  .pe-item-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .pe-item-title { display: flex; align-items: center; gap: 7px; }
+  .pe-plate { color: $color-primary-dark; }
+  .pe-item-name { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+  .pe-ss {
+    padding: 1px 7px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    font-weight: $fw-bold;
+    color: $color-info;
+    background: $color-info-bg;
+    border: 1px solid #bfdbfe;
+  }
+  .pe-toggle {
+    padding: 5px 13px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &.on { color: $color-primary-dark; background: $color-primary-bg; border-color: $color-primary; font-weight: $fw-bold; }
+  }
+  .pe-field-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+  .pe-item-ops {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .pe-op {
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-sm;
+    background: $color-fill;
+    text-align: center;
+    line-height: 28px;
+    font-size: $fs-small;
+    color: $color-text-primary;
+
+    &:active { background: $color-border; }
+    &.off { color: $color-text-tertiary; background: $color-bg-soft; }
+    &.danger { color: $color-danger; background: $color-danger-bg; }
+  }
+
+  .pe-add { margin-top: 10px; }
+  .pe-foot { display: block; line-height: 1.7; padding: 2px 2px 0; }
+
+  /* 周期周次安排 */
+  .pe-cycle, .pe-max { display: flex; flex-direction: column; gap: 8px; }
+  .pe-wklist { display: flex; flex-direction: column; }
+  .pe-wk {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: $radius-md;
+    border-left: 3px solid $color-divider;
+
+    &.on { background: $color-primary-bg; border-left-color: $color-primary; }
+  }
+  .pe-wk-label { font-size: $fs-small; font-weight: $fw-bold; color: $color-text-primary; }
+
+  /* 力量基准行 */
+  .pe-maxrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 2px;
+    border-bottom: 1px solid $color-divider;
+
+    &:last-of-type { border-bottom: none; }
+    &:active { background: $color-bg-soft; }
+  }
+  .pe-max-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pe-max-name { font-size: $fs-medium; color: $color-text-primary; font-weight: $fw-medium; }
+  .pe-max-val {
+    font-size: $fs-h2;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+  .pe-max-unit { font-size: $fs-nano; font-weight: $fw-regular; color: $color-text-secondary; margin-left: 2px; }
+  /* 停久了的那句提醒 —— 只在真掉下来时出现 */
+  .pe-max-fade { color: $color-warning; line-height: 1.6; margin-top: 1px; }
+  .pe-empty { display: block; line-height: 1.7; padding: 6px 2px; }
+  /* 没有计划时的空态(和上面那个行内提示 .pe-empty 不是一回事) */
+  .pe-blank {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 44px 24px;
+    text-align: center;
+  }
+  .pe-blank-cta { margin-top: 10px; }
+  .pe-rm { color: $color-info; line-height: 1.6; }
+}
+
+/* ============ 底部弹层(fixed,页面类作用域外) ============ */
+.pe-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  z-index: 110;
+}
+
+.pe-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 111;
+  box-sizing: border-box;
+  max-height: 84vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+
+  &.pe-sheet--pick { gap: 8px; }
+
+  .pe-sheet-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .pe-sheet-title { display: flex; flex-direction: column; gap: 2px; }
+  .pe-sheet-close { padding: 4px 6px; font-size: $fs-medium; color: $color-text-secondary; }
+
+  /* 参数行 */
+  .pe-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: $color-bg-soft;
+    border-radius: $radius-md;
+  }
+  .pe-field-k { font-size: $fs-caption; color: $color-text-primary; font-weight: $fw-medium; }
+
+  .pe-input {
+    flex: 1;
+    text-align: right;
+    font-size: $fs-medium;
+    color: $color-text-primary;
+    padding: 4px 0;
+  }
+
+  .pe-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pe-step-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-sm;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+    text-align: center;
+    line-height: 26px;
+    font-size: $fs-medium;
+    color: $color-text-primary;
+
+    &:active { background: $color-fill; }
+  }
+  .pe-step-val {
+    min-width: 52px;
+    text-align: center;
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+  .pe-step-unit { font-size: $fs-nano; font-weight: $fw-regular; color: $color-text-secondary; margin-left: 2px; }
+
+  .pe-tip { line-height: 1.7; white-space: pre-line; }
+  .pe-grouptitle { display: block; }
+
+  .pe-sheet-ops {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 2px 2px 0;
+  }
+  .pe-sheet-op {
+    font-size: $fs-caption;
+    color: $color-info;
+    font-weight: $fw-medium;
+    padding: 4px 2px;
+
+    &.off { color: $color-text-tertiary; }
+    &.danger { color: $color-danger; }
+  }
+  .pe-danger { color: $color-danger; }
+
+  /* 模式 chips */
+  .pe-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 2px 0 4px;
+  }
+  /* 休息时间那一排:紧跟「组间休息」步进器,收一点上边距 */
+  .pe-rest-chips { margin-top: -4px; padding-bottom: 6px; }
+  .pe-chip {
+    padding: 5px 11px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+
+    &.on {
+      color: $color-primary-dark;
+      background: $color-primary-bg;
+      border-color: $color-primary;
+      font-weight: $fw-bold;
+    }
+    /* 该动作不支持的组型(自重动作的递减/金字塔等) */
+    &.off { color: $color-text-tertiary; opacity: 0.55; }
+  }
+
+  /* 动作列表 */
+  .pe-exlist { display: flex; flex-direction: column; }
+  .pe-ex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    border-radius: $radius-md;
+    border-bottom: 1px solid $color-divider;
+
+    &.on { background: $color-primary-bg; }
+    &:active { background: $color-bg-soft; }
+  }
+
+  .pe-ex-star {
+    flex: none;
+    width: 32px;
+    text-align: center;
+    font-size: $fs-h2;
+    line-height: 32px;
+    color: $color-text-tertiary;
+
+    &.is-on { color: $color-warning; }
+  }
+  .pe-ex-copy { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pe-ex-name { font-size: $fs-medium; color: $color-text-primary; font-weight: $fw-medium; }
+  .pe-ex-tick { font-size: $fs-mini; font-weight: $fw-bold; color: $color-primary-dark; }
+  .pe-ex-empty { display: block; padding: 20px 4px; text-align: center; line-height: 1.7; }
+}

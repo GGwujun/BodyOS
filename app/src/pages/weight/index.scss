@@ -2,7 +2,7 @@
 
 /* ============ 体重数据页 ============ */
 .weight-page {
-  .status-hint { display: block; text-align: center; margin: 40px 0; font-size: 13px; color: $color-text-secondary; }
+  .status-hint { display: block; text-align: center; margin: 40px 0; font-size: $fs-small; color: $color-text-secondary; }
 
   /* 无目标引导卡 */
   .guide-card { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
@@ -19,21 +19,22 @@
     box-sizing: border-box; transform: rotate(-90deg);
   }
   .wp-ring__inner {
-    width: 100%; height: 100%; border-radius: 50%; background: #fff;
+    width: 100%; height: 100%; border-radius: 50%; background: $color-bg-card;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     transform: rotate(90deg);
   }
-  .wp-ring__num { font-size: 26px; line-height: 30px; font-weight: 700; color: $color-text-primary; }
-  .wp-ring__label { margin-top: 2px; font-size: 10px; color: $color-text-secondary; }
-  .wp-ring__sub { margin-top: 4px; font-size: 11px; font-weight: 600; color: $color-primary; }
+  /* 读数/标签和首页那个环同一档 —— 同一个环在两页长得不一样,读起来像两个东西 */
+  .wp-ring__num { font-size: $fs-display; line-height: 40px; font-weight: 700; color: $color-text-primary; }
+  .wp-ring__label { margin-top: 2px; font-size: $fs-nano; color: $color-text-secondary; }
+  .wp-ring__sub { margin-top: 4px; font-size: $fs-nano; font-weight: 600; color: $color-primary; }
 
   .hero-nums { flex: 1; display: flex; flex-direction: column; gap: 10px; }
   .hero-num { display: flex; align-items: baseline; justify-content: space-between; }
-  .hn-label { font-size: 13px; color: $color-text-secondary; }
+  .hn-label { font-size: $fs-small; color: $color-text-secondary; }
   .hn-pair { display: flex; align-items: baseline; gap: 3px; }
-  .hn-value { font-size: 19px; font-weight: 700; color: $color-text-primary; }
+  .hn-value { font-size: $fs-h1; font-weight: 700; color: $color-text-primary; }
   .hn-value--green { color: $color-primary; }
-  .hn-unit { font-size: 10px; color: $color-text-tertiary; }
+  .hn-unit { font-size: $fs-nano; color: $color-text-tertiary; }
 
   /* BMI 行 */
   .bmi-line {
@@ -42,23 +43,54 @@
     display: flex; flex-direction: column; gap: 6px;
   }
   .bmi-head { display: flex; align-items: center; gap: 8px; }
-  .bmi-text { font-size: 14px; font-weight: 600; color: $color-text-primary; }
-  .bmi-pill { padding: 2px 10px; border-radius: $radius-pill; font-size: 11px; font-weight: 600; }
-  .tone-blue { color: #0369a1; background: rgba(14, 165, 233, .12); }
-  .tone-green { color: $color-primary; background: rgba(16, 185, 129, .1); }
-  .tone-amber { color: $color-warning; background: rgba(245, 158, 11, .12); }
-  .tone-red { color: #dc2626; background: rgba(220, 38, 38, .1); }
-  .bmi-note { font-size: 11px; color: $color-text-tertiary; line-height: 1.6; }
+  .bmi-text { font-size: $fs-caption; font-weight: 600; color: $color-text-primary; }
+  .bmi-pill { padding: 2px 10px; border-radius: $radius-pill; font-size: $fs-nano; font-weight: 600; }
+  .tone-blue { color: $color-sky-dark; background: $color-sky-a12; }
+  .tone-green { color: $color-primary; background: $color-primary-a10; }
+  .tone-amber { color: $color-warning; background: $color-warning-a12; }
+  .tone-red { color: $color-danger; background: $color-danger-a10; }
+  .bmi-note { font-size: $fs-nano; color: $color-text-tertiary; line-height: 1.6; }
 
   .hero-actions { display: flex; gap: 10px; margin-top: 16px; }
   .hero-btn { flex: 1; }
+
+  /* 每周均值卡 —— 头部一个大数字 + 逐周列表 */
+  .week-card { display: flex; flex-direction: column; gap: 12px; }
+  .wk-head { display: flex; align-items: flex-end; justify-content: space-between; }
+  .wk-head__main { display: flex; flex-direction: column; gap: 2px; }
+  .wk-avg-line { display: flex; align-items: baseline; gap: 4px; }
+  .wk-avg { font-size: $fs-display; line-height: 34px; font-weight: 700; }
+  .wk-unit { font-size: $fs-mini; color: $color-text-tertiary; }
+  .wk-when { font-size: $fs-nano; color: $color-text-secondary; }
+  .wk-head__delta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+  .wk-delta { font-size: $fs-h2; font-weight: 700; }
+  .wk-delta__label { font-size: $fs-nano; color: $color-text-tertiary; }
+
+  .wk-list { display: flex; flex-direction: column; }
+  .wk-row {
+    display: flex; align-items: center; gap: 8px;
+    /* 左右各让出 8px 再负着拉回来:本周那条要有底色,而其它行的文字不能跟着挪 */
+    margin: 0 -8px; padding: 9px 8px; border-top: 1px solid $color-divider;
+    font-size: $fs-mini;
+  }
+  .wk-row:first-child { border-top: none; }
+  .wk-row--now { background: $color-bg-soft; border-radius: $radius-md; }
+  .wk-row__week { flex: 1; color: $color-text-secondary; }
+  .wk-row--now .wk-row__week { color: $color-text-primary; font-weight: 600; }
+  .wk-row__n { width: 40px; text-align: right; font-size: $fs-nano; color: $color-text-tertiary; }
+  .wk-row__avg { width: 46px; text-align: right; font-weight: 600; color: $color-text-primary; }
+  .wk-row__delta { width: 62px; text-align: right; font-weight: 600; font-size: $fs-nano; }
+
+  /* 变化量的三种语气:朝着目标 = 绿;其它一律中性(体重本来就上下浮动,不吓唬人) */
+  .tone-good { color: $color-primary; }
+  .tone-flat { color: $color-text-secondary; }
 
   /* 曲线卡(Screen 自带 16px 卡片间距) */
   .chart-card { display: flex; flex-direction: column; gap: 10px; }
   .chart-empty {
     padding: 30px 12px; text-align: center;
-    font-size: 12px; color: $color-text-tertiary; line-height: 1.7;
-    border: 1px dashed #dbe2ea; border-radius: $radius-md;
+    font-size: $fs-mini; color: $color-text-tertiary; line-height: 1.7;
+    border: 1px dashed $color-border-dashed; border-radius: $radius-md;
     background: $color-bg-soft;
   }
   .chart-note { line-height: 1.6; }

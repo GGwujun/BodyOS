@@ -1,0 +1,185 @@
+@import '../../styles/variables.scss';
+
+/* ============ 动作详情:重量 / 配片 / 1RM ============ */
+/* 这一块接在 howto(怎么做)下面,回答的是另一个问题:做多重。
+   所以用一条分隔线把它和教学内容分开,而不是混进同一堆 chip 里 */
+.exlib-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid $color-divider;
+}
+
+/* 上次 / 最好 —— 两行读数,不做成卡片:它们只是下一句话的依据 */
+.exlib-ref { display: flex; flex-direction: column; gap: 6px; }
+.exlib-ref-row { display: flex; align-items: baseline; gap: 10px; }
+.exlib-ref-k {
+  width: 34px;
+  flex: none;
+  font-size: $fs-nano;
+  color: $color-text-tertiary;
+}
+.exlib-ref-v {
+  font-size: $fs-caption;
+  font-weight: $fw-bold;
+  color: $color-primary-dark;
+  font-variant-numeric: tabular-nums;
+}
+.exlib-ref-sub {
+  font-size: $fs-mini;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.exlib-ref-more {
+  align-self: flex-start;
+  font-size: $fs-mini;
+  color: $color-info;
+  font-weight: $fw-medium;
+  padding: 2px 0;
+}
+
+/* 一个工具块 */
+.exlib-tool { display: flex; flex-direction: column; gap: 8px; }
+.exlib-tool-h {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.exlib-tool-t { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+.exlib-tool-hint { font-size: $fs-nano; color: $color-text-tertiary; }
+.exlib-tool-note {
+  font-size: $fs-mini;
+  color: $color-text-secondary;
+  line-height: 1.55;
+}
+
+/* 每边 / 单栈 / 不用 */
+.exlib-modes { display: flex; gap: 6px; }
+.exlib-mode {
+  padding: 5px 14px;
+  border-radius: $radius-pill;
+  font-size: $fs-mini;
+  color: $color-text-secondary;
+  background: $color-fill;
+
+  &.on {
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+    font-weight: $fw-bold;
+  }
+}
+
+/* 一行「标签 + 步进器」 */
+.exlib-calc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+}
+.exlib-calc-k { font-size: $fs-small; color: $color-text-primary; }
+.exlib-steps { display: flex; align-items: center; gap: 8px; }
+.exlib-step {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: $color-bg-soft;
+  border-radius: $radius-md;
+}
+.exlib-step-btn {
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  font-size: $fs-h2;
+  color: $color-primary-dark;
+
+  &:active { opacity: .5; }
+}
+.exlib-step-v {
+  min-width: 52px;
+  text-align: center;
+  font-size: $fs-small;
+  font-weight: $fw-bold;
+  color: $color-text-primary;
+  font-variant-numeric: tabular-nums;
+}
+.exlib-step-u {
+  margin-left: 2px;
+  font-size: $fs-nano;
+  font-weight: $fw-regular;
+  color: $color-text-secondary;
+}
+
+/* 「不用杆」是一个状态,不是一个数值 —— 做成旁边一个小开关 */
+.exlib-nobar {
+  padding: 5px 10px;
+  border-radius: $radius-pill;
+  font-size: $fs-nano;
+  color: $color-text-secondary;
+  background: $color-fill;
+
+  &.on { color: $color-primary-dark; background: $color-primary-bg; font-weight: $fw-bold; }
+}
+
+.exlib-barchips { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.exlib-barchip {
+  padding: 3px 10px;
+  border-radius: $radius-pill;
+  font-size: $fs-nano;
+  color: $color-text-secondary;
+  background: $color-bg-card;
+  border: 1px solid $color-border;
+
+  &.on { color: $color-primary-dark; background: $color-primary-bg; border-color: $color-primary-light; font-weight: $fw-bold; }
+}
+.exlib-barchip-note { font-size: $fs-nano; color: $color-text-tertiary; }
+
+/* 配片结果 */
+.exlib-plate {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: $radius-md;
+  background: $color-bg-soft;
+}
+.exlib-plate-row { display: flex; align-items: baseline; justify-content: space-between; }
+.exlib-plate-k { font-size: $fs-mini; color: $color-text-secondary; }
+.exlib-plate-v {
+  font-size: $fs-h2;
+  font-weight: $fw-bold;
+  color: $color-text-primary;
+  font-variant-numeric: tabular-nums;
+}
+.exlib-plate-u { margin-left: 2px; font-size: $fs-nano; font-weight: $fw-regular; color: $color-text-secondary; }
+.exlib-plate-stack {
+  font-size: $fs-caption;
+  font-weight: $fw-bold;
+  color: $color-primary-dark;
+  font-variant-numeric: tabular-nums;
+}
+.exlib-plate-main { font-size: $fs-mini; color: $color-text-secondary; }
+.exlib-plate-warn { font-size: $fs-mini; color: $color-warning; line-height: 1.5; }
+
+/* 1RM 结果 */
+.exlib-orm {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: $radius-md;
+  background: $color-bg-soft;
+}
+.exlib-orm-k { font-size: $fs-mini; color: $color-text-secondary; }
+.exlib-orm-v {
+  font-size: $fs-h2;
+  font-weight: $fw-bold;
+  color: $color-primary-dark;
+  font-variant-numeric: tabular-nums;
+}
+.exlib-orm-u { margin-left: 2px; font-size: $fs-nano; font-weight: $fw-regular; color: $color-text-secondary; }

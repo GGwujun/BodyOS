@@ -18,15 +18,22 @@ export function bmiOf(weightKg?: number | null, heightCm?: number | null): numbe
   return weightKg / (m * m);
 }
 
+/**
+ * 中国成人 BMI 正常范围。数字拆开是有用的:体重页的 BMI 曲线上那条「正常上限」
+ * 目标线要用 `BMI_NORMAL_MAX`,文案里的区间要用整个字符串 ——
+ * 以前这两个数是各写一份的,改标准的时候必然会漏掉一处。
+ */
+export const BMI_NORMAL_MIN = 18.5;
+export const BMI_NORMAL_MAX = 23.9;
+export const BMI_NORMAL_RANGE = `${BMI_NORMAL_MIN} ~ ${BMI_NORMAL_MAX}`;
+
 /** 中国成人标准:偏瘦 <18.5,正常 18.5~23.9,超重 24~27.9,肥胖 ≥28 */
 export function bmiBand(bmi: number): BmiBand {
-  if (bmi < 18.5) return { label: '偏瘦', tone: 'blue', range: '低于 18.5' };
-  if (bmi < 24) return { label: '正常', tone: 'green', range: '18.5 ~ 23.9' };
+  if (bmi < BMI_NORMAL_MIN) return { label: '偏瘦', tone: 'blue', range: `低于 ${BMI_NORMAL_MIN}` };
+  if (bmi < 24) return { label: '正常', tone: 'green', range: BMI_NORMAL_RANGE };
   if (bmi < 28) return { label: '超重', tone: 'amber', range: '24 ~ 27.9' };
   return { label: '肥胖', tone: 'red', range: '28 及以上' };
 }
-
-export const BMI_NORMAL_RANGE = '18.5 ~ 23.9';
 
 /** 活动系数,与后端 ACTIVITY_FACTORS 一致 */
 const ACTIVITY_FACTOR_MAP: Record<string, number> = {

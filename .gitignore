@@ -5,6 +5,9 @@ node_modules/
 app/dist/
 server/dist/
 app/.swc/
+# 冒烟测试的编译产物(`npm run smoke` 生成,是 src 的整份副本)—— 别让它进版本库,
+# 否则 `git add -A` 会连一整套编译出来的 js 一起提上去,和源码对不上还删不掉
+app/.smoke/
 
 # 环境变量与密钥（.env.example 保留作为模板）
 server/.env
@@ -14,6 +17,11 @@ server/.env
 
 # 数据库备份与本地运行数据
 server/backups/
+
+# 服务端媒体目录:用户上传的照片是运行数据(内容哈希命名,扁平放在这一层),
+# 不进版本库;ex/ 是我们自己的动作演示图,随版本发布,要进 —— 少了它线上就是一片空白。
+server/media/*
+!server/media/ex/
 
 # 日志
 *.log

@@ -3,7 +3,9 @@
 /* ============ 运动记录页 ============ */
 .exercise-page {
   background: $color-bg;
-  padding: 4px 0 calc(24px + env(safe-area-inset-bottom));
+  /* 只写上下 —— 用 padding 简写会把左右写成 0,盖掉 Screen 那层 .safe-x 的 16px */
+  padding-top: 4px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
   gap: 12px;
 
   /* 模式切换(白底胶囊分段) */
@@ -14,29 +16,45 @@
   }
   .mode-tabs text, .mode-tabs taro-text-core {
     flex: 1; text-align: center; padding: 7px 0;
-    font-size: 13px; color: $color-text-secondary;
-    border-radius: 9px;
+    font-size: $fs-small; color: $color-text-secondary;
+    border-radius: $radius-sm;
   }
-  .mode-tabs .active { background: $color-primary; color: #fff; font-weight: $fw-bold; }
+  .mode-tabs .active { background: $color-primary; color: $color-text-inverse; font-weight: $fw-bold; }
 
-  .section-title { display: block; font-size: 13px; font-weight: $fw-bold; color: #334155; padding: 2px 2px 0; }
+  .section-title { display: block; font-size: $fs-small; font-weight: $fw-bold; color: $color-slate-600; padding: 2px 2px 0; }
 
   /* 一句话描述 */
   .ai-entry { position: relative; padding-left: 52px; }
-  .card-accent { position: absolute; left: 18px; top: 20px; color: $color-primary; font-size: 22px; }
+  .card-accent { position: absolute; left: 18px; top: 20px; color: $color-primary; font-size: $fs-num; }
   .ex-input {
     width: 100%; min-height: 56px; margin-top: 10px; padding: 10px 12px;
     background: $color-bg-soft; border: 1px solid $color-border;
-    border-radius: $radius-md; font-size: 14px; box-sizing: border-box;
+    border-radius: $radius-md; font-size: $fs-caption; box-sizing: border-box;
   }
 
   /* 表单行 */
+  /* 唯一那个必填项旁边的小标记 —— 光把「选填」写在别的格子里,读不出哪个是必填 */
+  .ex-req {
+    margin-left: 6px; padding: 1px 6px;
+    font-size: $fs-nano; color: $color-danger;
+    background: $color-danger-bg; border-radius: $radius-sm;
+  }
   .form-field {
     display: flex; justify-content: space-between; align-items: center;
     padding: 11px 0; border-bottom: 1px solid $color-divider;
   }
-  .form-input { flex: 1; text-align: right; font-size: 14px; background: transparent; width: 140px; }
+  .form-input { flex: 1; text-align: right; font-size: $fs-caption; background: transparent; width: 140px; }
   .manual-card .fs-h1 { display: flex; align-items: center; gap: 6px; }
+  /* 边填边算出来的配速:填完距离和时长立刻能看到值对不对 */
+  .ex-pace {
+    display: block; text-align: right; padding: 6px 0 0;
+    color: $color-primary-dark; font-weight: $fw-medium;
+  }
+  /* 估算消耗:是建议,不是结论 —— 点一下才填进去 */
+  .ex-guess {
+    display: block; padding: 6px 0 0;
+    color: $color-info; text-decoration: underline;
+  }
 
   /* 运动列表 */
   .ex-item {
@@ -44,7 +62,9 @@
     padding: 12px 0; border-bottom: 1px solid $color-divider; gap: 12px;
   }
   .ex-item:last-child { border-bottom: 0; }
-  .ex-del { color: $color-text-tertiary; font-size: 12px; padding: 4px 8px; white-space: nowrap; }
+  /* 有氧那行:距离 · 配速 · 坡度,比「来源:手动」先看到 */
+  .ex-cardio { display: block; color: $color-primary-dark; }
+  .ex-del { color: $color-text-tertiary; font-size: $fs-mini; white-space: nowrap; }
 
   .btn--primary { background: $color-primary !important; border-color: $color-primary !important; }
 }

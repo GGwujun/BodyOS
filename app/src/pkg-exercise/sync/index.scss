@@ -1,0 +1,90 @@
+@import '../../styles/variables.scss';
+
+/* ============ 训练数据同步(分包) ============ */
+.sy-page {
+  background: $color-bg;
+  gap: 10px;
+
+  .sy-head { gap: 6px; }
+
+  /* ---- 本机状态 ---- */
+  .sy-state { gap: 8px; }
+
+  .sy-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .sy-k {
+    font-size: $fs-small;
+    color: $color-text-secondary;
+    flex-shrink: 0;
+  }
+
+  .sy-v {
+    font-size: $fs-small;
+    color: $color-text-primary;
+    text-align: right;
+    line-height: 20px;
+  }
+
+  /* ---- 同步按钮 ---- */
+  .sy-btn { margin-top: 2px; }
+
+  .sy-step {
+    display: block;
+    text-align: center;
+    padding-bottom: 4px;
+  }
+
+  /* ---- 同步结果 ---- */
+  .sy-result { gap: 4px; }
+
+  .sy-result-title {
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    padding-bottom: 2px;
+  }
+
+  .sy-line {
+    display: block;
+    line-height: 20px;
+    color: $color-text-secondary;
+  }
+
+  .sy-warn { color: $color-warning; }
+
+  /* ---- 自动同步 ---- */
+  .sy-auto-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .sy-auto-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sy-auto-title { font-size: $fs-caption; font-weight: $fw-medium; }
+
+  /* ---- 规矩说明 ---- */
+  .sy-note { gap: 4px; }
+
+  .sy-note-title {
+    font-size: $fs-caption;
+    font-weight: $fw-medium;
+    padding-bottom: 2px;
+  }
+
+  .sy-note-line {
+    display: block;
+    line-height: 20px;
+    color: $color-text-secondary;
+  }
+}

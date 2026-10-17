@@ -8,7 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/engine/engine.test.ts src/routes/trends.test.ts src/routes/body.test.ts",
+    "test": "tsx --test src/engine/engine.test.ts src/routes/trends.test.ts src/routes/body.test.ts src/routes/body-weight.test.ts src/routes/activity.test.ts src/routes/training.test.ts src/routes/reminder.test.ts src/routes/index.test.ts src/ai/prompts.test.ts src/data/foodDB.test.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",

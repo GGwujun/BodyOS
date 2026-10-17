@@ -1,0 +1,167 @@
+@import '../../styles/variables.scss';
+
+/* ============ 进度照片 ============ */
+.photos-page {
+  gap: 10px;
+  padding-bottom: 24px;
+
+  .ph-intro { display: flex; flex-direction: column; gap: 6px; }
+  .ph-intro .fs-caption { line-height: 1.7; }
+  .ph-tip-toggle { font-size: $fs-small; color: $color-primary-dark; padding: 12px 0; }
+  .ph-tips { display: flex; flex-direction: column; gap: 3px; padding-top: 2px; }
+  .ph-tip { line-height: 1.6; }
+
+  .ph-block { display: flex; flex-direction: column; gap: 10px; }
+
+  /* 姿势切换 */
+  .ph-chips { display: flex; gap: 6px; }
+  .ph-chip {
+    font-size: $fs-mini;
+    padding: 10px 14px;
+    border-radius: $radius-pill;
+    background: $color-fill;
+    color: $color-text-secondary;
+
+    &--on { background: $color-primary-bg; color: $color-primary-dark; font-weight: $fw-medium; }
+  }
+
+  /* 空态 */
+  .ph-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 30px 16px;
+    text-align: center;
+  }
+  .ph-empty-emoji { font-size: $fs-emoji; }
+
+  /* 对比舞台:固定尺寸,裁剪层才能在真机上稳定对齐 */
+  .ph-compare { display: flex; flex-direction: column; gap: 8px; }
+  .ph-stage {
+    position: relative;
+    width: 600rpx;
+    height: 760rpx;
+    margin: 0 auto;
+    border-radius: $radius-card;
+    overflow: hidden;
+    background: $color-fill;
+  }
+  .ph-stage-img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 600rpx;
+    height: 760rpx;
+  }
+  .ph-clip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+  .ph-line {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: $color-bg-card;
+    box-shadow: 0 0 6px rgba(15, 23, 42, .4);
+  }
+  .ph-tag {
+    position: absolute;
+    bottom: 12px;
+    font-size: $fs-nano;
+    color: $color-text-inverse;
+    background: rgba(15, 23, 42, .55);
+    border-radius: $radius-pill;
+    padding: 3px 10px;
+
+    &--left { left: 12px; }
+    &--right { right: 12px; }
+  }
+  .ph-slider { margin: 0 8px; }
+  .ph-gap { text-align: center; }
+  .ph-hint { line-height: 1.6; }
+
+  /* 两个格子 */
+  .ph-slots { display: flex; gap: 10px; }
+  .ph-slot {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 12px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1px solid transparent;
+
+    &--on { border-color: $color-primary; background: $color-primary-bg; }
+  }
+  .ph-slot-k { font-size: $fs-mini; color: $color-text-secondary; }
+  .ph-slot-v { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; font-variant-numeric: tabular-nums; }
+
+  /* 缩略图条 */
+  .ph-strip { width: 100%; white-space: nowrap; }
+  .ph-strip-inner { display: inline-flex; gap: 8px; padding: 2px 0; }
+  .ph-thumb {
+    position: relative;
+    width: 132rpx;
+    flex-shrink: 0;
+    border-radius: $radius-md;
+    overflow: hidden;
+    border: 2px solid transparent;
+
+    &--a { border-color: $color-info; }
+    &--b { border-color: $color-primary; }
+  }
+  .ph-thumb-img { display: block; width: 132rpx; height: 176rpx; }
+  .ph-thumb-date {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: $fs-nano;
+    color: $color-text-inverse;
+    text-align: center;
+    background: rgba(15, 23, 42, .5);
+    padding: 1px 0;
+  }
+  .ph-badge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: $fs-nano;
+    color: $color-text-inverse;
+    border-radius: $radius-pill;
+    padding: 1px 6px;
+
+    &--a { background: $color-info; }
+    &--b { background: $color-primary; }
+  }
+  .ph-strip-note { line-height: 1.6; }
+
+  .ph-actions { display: flex; gap: 10px; }
+  .ph-btn { flex: 1; }
+
+  /* 时间线 */
+  .ph-month { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+  .ph-month-label { font-size: $fs-small; font-weight: $fw-medium; color: $color-text-secondary; }
+  .ph-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ph-cell {
+    width: calc(33.33% - 6px);
+    border-radius: $radius-md;
+    overflow: hidden;
+    background: $color-bg-soft;
+  }
+  .ph-cell-img { display: block; width: 100%; height: 200rpx; }
+  .ph-cell-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 6px;
+  }
+  .ph-cell-pose { font-size: $fs-nano; color: $color-text-secondary; }
+  .ph-cell-age { font-size: $fs-nano; color: $color-text-tertiary; }
+}

@@ -1,0 +1,50 @@
+@import '../../styles/variables.scss';
+
+/* 喝水那一块 —— 记录页弹层里和速记页上各出现一次,样式只此一份。
+   蓝色($color-sky-light 那一家)专给水分:它是全站唯一一处蓝色动作,一眼就知道按下去记的是水。 */
+.water-quick { display: block; }
+
+.water-status { display: flex; align-items: baseline; gap: 6px; margin: 18px 0 10px; }
+.water-amount { font-size: $fs-emoji; font-weight: 700; color: $color-primary-dark; }
+.water-goal { font-size: $fs-small; color: $color-text-secondary; }
+.water-done {
+  font-size: $fs-nano; color: $color-success; background: $color-primary-a10;
+  border-radius: $radius-pill; padding: 2px 8px; margin-left: 6px;
+}
+/* 拉不到今日水量时不留一个 0(那会让人以为「今天一口没喝」)——
+   说清楚是没读到,并且**看得出来这一行能点**(它同时是那一句说明和重试入口)。
+   加下划线而不是换颜色:橙色在全站是「数值/强调」,不是报错。 */
+.water-pct.is-failed { color: $color-warning; text-decoration: underline; }
+
+.water-bar { height: 8px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
+.water-bar__fill {
+  height: 100%; border-radius: $radius-pill;
+  background: linear-gradient(90deg, $color-sky-pale, $color-sky-light); transition: width .3s ease;
+}
+.water-pct { display: block; margin-top: 6px; font-size: $fs-nano; color: $color-text-tertiary; }
+
+.water-chips { display: flex; gap: 8px; margin-top: 16px; }
+.water-chip {
+  flex: 1; text-align: center; padding: 10px 0;
+  background: rgba(14, 165, 233, .08); color: $color-sky-dark;
+  border: 1px solid rgba(14, 165, 233, .25); border-radius: $radius-md;
+  font-size: $fs-small; font-weight: 600;
+}
+.water-chip.is-busy { opacity: .5; }
+
+.water-custom { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.water-custom-input {
+  flex: 1; font-size: $fs-caption; padding: 8px 0;
+  color: $color-text-primary; border-bottom: 2px solid $color-sky-light;
+}
+/* 「添加」和上面那排档位是一个蓝(手输只是四个档位之外的补漏,不是主路),
+   所以做成浅底描边而不是实心 —— 实心会跟「点一下就记上」的档位抢注意力 */
+.water-custom .water-add {
+  flex-shrink: 0; font-weight: 600;
+  color: $color-sky-dark; background: rgba(14, 165, 233, .08);
+  border: 1px solid rgba(14, 165, 233, .25);
+}
+.water-reset {
+  display: block; margin-top: 6px; padding: 12px 0; font-size: $fs-nano;
+  color: $color-text-tertiary; text-decoration: underline;
+}

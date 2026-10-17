@@ -4,6 +4,7 @@ import { prisma } from '../db';
 import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
 import { wrap } from '../lib/asyncHandler';
+import { recomputeDaily } from '../engine';
 
 const router = Router();
 
@@ -12,7 +13,7 @@ const CreateGoalSchema = z.object({
   targetValue: z.number().positive().max(10_000),
   unit: z.string().max(10),
   durationWeeks: z.number().int().positive().optional(),
-  startDate: z.string().datetime().optional(),
+  startDate: z.string().datetime().refine(value => new Date(value).getTime() <= Date.now() + 60_000, '开始日期不能晚于今天').optional(),
   isActive: z.boolean().optional()
 });
 
@@ -43,6 +44,8 @@ router.post('/', wrap(async (req, res) => {
     }
     });
   });
+  // 新目标立刻算一次进度:否则首页目标卡要等到下一次称重/记饭才有数
+  await recomputeDaily(getUserId(res));
   return ok(res, goal);
 }));
 
@@ -64,6 +67,7 @@ router.put('/:id', wrap(async (req, res) => {
     data: { ...rest, ...(startDate ? { startDate: new Date(startDate) } : {}) }
     });
   });
+  await recomputeDaily(getUserId(res));
   return ok(res, goal);
 }));
 
@@ -74,6 +78,7 @@ router.delete('/:id', wrap(async (req, res) => {
     return err(res, 404, '目标不存在', { affectsData: false });
   }
   await prisma.goal.update({ where: { id: req.params.id }, data: { isActive: false } });
+  await recomputeDaily(getUserId(res));
   return ok(res, { archived: true });
 }));
 

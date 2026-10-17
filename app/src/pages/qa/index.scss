@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .qa-page {
   .daily-card {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02));
@@ -6,8 +8,8 @@
 
   .daily-badge {
     font-size: 22rpx;
-    color: #fff;
-    background: #10b981;
+    color: $color-text-inverse;
+    background: $color-primary;
     border-radius: 999rpx;
     padding: 4rpx 16rpx;
     font-weight: 600;
@@ -25,7 +27,7 @@
   .daily-a {
     display: block;
     font-size: 26rpx;
-    color: #334155;
+    color: $color-slate-600;
     line-height: 1.8;
     margin-top: 6px;
   }
@@ -38,22 +40,22 @@
 
   .qa-chip {
     font-size: 24rpx;
-    color: #475569;
-    background: #fff;
+    color: $color-slate-600;
+    background: $color-bg-card;
     border: 1rpx solid #e2e8f0;
     border-radius: 999rpx;
     padding: 6rpx 20rpx;
 
     &.active {
-      color: #059669;
-      border-color: #10b981;
+      color: $color-primary-dark;
+      border-color: $color-primary;
       background: rgba(16, 185, 129, 0.08);
       font-weight: 600;
     }
   }
 
   .qa-item {
-    border-bottom: 1rpx solid #f1f5f9;
+    border-bottom: 1rpx solid $color-fill;
     padding: 16px 0;
 
     &:last-child {
@@ -61,7 +63,7 @@
     }
 
     &.open .qa-q {
-      color: #059669;
+      color: $color-primary-dark;
     }
   }
 
@@ -69,7 +71,7 @@
     flex: 1;
     font-size: 28rpx;
     font-weight: 500;
-    color: #1e293b;
+    color: $color-text-primary;
     line-height: 1.5;
   }
 
@@ -78,8 +80,8 @@
     width: 44rpx;
     height: 44rpx;
     border-radius: 50%;
-    background: #f1f5f9;
-    color: #475569;
+    background: $color-fill;
+    color: $color-slate-600;
     font-size: 30rpx;
     display: flex;
     align-items: center;
@@ -90,15 +92,15 @@
 
   .qa-body {
     margin-top: 10px;
-    background: #f8fafc;
-    border-radius: 12rpx;
+    background: $color-bg-soft;
+    border-radius: $radius-sm;
     padding: 14rpx 20rpx;
   }
 
   .qa-cat-tag {
     display: inline-block;
     font-size: 20rpx;
-    color: #0284c7;
+    color: $color-sky;
     background: rgba(2, 132, 199, 0.08);
     border-radius: 6rpx;
     padding: 2rpx 10rpx;
@@ -108,7 +110,7 @@
   .qa-a {
     display: block;
     font-size: 26rpx;
-    color: #334155;
+    color: $color-slate-600;
     line-height: 1.8;
   }
 

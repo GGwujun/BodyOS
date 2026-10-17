@@ -20,7 +20,14 @@ export default defineConfig(async (merge) => {
       '@': path.resolve(__dirname, '..', 'src')
     },
     plugins: [],
-    defineConstants: {},
+    defineConstants: {
+      // 后端基址可以在构建时覆盖 —— 换局域网 IP、接测试环境都不必改源码:
+      //   API_BASE=http://192.168.1.5:3000/api/v1 npm run build:weapp
+      // 必须在这里注入,不能靠源码里读 process.env.API_BASE:小程序运行时**没有 process**,
+      // 而 TARO_ENV / NODE_ENV 之所以读得到,正是因为 Taro 把这类常量在打包时内联了 ——
+      // 这一条走的是同一条路。空串表示没给,由 src/config 回落到各自的默认值。
+      'process.env.API_BASE': JSON.stringify(process.env.API_BASE || '')
+    },
     copy: {
       patterns: [
         // tabBar 图标不经过 webpack 编译,直接复制到产物目录(app.config.ts 引用)

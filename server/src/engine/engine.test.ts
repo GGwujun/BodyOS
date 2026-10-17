@@ -238,3 +238,19 @@ test('missing AI credentials fail explicitly without fabricated data', async () 
     await assert.rejects(chat([{role:'user',content:'测试'}]), /尚未配置/);
   } finally { env.zhipuApiKey = original; }
 });
+
+test('目标分数按方向判趋势:增肌掉秤不该拿「减脂成功」的分', () => {
+  const base = { progress: 0, isActive: true };
+  // 同样是 -0.05kg/天:对减脂是好事,对增肌是掉肌肉
+  assert.ok(goalScore({ ...base, trend: -0.05, type: 'fat_loss' })
+    > goalScore({ ...base, trend: -0.05, type: 'muscle_gain' }));
+  // 同样是 +0.05kg/天:对增肌是好事,对减脂是白练
+  assert.ok(goalScore({ ...base, trend: 0.05, type: 'muscle_gain' })
+    > goalScore({ ...base, trend: 0.05, type: 'fat_loss' }));
+  // 维持:稳比动得分高
+  assert.ok(goalScore({ ...base, trend: 0, type: 'maintain' })
+    > goalScore({ ...base, trend: 0.2, type: 'maintain' }));
+  // 耐力与体重方向无关:两个方向拿一样的分
+  assert.equal(goalScore({ ...base, trend: 0.2, type: 'endurance' }),
+    goalScore({ ...base, trend: -0.2, type: 'endurance' }));
+});

@@ -1,0 +1,820 @@
+@import '../../styles/variables.scss';
+
+/* ============ 动作库(分包) ============ */
+.exlib-page {
+  background: $color-bg;
+  gap: 10px;
+
+  /* ===== 搜索框 + 「按肌肉看」=====
+     两种找法(叫什么 / 练哪儿)摆在同一个高度上:搜索是主入口,肌群是并列的另一条路,
+     不是塞进筛选行里冒充第三个筛子 */
+  .ex-search-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ex-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    border-radius: $radius-pill;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    .ex-search-ico {
+      position: absolute;
+      left: 13px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .ex-search-input {
+      width: 100%;
+      height: 38px;
+      box-sizing: border-box;
+      padding: 0 38px 0 36px;
+      font-size: $fs-caption;
+      line-height: 38px;
+      color: $color-text-primary;
+    }
+
+    /* 占位符只说明「能搜什么」。字比正文小一档,长句才不会顶到搜索框右边 */
+    .ex-search-ph {
+      font-size: $fs-mini;
+      color: $color-text-tertiary;
+    }
+
+    .ex-search-clear {
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: $color-fill;
+      color: $color-text-tertiary;
+      font-size: $fs-nano;
+      line-height: 1;
+    }
+  }
+
+  .ex-muscle {
+    flex: none;
+    height: 40px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+    border: 1px solid $color-primary-light;
+
+    &:active { opacity: .72; }
+  }
+
+  /* ===== 三维筛选收成一条栏 =====
+     原来部位/器械/分类三排 chip 常驻:每排都被屏幕右边切掉半个,还吃掉小半屏。
+     现在一维一个入口,点开哪一维才在下面铺全部选项 —— 选项一个不少,首屏先看到动作。 */
+  .ex-filterbar {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ex-filter {
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 9px;
+    border-radius: $radius-md;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &:active { opacity: .78; }
+
+    .ex-filter-v {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: $fs-small;
+      font-weight: $fw-medium;
+      color: $color-text-primary;
+    }
+
+    .ex-filter-caret {
+      flex: none;
+      display: flex;
+      align-items: center;
+      transition: transform .18s ease;
+
+      &.is-open { transform: rotate(180deg); }
+    }
+
+    &.is-on,
+    &.is-open {
+      .ex-filter-v { color: $color-primary-dark; font-weight: $fw-bold; }
+    }
+
+    &.is-on {
+      background: $color-primary-bg;
+      border-color: $color-primary-light;
+    }
+
+    &.is-open {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-primary-a10;
+    }
+  }
+
+  .ex-filter-panel {
+    padding: 12px 14px 14px;
+    border-radius: $radius-md;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+    box-shadow: $shadow-card;
+  }
+
+  .ex-filter-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 10px;
+  }
+
+  .ex-filter-panel-t {
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+
+  .ex-filter-panel-reset {
+    padding: 2px 0;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+
+    &:active { opacity: .6; }
+  }
+
+  .ex-filter-opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ex-opt {
+    padding: 8px 14px;
+    border-radius: $radius-pill;
+    background: $color-bg-soft;
+    border: 1px solid transparent;
+    font-size: $fs-mini;
+    line-height: 1.2;
+    color: $color-text-secondary;
+
+    &.on {
+      background: $color-primary-bg;
+      border-color: $color-primary-light;
+      color: $color-primary-dark;
+      font-weight: $fw-bold;
+    }
+  }
+
+  /* 肌群筛子(从肌群页带过来)—— 只有它一条框,没有 chip 排:
+     并进「部位」那一排等于把两套标准搅成一套,另起一排又会让用户以为其中一排是多余的 */
+  .ex-msggroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    /* 不要再加左右 margin:页面本身有 safe-x 的内缩,加了就和搜索框、筛选栏对不齐 */
+    padding: 9px 12px;
+    border-radius: $radius-md;
+    background: $color-primary-bg;
+    border: 1px solid $color-primary-light;
+
+    &-t {
+      font-size: $fs-mini;
+      color: $color-primary-dark;
+      font-weight: $fw-medium;
+    }
+
+    &-x {
+      flex: none;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .72);
+      font-size: $fs-nano;
+      color: $color-primary-dark;
+    }
+  }
+
+  /* ===== 收藏 / 我建的(只有存在时才出现)===== */
+  .ex-mine-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 2px;
+  }
+
+  .ex-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &:active { opacity: .72; }
+
+    &.active {
+      color: $color-primary-dark;
+      background: $color-primary-bg;
+      border-color: $color-primary-light;
+      font-weight: $fw-bold;
+    }
+  }
+
+  /* ===== 自己设计一个动作 =====
+     列表最前面那张卡。虚线底把它和真正的动作行分开:它是备选,不是第一个动作 */
+  .ex-create {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border-radius: $radius-card;
+    background: $color-bg-card;
+    border: 1px dashed $color-border-dashed;
+
+    &:active { opacity: .75; }
+
+    &-icon {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      border-radius: $radius-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $color-primary-bg;
+    }
+
+    &-plus {
+      font-size: $fs-num;
+      font-weight: $fw-regular;
+      color: $color-primary;
+      line-height: 1;
+    }
+
+    &-copy {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    &-t {
+      font-size: $fs-medium;
+      font-weight: $fw-bold;
+      color: $color-text-primary;
+    }
+
+    &-s {
+      font-size: $fs-mini;
+      line-height: 1.5;
+      color: $color-text-tertiary;
+    }
+
+    &-go {
+      flex: none;
+      font-size: $fs-h2;
+      line-height: 1;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .ex-fav-tip {
+    display: block;
+    padding: 0 4px;
+    font-size: $fs-mini;
+    line-height: 1.6;
+    color: $color-text-tertiary;
+  }
+
+  /* ===== 分组列表 ===== */
+  .ex-groups { padding: 6px 16px 10px; }
+
+  .ex-group {
+    padding: 12px 0 2px;
+  }
+
+  /* 组与组之间靠一条细线分开:同一张卡里既有「胸」也有「背」,
+     没有这条线,上一组的最后一行会看成下一组的第一行 */
+  .ex-group + .ex-group {
+    margin-top: 4px;
+    border-top: 1px solid $color-divider;
+  }
+
+  .ex-group-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 0 4px;
+  }
+
+  .ex-group-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .ex-group-mark {
+    flex: none;
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    background: $color-primary;
+
+    &--fav { background: $color-warning; }
+  }
+
+  .ex-group-title {
+    font-size: $fs-body;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+
+  .ex-group-count {
+    flex: none;
+    font-size: $fs-mini;
+    color: $color-text-tertiary;
+  }
+
+  .ex-group-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    padding: 11px 0 4px;
+    font-size: $fs-mini;
+    font-weight: $fw-medium;
+    color: $color-primary-dark;
+
+    &:active { opacity: .6; }
+  }
+
+  /* ===== 筛选结果 ===== */
+  .ex-result-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 2px 0 6px;
+  }
+
+  .ex-result-copy {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .ex-result-t {
+    font-size: $fs-small;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+
+  .ex-result-n {
+    font-size: $fs-mini;
+    color: $color-text-tertiary;
+  }
+
+  .ex-result-reset {
+    flex: none;
+    padding: 2px 0 2px 12px;
+    font-size: $fs-mini;
+    font-weight: $fw-medium;
+    color: $color-primary-dark;
+
+    &:active { opacity: .6; }
+  }
+
+  /* 列表末尾那一条:没铺完时是「还有 N 个,加载更多 ›」,铺到上限之后换成同一位置的灰字劝说 */
+  .ex-result-more {
+    display: block;
+    padding: 14px 0 4px;
+    text-align: center;
+    font-size: $fs-mini;
+    line-height: 1.6;
+    color: $color-text-tertiary;
+
+    &--tap {
+      color: $color-primary-dark;
+      font-weight: $fw-bold;
+
+      &:active { opacity: .6; }
+    }
+  }
+
+  /* 差一个字的兜底那几行。这一块在 `.ex-empty`(竖向居中)里面,所以要把宽度拿满,
+     否则每行会被缩成内容宽度 —— 星标就跑到行中间去了 */
+  .ex-near {
+    align-self: stretch;
+    width: 100%;
+    margin: 2px 0;
+  }
+
+  .ex-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 34px 0 18px;
+
+    .ex-empty-emoji {
+      font-size: $fs-emoji;
+      line-height: 1;
+    }
+
+    .ex-empty-text {
+      font-size: $fs-mini;
+      line-height: 1.6;
+      color: $color-text-secondary;
+      text-align: center;
+    }
+
+    .ex-empty-ops {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .ex-empty-reset {
+      height: 34px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      border-radius: $radius-pill;
+      background: $color-primary-bg;
+      border: 1px solid $color-primary-light;
+      font-size: $fs-mini;
+      font-weight: $fw-bold;
+      color: $color-primary-dark;
+
+      &:active { opacity: .7; }
+    }
+
+    .ex-empty-create {
+      padding: 4px 0;
+      font-size: $fs-mini;
+      color: $color-primary-dark;
+      text-align: center;
+
+      &:active { opacity: .6; }
+    }
+  }
+}
+
+/* ============ 动作行 ============ */
+.ex-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+
+  /* 用「相邻行」而不是每行底边:第一行紧跟在组标题下面,不该先来一条横线 */
+  & + .ex-row { border-top: 1px solid $color-divider; }
+
+  &:active { opacity: .72; }
+
+  .ex-row-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ex-row-main {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ex-name {
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    line-height: 1.35;
+    color: $color-text-primary;
+  }
+
+  .ex-tag {
+    padding: 1px 7px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    line-height: 1.5;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+    border: 1px solid $color-fill;
+  }
+
+  .ex-tag-lv {
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+    border-color: $color-primary-light;
+  }
+
+  /* 我建的动作:和难度标签同一个绿色家族,但底更实一点(它不是「属性」,是身份) */
+  .ex-tag-mine {
+    color: $color-primary-dark;
+    background: #d8f5e8;
+    border-color: $color-primary-light;
+    font-weight: $fw-bold;
+  }
+
+  .ex-row-sub {
+    font-size: $fs-mini;
+    line-height: 1.5;
+    color: $color-text-tertiary;
+  }
+}
+
+/* 行尾的「＋ 计划」—— 排进计划是一个动作,不是一种状态;给它清楚的按钮边界和 28px 高度 */
+.ex-plan {
+  flex: none;
+  height: 28px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-pill;
+  font-size: $fs-mini;
+  font-weight: $fw-bold;
+  color: $color-primary-dark;
+  background: $color-primary-bg;
+  border: 1px solid $color-primary-light;
+
+  &:active { opacity: .6; }
+}
+
+/* 星标要够大才好点(手指头不是鼠标),所以给固定宽高而不是让字撑 */
+.ex-star {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  color: $color-text-tertiary;
+
+  &.is-on { color: $color-warning; }
+}
+
+/* ============ 详情弹层 ============
+ * fixed 样式必须在页面类作用域外(见 recipes 先例) */
+.exlib-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  z-index: 100;
+}
+
+.exlib-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 101;
+  box-sizing: border-box;
+  max-height: 78vh;
+  overflow-y: auto;
+  padding: 10px 16px calc(24px + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+
+  /* 顶部那根短横:告诉用户「这是一张可以往下收的底卡」,不是一整页 */
+  .exlib-grab {
+    width: 36px;
+    height: 4px;
+    margin: 0 auto 12px;
+    border-radius: 2px;
+    background: $color-fill;
+  }
+
+  .exlib-sheet-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .exlib-sheet-title {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .exlib-sheet-name {
+    font-size: $fs-h2;
+    font-weight: $fw-bold;
+    line-height: 1.35;
+    color: $color-text-primary;
+  }
+
+  .exlib-sheet-close {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: $color-bg-soft;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+  }
+
+  /* 部位/器械/肌群/步骤那几块搬去了 howto/index.scss(训练页速查栏共用同一份) */
+  .exlib-mine {
+    display: block;
+    text-align: center;
+    font-size: $fs-small;
+    color: $color-primary-dark;
+    padding: 14px 0 4px;
+  }
+
+  /* 详情层的收藏入口:第二个「看记录」式链接,所以只补一点间距和一个更淡的颜色 */
+  .exlib-star {
+    color: $color-text-secondary;
+    padding-top: 10px;
+  }
+
+  /* 编辑入口排在最上面(自己的动作,常改的就是它),和「看记录」拉开一点距离 */
+  .exlib-edit { padding-top: 12px; }
+
+  /* 「加入计划」是这一屏唯一一个「做了件事」的入口(其余几行都是去看别的页),
+     所以给一块浅底把它从链接堆里挑出来 —— 底和描边照难度标签那一对(全站一个绿),
+     不做成实心主按钮:它不是这一页的主流程,选完还要挑是哪一天 */
+  .exlib-add-plan {
+    margin-top: 14px;
+    padding: 13px 0;
+    border-radius: $radius-md;
+    background: $color-primary-bg;
+    border: 1px solid $color-primary-light;
+    font-weight: $fw-bold;
+
+    &:active { opacity: .7; }
+  }
+
+  .exlib-pick-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 14px 0 6px;
+  }
+
+  /* 「‹ 返回」用次要色:它退的是这一小块,不是整个弹层 */
+  .exlib-pick-back {
+    font-size: $fs-small;
+    color: $color-text-secondary;
+  }
+
+  .exlib-day {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid $color-divider;
+
+    &:last-of-type { border-bottom: none; }
+
+    /* 已经在这一天里的不给点:同一个动作排进同一天两遍,多半是手滑 */
+    &.is-has .exlib-day-title { color: $color-text-secondary; }
+  }
+
+  .exlib-day-main {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .exlib-day-title {
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+
+  .exlib-day-sub {
+    font-size: $fs-nano;
+    color: $color-text-tertiary;
+  }
+
+  .exlib-day-tail {
+    flex: none;
+    font-size: $fs-small;
+    font-weight: $fw-medium;
+    color: $color-primary-dark;
+  }
+
+  .exlib-day.is-has .exlib-day-tail { color: $color-text-tertiary; }
+
+  .exlib-pick-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 4px;
+  }
+
+  .exlib-pick-all {
+    display: block;
+    padding-top: 12px;
+  }
+
+  /* 新建训练日那一行:和前几天的可选行同形,但用虚线把它和已有日程分开 */
+  .exlib-day--new {
+    margin-top: 4px;
+    border-bottom: none;
+    border-top: 1px dashed $color-border;
+
+    .exlib-day-title { color: $color-primary-dark; }
+  }
+
+  /* 「加入计划」第二步的设置面板 —— 字段样式在 setup/index.scss(计划编辑器共用),
+     这里只补「新训练日起名」和吸底确认条 */
+  .exlib-setup-name {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 0 2px;
+  }
+
+  /* 面板比别处长得多,确认条必须吸底,否则要滚到最后才看得见「加入」 */
+  .exlib-setup-ops {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    gap: 10px;
+    margin: 16px -16px calc(-24px - env(safe-area-inset-bottom));
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: $color-bg-card;
+    border-top: 1px solid $color-border;
+  }
+
+  .exlib-setup-btn {
+    flex: 1;
+    text-align: center;
+    padding: 11px 0;
+    border-radius: $radius-md;
+    font-size: $fs-small;
+    color: $color-text-secondary;
+    background: $color-fill;
+
+    &--ok {
+      flex: 2;
+      color: $color-text-inverse;
+      background: $color-primary;
+      font-weight: $fw-bold;
+    }
+  }
+}

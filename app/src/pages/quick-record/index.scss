@@ -1,0 +1,47 @@
+@import '../../styles/variables.scss';
+
+/* ============ 速记页(中间那一格) ============
+   两张卡、一条去路,别的不摆 —— 这一页存在的意义就是「比翻记录页快」。 */
+.quick-page {
+  background: $color-bg;
+  /* 只写上下:左右那 16px 是 Screen 的 .safe-x 给的 —— 简写 padding 和它是同一个属性,
+     不是叠加而是覆盖,而页面样式在 app.wxss 之后加载,左右会真的变成 0 */
+  padding-top: 4px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  gap: 14px;
+}
+
+.quick-header { padding: 0 2px 2px; display: flex; flex-direction: column; gap: 2px; }
+.quick-title { font-size: $fs-title; line-height: 1.35; font-weight: 700; color: $color-text-primary; }
+.quick-sub { font-size: $fs-mini; color: $color-text-secondary; }
+
+.quick-card {
+  background: $color-bg-card;
+  border-radius: $radius-card;
+  padding: 16px;
+  box-shadow: $shadow-card;
+}
+.quick-card__head { display: flex; align-items: center; gap: 6px; }
+.quick-card__emoji { font-size: $fs-body; }
+.quick-card__title { flex: 1; font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+.quick-card__hint { font-size: $fs-nano; color: $color-text-tertiary; }
+
+/* 体重:记过和没记过是两种长相 —— 记过先给读数(那是他要确认的东西),
+   没记过给的是一句引导 + 一个动作 */
+.quick-weigh {
+  margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 14px; border-radius: $radius-md; background: $color-fill;
+}
+.quick-weigh.is-done { background: $color-primary-bg; }
+.quick-weigh__value { font-size: $fs-num; font-weight: 700; color: $color-text-primary; }
+.quick-weigh__unit { font-size: $fs-mini; font-weight: 400; color: $color-text-secondary; }
+.quick-weigh__again { flex-shrink: 0; font-size: $fs-mini; color: $color-primary-dark; }
+.quick-weigh__empty { flex: 1; min-width: 0; font-size: $fs-mini; color: $color-text-secondary; }
+.quick-weigh__cta { flex-shrink: 0; font-size: $fs-small; font-weight: $fw-medium; color: $color-primary-dark; }
+
+.quick-more {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 14px 16px; background: $color-bg-card; border-radius: $radius-lg; box-shadow: $shadow-card;
+}
+.quick-more__text { font-size: $fs-small; color: $color-text-secondary; }
+.quick-more__action { flex-shrink: 0; font-size: $fs-small; font-weight: $fw-medium; color: $color-primary-dark; }

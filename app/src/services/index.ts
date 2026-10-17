@@ -12,3 +12,4 @@ export * as aiApi from './ai';
 export * as dataSourceApi from './dataSources';
 export * as waterApi from './water';
 export * as ingredientApi from './ingredient';
+export * as trainingApi from './training';

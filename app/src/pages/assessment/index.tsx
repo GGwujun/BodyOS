@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { ASSESSMENTS, estimateMinutes, scoreAssessment } from '@/data/assessments';
 import type { AssessmentDef, Answer, AssessResult } from '@/data/assessments';
 import { todayStr } from '@/utils/date';
+import { setLeaveGuard } from '@/utils/leave-guard';
 import './index.scss';
 
 interface LastResult { date: string; score: number; }
@@ -27,6 +28,38 @@ export default function Assessment() {
     ASSESSMENTS.forEach((a) => { const l = readLast(a.id); if (l) map[a.id] = l; });
     return map;
   });
+
+  /** 答过几道了 —— 退出/离开要不要问一句,看的就是它 */
+  const answeredAny = answers.some((a) => a !== undefined);
+
+  /**
+   * 中途退出去。以前 quiz 这一支里**只有上一题/下一题** —— 答到第三题想换一套测评,
+   * 只能靠系统返回键或底部那条浮动导航,而那条导航走的是 switchTab(关掉整个页面),
+   * 已经答的那几道一声不吭就没了。所以:页内给一个出口,出口自己问一句。
+   */
+  const exitQuiz = async () => {
+    if (answeredAny) {
+      const { confirm } = await Taro.showModal({
+        title: '退出这次测评?',
+        content: '已经答的这几道不会保存,下次要重新开始。',
+        confirmText: '退出',
+        cancelText: '继续答'
+      });
+      if (!confirm) return;
+    }
+    setPhase('list');
+  };
+
+  // 底部那条浮动导航(和系统返回)也拦一道 —— 只有答过题才算「有东西会丢」
+  useEffect(() => {
+    setLeaveGuard({
+      dirty: () => phase === 'quiz' && answeredAny,
+      title: '测评还没答完',
+      content: '已经答的这几道不会保存,离开的话要重新开始。',
+      confirmText: '退出'
+    });
+    return () => setLeaveGuard(null);
+  }, [phase, answeredAny]);
 
   const start = (d: AssessmentDef) => {
     setDef(d); setAnswers([]); setIdx(0); setResult(null);
@@ -99,7 +132,10 @@ export default function Assessment() {
       <View className="card quiz-card">
         <View className="quiz-progress">
           <Text className="quiz-step">{idx + 1} / {def.questions.length}{q.multi ? ' · 可多选' : ''}</Text>
-          <Text className="quiz-pct">{progress}%</Text>
+          <View className="quiz-head-right">
+            <Text className="quiz-pct">{progress}%</Text>
+            <Text className="quiz-exit" onClick={exitQuiz}>退出</Text>
+          </View>
         </View>
         <View className="quiz-bar"><View className="quiz-bar__fill" style={{ width: `${progress}%` }} /></View>
         {q.dim && def.dimLabels?.[q.dim] && <Text className="quiz-dim">{def.dimLabels[q.dim]}</Text>}
@@ -124,7 +160,7 @@ export default function Assessment() {
           })}
         </View>
         <View className="quiz-nav">
-          <Button className="nav-back" disabled={idx === 0} onClick={() => setIdx(idx - 1)}>上一题</Button>
+          <Button className="btn nav-back" disabled={idx === 0} onClick={() => setIdx(idx - 1)}>上一题</Button>
           <Button className="btn btn--primary nav-next" disabled={!answered} onClick={next}>
             {idx === def.questions.length - 1 ? '查看结果' : '下一题'}
           </Button>

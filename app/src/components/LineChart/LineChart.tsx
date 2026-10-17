@@ -1,6 +1,7 @@
-import { Canvas, View } from '@tarojs/components';
+import { Canvas, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { axisText, chartDomain, pickIndex, valueText, worthTarget } from '@/utils/chart';
 import './index.scss';
 
 interface Point {
@@ -8,30 +9,74 @@ interface Point {
   value: number;
 }
 
+/**
+ * 小程序 canvas 的触摸事件:坐标是**相对 canvas**的(`touches[0].x`)。
+ * 不声明成 Taro 的通用事件类型,是因为这里只读两个字段 —— 宽进窄出。
+ */
+interface ChartTouch {
+  touches?: { x?: number }[];
+  detail?: { x?: number };
+}
+
 interface LineChartProps {
   points: Point[];
+  /** 调用方强指纵轴范围(不给就按数据算,见 `utils/chart.chartDomain`) */
   domain?: [number, number];
   color?: string;
   height?: number;
   canvasId: string;
+  /** 目标线(虚线 + 右侧小字)。画不进来的线等于没画,所以它会参与算域 */
+  target?: { value: number; label: string } | null;
+  /** 读数后面的单位(「65.2 公斤」)。不传就只有数字 */
+  unit?: string;
+  /** 点选回调 —— 想和别处联动的调用方才需要(比如把读数写进标题) */
+  onPick?: (p: Point, i: number) => void;
 }
 
 /**
- * Canvas 折线图(微信小程序 2d,无第三方依赖)。
- * 用于 Trends 页体重/评分趋势。
+ * Canvas 折线图(微信小程序 2d,无第三方依赖)—— 全站曲线的**唯一**画法。
+ *
+ * 三个能读的地方,都是 2026-10-16 补的(此前它只是一条线加几个点,
+ * 用户看得出「在涨」但读不出「涨到多少」,鼠标年代的习惯在手机上不成立 —— 没有 hover):
+ *  · **纵轴刻度**:上下各一个数(念得出来的整数,见 `chartDomain`),横轴首末两个日期。
+ *    画在 canvas 里而不是摆 View:90 天的曲线要是每个点一个节点,小程序直接卡死。
+ *  · **目标线**:体重曲线摆在目标体重上、热量曲线摆在每日热量目标上 ——
+ *    「还差多少」以前只能靠用户自己拿眼睛比。
+ *  · **点选读数**:手指点(或按住拖)哪一段,就报那个点的日期和值,读数写在图下面那一行。
+ *    不在图里画气泡:canvas 里的小字缩放到手机上看不清,而且那一行本来就在摆提示语。
+ *
+ * 性能上的两条:量一次 canvas 就存进 ref,触摸时只重画不重新查询节点;
+ * 选中的下标存在 ref 里(重画读它),state 只用来更新那一行读数文字。
  */
 export default function LineChart({
   points,
   domain,
   color = '#2ecc71',
   height = 120,
-  canvasId
+  canvasId,
+  target,
+  unit = '',
+  onPick
 }: LineChartProps) {
-  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const width = 320;
+  /* 量出来的绘图区(重画要用),以及「现在选中的是第几个」——画的时候读 ref,不读 state */
+  const sizeRef = useRef({ left: 0, width: 0 });
+  const drawRef = useRef<() => void>(() => {});
+  const pickRef = useRef<number | null>(null);
+  /**
+   * 选中**自己带着序列的签名**:换时间档(7 天 → 30 天)之后「第 5 个点」指的是另一天,
+   * 签名对不上就当没选过(那一行退出读数、回到提示语)——
+   * 和列表分页那套「状态自带作用域」同一个道理,别改成单独一个下标再处处记着清。
+   */
+  const key = `${points.length}:${points[0]?.label ?? ''}:${points[points.length - 1]?.label ?? ''}`;
+  const [pick, setPick] = useState<{ key: string; i: number } | null>(null);
+  const keyRef = useRef(key);
+  if (keyRef.current !== key) {
+    keyRef.current = key;
+    pickRef.current = null;
+  }
 
   useEffect(() => {
-    if (points.length === 0) return;
+    if (!points.length) return;
     const query = Taro.createSelectorQuery();
     query
       .select(`#${canvasId}`)
@@ -40,53 +85,82 @@ export default function LineChart({
         const canvas = res?.[0]?.node;
         if (!canvas) return;
         const dpr = Taro.getSystemInfoSync().pixelRatio;
-        const measuredWidth = Number.isFinite(res[0].width) && res[0].width > 0 ? res[0].width : width;
+        const measuredWidth = Number.isFinite(res[0].width) && res[0].width > 0 ? res[0].width : 320;
         const measuredHeight = Number.isFinite(res[0].height) && res[0].height > 0 ? res[0].height : height;
         canvas.width = measuredWidth * dpr;
         canvas.height = measuredHeight * dpr;
         const ctx = canvas.getContext('2d');
         ctx.scale(dpr, dpr);
-        ctxRef.current = ctx;
-        draw(ctx, measuredWidth, measuredHeight);
+        sizeRef.current = { left: PAD_L, width: measuredWidth - PAD_L - PAD_R };
+        drawRef.current = () => draw(ctx, measuredWidth, measuredHeight);
+        drawRef.current();
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [points, domain, color]);
+  }, [points, domain?.[0], domain?.[1], color, target?.value, target?.label, unit, height, canvasId]);
+
+  /**
+   * 点选:按最近的点算(见 `utils/chart.pickIndex`)—— 落在留白里、甚至图外面也算头尾那一点,
+   * 不用精确戳中那个 2.5px 的圆。按住横向拖也走这条(同一个点不重复上报)。
+   */
+  const onTouch = (e: ChartTouch) => {
+    if (!points.length || !sizeRef.current.width) return;
+    const x = e?.touches?.[0]?.x ?? e?.detail?.x;
+    if (typeof x !== 'number') return;
+    const i = pickIndex(x, sizeRef.current.left, sizeRef.current.width, points.length);
+    if (pickRef.current === i) return;
+    pickRef.current = i;
+    setPick({ key, i });
+    drawRef.current();
+    onPick?.(points[i], i);
+  };
 
   function draw(ctx: CanvasRenderingContext2D, w: number, h: number) {
     ctx.clearRect(0, 0, w, h);
     if (points.length === 0) return;
 
-    const padX = 12;
-    const padY = 14;
-    const innerW = w - padX * 2;
-    const innerH = h - padY * 2;
-
     const values = points.map((p) => p.value);
-    let min = domain?.[0] ?? Math.min(...values);
-    let max = domain?.[1] ?? Math.max(...values);
-    if (min === max) {
-      min -= 1;
-      max += 1;
-    }
-    const stepX = points.length > 1 ? innerW / (points.length - 1) : 0;
-    const coords = points.map((p, i) => ({
-      x: padX + i * stepX,
-      y: padY + innerH - ((p.value - min) / (max - min)) * innerH
-    }));
+    /* 目标太远就不画(否则曲线被压平),见 utils/chart.worthTarget —— 算域和画线用同一个判断 */
+    const t = target && worthTarget(values, target.value) ? target : null;
+    const d = chartDomain(values, t?.value ?? null);
+    const min = domain?.[0] ?? d.min;
+    const max = domain?.[1] ?? d.max;
+    const step = domain ? (max - min) / 3 : d.step;
+    const span = max - min || 1;
 
-    // 渐变填充区域
+    const plotW = w - PAD_L - PAD_R;
+    const plotH = h - PAD_T - PAD_B;
+    const plotBottom = h - PAD_B;
+    const xOf = (i: number) => PAD_L + (points.length > 1 ? (plotW / (points.length - 1)) * i : plotW / 2);
+    const yOf = (v: number) => PAD_T + plotH - ((v - min) / span) * plotH;
+    const coords = points.map((p, i) => ({ x: xOf(i), y: yOf(p.value) }));
+
+    /* 刻度先画,曲线压在上面 —— 刻度是背景,读数是主角 */
+    ctx.font = '10px sans-serif';
+    ctx.fillStyle = '#94a3b8';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    ctx.fillText(axisText(max, step), PAD_L - 6, PAD_T - 4);
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(axisText(min, step), PAD_L - 6, plotBottom + 4);
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    ctx.fillText(points[0].label, PAD_L, plotBottom + 4);
+    ctx.textAlign = 'right';
+    ctx.fillText(points[points.length - 1].label, w - PAD_R, plotBottom + 4);
+
+    /* 渐变填充区域 */
     ctx.beginPath();
     coords.forEach((c, i) => (i === 0 ? ctx.moveTo(c.x, c.y) : ctx.lineTo(c.x, c.y)));
-    ctx.lineTo(coords[coords.length - 1].x, padY + innerH);
-    ctx.lineTo(coords[0].x, padY + innerH);
+    ctx.lineTo(coords[coords.length - 1].x, plotBottom);
+    ctx.lineTo(coords[0].x, plotBottom);
     ctx.closePath();
-    const grad = ctx.createLinearGradient(0, padY, 0, padY + innerH);
+    const grad = ctx.createLinearGradient(0, PAD_T, 0, plotBottom);
     grad.addColorStop(0, hexA(color, 0.22));
     grad.addColorStop(1, hexA(color, 0));
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // 折线
+    /* 折线 */
     ctx.beginPath();
     coords.forEach((c, i) => (i === 0 ? ctx.moveTo(c.x, c.y) : ctx.lineTo(c.x, c.y)));
     ctx.strokeStyle = color;
@@ -95,21 +169,80 @@ export default function LineChart({
     ctx.lineCap = 'round';
     ctx.stroke();
 
-    // 数据点
+    /* 目标线:虚线 + 右端一行小字(字压在线上面,免得和横轴刻度挤在一起) */
+    if (t) {
+      const ty = yOf(t.value);
+      ctx.save();
+      ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(PAD_L, ty);
+      ctx.lineTo(w - PAD_R, ty);
+      ctx.stroke();
+      ctx.restore();
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(`${t.label} ${valueText(t.value)}${unit}`, w - PAD_R, ty - 2);
+    }
+
+    /* 数据点 */
     coords.forEach((c) => {
       ctx.beginPath();
       ctx.arc(c.x, c.y, 2.5, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
     });
+
+    /* 选中的那一点:一条竖向参考线 + 一个圈 —— 读数在图下面那一行,这里只标「是哪一个」 */
+    const sel = pickRef.current;
+    if (sel != null && sel < coords.length) {
+      const c = coords[sel];
+      ctx.save();
+      ctx.setLineDash([2, 3]);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(c.x, PAD_T);
+      ctx.lineTo(c.x, plotBottom);
+      ctx.stroke();
+      ctx.restore();
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
   }
 
+  const sel = pick && pick.key === key && pick.i < points.length ? points[pick.i] : null;
   return (
-    <View className="line-chart" style={{ height: `${height}px` }}>
-      <Canvas type="2d" id={canvasId} className="chart-canvas" style={{ width: '100%', height: `${height}px` }} />
+    <View className="line-chart">
+      <Canvas
+        type="2d"
+        id={canvasId}
+        className="chart-canvas"
+        style={{ width: '100%', height: `${height}px` }}
+        onTouchStart={onTouch}
+        onTouchMove={onTouch}
+      />
+      {/* 这一行既是提示也是读数:没点过说什么能点,点过就换成那个点的日期和值 */}
+      <Text className={`line-chart__read${sel ? ' is-on' : ''}`}>
+        {sel ? `${sel.label} · ${valueText(sel.value)}${unit}` : '点曲线看具体数值'}
+      </Text>
     </View>
   );
 }
+
+/** 绘图区边距:左边留给纵轴那两个数,下边留给横轴那两个日期,右边只留一点喘气 */
+const PAD_L = 34;
+const PAD_R = 8;
+const PAD_T = 14;
+const PAD_B = 18;
 
 /** #RRGGBB → rgba */
 function hexA(hex: string, alpha: number): string {

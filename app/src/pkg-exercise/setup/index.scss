@@ -1,0 +1,132 @@
+@import '../../styles/variables.scss';
+
+/* ============ 动作参数面板(共享) ============ */
+/* 计划编辑弹层和动作库「加入计划」共用这一套字段 —— 两处看见的设置项必须一样 */
+.set-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.set-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+
+  &--copy { align-items: flex-start; }
+}
+.set-k {
+  flex: none;
+  font-size: $fs-small;
+  color: $color-text-primary;
+}
+.set-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.set-note {
+  font-size: $fs-mini;
+  color: $color-text-secondary;
+  line-height: 1.55;
+}
+.set-plate {
+  padding: 7px 10px;
+  border-radius: $radius-sm;
+  background: $color-primary-bg;
+  font-size: $fs-mini;
+  color: $color-primary-dark;
+  line-height: 1.5;
+}
+
+/* 步进器 */
+.set-step {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: $color-bg-soft;
+  border-radius: $radius-md;
+}
+.set-step-btn {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  font-size: $fs-h2;
+  color: $color-primary-dark;
+
+  &:active { opacity: .5; }
+}
+.set-step-v {
+  min-width: 54px;
+  text-align: center;
+  font-size: $fs-small;
+  font-weight: $fw-bold;
+  color: $color-text-primary;
+  font-variant-numeric: tabular-nums;
+}
+.set-step-u {
+  margin-left: 2px;
+  font-size: $fs-nano;
+  font-weight: $fw-regular;
+  color: $color-text-secondary;
+}
+
+.set-add-weight {
+  padding: 5px 12px;
+  border-radius: $radius-pill;
+  font-size: $fs-mini;
+  font-weight: $fw-bold;
+  color: $color-primary-dark;
+  background: $color-primary-bg;
+  border: 1px solid $color-primary-light;
+
+  &:active { opacity: .6; }
+}
+
+/* chips */
+.set-title {
+  font-size: $fs-small;
+  font-weight: $fw-bold;
+  color: $color-text-primary;
+  padding-top: 2px;
+}
+.set-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.set-chip {
+  padding: 5px 12px;
+  border-radius: $radius-pill;
+  font-size: $fs-mini;
+  color: $color-text-secondary;
+  background: $color-fill;
+
+  &.on { color: $color-primary-dark; background: $color-primary-bg; font-weight: $fw-bold; }
+  &.off { opacity: .38; }
+}
+
+/* 开关 */
+.set-toggle {
+  flex: none;
+  padding: 5px 12px;
+  border-radius: $radius-pill;
+  font-size: $fs-mini;
+  color: $color-text-secondary;
+  background: $color-fill;
+
+  &.on { color: $color-primary-dark; background: $color-primary-bg; font-weight: $fw-bold; }
+}
+
+/* 备注 */
+.set-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: $radius-md;
+  background: $color-bg-soft;
+  font-size: $fs-small;
+  color: $color-text-primary;
+}

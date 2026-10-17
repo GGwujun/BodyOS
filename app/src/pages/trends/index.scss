@@ -3,7 +3,10 @@
 /* ============ 趋势页 ============ */
 .trends-page {
   background: $color-bg;
-  padding: 12px 0 calc(24px + env(safe-area-inset-bottom));
+  /* 只写上下:左右那 16px 是 Screen 的 .safe-x 给的 —— 简写 padding 和它是同一个属性,
+     不是叠加而是覆盖,而页面样式在 app.wxss 之后加载,左右会真的变成 0 */
+  padding-top: 12px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
   gap: 14px;
 
   /* 顶部分段切换(白底胶囊,选中段绿底白字) */
@@ -13,20 +16,20 @@
     border-radius: $radius-md; box-shadow: $shadow-card;
   }
   .section-tabs text, .section-tabs taro-text-core {
-    flex: 1; text-align: center; padding: 7px 0;
-    font-size: 13px; color: $color-text-secondary;
-    border-radius: 9px; transition: all .2s ease;
+    flex: 1; text-align: center; padding: 12px 0;
+    font-size: $fs-small; color: $color-text-secondary;
+    border-radius: $radius-sm; transition: all .2s ease;
   }
-  .section-tabs .active { background: $color-primary; color: #fff; font-weight: $fw-bold; }
+  .section-tabs .active { background: $color-primary; color: $color-text-inverse; font-weight: $fw-bold; }
 
   /* 时间范围胶囊 */
   .range-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   .range-tabs text, .range-tabs taro-text-core {
-    display: block; padding: 6px 0; text-align: center;
+    display: block; padding: 11px 0; text-align: center;
     background: $color-bg-card; border: 1px solid $color-border;
-    border-radius: $radius-pill; color: $color-text-secondary; font-size: 12px;
+    border-radius: $radius-pill; color: $color-text-secondary; font-size: $fs-mini;
   }
-  .range-tabs .active { background: $color-primary; border-color: $color-primary; color: #fff; font-weight: $fw-bold; }
+  .range-tabs .active { background: $color-primary; border-color: $color-primary; color: $color-text-inverse; font-weight: $fw-bold; }
   .range-tabs picker, .range-tabs taro-picker-core { min-width: 0; width: 100%; }
   .range-tabs picker text, .range-tabs taro-picker-core text,
   .range-tabs picker taro-text-core, .range-tabs taro-picker-core taro-text-core {
@@ -34,7 +37,7 @@
   }
 
   /* 加载/失败提示 */
-  .status-hint { display: block; padding: 32px 0; text-align: center; font-size: 13px; color: $color-text-tertiary; }
+  .status-hint { display: block; padding: 32px 0; text-align: center; font-size: $fs-small; color: $color-text-tertiary; }
 
   /* 指标卡 */
   .metric-card {
@@ -44,60 +47,114 @@
   }
   .metric-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
   .metric-head view:first-child, .metric-head taro-view-core:first-child { display: flex; flex-direction: column; gap: 4px; }
-  .metric-label { font-size: 13px; color: $color-text-secondary; }
-  .metric-value { font-size: 30px; font-weight: 700; line-height: 1.25; color: $color-text-primary; letter-spacing: -.5px; }
+  .metric-label { font-size: $fs-small; color: $color-text-secondary; }
+  .metric-value { font-size: $fs-display; font-weight: 700; line-height: 1.25; color: $color-text-primary; letter-spacing: -.5px; }
 
   /* 涨跌标记:软色胶囊 */
-  .good { color: $color-primary-dark; background: $color-primary-bg; font-size: 11px; padding: 3px 9px; border-radius: $radius-pill; }
-  .warn { color: #b45309; background: #fef3c7; font-size: 11px; padding: 3px 9px; border-radius: $radius-pill; }
-  .muted { color: $color-text-tertiary; font-size: 11px; }
+  .good { color: $color-primary-dark; background: $color-primary-bg; font-size: $fs-nano; padding: 3px 9px; border-radius: $radius-pill; }
+  .warn { color: $color-amber-dark; background: $color-amber-bg; font-size: $fs-nano; padding: 3px 9px; border-radius: $radius-pill; }
+  .muted { color: $color-text-tertiary; font-size: $fs-nano; }
 
   /* 主图表 */
   .main-chart { padding-bottom: 12px; }
   .chart-placeholder {
     display: block; margin-top: 4px; padding: 44px 0;
-    border: 1px dashed #dbe2ea; border-radius: $radius-md;
+    border: 1px dashed $color-border-dashed; border-radius: $radius-md;
     background: $color-bg-soft; text-align: center;
-    font-size: 12px; color: $color-text-tertiary;
+    font-size: $fs-mini; color: $color-text-tertiary;
   }
   .chart-hint {
     display: block; margin-top: 8px; text-align: center;
-    font-size: 11px; color: $color-text-tertiary;
+    font-size: $fs-nano; color: $color-text-tertiary;
   }
+  /* 三个空态的唯一出口,以前只有一行字高(13px) —— 补成整条可点 */
   .chart-action {
-    display: block; margin-top: 10px; text-align: center;
-    font-size: 13px; font-weight: 600; color: $color-primary-dark;
+    display: block; margin-top: 10px; padding: 13px 0; text-align: center;
+    font-size: $fs-small; font-weight: 600; color: $color-primary-dark;
   }
+
+  /* 三大营养素:一条占比条 + 两行字。
+     三个颜色用的是食谱页那套(m-protein/m-carb/m-fat),同一样东西全站一个色 ——
+     在这页是蓝的、翻到食谱页变绿的,用户就得每次重新认一遍 */
+  .macro-row { margin-top: 12px; padding-top: 12px; border-top: 1px dashed $color-border; }
+  .macro-bar {
+    display: flex; height: 8px; border-radius: $radius-pill; overflow: hidden;
+    background: $color-fill;
+  }
+  .macro-bar__seg { height: 100%; }
+  .macro-bar__seg.is-p { background: $color-sky; }
+  .macro-bar__seg.is-c { background: $color-amber-dark; }
+  .macro-bar__seg.is-f { background: $color-rose; }
+  .macro-row__line { display: block; margin-top: 8px; font-size: $fs-small; color: $color-text-primary; }
+  /* 占比不跟克数同一行:克数是「吃了多少」,占比是「吃得对不对」,挤一起看谁都读不进去 */
+  .macro-row__share { display: block; margin-top: 3px; font-size: $fs-nano; color: $color-text-tertiary; }
+  .macro-row__tip {
+    display: block; margin-top: 8px; padding: 8px 10px;
+    background: $color-primary-bg; border-radius: $radius-md;
+    font-size: $fs-mini; color: $color-primary-dark;
+  }
+
+  /* 身体数据的三条下钻:一行摆平,竖线分格 —— 它是页脚不是卡片,别再摆一个标题 */
+  /* 内边距搬到每一格自己身上 —— 写在父容器上等于没有热区放大,点得到的还是那行字 */
+  .body-links {
+    display: flex; align-items: stretch;
+    background: $color-bg-card; border: 1px solid $color-border;
+    border-radius: $radius-card; box-shadow: $shadow-card;
+    overflow: hidden;
+  }
+  .body-link {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 15px 0;
+    font-size: $fs-small; font-weight: $fw-medium; color: $color-primary-dark;
+
+    & + .body-link { border-left: 1px solid $color-border; }
+  }
+
+  /* 训练那一块 —— 首行是一句话不是一个数,所以不用 .metric-value(30px 的字号
+     把「近 7 天练了 2 天」这句话撑得像个标题),另给一档 20px 的 */
+  .train-recent { font-size: $fs-h1; font-weight: 700; line-height: 1.3; color: $color-text-primary; }
+  .train-total { display: block; margin-top: 6px; font-size: $fs-mini; color: $color-text-secondary; }
+  .train-lifts { margin-top: 12px; }
+  .train-lifts__title { font-size: $fs-nano; color: $color-text-tertiary; letter-spacing: 1px; }
+  .train-lift { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; }
+  .train-lift + .train-lift { border-top: 1px solid $color-border; }
+  .train-lift__name {
+    flex: 1; min-width: 0;
+    font-size: $fs-small; color: $color-text-primary;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .train-lift__value { font-size: $fs-small; font-weight: 600; color: $color-primary-dark; }
+  .train-lift__when { font-size: $fs-nano; color: $color-text-tertiary; }
 
   /* 数据页小卡 */
   .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .mini-grid .metric-card {
     display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
-    color: $color-primary; font-size: 18px;
+    color: $color-primary; font-size: $fs-h2;
   }
-  .mini-grid .metric-card .mini-label { font-size: 12px; color: $color-text-secondary; }
-  .mini-value { font-size: 22px; font-weight: 700; color: $color-text-primary !important; }
+  .mini-grid .metric-card .mini-label { font-size: $fs-mini; color: $color-text-secondary; }
+  .mini-value { font-size: $fs-num; font-weight: 700; color: $color-text-primary !important; }
 
   /* 每日列表 */
   .data-list { display: flex; flex-direction: column; }
-  .card-title { font-size: 15px; font-weight: 700; color: $color-text-primary; margin-bottom: 4px; }
+  .card-title { font-size: $fs-medium; font-weight: 700; color: $color-text-primary; margin-bottom: 4px; }
   .data-list view, .data-list taro-view-core {
     display: flex; justify-content: space-between;
-    padding: 11px 0; border-bottom: 1px solid $color-divider; font-size: 13px;
+    padding: 11px 0; border-bottom: 1px solid $color-divider; font-size: $fs-small;
   }
   .data-list view:last-child, .data-list taro-view-core:last-child { border-bottom: 0; }
   .data-list view text:first-child, .data-list view taro-text-core:first-child,
   .data-list taro-view-core text:first-child, .data-list taro-view-core taro-text-core:first-child { color: $color-text-secondary; }
   .data-list view text:last-child, .data-list view taro-text-core:last-child,
   .data-list taro-view-core text:last-child, .data-list taro-view-core taro-text-core:last-child { font-weight: $fw-bold; color: $color-text-primary; }
-  .data-empty { padding: 14px 0; font-size: 12px; color: $color-text-tertiary; }
+  .data-empty { padding: 14px 0; font-size: $fs-mini; color: $color-text-tertiary; }
 
   /* 解读卡 */
-  .insight { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 18px; }
-  .insight text, .insight taro-text-core { font-size: 13px; line-height: 1.7; color: #475569; }
-  .insight .card-title { font-size: 16px; margin-bottom: 0; }
+  .insight { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: $fs-h2; }
+  .insight text, .insight taro-text-core { font-size: $fs-small; line-height: 1.7; color: $color-slate-600; }
+  .insight .card-title { font-size: $fs-body; margin-bottom: 0; }
   .insight .action {
     background: $color-primary-bg; color: $color-primary-dark;
-    border-radius: 10px; padding: 9px 12px; margin-top: 2px;
+    border-radius: $radius-md; padding: 9px 12px; margin-top: 2px;
   }
 }

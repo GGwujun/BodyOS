@@ -1,0 +1,915 @@
+@import '../../styles/variables.scss';
+
+/* ============ 训练执行(分包) ============ */
+/* 打不开这一天时的空态(不是加载中) */
+.wk-blank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 44px 24px;
+  text-align: center;
+}
+.wk-blank-cta { margin-top: 10px; }
+
+.wk-page {
+  background: $color-bg;
+  gap: 10px;
+  padding-bottom: 96px; /* 给底部完成按钮留位 */
+
+  /* 顶部进度 */
+  .wk-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .wk-top-copy { display: flex; flex-direction: column; gap: 2px; }
+  .wk-title { font-size: $fs-h1; font-weight: $fw-bold; color: $color-text-primary; }
+  /* 恢复提醒:今天要练的部位还没缓过来 */
+  .wk-warn {
+    display: block;
+    margin-top: 8px;
+    padding: 8px 11px;
+    border-radius: $radius-md;
+    background: $color-warning-bg;
+    border-left: 3px solid $color-warning;
+    font-size: $fs-mini;
+    line-height: 1.6;
+    color: $color-text-primary;
+  }
+  .wk-cycle {
+    align-self: flex-start;
+    margin-top: 2px;
+    padding: 2px 9px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+  }
+  .wk-clock { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+  .wk-clock-time { font-size: $fs-h1; font-weight: $fw-bold; color: $color-primary-dark; font-variant-numeric: tabular-nums; }
+
+  .wk-progress {
+    height: 8px;
+    border-radius: $radius-pill;
+    background: $color-fill;
+    overflow: hidden;
+  }
+  .wk-progress-fill {
+    height: 100%;
+    border-radius: $radius-pill;
+    background: $color-primary-gradient;
+    transition: width 0.3s ease;
+  }
+
+  /* 练前上称:一行安静的入口,不占一张卡(清单才是这一屏的主角) */
+  .wk-weigh {
+    display: block;
+    padding: 2px 2px 0;
+    font-size: $fs-small;
+    font-weight: $fw-medium;
+    color: $color-primary-dark;
+  }
+  .wk-weigh-done { display: block; padding: 2px 2px 0; }
+
+  /* 动作卡 */
+  .wk-ex { display: flex; flex-direction: column; gap: 2px; }
+
+  /* 正在练的这一个 —— 浅底 + 主色描边(和计划页今天那一套同一套做法:
+     同一种意思在两地得是同一种长相)。只描边不浮起来 —— 这一屏卡片本来就多 */
+  .wk-ex--now {
+    background: $color-primary-bg;
+    border-color: $color-primary-light;
+  }
+  .wk-ex--now .wk-ex-name { color: $color-primary-dark; }
+
+  /* 练完的动作折成一行(见 doneOpen):留一点点淡,和「还没练」的动作区分开 */
+  .wk-ex--fold {
+    opacity: 0.72;
+    .wk-ex-head { padding: 0; }
+    .wk-ex-name { font-size: $fs-medium; }
+  }
+  .wk-fold-x { color: $color-primary-dark; font-weight: $fw-medium; padding: 2px 0; }
+  .wk-ex-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 2px 0 4px;
+  }
+  .wk-ex-title { display: flex; align-items: center; gap: 7px; }
+  .wk-ex-right { display: flex; align-items: center; gap: 10px; }
+  .wk-more {
+    width: 34px;
+    height: 34px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: $radius-sm;
+    background: $color-fill;
+    color: $color-text-secondary;
+    font-size: $fs-caption;
+
+    &:active { background: $color-border; }
+  }
+  .wk-ex-name { font-size: $fs-body; font-weight: $fw-bold; color: $color-text-primary; }
+  .wk-type {
+    padding: 1px 8px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    font-weight: $fw-bold;
+    color: $color-warning;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+  }
+  .wk-ss {
+    padding: 1px 8px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    font-weight: $fw-bold;
+    color: $color-info;
+    background: $color-info-bg;
+    border: 1px solid #bfdbfe;
+  }
+  /* 「不算进步」(这次不计入进阶)—— 和日志卡上那一枚同一身黄:同一个词在两处必须同一种长相 */
+  .wk-noprog {
+    padding: 1px 8px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    font-weight: $fw-bold;
+    color: $color-warning;
+    background: $color-warning-a12;
+  }
+  .wk-e1rm { display: block; padding: 6px 0 2px; }
+
+  /* 演示图(当前这个动作才有,见 index.tsx 那段)。
+     底下那条「收起」和它上面那条署名一样,都是灰的小字 —— 一个是不让大图占住半屏,
+     一个是署名的规矩,两件都不是动作本身,不该抢组数那几行的注意力 */
+  .wk-demo { display: flex; flex-direction: column; }
+  .wk-demo-shut {
+    align-self: flex-end;
+    padding: 2px 0 6px;
+    color: $color-text-secondary;
+  }
+  /* 这一块是摆在这张浅绿卡上的,而图在别处(动作库/速查栏)是摆在白卡上 ——
+     那两处用三级灰没问题,落在绿底上就只有 2.4:1,基本读不出来。
+     署名是 CC BY-SA 的硬要求,读不出来的署名等于没署名,所以这里提到二级灰 */
+  .wk-demo .howto-demo__hint,
+  .wk-demo .howto-demo__credit { color: $color-text-secondary; }
+  /* 收起来之后这一行是回来找图的路 —— 和「怎么做 ›」一个颜色,让人认得出它是入口 */
+  .wk-demo-open {
+    display: block;
+    padding: 3px 0 5px;
+    color: $color-primary-dark;
+    font-weight: $fw-medium;
+  }
+
+  /* 「上次 3 天前 · 60×8 / 60×8 / 57.5×6 · 最好 65×6」—— 一整行动作共用一句,
+     刻意做得不比别处响:它是**参照**,不是目标(目标在组行的步进器里) */
+  .wk-ref {
+    display: block;
+    padding: 3px 0 5px;
+    line-height: 18px;
+    color: $color-text-secondary;
+  }
+  .wk-focus-ref { display: block; padding: 4px 0 0; }
+
+  /* 热身组区(默认折叠) */
+  .wk-warm {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 6px;
+    padding: 8px 10px;
+    background: $color-bg-soft;
+    border-radius: $radius-sm;
+  }
+  .wk-warm-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .wk-warm-title { font-size: $fs-mini; font-weight: $fw-bold; color: $color-primary-dark; }
+  .wk-warm-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+
+    &.on .wk-warm-v { color: $color-text-tertiary; text-decoration: line-through; }
+  }
+  .wk-warm-v {
+    min-width: 92px;
+    font-size: $fs-small;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 组行 */
+  .wk-set {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 9px 0;
+    border-bottom: 1px solid $color-divider;
+
+    &:last-of-type { border-bottom: none; }
+    &.done .wk-set-no { color: $color-text-tertiary; text-decoration: line-through; }
+  }
+  /* 组型说明 — 占满整行,左侧与动作名对齐(勾 26 + 间距 6 + 组号 14) */
+  .wk-set-note {
+    flex-basis: 100%;
+    padding-left: 46px;
+    font-size: $fs-nano;
+    line-height: 1.6;
+    color: $color-warning;
+  }
+  /* 「撤掉这组」— 只在临时加的那一组下面出现(见 delAddedSet)。
+     字比「＋ 加一组」小、颜色是提示色而不是按钮色:它是个补救的口子,
+     不该长得像一步常规操作 —— 摆得太显眼,人会以为每一组都能删 */
+  .wk-set-del {
+    flex-basis: 100%;
+    padding-left: 46px;
+    font-size: $fs-nano;
+    line-height: 1.6;
+    color: $color-text-tertiary;
+    text-decoration: underline;
+  }
+  /* 「＋ 加一组」— 紧跟在最后一组下面(刚打完勾的那一组旁边就是它,不用回上面找)。
+     比补录页那个同名入口(#le-addset)大一圈:这一下是站在器械旁边、手上有粉的时候点的,
+     13px 字 + 上下各 6px 的内边距才按得住 */
+  .wk-addset {
+    display: block;
+    margin-top: 2px;
+    padding: 6px 0 2px;
+    font-size: $fs-small;
+    color: $color-info;
+
+    &:active { opacity: 0.6; }
+  }
+
+  /* 26px 的圆是「这一组打完了」的唯一入口,训练时手上有粉、有汗,按不住。
+     视觉尺寸不动(它就是该长 26),命中区外扩到 44×44 ——
+     外扩吃掉的是这一行自己的上下内边距(9px)和右边的组号,不会盖到上下一组的勾上 */
+  .wk-check {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid $color-border-strong;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-bg-card;
+
+    &.checked {
+      border-color: $color-primary;
+      background: $color-primary;
+    }
+
+    /* 热身组用小一号的勾 */
+    &::after { content: ''; position: absolute; inset: -9px; }
+    /* 小号那个挨得更近,外扩少一点,免得抢了旁边那一列 */
+    &.wk-check--sm { width: 20px; height: 20px; border-width: 1.5px; }
+    &.wk-check--sm::after { inset: -6px; }
+  }
+  .wk-tick { font-size: $fs-caption; color: $color-text-inverse; line-height: 1; }
+  .wk-check--sm .wk-tick { font-size: $fs-nano; }
+  .wk-set-no {
+    width: 14px;
+    text-align: center;
+    font-size: $fs-small;
+    color: $color-text-secondary;
+    flex-shrink: 0;
+  }
+
+  /* 步进器 */
+  .wk-ctrl {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+  }
+  /* 重量/次数的 −/＋:24×26 挤在一行里,训练中单手极易按到隔壁那一格 */
+  .wk-btn {
+    width: 30px;
+    height: 34px;
+    border-radius: $radius-sm;
+    background: $color-fill;
+    font-size: $fs-medium;
+    color: $color-text-primary;
+    text-align: center;
+    line-height: 34px;
+
+    &:active { background: $color-border; }
+  }
+  .wk-val {
+    min-width: 34px;
+    text-align: center;
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+  .wk-unit { font-size: $fs-nano; font-weight: $fw-regular; color: $color-text-secondary; margin-left: 1px; }
+  .wk-val-bw { min-width: 34px; }
+
+  /*
+   * 计时行的整块控件:点哪儿都是「开始 / 按停」,所以整块可点 —— 撑到一半眼睛
+   * 是花的,没工夫瞄那两个 24px 的小按钮。真的按起来走路的时候(农夫行走),
+   * 一行 26px 更是不够用。
+   */
+  .wk-hold {
+    min-height: 30px;
+    padding: 0 8px;
+    border-radius: $radius-sm;
+    background: $color-fill;
+    justify-content: center;
+    gap: 6px;
+
+    /* 正在计时 —— 和休息条同一个颜色语言:亮起来就是「现在在计时」 */
+    &.is-live { background: $color-primary-bg; }
+    /* 已经超过处方上限 —— 多撑的秒数才是今天的长进,标成主色 */
+    &.is-over { background: $color-primary-bg; }
+
+    &:active { opacity: .85; }
+  }
+  .wk-hold-live { color: $color-primary; }
+  .wk-hold-over { font-size: $fs-mini; font-weight: $fw-bold; color: $color-primary; }
+  .wk-hold-hint { font-size: $fs-nano; color: $color-text-secondary; }
+
+  .wk-fhold {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: $radius-md;
+    background: $color-fill;
+
+    &.is-live, &.is-over { background: $color-primary-bg; }
+    &:active { opacity: .85; }
+  }
+  .wk-fhold-live { color: $color-primary; }
+  .wk-fhold-over { font-size: $fs-small; font-weight: $fw-bold; color: $color-primary; }
+  .wk-fhold-hint { font-size: $fs-mini; color: $color-text-secondary; }
+
+  /* 自感强度徽标(RIR) — 未评为中性灰,已评按档位着色 */
+  /* 自感强度徽标:和打勾同理,30px 太小,命中区补到 44 */
+  .wk-eff {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-fill;
+    border: 1px solid $color-border;
+
+    &.rated { border-color: transparent; }
+  }
+  .wk-eff::after { content: ''; position: absolute; inset: -7px; }
+  .wk-eff-t {
+    font-size: $fs-small;
+    font-weight: $fw-bold;
+    color: $color-text-tertiary;
+    line-height: 1;
+  }
+  .wk-eff.rated .wk-eff-t { color: $color-text-inverse; }
+
+  /* 动作常驻备注 */
+  .wk-note {
+    display: block;
+    padding: 5px 9px;
+    margin-bottom: 6px;
+    border-radius: $radius-sm;
+    background: $color-warning-bg;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    line-height: 1.6;
+  }
+
+  /* 本次感受 */
+  .wk-sn { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; }
+  .wk-sn-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .wk-sn-head .fs-mini { flex: 1; line-height: 1.6; }
+  .wk-sn-input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 78px;
+    padding: 10px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+    font-size: $fs-caption;
+    color: $color-text-primary;
+    line-height: 1.6;
+  }
+  .wk-sn-ph { color: $color-text-tertiary; font-size: $fs-small; }
+
+  /* 「这次不算进步」开关 */
+  .wk-np { padding: 12px 14px; }
+  .wk-np-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .wk-np-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .wk-np-title { font-size: $fs-medium; font-weight: $fw-medium; color: $color-text-primary; }
+
+  .wk-finish { margin-top: 2px; }
+  .wk-foot { display: block; text-align: center; line-height: 1.7; }
+}
+
+/* ============ 休息倒计时条(fixed,页面类作用域外) ============ */
+.wk-rest {
+  position: fixed;
+  left: $safe-margin;
+  right: $safe-margin;
+  /* 让开常驻底部导航(PageNavigation:62px + 安全区)。两边都是 fixed 且同 z-index,
+     它在 DOM 里更靠后 —— 于是白底导航盖上来,被盖住的正好是「暂停 / +15s / 跳过」
+     那一整行,休息时最要按的三个键。光抬 z-index 不够,还得往上挪出它的高度。 */
+  bottom: calc(74px + env(safe-area-inset-bottom));
+  z-index: 120;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 14px 16px;
+  background: $color-bg-card;
+  border-radius: $radius-card;
+  box-shadow: $shadow-elevated;
+
+  .wk-rest-label { font-size: $fs-mini; color: $color-text-secondary; text-align: center; }
+  .wk-rest-time {
+    font-size: $fs-display;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .wk-rest-bar {
+    height: 5px;
+    border-radius: $radius-pill;
+    background: $color-fill;
+    overflow: hidden;
+  }
+  .wk-rest-fill {
+    height: 100%;
+    border-radius: $radius-pill;
+    background: $color-primary-gradient;
+    transition: width 0.95s linear;
+  }
+  .wk-rest-ops {
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+  }
+  /* 休息条上那三个键(暂停 / +15s / 跳过):以前只有字那么大的命中区,
+     而它们是「歇着的这几十秒里唯一会按的东西」*/
+  .wk-rest-op {
+    display: flex; align-items: center;
+    min-height: 44px; padding: 0 14px;
+    font-size: $fs-small; color: $color-info; font-weight: $fw-medium;
+  }
+  /* 暂停:数字和进度条一起褪成灰。它们本来就不动了,继续用「正在走」的绿色
+     会让人以为表卡住了 —— 一眼要能分出「在歇」和「停着」 */
+  &.is-paused .wk-rest-label { color: $color-info; }
+  &.is-paused .wk-rest-time { color: $color-text-secondary; }
+  &.is-paused .wk-rest-fill { background: $color-text-tertiary; transition: none; }
+}
+
+/* ============ 完成汇总弹层(fixed,页面类作用域外) ============ */
+.wk-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  z-index: 130;
+}
+
+.wk-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 131;
+  box-sizing: border-box;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+
+  .wk-sheet-emoji { font-size: $fs-mega; line-height: 1; }
+  .wk-sheet-title { font-size: $fs-num; font-weight: $fw-bold; color: $color-text-primary; }
+
+  .wk-sheet-stats {
+    display: flex;
+    flex-wrap: wrap;   /* 有计时动作时会多一格「保持」,五个数字挤一行就看不清了 */
+    width: 100%;
+    gap: 8px;
+  }
+  .wk-stat {
+    /* 一行四个。撑得下的那几格照旧等分;多出来的「保持」自己占一整行(见下) */
+    flex: 1 1 calc(25% - 6px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 12px 4px;
+    background: $color-bg-soft;
+    border-radius: $radius-md;
+  }
+  /* 「保持」的数字比别格长(「1 分 30 秒」),和四个数字挤一行会顶破格子,独占一行 */
+  .wk-stat--hold { flex-basis: 100%; }
+  .wk-stat-v { font-size: $fs-h2; font-weight: $fw-bold; color: $color-text-primary; font-variant-numeric: tabular-nums; }
+  .wk-stat-k { font-size: $fs-nano; color: $color-text-secondary; }
+
+  /* 时长手改:平时只有一句话(不打扰刚练完的人),点开才展开成一行的加减 */
+  .wk-dur-open { text-decoration: underline; text-underline-offset: 3px; padding: 2px 0; }
+  .wk-dur {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: $color-bg-soft;
+    border-radius: $radius-md;
+  }
+  /* 标签吃掉剩余宽度,把加减和「好了」推到右端 */
+  .wk-dur-k { flex: 1; color: $color-text-primary; }
+  .wk-dur-step { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+  .wk-dur-btn {
+    width: 24px;
+    height: 26px;
+    border-radius: $radius-sm;
+    background: $color-fill;
+    font-size: $fs-medium;
+    color: $color-text-primary;
+    text-align: center;
+    line-height: 26px;
+
+    &:active { background: $color-border; }
+  }
+  .wk-dur-val {
+    min-width: 34px;
+    text-align: center;
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+  .wk-dur-unit { font-size: $fs-nano; color: $color-text-secondary; }
+  .wk-dur-ok { font-size: $fs-small; font-weight: $fw-bold; color: $color-primary-dark; padding: 2px 6px; flex-shrink: 0; }
+  .wk-dur-cancel { font-size: $fs-mini; color: $color-text-tertiary; padding: 2px 4px; flex-shrink: 0; }
+
+  .wk-sheet-eff {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: $color-bg-soft;
+    border-radius: $radius-md;
+  }
+  .wk-sheet-eff-t { flex: 1; color: $color-text-primary; line-height: 1.6; }
+
+  .wk-sheet-notes {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px;
+    background: $color-primary-bg;
+    border-radius: $radius-md;
+  }
+  .wk-sheet-notes-title { color: $color-primary-dark; font-weight: $fw-bold; }
+  .wk-sheet-note { font-size: $fs-mini; color: $color-text-primary; line-height: 1.6; }
+
+  .wk-sheet-btn { width: 100%; margin-top: 4px; }
+
+  /* 分享卡 + 回计划:并排,一格一半 */
+  .wk-sheet-ops {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .wk-sheet-op { flex: 1; }
+}
+
+/* ============ 专注模式(fixed 全屏,页面类作用域外) ============ */
+.wk-focus {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 120;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: calc(14px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+  background: $color-bg;
+  overflow-y: auto;
+
+  .wk-focus-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .wk-focus-close {
+    font-size: $fs-caption;
+    color: $color-info;
+    font-weight: $fw-medium;
+    padding: 4px 0;
+  }
+  /* 「怎么做 ›」— 排在「退出专注」和「第 N/M 个动作」中间的那一枚(见 howTo 状态) */
+  .wk-focus-how {
+    font-size: $fs-caption;
+    color: $color-primary-dark;
+    font-weight: $fw-medium;
+    padding: 4px 0;
+  }
+  .wk-focus-name { font-size: $fs-hero; font-weight: $fw-bold; color: $color-text-primary; line-height: 1.3; }
+  .wk-focus-sub { line-height: 1.6; }
+
+  /* 专注模式的大号休息计时 */
+  .wk-focus-rest {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 16px;
+    background: $color-bg-card;
+    border-radius: $radius-card;
+    box-shadow: $shadow-card;
+  }
+  .wk-focus-rest-t {
+    font-size: $fs-mega;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .wk-focus-rest-k { text-align: center; }
+  .wk-focus-rest-ops { display: flex; gap: 26px; padding-top: 4px; }
+  /* 同上:专注模式这一屏只有这个计时在动,停了就得看得出来 */
+  .wk-focus-rest.is-paused .wk-focus-rest-t { color: $color-text-secondary; }
+
+  .wk-focus-sets { display: flex; flex-direction: column; gap: 10px; }
+  .wk-fset {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: $color-bg-card;
+    border-radius: $radius-card;
+    border: 1.5px solid transparent;
+
+    &.done { background: $color-primary-bg; border-color: $color-primary-light; }
+  }
+  .wk-fset-no {
+    width: 20px;
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-text-tertiary;
+    flex-shrink: 0;
+  }
+  .wk-fset-body { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .wk-fset-line { display: flex; align-items: center; gap: 6px; }
+  .wk-fset-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-sm;
+    background: $color-fill;
+    text-align: center;
+    line-height: 34px;
+    font-size: $fs-h1;
+    color: $color-text-primary;
+
+    &:active { background: $color-border; }
+  }
+  .wk-fset-v {
+    min-width: 44px;
+    text-align: center;
+    font-size: $fs-h1;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+  .wk-fset-u { font-size: $fs-nano; font-weight: $fw-regular; color: $color-text-secondary; margin-left: 1px; }
+  .wk-fset-bw { min-width: 60px; font-size: $fs-body; color: $color-text-secondary; }
+  .wk-fset-note { font-size: $fs-nano; line-height: 1.5; color: $color-warning; }
+  /* 计时行在专注模式下换掉次数那一行 —— 高度得撑住,否则组和组的间距会跳 */
+  .wk-fset-line.wk-fhold { min-height: 40px; }
+
+  .wk-fset-check {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid $color-border-strong;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-bg-card;
+
+    &.on { border-color: $color-primary; background: $color-primary; }
+  }
+  .wk-fset-tick { font-size: $fs-h1; line-height: 1; color: $color-text-tertiary; }
+  .wk-fset-check.on .wk-fset-tick { color: $color-text-inverse; }
+
+  /* 「＋ 加一组」—— 大字模式下所有能按的东西都放大了一档,它也跟着放大 */
+  .wk-faddset {
+    display: block;
+    padding: 12px 14px;
+    font-size: $fs-medium;
+    color: $color-info;
+    background: $color-bg-card;
+    border: 1px dashed $color-border;
+    border-radius: $radius-card;
+    text-align: center;
+
+    &:active { background: $color-bg-soft; }
+  }
+
+  .wk-focus-nav { display: flex; gap: 12px; margin-top: auto; padding-top: 6px; }
+  .wk-focus-navbtn {
+    flex: 1;
+    padding: 13px;
+    text-align: center;
+    border-radius: $radius-md;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+    font-size: $fs-caption;
+    color: $color-text-primary;
+
+    &:active { background: $color-fill; }
+    &.off { color: $color-text-tertiary; }
+  }
+}
+
+/* ============ 动作操作 / 换动作 / 历史(fixed,页面类作用域外) ============ */
+.wk-panel {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 131;
+  box-sizing: border-box;
+  max-height: 84vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+
+  .wk-panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .wk-panel-title { display: flex; flex-direction: column; gap: 2px; }
+  .wk-panel-close { padding: 4px 6px; font-size: $fs-medium; color: $color-text-secondary; }
+  .wk-panel-empty { display: block; padding: 12px 4px; text-align: center; line-height: 1.7; }
+
+  .wk-note-input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 88px;
+    padding: 10px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+    font-size: $fs-caption;
+    color: $color-text-primary;
+    line-height: 1.6;
+  }
+
+  .wk-ops { display: flex; flex-direction: column; gap: 8px; }
+  .wk-op-row {
+    padding: 13px 12px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+    font-size: $fs-medium;
+    color: $color-text-primary;
+    text-align: center;
+
+    &:active { background: $color-fill; }
+    &.off { color: $color-text-tertiary; }
+    &.danger { color: $color-danger; background: $color-danger-bg; border-color: transparent; }
+  }
+  /* 超级组的成员:说清楚按「上移」走的是整个组,不是一个动作 */
+  .wk-op-hint { font-size: $fs-mini; color: $color-text-tertiary; text-align: center; margin-top: -2px; }
+
+  .wk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .wk-chip {
+    padding: 5px 11px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+
+    &.on {
+      color: $color-primary-dark;
+      background: $color-primary-bg;
+      border-color: $color-primary;
+      font-weight: $fw-bold;
+    }
+  }
+
+  .wk-exlist { display: flex; flex-direction: column; }
+  .wk-ex-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    border-radius: $radius-md;
+    border-bottom: 1px solid $color-divider;
+
+    &.on { background: $color-primary-bg; }
+    &:active { background: $color-bg-soft; }
+  }
+  .wk-ex-opt-copy { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .wk-ex-opt-name { font-size: $fs-medium; color: $color-text-primary; font-weight: $fw-medium; }
+  .wk-ex-opt-tick { font-size: $fs-mini; font-weight: $fw-bold; color: $color-primary-dark; }
+
+  .wk-hist { display: flex; flex-direction: column; }
+  .wk-panel-more {
+    display: block;
+    text-align: center;
+    font-size: $fs-small;
+    color: $color-primary-dark;
+    padding: 12px 0 2px;
+  }
+  .wk-hist-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 2px;
+    border-bottom: 1px solid $color-divider;
+  }
+  .wk-hist-row:last-of-type { border-bottom: none; }
+  .wk-hist-date { font-size: $fs-small; color: $color-text-primary; font-weight: $fw-medium; flex-shrink: 0; }
+  .wk-hist-sets { flex: 1; text-align: right; line-height: 1.5; }
+}
+
+/* ============ 自感强度选择器(fixed,页面类作用域外) ============ */
+.wk-rate {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 131;
+  box-sizing: border-box;
+  max-height: 82vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 16px calc(24px + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+
+  .wk-rate-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .wk-rate-title { display: flex; flex-direction: column; gap: 2px; }
+  .wk-rate-close { padding: 6px; font-size: $fs-medium; color: $color-text-secondary; }
+
+  .wk-rate-opts { display: flex; flex-direction: column; gap: 8px; }
+  .wk-rate-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1.5px solid transparent;
+
+    &.active {
+      background: rgba(16, 185, 129, 0.07);
+      border-color: $color-primary;
+    }
+  }
+  .wk-rate-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .wk-rate-copy { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .wk-rate-label { font-size: $fs-caption; font-weight: $fw-bold; color: $color-text-primary; }
+  .wk-rate-tick { font-size: $fs-caption; color: $color-primary-dark; font-weight: $fw-bold; }
+
+  .wk-rate-foot { display: block; text-align: center; line-height: 1.7; }
+}

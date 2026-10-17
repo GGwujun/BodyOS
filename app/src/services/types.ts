@@ -79,6 +79,14 @@ export interface FoodLog {
   meal: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   items: FoodItem[];
   totalCalories: number;
+  /**
+   * 三大营养素合计。服务端一直在存(见 prisma FoodLog),只是客户端这个类型以前没声明,
+   * 于是「今天蛋白吃了多少」在记录页也拿不到 —— 类型少一个字段,功能就少一块。
+   * 手动只填名字+热量的那种记录三个都是 0(真值,不是缺字段)。
+   */
+  proteinG: number;
+  carbG: number;
+  fatG: number;
   loggedAt: string;
   source: 'manual' | 'ai_text' | 'ai_image';
 }
@@ -101,9 +109,13 @@ export interface Activity {
   type: string;
   durationMin?: number;
   calories: number;
+  /** 距离(米)。有氧才有;配速由前端用时长/距离算,不另存 */
+  distanceM?: number;
+  /** 跑步机坡度(%),0.5 一格。口径沿用 openGym 的 incline */
+  inclinePct?: number;
   steps?: number;
   startedAt: string;
-  source?: string;          // manual|ai_text|wechat|apple_health|...
+  source?: string;          // manual|ai_text|wechat|apple_health|...|training
   provider?: string;        // 数据来源
   externalId?: string;
   deduplicated?: boolean;   // 是否被去重合并
@@ -121,6 +133,12 @@ export interface BodyMeasurement {
   weightKg?: number;
   bodyFatPct?: number;
   muscleKg?: number;
+  /** 围度(厘米);一次只量一两处也允许,没量的部位为 null */
+  waistCm?: number | null;
+  chestCm?: number | null;
+  hipCm?: number | null;
+  armCm?: number | null;
+  thighCm?: number | null;
 }
 
 /* ============ 每日汇总 ============ */
@@ -133,10 +151,21 @@ export interface DailySummary {
   recoveryScore?: number | null;
   goalScore?: number | null;
   intakeCalories: number;
+  /**
+   * 消耗 = 基础代谢 + 日常活动 + 运动消耗(见 server/src/engine/energy.ts)。
+   * 三个组成项都是分开返回的 —— 首页那张能量卡要说清「这个数是怎么来的」,
+   * 而**TDEE 故意不进这个和**:它本身就含基础代谢,再加一遍就是重复计。
+   */
   burnCalories: number | null;
   netCalories: number | null;
+  /** 基础代谢(Mifflin-St Jeor)。没填性别/年龄/身高/体重时为 null */
+  bmr?: number | null;
+  /** 每日总消耗估算(基础代谢 × 活动系数)。只用来定热量目标,不参与 burnCalories 求和 */
+  tdee?: number | null;
   steps?: number;
+  /** 日常活动消耗 —— 没有 durationMin 的记录(步数换算的那部分) */
   activeCalories?: number;
+  /** 运动消耗 —— 有 durationMin 的记录(手动记的、同步来的、力量训练回写的) */
   exerciseCalories?: number;
   /** 当日水分合计(毫升) */
   waterMl?: number;

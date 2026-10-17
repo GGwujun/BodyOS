@@ -53,7 +53,7 @@ export default function DataSources() {
   return (
     <Screen className="data-sources-page">
       {loading && <Text className="fs-caption text-secondary">加载中…</Text>}
-      {error && <View className="ds-error"><Text>数据来源加载失败：{error}</Text><Button size="mini" onClick={refresh}>重新加载</Button></View>}
+      {error && <View className="ds-error"><Text>数据来源加载失败：{error}</Text><Button className="btn btn--mini btn--secondary" onClick={refresh}>重新加载</Button></View>}
       {actionError && <View className="ds-error">{actionError}</View>}
 
       {sources.map((s) => (
@@ -69,7 +69,9 @@ export default function DataSources() {
           </View>
         </View>
       ))}
-      <View className="ds-more"><Text>更多数据来源持续接入中</Text></View>
+      {/* 拉失败的时候那句「更多持续接入中」会读成「本来就没有数据源」——
+          和上面的错误框说的是两件事,那就别说 */}
+      {!error && <View className="ds-more"><Text>更多数据来源持续接入中</Text></View>}
       <View className="privacy-note"><ShieldOutlined /><Text>数据安全：所有数据仅用于你的身体管理和分析</Text></View>
     </Screen>
   );

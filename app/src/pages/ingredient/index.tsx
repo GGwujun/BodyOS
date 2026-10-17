@@ -39,7 +39,7 @@ export default function Ingredient() {
     } catch (e) {
       const msg = (e as { message?: string })?.message;
       if (msg?.includes('cancel') || msg?.includes('fail cancel')) return; // 用户取消选图
-      setErrorMsg(msg || '识别失败');
+      setErrorMsg(msg || '没能读出配料表');
       setState('failed');
     }
   };

@@ -1,0 +1,114 @@
+@import '../../styles/variables.scss';
+
+/* ============ 计划分享(分包) ============ */
+.ps-page {
+  background: $color-bg;
+  gap: 10px;
+
+  .ps-head { gap: 6px; }
+
+  .ps-block { gap: 6px; }
+
+  .ps-title {
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+  }
+
+  .ps-note { line-height: 18px; }
+  /* 没计划时「复制计划文字」是灰的,得在下面给一个真的能点的出口 */
+  .ps-empty-cta { margin-top: 6px; }
+
+  .ps-warn {
+    color: $color-warning;
+    line-height: 18px;
+  }
+
+  .ps-ok {
+    color: $color-primary-dark;
+    line-height: 18px;
+    font-weight: $fw-medium;
+  }
+
+  .ps-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 2px;
+  }
+
+  .ps-act {
+    flex: 1;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-pill;
+    background: $color-bg-soft;
+    color: $color-primary-dark;
+    font-size: $fs-small;
+  }
+
+  .ps-act-btn { flex: 1; }
+
+  /* 计划文字要能长按全选手动复制,行距给足一点 */
+  .ps-area {
+    width: 100%;
+    height: 150px;
+    box-sizing: border-box;
+    background: $color-bg-soft;
+    border-radius: $radius-md;
+    padding: 8px;
+    font-size: $fs-nano;
+    line-height: 18px;
+    color: $color-text-secondary;
+  }
+
+  .ps-area--in {
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+    font-size: $fs-mini;
+  }
+
+  /* ---- 读出来的预览 ---- */
+  .ps-preview {
+    gap: 2px;
+    padding: 6px 0;
+    border-top: 1px solid $color-border;
+  }
+
+  .ps-preview-day {
+    font-size: $fs-small;
+    font-weight: $fw-medium;
+  }
+
+  .ps-preview-item {
+    display: block;
+    color: $color-text-secondary;
+    line-height: 18px;
+  }
+
+  .ps-issues { gap: 2px; }
+
+  .ps-issue,
+  .ps-note-line {
+    display: block;
+    color: $color-text-secondary;
+    line-height: 18px;
+  }
+
+  .ps-done { gap: 4px; }
+
+  .ps-done-title {
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    padding-bottom: 2px;
+  }
+
+  .ps-done-line {
+    display: block;
+    line-height: 20px;
+    color: $color-text-secondary;
+  }
+
+  .ps-tip { gap: 4px; }
+}

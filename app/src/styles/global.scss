@@ -59,17 +59,27 @@ view, text {
   box-shadow: $shadow-card;
 }
 
-/* ============ 按钮 ============ */
+/* ============ 按钮 ============
+ * 微信的 <button> 自带一整套底样式(灰底 #f8f8f8、5px 圆角、18px 字号,
+ * 外加 `::after` 画的一圈描边和「相邻按钮之间 15px 上边距」)。这套底样式**必须显式清掉**:
+ * 它会从没有写 className 的 <Button> 上冒出来,也会在写了的按钮之间塞进那条 margin。
+ * 全站写按钮都从 `.btn` 进 —— 只写 `size="mini"` 不写 className 的,长出来的就是微信默认长相。
+ */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 $space-4;
+  margin: 0; /* 原生 button 相邻兄弟有 15px 上边距,并排按钮会被顶歪 */
   height: 44px;
   border-radius: $radius-pill;
   font-size: $fs-body;
   font-weight: $fw-medium;
   border: none;
+  line-height: 1;
+
+  /* 原生那圈描边画在 ::after 上(border 清了它还在) */
+  &::after { border: 0; }
 
   &--primary {
     background: $color-primary;
@@ -88,11 +98,37 @@ view, text {
     color: $color-text-secondary;
   }
 
+  /* 行内小按钮(列表行右侧那种)。以前这些位置写的是 `<Button size="mini">` ——
+     `size` 只改原生的内边距和字号,底色和圆角还是原生的,和旁边的胶囊不是一套长相 */
+  &--mini {
+    height: 32px;
+    padding: 0 14px;
+    font-size: $fs-mini;
+  }
+
   &--block { display: flex; width: 100%; }
+
+  /* 必填项没填完时把主按钮压暗一点 —— 按下去只会弹一句 toast 的按钮,
+     应该在被按之前就看得出来还差不东西 */
+  &--dim { opacity: 0.6; }
 
   &[disabled] {
     opacity: 0.5;
   }
+}
+
+/* ============ 列表行里的文字按钮 ============
+ * 「编辑 / 删除」这类只有 12-13px 字、没有内边距的行内动作。同一个列表里,
+ * 一个进编辑态、一个直接删数据 —— 按错的代价完全不对称,而它们以前只隔一个字宽。
+ * align-self: stretch 让它**跟着那一行的高度**长:行有多高热区就有多高,
+ * 不会为了好点把列表撑高(两行文字的记录行本来就有 40px 上下)。
+ */
+.row-act {
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
+  padding: 0 10px;
+  min-height: 40px;
 }
 
 /* ============ Tag ============ */
@@ -103,10 +139,10 @@ view, text {
   border-radius: $radius-pill;
   font-size: $fs-mini;
 
-  &--brand { background: rgba(46, 204, 113, 0.12); color: $color-primary; }
-  &--info { background: rgba(52, 152, 219, 0.12); color: $color-info; }
-  &--warning { background: rgba(243, 156, 18, 0.12); color: $color-warning; }
-  &--danger { background: rgba(231, 76, 60, 0.12); color: $color-danger; }
+  &--brand { background: $color-primary-a10; color: $color-primary; }
+  &--info { background: $color-info-a12; color: $color-info; }
+  &--warning { background: $color-warning-a12; color: $color-warning; }
+  &--danger { background: $color-danger-a10; color: $color-danger; }
 }
 
 /* ============ 分割 ============ */
@@ -115,6 +151,46 @@ view, text {
   background: $color-fill;
   margin: $space-4 0;
 }
+
+/* ============ 按下反馈 ============
+ * 微信的 <Button> 自带 hover 变暗,而全站的「卡片」都是 <View onClick>(没有自带反馈)——
+ * 于是主包里点一下卡片屏幕完全不动,用户不知道点上了没有。训练分包那几页一直写了
+ * `:active`,同样是一堆 View,手感就明显「活」得多 —— 差距不在配色,在这里。
+ *
+ * 只列**确实是能点的整块**的那些类,不写 `view:active` 这种一刀切:
+ * 卡片里也有不可点的(趋势页那几张图表卡、工具箱的说明文字),给它们加上按压态
+ * 等于告诉用户「这儿能点」,点下去却什么都不会发生 —— 那比没有反馈更糟。
+ *
+ * 用透明度而不是换底色:这些容器的底色本来就各不相同(白卡、绿卡、灰卡),
+ * 统一改底色会打架;变浅一点点在各种底色上都读得出来,也不会看成「禁用」。
+ */
+.dashboard-card:active,
+.entry-card:active,
+.menu-row:active,
+.tb-item:active,
+.source-row:active,
+.recipe-card:active,
+.meal-recipe:active,
+.quick-more:active,
+.strip-day:active,
+.ph-cell:active,
+.as-row:active,
+.cache-row:active,
+/* 补漏:这几处确实是能点的(首页「今天改练/今天不练」「放弃那一场」「重新生成」,
+   速记页体重那块,趋势页三条下钻和空态出口),以前按下去了没有任何变化 */
+.quick-weigh:active,
+.body-link:active,
+.chart-action:active,
+.train-off:active,
+.live-drop:active,
+.insight-regen:active,
+.insight-error:active,
+.water-reset:active {
+  opacity: 0.72;
+}
+/* 日期条上的未来那几天点不动(首页里 `!d.isFuture && switchDate(...)`)——
+   它们不该跟着变浅,不然按下去像是坏了 */
+.strip-day.future:active { opacity: 1; }
 
 /* ============ 空状态 ============ */
 .empty {

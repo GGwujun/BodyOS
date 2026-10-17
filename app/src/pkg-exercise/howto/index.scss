@@ -1,0 +1,169 @@
+@import '../../styles/variables.scss';
+
+/* ============ 「怎么做这个动作」那一块(动作库详情弹层 + 训练页速查栏共用) ============ */
+.howto-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 0 4px;
+
+  .howto-chip {
+    padding: 3px 10px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+    border: 1px solid $color-fill;
+  }
+
+  .howto-chip-bp {
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+    border-color: $color-primary-light;
+    font-weight: $fw-bold;
+  }
+
+  .howto-chip-lv {
+    color: $color-primary-dark;
+    background: $color-bg-card;
+    border-color: $color-primary-light;
+  }
+
+  .howto-chip-mine {
+    color: $color-primary-dark;
+    background: #d8f5e8;
+    border-color: $color-primary-light;
+    font-weight: $fw-bold;
+  }
+}
+
+/* ============ 演示图(一张会循环的 GIF) ============ */
+/* 上游的图是画在白底上的整幅矩形(它自己画了白底),所以这里给白底 + 描边 + 圆角,
+   让那张白矩形看起来像是「嵌在卡片里的一张图」,而不是一块突兀的白 */
+.howto-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0 12px;
+
+  &__stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: $radius-md;
+    border: 1px solid $color-border;
+    background: $color-bg-card;
+  }
+
+  /* **写死 180px,不铺满卡片**。上游那批 GIF 实测就是 180×180
+     (1324 张全是这个尺寸,没有更大的源),而卡片内宽在 340 上下 ——
+     widthFix 铺满等于把图放大到近两倍,当场糊掉。
+     180px 编成 360rpx,在 750 设计宽度下正好 1:1,宁小不糊。
+     要是哪天真拿到更大分辨率的图:把这两个数一起改掉,别只改宽 */
+  &__img {
+    display: block;
+    width: 180px;
+    height: 180px;
+  }
+
+  &__bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__pos {
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+  }
+
+  /* 署名跟着图走(许可要求)。放页脚不行 —— 训练页速查栏根本没有页脚 */
+  &__credit {
+    font-size: $fs-nano;
+    color: $color-text-tertiary;
+  }
+}
+
+/* ============ 「练哪儿」示意图(没有演示图的动作) ============ */
+/* 和演示图长得像(都是「图 + 一行说明」),但**故意不共用一套 class**:
+   演示图那张是上游给的白底矩形图,要描边才不像一块贴歪的白纸;这张是自己画的,
+   背景透出卡片的底 —— 描边反而会把它框成一个盒子,和人体剪影对不上。
+   两处长得像但底子不同,合并成一套就得在里面写 if,不如各写各的。 */
+.howto-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0 12px;
+
+  /* 为什么摆在图**上面**:它是「这张图是什么」的前提,读完再看图才对得上;
+     压在图下面就会变成读完图才补一句解释,那一下已经把「怎么不动」想成出错了 */
+  &__note { font-size: $fs-mini; color: $color-text-secondary; }
+
+  /* 高度**必须封顶**,而且是用 aspectFit 撑出来、不是 widthFix:
+     这张图的比例是 200:352(比演示图还瘦长),铺满宽度算下来有 700 多 px ——
+     动作库那个弹层最高才 78vh,于是「标题 + 一张图」就把整屏占满,
+     下面的部位/器械/肌群/步骤全被顶到屏幕外面。用户打开动作库看到的是一个看图器,
+     不是「这个动作怎么做」。封到 280px 之后,第一屏能同时看到图和它下面那几行。
+     aspectFit 不裁不变形;图是透明底的,横向留白看不出来。 */
+  &__img {
+    display: block;
+    width: 100%;
+    height: 280px;
+  }
+
+  &__bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__pos {
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+  }
+
+  &__hint {
+    font-size: $fs-nano;
+    color: $color-text-tertiary;
+  }
+}
+
+.howto-muscles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0 12px;
+  color: $color-text-primary;
+}
+
+.howto-steps { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
+
+.howto-step { display: flex; gap: 10px; align-items: flex-start; }
+
+.howto-step-no {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: $color-primary-bg;
+  color: $color-primary-dark;
+  font-size: $fs-nano;
+  font-weight: $fw-bold;
+  text-align: center;
+  line-height: 20px;
+}
+
+.howto-step-text { font-size: $fs-caption; line-height: 20px; color: $color-text-primary; }
+
+.howto-foot { display: block; padding-top: 2px; line-height: 1.6; }
+
+/* 用户自己写的常驻备注(自定义动作还没有步骤时,它就是这一块的全部) */
+.howto-note {
+  color: $color-text-primary;
+  line-height: 1.6;
+}

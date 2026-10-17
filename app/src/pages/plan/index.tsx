@@ -11,7 +11,9 @@ import { track } from '@/services/analytics';
 import { userApi } from '@/services';
 import { toast } from '@/utils/ui';
 import { BMI_NORMAL_RANGE, ageOf, bmiBand, bmiOf, calcBmr, calcTdee } from '@/utils/health';
+import { localDayOf } from '@/utils/date';
 import './index.scss';
+import { navigate } from '@/utils/nav';
 
 const GOAL_LABELS: Record<string, string> = { fat_loss: '减脂', muscle_gain: '增肌', maintain: '维持', endurance: '提升体能' };
 const UNIT_LABELS: Record<string, string> = { kg: '公斤', '分钟/周': '分钟/周' };
@@ -128,7 +130,7 @@ export default function PlanPage() {
         <View className="card guide-card">
           <Text className="fs-h1">还没有进行中的方案</Text>
           <Text className="fs-caption guide-copy">设置目标后，这里会展示方案信息、进度时间轴和按你代谢推荐的食谱。</Text>
-          <Button className="btn btn--primary btn--block" onClick={() => { track('plan_setup_goal', 'other'); Taro.navigateTo({ url: '/pages/onboarding/index?from=nav' }); }}>去设置目标</Button>
+          <Button className="btn btn--primary btn--block" onClick={() => { track('plan_setup_goal', 'other'); navigate('/pages/onboarding/index?from=nav'); }}>去设置目标</Button>
         </View>
       ) : (
         <>
@@ -187,7 +189,7 @@ export default function PlanPage() {
               </>}
 
             <View className="plan-ops">
-              <Button className="btn btn--secondary op-btn" onClick={() => { track('plan_reset_click', 'other'); Taro.navigateTo({ url: '/pages/onboarding/index?from=nav' }); }}>重置方案</Button>
+              <Button className="btn btn--secondary op-btn" onClick={() => { track('plan_reset_click', 'other'); navigate('/pages/onboarding/index?from=nav'); }}>重置方案</Button>
               <Button className="btn op-btn op-btn--danger" disabled={removing} onClick={() => void removePlan()}>{removing ? '正在删除…' : '删除方案'}</Button>
             </View>
           </View>
@@ -252,7 +254,7 @@ export default function PlanPage() {
                     </View>
                     {slot.picks.length === 0 && <Text className="meal-empty">食谱库中暂无该餐搭配</Text>}
                     {slot.picks.map((r) => (
-                      <View className="meal-recipe" key={r.id} onClick={() => { track('plan_recipe_click', 'other', { meal: MEAL_SLOTS[i].key }); Taro.navigateTo({ url: '/pages/recipes/index' }); }}>
+                      <View className="meal-recipe" key={r.id} onClick={() => { track('plan_recipe_click', 'other', { meal: MEAL_SLOTS[i].key }); navigate('/pages/recipes/index'); }}>
                         <View className="mr-main">
                           <Text className="mr-name">{r.name}</Text>
                           <Text className="mr-meta">{r.calories} 千卡 · 蛋白质 {r.proteinG}g{r.tags.length ? ` · ${r.tags[0]}` : ''}</Text>
@@ -268,7 +270,7 @@ export default function PlanPage() {
                       <Text className="meal-name">加餐</Text>
                       <Text className="meal-budget">今日还可安排约 {suggestKcal - usedKcal} 千卡</Text>
                     </View>
-                    <View className="meal-recipe" onClick={() => Taro.navigateTo({ url: '/pages/recipes/index' })}>
+                    <View className="meal-recipe" onClick={() => navigate('/pages/recipes/index')}>
                       <View className="mr-main">
                         <Text className="mr-name">{snack.name}</Text>
                         <Text className="mr-meta">{snack.calories} 千卡 · 蛋白质 {snack.proteinG}g</Text>
@@ -277,7 +279,7 @@ export default function PlanPage() {
                   </View>
                 )}
                 <Text className="diet-note">食谱由现有食谱库按每餐预算真实筛选（早 3 成 / 午 4 成 / 晚 3 成），营养为整餐估算值。</Text>
-                <Button className="btn btn--secondary btn--block" onClick={() => Taro.navigateTo({ url: '/pages/recipes/index' })}>查看全部食谱</Button>
+                <Button className="btn btn--secondary btn--block" onClick={() => navigate('/pages/recipes/index')}>查看全部食谱</Button>
               </>
             )}
           </View>
@@ -296,7 +298,7 @@ export default function PlanPage() {
                 <View className="pl-row" key={g.id}>
                   <View className="pl-row__main">
                     <Text className="pl-row__name">{GOAL_LABELS[g.type] ?? g.type} · {g.durationWeeks ? `${g.durationWeeks} 周` : '未设周期'}</Text>
-                    <Text className="pl-row__meta">{g.startDate.slice(0, 10).replace(/-/g, '/')} 开始 · 目标 {g.targetValue} {UNIT_LABELS[g.unit] ?? g.unit}</Text>
+                    <Text className="pl-row__meta">{localDayOf(g.startDate).replace(/-/g, '/')} 开始 · 目标 {g.targetValue} {UNIT_LABELS[g.unit] ?? g.unit}</Text>
                   </View>
                   <Text className="pl-row__state">已结束</Text>
                 </View>

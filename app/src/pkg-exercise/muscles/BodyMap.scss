@@ -1,0 +1,68 @@
+@import '../../styles/variables.scss';
+
+/* ============ 身体肌群图(肌群页 + 统计页共用) ============ */
+/* 这套样式原先嵌在 `.ms-page` 里。统计页的「肌肉平衡」也要摆同一张图,
+   再嵌一次就是两份 —— 两份的下场不是重复代码,是**同一个部位在两个页面上长得不一样**。
+   所以跟着组件走:谁 import 了 BodyMap,谁就有这套样式。
+   （图例圆点 .bm-dot / 详情框 .bm-detail 是各页自己的排版,留在各自页面的 scss 里） */
+.bm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.bm-figure {
+  position: relative;
+  width: 122px;
+  height: 196px;
+}
+
+.bm-side { font-size: $fs-nano; color: $color-text-tertiary; }
+
+/* 头颈只是让人认得出这是个人,不参与统计 */
+.bm-head {
+  position: absolute;
+  left: 43%;
+  top: 0;
+  width: 14%;
+  height: 10%;
+  border-radius: 50%;
+  background: $color-border;
+}
+
+.bm-neck {
+  position: absolute;
+  left: 45.5%;
+  top: 8%;
+  width: 9%;
+  height: 6%;
+  background: $color-border;
+}
+
+.bm-part {
+  position: absolute;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+
+  &--fresh { background: $color-primary; }
+  &--ok { background: $color-warning; }
+  &--tired { background: $color-danger; }
+  &--high { background: $color-muscle-high; }
+  &--low { background: $color-muscle-low; }
+  &--none { background: $color-border; }
+
+  &--active { box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.14); }
+}
+
+.bm-part-t {
+  font-size: $fs-nano;
+  font-weight: $fw-medium;
+  color: $color-text-inverse;
+  line-height: 1;
+}
+
+.bm-part--none .bm-part-t { color: #9ca3af; }

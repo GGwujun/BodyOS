@@ -1,8 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { Request, Response } from 'express';
-import bodyRouter from './body';
+import bodyRouter, { CreateBodySchema } from './body';
 import { prisma } from '../db';
+
+test('只量围度也能存,量错一位数会被挡', () => {
+  const at = '2026-01-01T00:00:00.000Z';
+  assert.equal(CreateBodySchema.safeParse({ measuredAt: at, waistCm: 80 }).success, true);
+  assert.equal(CreateBodySchema.safeParse({ measuredAt: at, waistCm: 800 }).success, false);
+  assert.equal(CreateBodySchema.safeParse({ measuredAt: at, waistCm: 5 }).success, false);
+  assert.equal(CreateBodySchema.safeParse({ measuredAt: at }).success, false, '什么都没填要拦住');
+});
 
 test('measurement writes start in a transaction and forward failure without reporting success', async () => {
   const failure = new Error('stop before database write');
@@ -11,6 +19,8 @@ test('measurement writes start in a transaction and forward failure without repo
     if (params.model === 'BodyMeasurement' && params.action === 'create') {
       atomic = params.runInTransaction;
     }
+    // 写入前要读一次「当前最新体重」决定是否同步档案 —— 那是正常的读,放它过去
+    if (params.model === 'BodyMeasurement' && params.action === 'findFirst') return null;
     throw failure;
   });
   const route = bodyRouter.stack.find(layer => (layer.route as {methods?:{post?:boolean}} | undefined)?.methods?.post)?.route;

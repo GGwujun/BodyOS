@@ -1,0 +1,677 @@
+@import '../../styles/variables.scss';
+
+/* ============ 计划总览(分包) ============ */
+.pview-page {
+  background: $color-bg;
+  gap: 10px;
+  padding-bottom: 30px;
+
+  /* 空态 */
+  .pv-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 44px 24px;
+    text-align: center;
+  }
+  .pv-empty-emoji { font-size: $fs-mega; }
+  .pv-empty-cta { margin-top: 10px; }
+
+  /* ============ 页头:标题 + 教练入口 ============ */
+  /* openGym 的日程页头也是这两样:「Schedule」和右上角的教练。教练不是第三个 tab,
+     它是「你拿不准怎么排」时的一条路,比 tab 轻,所以放在标题同一行 */
+  .pv-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 2px 0;
+  }
+  .pv-hdr-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .pv-hdr-title { font-size: $fs-h1; font-weight: $fw-bold; color: $color-text-primary; }
+  .pv-coach {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: $radius-pill;
+    font-size: $fs-caption;
+    font-weight: $fw-medium;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+  }
+  /* 有一版没决定的方案 —— 一个小红点,不是数字:用户只需要知道「那里有件事」 */
+  .pv-coach-dot {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $color-danger;
+    border: 1px solid $color-bg-card;
+  }
+
+  /* ============ 日程 / 日常 ============ */
+  .pv-tabs {
+    display: flex;
+    gap: 22px;
+    padding: 0 2px;
+    border-bottom: 1px solid $color-divider;
+  }
+  .pv-tab {
+    padding: 8px 2px 9px;
+    margin-bottom: -1px;
+    font-size: $fs-caption;
+    color: $color-text-secondary;
+    border-bottom: 2px solid transparent;
+
+    &.on {
+      font-weight: $fw-bold;
+      color: $color-primary-dark;
+      border-bottom-color: $color-primary;
+    }
+  }
+
+  /* ============ 今天 ============ */
+  /* 不管催不催都有一张:轮转刚练完 / 固定周的休息日也得说清楚今天怎么了。
+     以前只有「该催了」才有卡,不催的日子这一页对今天一个字都不说 */
+  .pv-today {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: $color-primary-bg;
+    border-left: 4px solid $color-primary;
+
+    /* 断太久之后的「回来就好」:不摆出催的样子 */
+    &.is-back {
+      background: $color-bg-soft;
+      border-left-color: $color-text-secondary;
+    }
+    /* 练完了:这一页接下来该说的是「下次」,不是「还欠着」 */
+    &.is-done {
+      background: $color-bg-soft;
+      border-left-color: $color-info;
+    }
+  }
+  .pv-today-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .pv-today-title { font-size: $fs-h2; font-weight: $fw-bold; color: $color-text-primary; }
+  .pv-today-gap { color: $color-text-secondary; }
+  .pv-today-line { font-size: $fs-medium; line-height: 22px; color: $color-text-primary; }
+  .pv-today-go { margin-top: 2px; }
+  .pv-today-ops {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 2px;
+  }
+  .pv-today-link { font-size: $fs-small; color: $color-text-secondary; text-decoration: underline; }
+  .pv-today-hint { color: $color-text-secondary; line-height: 1.6; }
+
+  /* 休息日 —— 不是「没有下一步」:固定周点一天就能改 */
+  .pv-rest {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: $color-bg-soft;
+    border-left: 4px solid $color-border;
+  }
+  .pv-rest-title { font-size: $fs-h2; font-weight: $fw-bold; color: $color-text-primary; }
+  .pv-rest-link {
+    font-size: $fs-small;
+    font-weight: $fw-medium;
+    color: $color-primary-dark;
+    text-decoration: underline;
+  }
+
+  /* ============ 怎么练:固定周 / 轮转 ============ */
+  .pv-mode { display: flex; flex-direction: column; gap: 8px; }
+  .pv-mode-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .pv-seg {
+    display: flex;
+    padding: 2px;
+    border-radius: $radius-pill;
+    background: $color-bg-soft;
+  }
+  .pv-seg-item {
+    padding: 5px 12px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+
+    &.on {
+      font-weight: $fw-bold;
+      color: $color-primary-dark;
+      background: $color-bg-card;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .pv-sec-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 2px 0 8px;
+  }
+  .pv-sec-acts { display: flex; align-items: center; gap: 12px; }
+  .pv-textbtn { font-size: $fs-mini; color: $color-info; }
+  .pv-textbtn--add { color: $color-primary-dark; font-weight: $fw-medium; }
+
+  /* ============ 固定周 ============ */
+  .pv-week { display: flex; flex-direction: column; gap: 0; }
+  .pv-week-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid $color-divider;
+
+    &:last-of-type { border-bottom: none; }
+    /* 今天那一行先被眼睛找到,但别长得像另一张卡 */
+    &.is-today {
+      margin: 0 -6px;
+      padding: 10px 6px;
+      border-radius: $radius-md;
+      background: $color-primary-bg;
+      border-bottom-color: transparent;
+    }
+  }
+  .pv-week-day {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: $radius-pill;
+    text-align: center;
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+  }
+  .pv-week-row.is-today .pv-week-day {
+    color: $color-text-inverse;
+    background: $color-primary;
+  }
+  .pv-week-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .pv-week-title { font-size: $fs-caption; font-weight: $fw-medium; color: $color-text-primary; }
+  .pv-week-go {
+    flex-shrink: 0;
+    padding: 4px 9px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    background: $color-bg-card;
+    border: 1px solid $color-primary-light;
+  }
+  .pv-week-tail { flex-shrink: 0; font-size: $fs-caption; color: $color-text-tertiary; }
+  .pv-week-foot { padding-top: 8px; line-height: 1.6; }
+
+  /* ============ 轮转 ============ */
+  .pv-loop { display: flex; flex-direction: column; gap: 0; }
+  .pv-loop-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid $color-divider;
+
+    &.is-done { opacity: 0.62; }
+    /* 下一套:这一页里唯一需要「现在去」的那一行 */
+    &.is-next {
+      margin: 0 -6px;
+      padding: 10px 6px;
+      border-radius: $radius-md;
+      background: $color-primary-bg;
+      border-bottom-color: transparent;
+    }
+  }
+  .pv-loop-minus {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: $radius-pill;
+    font-size: $fs-medium;
+    color: $color-danger;
+    background: $color-bg-soft;
+  }
+  .pv-loop-n {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 22px;
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-text-secondary;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &.next {
+      color: $color-text-inverse;
+      background: $color-primary;
+      border-color: $color-primary;
+    }
+  }
+  .pv-loop-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .pv-loop-title { font-size: $fs-caption; font-weight: $fw-medium; color: $color-text-primary; }
+  .pv-loop-move { flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
+  .pv-iconbtn {
+    padding: 2px 4px;
+    font-size: $fs-caption;
+    color: $color-text-secondary;
+
+    &.off { opacity: 0.25; }
+  }
+  .pv-loop-go {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    font-weight: $fw-medium;
+    color: $color-primary-dark;
+    background: $color-bg-card;
+    border: 1px solid $color-primary-light;
+  }
+  .pv-loop-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 0 4px;
+  }
+  .pv-loop-add { font-size: $fs-caption; font-weight: $fw-medium; color: $color-primary-dark; }
+  .pv-loop-foot {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 10px;
+  }
+  .pv-loop-restart { font-size: $fs-mini; color: $color-info; text-decoration: underline; }
+  .pv-loop-hint { padding-top: 6px; line-height: 1.6; }
+
+  /* ============ 日常(训练日列表) ============ */
+  .pv-routine-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    padding: 0 2px;
+  }
+  .pv-routine { display: flex; flex-direction: column; gap: 4px; }
+  .pv-routine--row { padding-top: 8px; padding-bottom: 8px; }
+  .pv-routine-head { display: flex; align-items: center; }
+  .pv-routine-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pv-routine-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .pv-routine-tag {
+    padding: 1px 7px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+
+    &.is-dim { color: $color-text-tertiary; }
+    &.is-loop { color: $color-primary-dark; background: $color-primary-bg; }
+  }
+  .pv-routine-ops {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid $color-divider;
+  }
+  .pv-routine-op {
+    padding: 4px 10px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+
+    &.off { opacity: 0.3; }
+    &.is-danger { color: $color-danger; }
+  }
+  .pv-routine-edit {
+    display: block;
+    padding-top: 8px;
+    text-align: center;
+    font-size: $fs-small;
+    font-weight: $fw-medium;
+    color: $color-info;
+  }
+
+  /* ============ 底部选择层 ============ */
+  .pv-sheet-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .pv-sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 21;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 78vh;
+    overflow-y: auto;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+    border-radius: $radius-lg $radius-lg 0 0;
+    background: $color-bg-card;
+  }
+  .pv-sheet-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 8px;
+  }
+  .pv-sheet-close {
+    flex-shrink: 0;
+    padding: 2px 6px;
+    font-size: $fs-caption;
+    color: $color-text-tertiary;
+  }
+  .pv-pick-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid $color-divider;
+
+    &:last-of-type { border-bottom: none; }
+  }
+  .pv-pick-check {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    border: 1px solid $color-border;
+
+    &.on {
+      border-color: $color-primary;
+      background: $color-primary;
+    }
+  }
+  .pv-pick-tick { font-size: $fs-nano; font-weight: $fw-bold; color: $color-text-inverse; }
+  .pv-pick-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .pv-pick-title { font-size: $fs-caption; font-weight: $fw-medium; color: $color-text-primary; }
+  .pv-pick-plus { flex-shrink: 0; font-size: $fs-h2; color: $color-primary-dark; }
+  .pv-sheet-ops { display: flex; gap: 8px; padding-top: 12px; }
+  .pv-sheet-btn {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    border-radius: $radius-pill;
+    font-size: $fs-small;
+    font-weight: $fw-medium;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+
+    &--ok { color: $color-text-inverse; background: $color-primary; }
+  }
+
+  /* 请假卡 —— 不用提醒卡那身绿色:这不是「该练了」,是「今天不练也没事」 */
+  .pv-off {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: $color-bg-soft;
+    border-left: 4px solid $color-info;
+  }
+  .pv-off-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .pv-off-title { font-size: $fs-h2; font-weight: $fw-bold; color: $color-text-primary; }
+  .pv-off-run { color: $color-text-secondary; }
+  .pv-off-ops { display: flex; align-items: center; gap: 16px; margin-top: 2px; }
+  .pv-off-op { font-size: $fs-small; color: $color-text-secondary; text-decoration: underline; }
+  .pv-off-op--danger { color: $color-danger; }
+
+  /* 概要卡 */
+  .pv-sum { display: flex; flex-direction: column; gap: 10px; }
+  .pv-sum-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .pv-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pv-badge {
+    padding: 3px 10px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+    border: 1px solid $color-primary-light;
+  }
+  .pv-note { line-height: 1.7; }
+
+  /* 本周周期卡 */
+  .pv-cycle { display: flex; flex-direction: column; gap: 8px; }
+  .pv-cycle-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .pv-cycle-week {
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+    padding: 3px 10px;
+    border-radius: $radius-pill;
+    font-variant-numeric: tabular-nums;
+  }
+  .pv-cycle-next { margin-top: 2px; }
+
+  /* 训练日卡 */
+  .pv-day { display: flex; flex-direction: column; gap: 4px; }
+  /* 今天这一套 —— 浅底 + 主色描边,让眼睛先落到它上面。
+     只换底色和描边,不加阴影:这一页卡片本来就多,再浮起来一层会更吵 */
+  .pv-day--next {
+    background: $color-primary-bg;
+    border-color: $color-primary-light;
+  }
+  /* 卡里那条分割线在绿底上太淡了,换成主色的一层薄(和底下那张请假卡同一个观感) */
+  .pv-day--next .pv-item { border-bottom-color: $color-primary-a10; }
+  /* 折起来的那些日子:整张卡就是一行的意思,给它卡片的宽度和圆角,但别给卡片的厚度 */
+  .pv-day--row { padding-top: 8px; padding-bottom: 8px; }
+  .pv-day--row .pv-day-head { padding: 2px 0; }
+
+  /* 折起来的那几处(训练日、训练工具)头一行是同一副样子:左边一段话、右边一个开合记号 */
+  .pv-day-head,
+  .pv-tool-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0 8px;
+  }
+  /* 套名的头一个字(推/拉/腿/上/全)—— 和图标同样的用处,但不用新画一套图 */
+  .pv-day-mark {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-md;
+    font-size: $fs-h2;
+    font-weight: $fw-bold;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+  }
+  .pv-day--next .pv-day-mark { color: $color-primary-dark; background: $color-bg-card; }
+  .pv-day-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .pv-day-chev { flex-shrink: 0; font-size: $fs-caption; color: $color-text-tertiary; }
+  .pv-day-title { display: flex; align-items: center; gap: 8px; }
+  /* 今天改练了 —— 一条说明 + 一个「改回建议的」。用带下划线的文字而不是按钮:
+     这是个回头路,不该长得和「开始这次训练」一样重 */
+  .pv-assign {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: $color-primary-bg;
+  }
+  .pv-assign-undo {
+    flex-shrink: 0;
+    font-size: $fs-small;
+    color: $color-primary-dark;
+    text-decoration: underline;
+  }
+  .pv-next-tag {
+    padding: 2px 9px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    font-weight: $fw-bold;
+    color: $color-text-inverse;
+    background: $color-primary;
+  }
+
+  .pv-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 9px 0;
+    border-bottom: 1px solid $color-divider;
+  }
+  .pv-item:last-of-type { border-bottom: none; }
+  .pv-item-main { display: flex; align-items: center; gap: 8px; }
+  .pv-item-name { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+  .pv-type {
+    padding: 1px 8px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    font-weight: $fw-bold;
+    color: $color-warning;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+  }
+  .pv-streak {
+    padding: 1px 8px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    color: $color-warning;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+  }
+  /* 末组尽力(AMRAP)标 */
+  .pv-amrap {
+    padding: 1px 8px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    font-weight: $fw-bold;
+    color: $color-info;
+    background: $color-info-bg;
+    border: 1px solid #bfdbfe;
+  }
+  .pv-suggest { color: $color-primary-dark; }
+
+  /* 配片:每边挂什么 — 次要信息,但站到杠铃前就是它 */
+  .pv-plate { display: block; color: $color-primary-dark; }
+
+  /* 按钮现在在标题底下(见 index.tsx 那段)—— 上边留 2px 贴着标题,下边留出动作表的位置 */
+  .pv-start { margin: 2px 0 6px; }
+
+  /* 历史 */
+  /* 「最近训练」的 5 行本身在 log-card 里(训练记录页共用同一份)—— 这一条只是它的标题行 */
+  .pv-hist-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 4px 0 6px;
+  }
+  .pv-hist-all { font-size: $fs-mini; color: $color-info; font-weight: $fw-medium; }
+
+  .pv-backfill {
+    display: block;
+    padding: 4px 0;
+    text-align: center;
+    font-size: $fs-small;
+    color: $color-info;
+    font-weight: $fw-medium;
+  }
+  /* 备注行(动作常驻备注 / 上次感受) */
+  .pv-note-line {
+    display: block;
+    padding: 4px 8px;
+    border-radius: $radius-sm;
+    background: $color-warning-bg;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    line-height: 1.6;
+  }
+
+  .pv-actions { display: flex; flex-direction: column; gap: 10px; padding: 2px 0 6px; }
+
+  /* 训练工具(页脚)—— 一行一个,行与行之间用留白分,不画分隔线:
+     这些东西不是列表数据,是入口,线多了像设置页。
+     三组九行摊在页尾就是一整屏的目录(见 index.tsx 那段),所以收成一行,点开才是那三组 */
+  .pv-tools { gap: 0; }
+  .pv-tools--row { padding-top: 8px; padding-bottom: 8px; }
+  .pv-tools--row .pv-tool-head { padding: 2px 0; }
+  .pv-tool-group {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 0 2px;
+
+    & + .pv-tool-group { border-top: 1px solid $color-border; margin-top: 6px; }
+  }
+  .pv-tool-group__title {
+    padding: 2px 0 4px;
+    font-size: $fs-nano;
+    color: $color-text-tertiary;
+    letter-spacing: 1px;
+  }
+  .pv-tool {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+  }
+  .pv-tool__copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .pv-tool__name { font-size: $fs-caption; font-weight: $fw-medium; color: $color-text-primary; }
+  .pv-tool__desc { font-size: $fs-nano; color: $color-text-tertiary; }
+  .pv-tool__arrow { flex-shrink: 0; font-size: $fs-body; color: $color-text-tertiary; }
+}

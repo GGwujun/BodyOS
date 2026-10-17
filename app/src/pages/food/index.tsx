@@ -9,9 +9,11 @@ import { track } from '@/services/analytics';
 import type { FoodItem, FoodLog, FrequentFood } from '@/services/types';
 import { confirmDelete, toast } from '@/utils/ui';
 import { todayStr } from '@/utils/date';
+import { anyMacros, energyShare, macroLine, shareLine, sumMacros } from '@/utils/nutrition';
 import { fileToBase64 } from '@/utils/file';
 import { Photograph, BulbOutlined } from '@taroify/icons';
 import './index.scss';
+import { navigate } from '@/utils/nav';
 
 type Meal = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 const MEALS: { key: Meal; label: string }[] = [
@@ -35,11 +37,18 @@ export default function Food() {
   const [resultConf, setResultConf] = useState<number | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [logs, setLogs] = useState<FoodLog[]>([]);
+  /** 今天的宏量合计与供能占比(占比在没有克数时是 null —— 没有分母) */
+  const dayMacro = useMemo(() => sumMacros(logs), [logs]);
+  const dayShare = useMemo(() => energyShare(dayMacro), [dayMacro]);
   const [logsLoading, setLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState('');
   const [manualOpen, setManualOpen] = useState(false);
   const [manualName, setManualName] = useState('');
   const [manualKcal, setManualKcal] = useState('');
+  /* 热量输入框的「用户原样敲的文本」。它是受控的 number:
+     清空 → Number('')||0 → 0,于是退格删不掉那一位(删完立刻回弹成 0)。
+     草稿只在编辑这一餐期间有效,换一批 items 就整个丢掉(行号会串)。 */
+  const [kcalDraft, setKcalDraft] = useState<Record<number, string>>({});
   const [editId, setEditId] = useState<string | null>(null);
 
   // 常用食物库:首次切到该 tab 懒加载(近 30 天频次聚合),失败可点击重试
@@ -111,11 +120,13 @@ export default function Food() {
         r = await foodApi.parseFood({ text });
       }
       setItems(r.items);
+      setKcalDraft({});
       setSource(useImage ? 'ai_image' : 'ai_text');
       setResultConf(typeof r.confidence === 'number' ? r.confidence : null);
       setState('need_confirm');
     } catch (e) {
-      setErrorMsg((e as { message?: string })?.message || '识别失败');
+      // 兜底不要和上面那句标题同名 —— 渲染出来会变成「识别失败:识别失败」
+      setErrorMsg((e as { message?: string })?.message || '没能读出内容');
       setState('failed');
     }
   };
@@ -142,6 +153,8 @@ export default function Food() {
   };
   const removeItem = (i: number) => {
     setItems((prev) => prev.filter((_, idx) => idx !== i));
+    // 草稿是按行号存的,删了一行后面全部前移 —— 不跟着挪就会串行
+    setKcalDraft({});
   };
 
   const totalKcal = items.reduce((s, i) => s + (Number(i.calories) || 0), 0);
@@ -152,14 +165,28 @@ export default function Food() {
     if (items.some(item => !item.name.trim() || !Number.isFinite(item.calories) || item.calories < 0)) {
       toast('请检查食物名称和热量', 'none'); return;
     }
+    /**
+     * 这一页只让用户改热量,不让改蛋白/碳水/脂肪。改完热量后如果宏量还是旧值,
+     * 一条「120 kcal、蛋白 30g」的记录会同时进热量合计和营养素合计 ——
+     * 两个数各自看都对,加起来自相矛盾。按热量比例把宏量一起缩放
+     * (4/4/9 的能量关系保持原样);原数据本来就没有克数的(手动只填热量)不动。
+     */
+    const itemsForSave = items.map((it) => {
+      const macroKcal = it.proteinG * 4 + it.carbG * 4 + it.fatG * 9;
+      if (it.calories <= 0 || macroKcal <= 0) return it;
+      const ratio = it.calories / macroKcal;
+      if (Math.abs(ratio - 1) < 0.1) return it;
+      const r1 = (v: number) => Math.round(v * 10) / 10;
+      return { ...it, proteinG: r1(it.proteinG * ratio), carbG: r1(it.carbG * ratio), fatG: r1(it.fatG * ratio) };
+    });
     setSaving(true);
     setErrorMsg('');
     try {
       if (editId) {
-        await foodApi.updateFoodLog(editId, { meal, items });
+        await foodApi.updateFoodLog(editId, { meal, items: itemsForSave });
         toast('已更新');
       } else {
-        await foodApi.createFoodLog({ meal, items, source });
+        await foodApi.createFoodLog({ meal, items: itemsForSave, source });
         track('ai_food_parse_confirm', 'ai', { items: items.length });
         toast('已保存');
       }
@@ -167,9 +194,10 @@ export default function Food() {
       setEditId(null);
       setText('');
       setItems([]);
+      setKcalDraft({});
       await loadLogs();
     } catch (e) {
-      setErrorMsg((e as { message?: string })?.message || '保存失败');
+      setErrorMsg((e as { message?: string })?.message || '数据没能存上,请重试');
       toast('保存失败，请重试', 'error');
     } finally {
       setSaving(false);
@@ -181,12 +209,14 @@ export default function Food() {
     setEditId(log.id);
     setMeal(log.meal);
     setSource(log.source);
+    setKcalDraft({});
     setItems(log.items.map((it) => ({ ...it })));
     setState('need_confirm');
   };
   const cancelEdit = () => {
     setEditId(null);
     setItems([]);
+    setKcalDraft({});
     setState('idle');
   };
 
@@ -229,12 +259,11 @@ export default function Food() {
           onInput={(e) => setText(e.detail.value)}
         />
         <View className="row between mt-3" style={{ gap: 8 }}>
-          <Button className="photo-btn" size="mini" onClick={() => parse(true)}>
+          <Button className="btn btn--mini photo-btn" onClick={() => parse(true)}>
             <Photograph /> 拍照识别
           </Button>
           <Button
-            className="parse-btn"
-            size="mini"
+            className="btn btn--mini parse-btn"
             loading={state === 'parsing'}
             onClick={() => parse(false)}
           >
@@ -246,7 +275,7 @@ export default function Food() {
       {mode === 'library' && <View className="card">
         <Text className="fs-h1">食物库</Text>
         <Text className="fs-mini text-secondary">180+ 种常见食物,热量按常见份量估算,一键加入本餐。</Text>
-        <Text className="lib-tool-link" onClick={() => Taro.navigateTo({ url: '/pages/food-tools/index' })}>小工具:食物对比 · 估重参考 · 红黑榜 ›</Text>
+        <Text className="lib-tool-link" onClick={() => navigate('/pages/food-tools/index')}>小工具:食物对比 · 估重参考 · 红黑榜 ›</Text>
         <Input className="lib-search" placeholder="搜索食物名称,如:鸡胸肉" value={libKw} onInput={(e) => setLibKw(e.detail.value)} />
         <View className="lib-chips">
           {FOOD_CATEGORIES.map((c) => <Text key={c} className={`lib-chip${libCat === c ? ' active' : ''}`} onClick={() => setLibCat(c)}>{c}</Text>)}
@@ -258,7 +287,7 @@ export default function Food() {
               <Text className="fs-caption">{f.name} · 约 {f.calories} kcal</Text>
               <Text className="fs-mini text-secondary">{f.amount} · 蛋白 {f.proteinG}g / 碳水 {f.carbG}g / 脂肪 {f.fatG}g</Text>
             </View>
-            <Button size="mini" onClick={() => addFromLibrary(f)}>加入</Button>
+            <Button className="btn btn--mini btn--secondary" onClick={() => addFromLibrary(f)}>加入</Button>
           </View>
         ))}
         {libFiltered.length > 60 && <Text className="lib-more fs-mini text-secondary">共 {libFiltered.length} 条,仅显示前 60 条,输入名称可精确搜索</Text>}
@@ -269,7 +298,7 @@ export default function Food() {
         <View className="manual-row">
           <Input className="edit-name" placeholder="食物名" value={manualName} onInput={e => setManualName(e.detail.value)} />
           <Input className="edit-kcal" type="digit" placeholder="热量" value={manualKcal} onInput={e => setManualKcal(e.detail.value)} />
-          <Button size="mini" onClick={addManual}>加入本餐</Button>
+          <Button className="btn btn--mini btn--secondary" onClick={addManual}>加入本餐</Button>
         </View>
       </View>}
       {mode === 'frequent' && <View className="card">
@@ -286,7 +315,7 @@ export default function Food() {
             <Text className="fs-caption">{f.name} · 约 {f.calories} kcal</Text>
             <Text className="fs-mini text-secondary">{f.amount || '1 份'} · 近 30 天 {f.count} 次</Text>
           </View>
-          <Button size="mini" onClick={() => {
+          <Button className="btn btn--mini btn--secondary" onClick={() => {
             setSource('manual');
             setResultConf(null);
             setItems(prev => [...prev, { name: f.name, amount: f.amount || '1 份', calories: f.calories, proteinG: f.proteinG, carbG: f.carbG, fatG: f.fatG }]);
@@ -295,7 +324,7 @@ export default function Food() {
         </View>)}
         {frequent !== null && frequent.length === 0 && Array.from(new Map(logs.flatMap(log => log.items).map(item => [item.name, item])).values()).map(item => <View className="edit-item" key={item.name}>
           <Text className="fs-caption">{item.name} · {item.calories} kcal</Text>
-          <Button size="mini" onClick={() => { setSource('manual'); setResultConf(null); setItems(prev => [...prev, {...item}]); setState('need_confirm'); }}>加入本餐</Button>
+          <Button className="btn btn--mini btn--secondary" onClick={() => { setSource('manual'); setResultConf(null); setItems(prev => [...prev, {...item}]); setState('need_confirm'); }}>加入本餐</Button>
         </View>)}
       </View>}
 
@@ -314,7 +343,7 @@ export default function Food() {
           {!editId && source !== 'manual' && resultConf != null && <Text className="fs-mini text-secondary">
             置信度 {Math.round(resultConf * 100)}%{resultConf < 0.8 ? ' · 部分为估算,建议核对份量' : ' · 热量来自食物库'}
           </Text>}
-          {errorMsg && <Text className="fs-caption text-danger">保存失败：{errorMsg}</Text>}
+          {errorMsg && <Text className="fs-caption text-danger">{errorMsg}</Text>}
           {items.map((it, i) => (
             <View key={i} className="edit-item">
               <Input
@@ -326,8 +355,12 @@ export default function Food() {
                 <Input
                   className="edit-kcal"
                   type="number"
-                  value={String(it.calories)}
-                  onInput={(e) => updateItem(i, { calories: Number(e.detail.value) || 0 })}
+                  value={kcalDraft[i] ?? String(it.calories)}
+                  onInput={(e) => {
+                    const raw = e.detail.value;
+                    setKcalDraft((d) => ({ ...d, [i]: raw }));
+                    updateItem(i, { calories: Number(raw) || 0 });
+                  }}
                 />
                 <Text className="fs-mini text-secondary">kcal</Text>
                 <Text className="edit-del" onClick={() => removeItem(i)}>✕</Text>
@@ -361,6 +394,19 @@ export default function Food() {
       {/* 当日记录:按餐次分组 */}
       <View className="card">
         <Text className="fs-h1">今日记录</Text>
+        {/* 今日三大营养素合计 —— 以前这一页只有每餐的热量,「今天蛋白吃了多少」
+            在哪儿都看不到(服务端一直存着,见 types.FoodLog)。这里是「记的时候看」的那处,
+            窗口日均与目标在趋势页 —— 两处口径同源(utils/nutrition)。
+            手动只填名字+热量的记录克数是 0,一整天都这么记就不显示,免得摆一份假的 0 */}
+        {anyMacros(logs) && <View className="day-macros">
+          <View className="day-macros__bar">
+            {dayShare && ([['p', dayShare.proteinG], ['c', dayShare.carbG], ['f', dayShare.fatG]] as const).map(([k, pct]) => (
+              <View key={k} className={`day-macros__seg is-${k}`} style={{ width: `${pct}%` }} />
+            ))}
+          </View>
+          <Text className="day-macros__line">{macroLine(dayMacro)}</Text>
+          {dayShare && <Text className="day-macros__share">{shareLine(dayShare)}</Text>}
+        </View>}
         {logsLoading && logs.length === 0 && <Text className="fs-mini text-secondary">正在加载…</Text>}
         {logsError && <Text className="fs-mini text-secondary" onClick={() => { setLogsError(''); void loadLogs(); }}>今日记录加载失败，点击重试</Text>}
         {!logsLoading && !logsError && logs.length === 0 && <Text className="fs-mini text-secondary">还没有记录</Text>}
@@ -382,8 +428,8 @@ export default function Food() {
                     </Text>
                     <Text className="fs-mini text-secondary">{Math.round(log.totalCalories)} kcal</Text>
                   </View>
-                  <Text className="fs-mini text-brand" onClick={() => onEditLog(log)}>编辑</Text>
-                  <Text className="edit-del" onClick={() => onDeleteLog(log.id)}>删除</Text>
+                  <Text className="fs-mini text-brand row-act" onClick={() => onEditLog(log)}>编辑</Text>
+                  <Text className="edit-del row-act" onClick={() => onDeleteLog(log.id)}>删除</Text>
                 </View>
               ))}
             </View>

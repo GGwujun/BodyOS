@@ -1,0 +1,129 @@
+@import '../../styles/variables.scss';
+
+/* ============ 新建 / 编辑自定义动作(分包) ============ */
+.xn-page {
+  background: $color-bg;
+  gap: 10px;
+
+  .xn-intro {
+    .fs-caption { margin-top: 4px; }
+  }
+
+  .xn-block {
+    gap: 10px;
+  }
+
+  .xn-label {
+    font-size: $fs-caption;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+
+  .xn-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 12px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+    font-size: $fs-caption;
+    color: $color-text-primary;
+  }
+
+  .xn-ph { color: $color-text-secondary; }
+
+  .xn-hint { line-height: 1.5; }
+
+  .xn-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .xn-chip {
+    padding: 6px 13px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &.on {
+      background: $color-primary-bg;
+      color: $color-primary-dark;
+      border-color: $color-primary-light;
+      font-weight: $fw-bold;
+    }
+
+    /* 已经当主要肌群挑过了,这里就不能再选(只当个位置占着,免得整行跳掉) */
+    &.off {
+      opacity: 0.4;
+    }
+  }
+
+  .xn-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-top: 1px solid $color-border;
+
+    &:first-of-type { border-top: none; }
+
+    .xn-toggle-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .xn-toggle-name {
+      font-size: $fs-small;
+      color: $color-text-primary;
+    }
+
+    .xn-switch {
+      flex: none;
+      min-width: 42px;
+      text-align: center;
+      padding: 5px 10px;
+      border-radius: $radius-pill;
+      font-size: $fs-mini;
+      color: $color-text-secondary;
+      background: $color-bg-card;
+      border: 1px solid $color-border;
+
+      &.on {
+        background: $color-primary-bg;
+        color: $color-primary-dark;
+        border-color: $color-primary-light;
+        font-weight: $fw-bold;
+      }
+    }
+  }
+
+  .xn-warn {
+    color: $color-warning;
+    line-height: 1.5;
+  }
+
+  .xn-err {
+    color: $color-danger;
+    padding: 0 2px;
+  }
+
+  /* 三项必填还没齐:按钮看着还在,点了会说缺什么(直接禁用会让人不知道差在哪) */
+  .xn-dim { opacity: 0.6; }
+
+  .xn-foot {
+    line-height: 1.6;
+    padding: 0 2px;
+  }
+
+  .xn-del {
+    text-align: center;
+    font-size: $fs-small;
+    color: $color-danger;
+    padding: 6px 0 18px;
+  }
+}

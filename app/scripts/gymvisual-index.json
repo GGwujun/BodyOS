@@ -1,0 +1,6628 @@
+{
+ "_note": "动作演示图清单快照(上游 data/exercises.json 的裁剪版)。上游:https://github.com/hasaneyldrm/exercises-dataset —— 媒体 © Gym visual(https://gymvisual.com/),上游许可不传递给下游。由 scripts/build-exercise-gifs.mjs --fetch 更新。",
+ "upstream": "https://github.com/hasaneyldrm/exercises-dataset",
+ "fetchedAt": "2026-10-16",
+ "count": 1324,
+ "entries": [
+  {
+   "id": "0001",
+   "name": "3/4 sit-up",
+   "gif": "videos/0001-2gPfomN.gif"
+  },
+  {
+   "id": "0002",
+   "name": "45° side bend",
+   "gif": "videos/0002-Hy9D21L.gif"
+  },
+  {
+   "id": "0003",
+   "name": "air bike",
+   "gif": "videos/0003-1ZFqTDN.gif"
+  },
+  {
+   "id": "1512",
+   "name": "all fours squad stretch",
+   "gif": "videos/1512-qBcKorM.gif"
+  },
+  {
+   "id": "0006",
+   "name": "alternate heel touchers",
+   "gif": "videos/0006-qaZVsGk.gif"
+  },
+  {
+   "id": "0007",
+   "name": "alternate lateral pulldown",
+   "gif": "videos/0007-4IKbhHV.gif"
+  },
+  {
+   "id": "1368",
+   "name": "ankle circles",
+   "gif": "videos/1368-uL9CsKm.gif"
+  },
+  {
+   "id": "3293",
+   "name": "archer pull up",
+   "gif": "videos/3293-72BC5Za.gif"
+  },
+  {
+   "id": "3294",
+   "name": "archer push up",
+   "gif": "videos/3294-A9qxk2F.gif"
+  },
+  {
+   "id": "2355",
+   "name": "arm slingers hanging bent knee legs",
+   "gif": "videos/2355-uWpxD4v.gif"
+  },
+  {
+   "id": "2333",
+   "name": "arm slingers hanging straight legs",
+   "gif": "videos/2333-PXTIwgu.gif"
+  },
+  {
+   "id": "3214",
+   "name": "arms apart circular toe touch (male)",
+   "gif": "videos/3214-RtyAsy1.gif"
+  },
+  {
+   "id": "3204",
+   "name": "arms overhead full sit-up (male)",
+   "gif": "videos/3204-NAkmgdx.gif"
+  },
+  {
+   "id": "0009",
+   "name": "assisted chest dip (kneeling)",
+   "gif": "videos/0009-PAgTVaK.gif"
+  },
+  {
+   "id": "0011",
+   "name": "assisted hanging knee raise",
+   "gif": "videos/0011-03lzqwk.gif"
+  },
+  {
+   "id": "0010",
+   "name": "assisted hanging knee raise with throw down",
+   "gif": "videos/0010-8K0w2yA.gif"
+  },
+  {
+   "id": "1708",
+   "name": "assisted lying calves stretch",
+   "gif": "videos/1708-GxDwDX0.gif"
+  },
+  {
+   "id": "1709",
+   "name": "assisted lying glutes stretch",
+   "gif": "videos/1709-yn0LjwL.gif"
+  },
+  {
+   "id": "1710",
+   "name": "assisted lying gluteus and piriformis stretch",
+   "gif": "videos/1710-RQNVT10.gif"
+  },
+  {
+   "id": "0012",
+   "name": "assisted lying leg raise with lateral throw down",
+   "gif": "videos/0012-UGhRD1A.gif"
+  },
+  {
+   "id": "0013",
+   "name": "assisted lying leg raise with throw down",
+   "gif": "videos/0013-VX5YKR5.gif"
+  },
+  {
+   "id": "0014",
+   "name": "assisted motion russian twist",
+   "gif": "videos/0014-r7cT9YD.gif"
+  },
+  {
+   "id": "0015",
+   "name": "assisted parallel close grip pull-up",
+   "gif": "videos/0015-vrhHa6D.gif"
+  },
+  {
+   "id": "0016",
+   "name": "assisted prone hamstring",
+   "gif": "videos/0016-VedGSby.gif"
+  },
+  {
+   "id": "1713",
+   "name": "assisted prone lying quads stretch",
+   "gif": "videos/1713-YUYAMEj.gif"
+  },
+  {
+   "id": "1714",
+   "name": "assisted prone rectus femoris stretch",
+   "gif": "videos/1714-2Ryn564.gif"
+  },
+  {
+   "id": "0017",
+   "name": "assisted pull-up",
+   "gif": "videos/0017-kiJ4Z2K.gif"
+  },
+  {
+   "id": "1716",
+   "name": "assisted seated pectoralis major stretch with stability ball",
+   "gif": "videos/1716-RoV1Rfa.gif"
+  },
+  {
+   "id": "1712",
+   "name": "assisted side lying adductor stretch",
+   "gif": "videos/1712-hC6oYY5.gif"
+  },
+  {
+   "id": "1758",
+   "name": "assisted sit-up",
+   "gif": "videos/1758-aumB2IV.gif"
+  },
+  {
+   "id": "1431",
+   "name": "assisted standing chin-up",
+   "gif": "videos/1431-7OeHptV.gif"
+  },
+  {
+   "id": "1432",
+   "name": "assisted standing pull-up",
+   "gif": "videos/1432-f4xtKBj.gif"
+  },
+  {
+   "id": "0018",
+   "name": "assisted standing triceps extension (with towel)",
+   "gif": "videos/0018-7HcfMBP.gif"
+  },
+  {
+   "id": "0019",
+   "name": "assisted triceps dip (kneeling)",
+   "gif": "videos/0019-J60bN17.gif"
+  },
+  {
+   "id": "2364",
+   "name": "assisted wide-grip chest dip (kneeling)",
+   "gif": "videos/2364-PnZJIrk.gif"
+  },
+  {
+   "id": "3220",
+   "name": "astride jumps (male)",
+   "gif": "videos/3220-f9lVSSI.gif"
+  },
+  {
+   "id": "3672",
+   "name": "back and forth step",
+   "gif": "videos/3672-fNGumX0.gif"
+  },
+  {
+   "id": "1314",
+   "name": "back extension on exercise ball",
+   "gif": "videos/1314-qLpO4vV.gif"
+  },
+  {
+   "id": "3297",
+   "name": "back lever",
+   "gif": "videos/3297-GaSzzuh.gif"
+  },
+  {
+   "id": "1405",
+   "name": "back pec stretch",
+   "gif": "videos/1405-chfnQnM.gif"
+  },
+  {
+   "id": "1473",
+   "name": "backward jump",
+   "gif": "videos/1473-SaDOwk7.gif"
+  },
+  {
+   "id": "0020",
+   "name": "balance board",
+   "gif": "videos/0020-xAySMB0.gif"
+  },
+  {
+   "id": "0968",
+   "name": "band alternating biceps curl",
+   "gif": "videos/0968-3omWx6P.gif"
+  },
+  {
+   "id": "0969",
+   "name": "band alternating v-up",
+   "gif": "videos/0969-ztAa1RK.gif"
+  },
+  {
+   "id": "0970",
+   "name": "band assisted pull-up",
+   "gif": "videos/0970-r1XNRYB.gif"
+  },
+  {
+   "id": "0971",
+   "name": "band assisted wheel rollerout",
+   "gif": "videos/0971-zhF9lW4.gif"
+  },
+  {
+   "id": "1254",
+   "name": "band bench press",
+   "gif": "videos/1254-khlHMqs.gif"
+  },
+  {
+   "id": "0980",
+   "name": "band bent-over hip extension",
+   "gif": "videos/0980-wSScovH.gif"
+  },
+  {
+   "id": "0972",
+   "name": "band bicycle crunch",
+   "gif": "videos/0972-tZkGYZ9.gif"
+  },
+  {
+   "id": "0974",
+   "name": "band close-grip pulldown",
+   "gif": "videos/0974-DptumMx.gif"
+  },
+  {
+   "id": "0975",
+   "name": "band close-grip push-up",
+   "gif": "videos/0975-ufaxB52.gif"
+  },
+  {
+   "id": "0976",
+   "name": "band concentration curl",
+   "gif": "videos/0976-kmVVAfu.gif"
+  },
+  {
+   "id": "3117",
+   "name": "band fixed back close grip pulldown",
+   "gif": "videos/3117-4LoWllp.gif"
+  },
+  {
+   "id": "3116",
+   "name": "band fixed back underhand pulldown",
+   "gif": "videos/3116-ZH68exZ.gif"
+  },
+  {
+   "id": "0977",
+   "name": "band front lateral raise",
+   "gif": "videos/0977-sTg7iys.gif"
+  },
+  {
+   "id": "0978",
+   "name": "band front raise",
+   "gif": "videos/0978-TFA88iB.gif"
+  },
+  {
+   "id": "1408",
+   "name": "band hip lift",
+   "gif": "videos/1408-E4R8Hz1.gif"
+  },
+  {
+   "id": "0979",
+   "name": "band horizontal pallof press",
+   "gif": "videos/0979-9pa4H5m.gif"
+  },
+  {
+   "id": "0981",
+   "name": "band jack knife sit-up",
+   "gif": "videos/0981-KCBKjma.gif"
+  },
+  {
+   "id": "0983",
+   "name": "band kneeling one arm pulldown",
+   "gif": "videos/0983-pmnrOp0.gif"
+  },
+  {
+   "id": "0985",
+   "name": "band kneeling twisting crunch",
+   "gif": "videos/0985-225x2Vd.gif"
+  },
+  {
+   "id": "0984",
+   "name": "band lying hip internal rotation",
+   "gif": "videos/0984-vIICElP.gif"
+  },
+  {
+   "id": "1002",
+   "name": "band lying straight leg raise",
+   "gif": "videos/1002-bbLR7fB.gif"
+  },
+  {
+   "id": "0986",
+   "name": "band one arm overhead biceps curl",
+   "gif": "videos/0986-UNAB8ak.gif"
+  },
+  {
+   "id": "0987",
+   "name": "band one arm single leg split squat",
+   "gif": "videos/0987-arsYEd3.gif"
+  },
+  {
+   "id": "0988",
+   "name": "band one arm standing low row",
+   "gif": "videos/0988-km0sQC0.gif"
+  },
+  {
+   "id": "0989",
+   "name": "band one arm twisting chest press",
+   "gif": "videos/0989-c16nYGA.gif"
+  },
+  {
+   "id": "0990",
+   "name": "band one arm twisting seated row",
+   "gif": "videos/0990-DKBwJrL.gif"
+  },
+  {
+   "id": "0991",
+   "name": "band pull through",
+   "gif": "videos/0991-VtTbiP3.gif"
+  },
+  {
+   "id": "0992",
+   "name": "band push sit-up",
+   "gif": "videos/0992-zFzbBfL.gif"
+  },
+  {
+   "id": "0993",
+   "name": "band reverse fly",
+   "gif": "videos/0993-sTfvVsG.gif"
+  },
+  {
+   "id": "0994",
+   "name": "band reverse wrist curl",
+   "gif": "videos/0994-Ezpnw9d.gif"
+  },
+  {
+   "id": "0996",
+   "name": "band seated hip internal rotation",
+   "gif": "videos/0996-9gbyYKk.gif"
+  },
+  {
+   "id": "1011",
+   "name": "band seated twist",
+   "gif": "videos/1011-S1JXDAG.gif"
+  },
+  {
+   "id": "0997",
+   "name": "band shoulder press",
+   "gif": "videos/0997-peAeMR3.gif"
+  },
+  {
+   "id": "1018",
+   "name": "band shrug",
+   "gif": "videos/1018-trmte8s.gif"
+  },
+  {
+   "id": "0998",
+   "name": "band side triceps extension",
+   "gif": "videos/0998-obe5LMq.gif"
+  },
+  {
+   "id": "0999",
+   "name": "band single leg calf raise",
+   "gif": "videos/0999-9JprnPh.gif"
+  },
+  {
+   "id": "1000",
+   "name": "band single leg reverse calf raise",
+   "gif": "videos/1000-QsSQWbf.gif"
+  },
+  {
+   "id": "1001",
+   "name": "band single leg split squat",
+   "gif": "videos/1001-y8bYM8w.gif"
+  },
+  {
+   "id": "1004",
+   "name": "band squat",
+   "gif": "videos/1004-TUZLh71.gif"
+  },
+  {
+   "id": "1003",
+   "name": "band squat row",
+   "gif": "videos/1003-w1NOByi.gif"
+  },
+  {
+   "id": "1005",
+   "name": "band standing crunch",
+   "gif": "videos/1005-Kzg30R7.gif"
+  },
+  {
+   "id": "1022",
+   "name": "band standing rear delt row",
+   "gif": "videos/1022-tc5dYrf.gif"
+  },
+  {
+   "id": "1007",
+   "name": "band standing twisting crunch",
+   "gif": "videos/1007-euq4pwp.gif"
+  },
+  {
+   "id": "1008",
+   "name": "band step-up",
+   "gif": "videos/1008-d5bTEPV.gif"
+  },
+  {
+   "id": "1009",
+   "name": "band stiff leg deadlift",
+   "gif": "videos/1009-kuMiR2T.gif"
+  },
+  {
+   "id": "1023",
+   "name": "band straight back stiff leg deadlift",
+   "gif": "videos/1023-lHeUULr.gif"
+  },
+  {
+   "id": "1010",
+   "name": "band straight leg deadlift",
+   "gif": "videos/1010-KUaoUV8.gif"
+  },
+  {
+   "id": "1012",
+   "name": "band twisting overhead press",
+   "gif": "videos/1012-u4bAmKp.gif"
+  },
+  {
+   "id": "1369",
+   "name": "band two legs calf raise - (band under both legs) v. 2",
+   "gif": "videos/1369-jl6uxZV.gif"
+  },
+  {
+   "id": "1013",
+   "name": "band underhand pulldown",
+   "gif": "videos/1013-k6tUeqS.gif"
+  },
+  {
+   "id": "1014",
+   "name": "band v-up",
+   "gif": "videos/1014-H6ETwO9.gif"
+  },
+  {
+   "id": "1015",
+   "name": "band vertical pallof press",
+   "gif": "videos/1015-G7PXMlT.gif"
+  },
+  {
+   "id": "1016",
+   "name": "band wrist curl",
+   "gif": "videos/1016-vUTfFHw.gif"
+  },
+  {
+   "id": "1017",
+   "name": "band y-raise",
+   "gif": "videos/1017-aHDy5O5.gif"
+  },
+  {
+   "id": "0023",
+   "name": "barbell alternate biceps curl",
+   "gif": "videos/0023-Yza7XrQ.gif"
+  },
+  {
+   "id": "0024",
+   "name": "barbell bench front squat",
+   "gif": "videos/0024-Y7YcmIJ.gif"
+  },
+  {
+   "id": "0025",
+   "name": "barbell bench press",
+   "gif": "videos/0025-EIeI8Vf.gif"
+  },
+  {
+   "id": "0026",
+   "name": "barbell bench squat",
+   "gif": "videos/0026-W9pFVv1.gif"
+  },
+  {
+   "id": "1316",
+   "name": "barbell bent arm pullover",
+   "gif": "videos/1316-cA9FuWG.gif"
+  },
+  {
+   "id": "0027",
+   "name": "barbell bent over row",
+   "gif": "videos/0027-eZyBC3j.gif"
+  },
+  {
+   "id": "2407",
+   "name": "barbell biceps curl (with arm blaster)",
+   "gif": "videos/2407-aee2Fcj.gif"
+  },
+  {
+   "id": "0028",
+   "name": "barbell clean and press",
+   "gif": "videos/0028-SGY8Zui.gif"
+  },
+  {
+   "id": "0029",
+   "name": "barbell clean-grip front squat",
+   "gif": "videos/0029-qi996YS.gif"
+  },
+  {
+   "id": "0030",
+   "name": "barbell close-grip bench press",
+   "gif": "videos/0030-J6Dx1Mu.gif"
+  },
+  {
+   "id": "0031",
+   "name": "barbell curl",
+   "gif": "videos/0031-25GPyDY.gif"
+  },
+  {
+   "id": "0032",
+   "name": "barbell deadlift",
+   "gif": "videos/0032-ila4NZS.gif"
+  },
+  {
+   "id": "0033",
+   "name": "barbell decline bench press",
+   "gif": "videos/0033-GrO65fd.gif"
+  },
+  {
+   "id": "0034",
+   "name": "barbell decline bent arm pullover",
+   "gif": "videos/0034-hMEptv0.gif"
+  },
+  {
+   "id": "0035",
+   "name": "barbell decline close grip to skull press",
+   "gif": "videos/0035-LMGXZn8.gif"
+  },
+  {
+   "id": "1255",
+   "name": "barbell decline pullover",
+   "gif": "videos/1255-9sgNE2O.gif"
+  },
+  {
+   "id": "0036",
+   "name": "barbell decline wide-grip press",
+   "gif": "videos/0036-hl8DUh8.gif"
+  },
+  {
+   "id": "0037",
+   "name": "barbell decline wide-grip pullover",
+   "gif": "videos/0037-Hj4FOCd.gif"
+  },
+  {
+   "id": "0038",
+   "name": "barbell drag curl",
+   "gif": "videos/0038-IENzBdA.gif"
+  },
+  {
+   "id": "1370",
+   "name": "barbell floor calf raise",
+   "gif": "videos/1370-2IHEa2T.gif"
+  },
+  {
+   "id": "0039",
+   "name": "barbell front chest squat",
+   "gif": "videos/0039-IeTIEqg.gif"
+  },
+  {
+   "id": "0041",
+   "name": "barbell front raise",
+   "gif": "videos/0041-b2Uoz54.gif"
+  },
+  {
+   "id": "0040",
+   "name": "barbell front raise and pullover",
+   "gif": "videos/0040-33AzZeV.gif"
+  },
+  {
+   "id": "0042",
+   "name": "barbell front squat",
+   "gif": "videos/0042-zG0zs85.gif"
+  },
+  {
+   "id": "0043",
+   "name": "barbell full squat",
+   "gif": "videos/0043-qXTaZnJ.gif"
+  },
+  {
+   "id": "1461",
+   "name": "barbell full squat (back pov)",
+   "gif": "videos/1461-DhMl549.gif"
+  },
+  {
+   "id": "1462",
+   "name": "barbell full squat (side pov)",
+   "gif": "videos/1462-iYzB0Cz.gif"
+  },
+  {
+   "id": "1545",
+   "name": "barbell full zercher squat",
+   "gif": "videos/1545-vR1vold.gif"
+  },
+  {
+   "id": "1409",
+   "name": "barbell glute bridge",
+   "gif": "videos/1409-qKBpF7I.gif"
+  },
+  {
+   "id": "3562",
+   "name": "barbell glute bridge two legs on bench (male)",
+   "gif": "videos/3562-qg2PGl6.gif"
+  },
+  {
+   "id": "0044",
+   "name": "barbell good morning",
+   "gif": "videos/0044-XlZ4lAC.gif"
+  },
+  {
+   "id": "0045",
+   "name": "barbell guillotine bench press",
+   "gif": "videos/0045-GXoaSgn.gif"
+  },
+  {
+   "id": "0046",
+   "name": "barbell hack squat",
+   "gif": "videos/0046-5VCj6iH.gif"
+  },
+  {
+   "id": "1436",
+   "name": "barbell high bar squat",
+   "gif": "videos/1436-Gnfo4FM.gif"
+  },
+  {
+   "id": "0047",
+   "name": "barbell incline bench press",
+   "gif": "videos/0047-3TZduzM.gif"
+  },
+  {
+   "id": "1719",
+   "name": "barbell incline close grip bench press",
+   "gif": "videos/1719-gx7s7uF.gif"
+  },
+  {
+   "id": "0048",
+   "name": "barbell incline reverse-grip press",
+   "gif": "videos/0048-641mIfk.gif"
+  },
+  {
+   "id": "0049",
+   "name": "barbell incline row",
+   "gif": "videos/0049-dmgMp3n.gif"
+  },
+  {
+   "id": "0050",
+   "name": "barbell incline shoulder raise",
+   "gif": "videos/0050-xi0yckC.gif"
+  },
+  {
+   "id": "0051",
+   "name": "barbell jefferson squat",
+   "gif": "videos/0051-pkSoCW9.gif"
+  },
+  {
+   "id": "0052",
+   "name": "barbell jm bench press",
+   "gif": "videos/0052-ZsiqXYa.gif"
+  },
+  {
+   "id": "0053",
+   "name": "barbell jump squat",
+   "gif": "videos/0053-1gFNTZV.gif"
+  },
+  {
+   "id": "1410",
+   "name": "barbell lateral lunge",
+   "gif": "videos/1410-py1HSzx.gif"
+  },
+  {
+   "id": "1435",
+   "name": "barbell low bar squat",
+   "gif": "videos/1435-bTpEUcm.gif"
+  },
+  {
+   "id": "0054",
+   "name": "barbell lunge",
+   "gif": "videos/0054-t8iSghb.gif"
+  },
+  {
+   "id": "1720",
+   "name": "barbell lying back of the head tricep extension",
+   "gif": "videos/1720-yg8Totb.gif"
+  },
+  {
+   "id": "0055",
+   "name": "barbell lying close-grip press",
+   "gif": "videos/0055-EcaV7aL.gif"
+  },
+  {
+   "id": "0056",
+   "name": "barbell lying close-grip triceps extension",
+   "gif": "videos/0056-HJ63mSO.gif"
+  },
+  {
+   "id": "0057",
+   "name": "barbell lying extension",
+   "gif": "videos/0057-EMpUwRI.gif"
+  },
+  {
+   "id": "0058",
+   "name": "barbell lying lifting (on hip)",
+   "gif": "videos/0058-SNFfUff.gif"
+  },
+  {
+   "id": "0059",
+   "name": "barbell lying preacher curl",
+   "gif": "videos/0059-SYJ4Bkt.gif"
+  },
+  {
+   "id": "0061",
+   "name": "barbell lying triceps extension",
+   "gif": "videos/0061-iZop9xO.gif"
+  },
+  {
+   "id": "0060",
+   "name": "barbell lying triceps extension skull crusher",
+   "gif": "videos/0060-h8LFzo9.gif"
+  },
+  {
+   "id": "0063",
+   "name": "barbell narrow stance squat",
+   "gif": "videos/0063-elhhVgj.gif"
+  },
+  {
+   "id": "0064",
+   "name": "barbell one arm bent over row",
+   "gif": "videos/0064-Jsgsc27.gif"
+  },
+  {
+   "id": "0065",
+   "name": "barbell one arm floor press",
+   "gif": "videos/0065-vtusOWT.gif"
+  },
+  {
+   "id": "0066",
+   "name": "barbell one arm side deadlift",
+   "gif": "videos/0066-2DxtqHL.gif"
+  },
+  {
+   "id": "0067",
+   "name": "barbell one arm snatch",
+   "gif": "videos/0067-xHKN2s8.gif"
+  },
+  {
+   "id": "0068",
+   "name": "barbell one leg squat",
+   "gif": "videos/0068-uKyN64F.gif"
+  },
+  {
+   "id": "0069",
+   "name": "barbell overhead squat",
+   "gif": "videos/0069-gfk9kD4.gif"
+  },
+  {
+   "id": "1411",
+   "name": "barbell palms down wrist curl over a bench",
+   "gif": "videos/1411-yzYH9pI.gif"
+  },
+  {
+   "id": "1412",
+   "name": "barbell palms up wrist curl over a bench",
+   "gif": "videos/1412-SJAA2IQ.gif"
+  },
+  {
+   "id": "3017",
+   "name": "barbell pendlay row",
+   "gif": "videos/3017-r0z6xzQ.gif"
+  },
+  {
+   "id": "1751",
+   "name": "barbell pin presses",
+   "gif": "videos/1751-bndCa3Q.gif"
+  },
+  {
+   "id": "0070",
+   "name": "barbell preacher curl",
+   "gif": "videos/0070-qOgPVf6.gif"
+  },
+  {
+   "id": "0071",
+   "name": "barbell press sit-up",
+   "gif": "videos/0071-wnEscH8.gif"
+  },
+  {
+   "id": "0072",
+   "name": "barbell prone incline curl",
+   "gif": "videos/0072-WLvTAv5.gif"
+  },
+  {
+   "id": "0073",
+   "name": "barbell pullover",
+   "gif": "videos/0073-i6LWjok.gif"
+  },
+  {
+   "id": "0022",
+   "name": "barbell pullover to press",
+   "gif": "videos/0022-znLogoF.gif"
+  },
+  {
+   "id": "0074",
+   "name": "barbell rack pull",
+   "gif": "videos/0074-za9Ni4z.gif"
+  },
+  {
+   "id": "0075",
+   "name": "barbell rear delt raise",
+   "gif": "videos/0075-Ln9iTbU.gif"
+  },
+  {
+   "id": "0076",
+   "name": "barbell rear delt row",
+   "gif": "videos/0076-S9zHIvU.gif"
+  },
+  {
+   "id": "0078",
+   "name": "barbell rear lunge",
+   "gif": "videos/0078-VaP75jl.gif"
+  },
+  {
+   "id": "0077",
+   "name": "barbell rear lunge v. 2",
+   "gif": "videos/0077-62Nw60O.gif"
+  },
+  {
+   "id": "0079",
+   "name": "barbell revers wrist curl v. 2",
+   "gif": "videos/0079-qDnGfDb.gif"
+  },
+  {
+   "id": "2187",
+   "name": "barbell reverse close-grip bench press",
+   "gif": "videos/2187-YqJw82s.gif"
+  },
+  {
+   "id": "0080",
+   "name": "barbell reverse curl",
+   "gif": "videos/0080-xNrS20v.gif"
+  },
+  {
+   "id": "0118",
+   "name": "barbell reverse grip bent over row",
+   "gif": "videos/0118-SzX3uzM.gif"
+  },
+  {
+   "id": "1256",
+   "name": "barbell reverse grip decline bench press",
+   "gif": "videos/1256-DotAgEF.gif"
+  },
+  {
+   "id": "1257",
+   "name": "barbell reverse grip incline bench press",
+   "gif": "videos/1257-DU7I633.gif"
+  },
+  {
+   "id": "1317",
+   "name": "barbell reverse grip incline bench row",
+   "gif": "videos/1317-8d8qJQI.gif"
+  },
+  {
+   "id": "1721",
+   "name": "barbell reverse grip skullcrusher",
+   "gif": "videos/1721-yRLPCLu.gif"
+  },
+  {
+   "id": "0081",
+   "name": "barbell reverse preacher curl",
+   "gif": "videos/0081-4LIG9xr.gif"
+  },
+  {
+   "id": "0082",
+   "name": "barbell reverse wrist curl",
+   "gif": "videos/0082-LsZkfU6.gif"
+  },
+  {
+   "id": "0084",
+   "name": "barbell rollerout",
+   "gif": "videos/0084-7M66AVi.gif"
+  },
+  {
+   "id": "0083",
+   "name": "barbell rollerout from bench",
+   "gif": "videos/0083-Gxg9lDc.gif"
+  },
+  {
+   "id": "0085",
+   "name": "barbell romanian deadlift",
+   "gif": "videos/0085-wQ2c4XD.gif"
+  },
+  {
+   "id": "0086",
+   "name": "barbell seated behind head military press",
+   "gif": "videos/0086-ngPpyRS.gif"
+  },
+  {
+   "id": "0087",
+   "name": "barbell seated bradford rocky press",
+   "gif": "videos/0087-0dCyly0.gif"
+  },
+  {
+   "id": "0088",
+   "name": "barbell seated calf raise",
+   "gif": "videos/0088-ktsFQAZ.gif"
+  },
+  {
+   "id": "1371",
+   "name": "barbell seated calf raise",
+   "gif": "videos/1371-ipvgBnC.gif"
+  },
+  {
+   "id": "1718",
+   "name": "barbell seated close grip behind neck triceps extension",
+   "gif": "videos/1718-4CBIBOM.gif"
+  },
+  {
+   "id": "0089",
+   "name": "barbell seated close-grip concentration curl",
+   "gif": "videos/0089-1V1gj1u.gif"
+  },
+  {
+   "id": "0090",
+   "name": "barbell seated good morning",
+   "gif": "videos/0090-d960PgE.gif"
+  },
+  {
+   "id": "0091",
+   "name": "barbell seated overhead press",
+   "gif": "videos/0091-kTbSH9h.gif"
+  },
+  {
+   "id": "0092",
+   "name": "barbell seated overhead triceps extension",
+   "gif": "videos/0092-5uFK1xr.gif"
+  },
+  {
+   "id": "0094",
+   "name": "barbell seated twist",
+   "gif": "videos/0094-dFSNDOA.gif"
+  },
+  {
+   "id": "0095",
+   "name": "barbell shrug",
+   "gif": "videos/0095-dG7tG5y.gif"
+  },
+  {
+   "id": "0096",
+   "name": "barbell side bent v. 2",
+   "gif": "videos/0096-i4JkUaL.gif"
+  },
+  {
+   "id": "0098",
+   "name": "barbell side split squat",
+   "gif": "videos/0098-W31mMjd.gif"
+  },
+  {
+   "id": "0097",
+   "name": "barbell side split squat v. 2",
+   "gif": "videos/0097-HUEqZ1y.gif"
+  },
+  {
+   "id": "1756",
+   "name": "barbell single leg deadlift",
+   "gif": "videos/1756-gEyURal.gif"
+  },
+  {
+   "id": "0099",
+   "name": "barbell single leg split squat",
+   "gif": "videos/0099-gGNQmVt.gif"
+  },
+  {
+   "id": "2799",
+   "name": "barbell sitted alternate leg raise",
+   "gif": "videos/2799-G7xoEzr.gif"
+  },
+  {
+   "id": "2800",
+   "name": "barbell sitted alternate leg raise (female)",
+   "gif": "videos/2800-BCs0G2F.gif"
+  },
+  {
+   "id": "0100",
+   "name": "barbell skier",
+   "gif": "videos/0100-4Leypho.gif"
+  },
+  {
+   "id": "0101",
+   "name": "barbell speed squat",
+   "gif": "videos/0101-euI1BwR.gif"
+  },
+  {
+   "id": "2810",
+   "name": "barbell split squat v. 2",
+   "gif": "videos/2810-HBYyX94.gif"
+  },
+  {
+   "id": "0102",
+   "name": "barbell squat (on knees)",
+   "gif": "videos/0102-oR7O9LW.gif"
+  },
+  {
+   "id": "2798",
+   "name": "barbell squat jump step rear lunge",
+   "gif": "videos/2798-RYcV1kH.gif"
+  },
+  {
+   "id": "0103",
+   "name": "barbell standing ab rollerout",
+   "gif": "videos/0103-xnInPfE.gif"
+  },
+  {
+   "id": "0104",
+   "name": "barbell standing back wrist curl",
+   "gif": "videos/0104-2qTvJAZ.gif"
+  },
+  {
+   "id": "0105",
+   "name": "barbell standing bradford press",
+   "gif": "videos/0105-dCPESfR.gif"
+  },
+  {
+   "id": "1372",
+   "name": "barbell standing calf raise",
+   "gif": "videos/1372-8ozhUIZ.gif"
+  },
+  {
+   "id": "0106",
+   "name": "barbell standing close grip curl",
+   "gif": "videos/0106-4dUn2iv.gif"
+  },
+  {
+   "id": "1456",
+   "name": "barbell standing close grip military press",
+   "gif": "videos/1456-wdRZISl.gif"
+  },
+  {
+   "id": "2414",
+   "name": "barbell standing concentration curl",
+   "gif": "videos/2414-vsMcDi9.gif"
+  },
+  {
+   "id": "0107",
+   "name": "barbell standing front raise over head",
+   "gif": "videos/0107-S8mo30S.gif"
+  },
+  {
+   "id": "0108",
+   "name": "barbell standing leg calf raise",
+   "gif": "videos/0108-rGwhJ5o.gif"
+  },
+  {
+   "id": "0109",
+   "name": "barbell standing overhead triceps extension",
+   "gif": "videos/0109-dZl9Q27.gif"
+  },
+  {
+   "id": "0110",
+   "name": "barbell standing reverse grip curl",
+   "gif": "videos/0110-LWuA3aZ.gif"
+  },
+  {
+   "id": "0111",
+   "name": "barbell standing rocking leg calf raise",
+   "gif": "videos/0111-6HiHHe0.gif"
+  },
+  {
+   "id": "0112",
+   "name": "barbell standing twist",
+   "gif": "videos/0112-yQe5HpE.gif"
+  },
+  {
+   "id": "1629",
+   "name": "barbell standing wide grip biceps curl",
+   "gif": "videos/1629-faHKVkK.gif"
+  },
+  {
+   "id": "1457",
+   "name": "barbell standing wide military press",
+   "gif": "videos/1457-Kyd9Rz5.gif"
+  },
+  {
+   "id": "0113",
+   "name": "barbell standing wide-grip curl",
+   "gif": "videos/0113-NdIb5Z1.gif"
+  },
+  {
+   "id": "0114",
+   "name": "barbell step-up",
+   "gif": "videos/0114-Kxquu2E.gif"
+  },
+  {
+   "id": "0115",
+   "name": "barbell stiff leg good morning",
+   "gif": "videos/0115-JrOHAZc.gif"
+  },
+  {
+   "id": "0116",
+   "name": "barbell straight leg deadlift",
+   "gif": "videos/0116-hrVQWvE.gif"
+  },
+  {
+   "id": "0117",
+   "name": "barbell sumo deadlift",
+   "gif": "videos/0117-KgI0tqW.gif"
+  },
+  {
+   "id": "3305",
+   "name": "barbell thruster",
+   "gif": "videos/3305-f7Y9eDZ.gif"
+  },
+  {
+   "id": "0120",
+   "name": "barbell upright row",
+   "gif": "videos/0120-UDlhcO8.gif"
+  },
+  {
+   "id": "0119",
+   "name": "barbell upright row v. 2",
+   "gif": "videos/0119-83HoW9X.gif"
+  },
+  {
+   "id": "0121",
+   "name": "barbell upright row v. 3",
+   "gif": "videos/0121-fI18Rbc.gif"
+  },
+  {
+   "id": "0122",
+   "name": "barbell wide bench press",
+   "gif": "videos/0122-JsKq9so.gif"
+  },
+  {
+   "id": "1258",
+   "name": "barbell wide reverse grip bench press",
+   "gif": "videos/1258-945zpRg.gif"
+  },
+  {
+   "id": "0124",
+   "name": "barbell wide squat",
+   "gif": "videos/0124-s7HX1BY.gif"
+  },
+  {
+   "id": "0123",
+   "name": "barbell wide-grip upright row",
+   "gif": "videos/0123-RgJDRR1.gif"
+  },
+  {
+   "id": "0126",
+   "name": "barbell wrist curl",
+   "gif": "videos/0126-82LxxkW.gif"
+  },
+  {
+   "id": "0125",
+   "name": "barbell wrist curl v. 2",
+   "gif": "videos/0125-6kSxYnw.gif"
+  },
+  {
+   "id": "0127",
+   "name": "barbell zercher squat",
+   "gif": "videos/0127-LSTChY9.gif"
+  },
+  {
+   "id": "3212",
+   "name": "basic toe touch (male)",
+   "gif": "videos/3212-BbfB8Gb.gif"
+  },
+  {
+   "id": "0128",
+   "name": "battling ropes",
+   "gif": "videos/0128-RJa4tCo.gif"
+  },
+  {
+   "id": "3360",
+   "name": "bear crawl",
+   "gif": "videos/3360-0Yz8WdV.gif"
+  },
+  {
+   "id": "1259",
+   "name": "behind head chest stretch",
+   "gif": "videos/1259-QoHIhPl.gif"
+  },
+  {
+   "id": "0129",
+   "name": "bench dip (knees bent)",
+   "gif": "videos/0129-RrLske5.gif"
+  },
+  {
+   "id": "1399",
+   "name": "bench dip on floor",
+   "gif": "videos/1399-9RT8oQW.gif"
+  },
+  {
+   "id": "0130",
+   "name": "bench hip extension",
+   "gif": "videos/0130-u27Kcdz.gif"
+  },
+  {
+   "id": "3019",
+   "name": "bench pull-ups",
+   "gif": "videos/3019-mExgrF9.gif"
+  },
+  {
+   "id": "3639",
+   "name": "bent knee lying twist (male)",
+   "gif": "videos/3639-6sYyrRX.gif"
+  },
+  {
+   "id": "1770",
+   "name": "biceps leg concentration curl",
+   "gif": "videos/1770-sJFIDIp.gif"
+  },
+  {
+   "id": "0139",
+   "name": "biceps narrow pull-ups",
+   "gif": "videos/0139-50BETrz.gif"
+  },
+  {
+   "id": "0140",
+   "name": "biceps pull-up",
+   "gif": "videos/0140-guT8YnS.gif"
+  },
+  {
+   "id": "0137",
+   "name": "body-up",
+   "gif": "videos/0137-U6G2gk9.gif"
+  },
+  {
+   "id": "3543",
+   "name": "bodyweight drop jump squat",
+   "gif": "videos/3543-wfotm7S.gif"
+  },
+  {
+   "id": "3544",
+   "name": "bodyweight incline side plank",
+   "gif": "videos/3544-5VXmnV5.gif"
+  },
+  {
+   "id": "1771",
+   "name": "bodyweight kneeling triceps extension",
+   "gif": "videos/1771-s0HKO2I.gif"
+  },
+  {
+   "id": "1769",
+   "name": "bodyweight side lying biceps curl",
+   "gif": "videos/1769-gscGLOU.gif"
+  },
+  {
+   "id": "3168",
+   "name": "bodyweight squatting row",
+   "gif": "videos/3168-3xK09Sk.gif"
+  },
+  {
+   "id": "3167",
+   "name": "bodyweight squatting row (with towel)",
+   "gif": "videos/3167-BReCuOn.gif"
+  },
+  {
+   "id": "1373",
+   "name": "bodyweight standing calf raise",
+   "gif": "videos/1373-bJYHBIN.gif"
+  },
+  {
+   "id": "3156",
+   "name": "bodyweight standing close-grip one arm row",
+   "gif": "videos/3156-v2DfH14.gif"
+  },
+  {
+   "id": "3158",
+   "name": "bodyweight standing close-grip row",
+   "gif": "videos/3158-tig3PXb.gif"
+  },
+  {
+   "id": "3162",
+   "name": "bodyweight standing one arm row",
+   "gif": "videos/3162-xbkPfaw.gif"
+  },
+  {
+   "id": "3161",
+   "name": "bodyweight standing one arm row (with towel)",
+   "gif": "videos/3161-O4oIqQD.gif"
+  },
+  {
+   "id": "3166",
+   "name": "bodyweight standing row",
+   "gif": "videos/3166-wd4ds3s.gif"
+  },
+  {
+   "id": "3165",
+   "name": "bodyweight standing row (with towel)",
+   "gif": "videos/3165-uTv34oq.gif"
+  },
+  {
+   "id": "0138",
+   "name": "bottoms-up",
+   "gif": "videos/0138-CI6baTY.gif"
+  },
+  {
+   "id": "1374",
+   "name": "box jump down with one leg stabilization",
+   "gif": "videos/1374-iPm26QU.gif"
+  },
+  {
+   "id": "2466",
+   "name": "bridge - mountain climber (cross body)",
+   "gif": "videos/2466-9c6T1YX.gif"
+  },
+  {
+   "id": "1160",
+   "name": "burpee",
+   "gif": "videos/1160-dK9394r.gif"
+  },
+  {
+   "id": "0870",
+   "name": "butt-ups",
+   "gif": "videos/0870-qcNN2FN.gif"
+  },
+  {
+   "id": "1494",
+   "name": "butterfly yoga pose",
+   "gif": "videos/1494-bWlZvXh.gif"
+  },
+  {
+   "id": "0148",
+   "name": "cable alternate shoulder press",
+   "gif": "videos/0148-KHPZL0b.gif"
+  },
+  {
+   "id": "0149",
+   "name": "cable alternate triceps extension",
+   "gif": "videos/0149-Gchi5Tr.gif"
+  },
+  {
+   "id": "3235",
+   "name": "cable assisted inverse leg curl",
+   "gif": "videos/3235-zHEpuuc.gif"
+  },
+  {
+   "id": "0150",
+   "name": "cable bar lateral pulldown",
+   "gif": "videos/0150-eYnzaCm.gif"
+  },
+  {
+   "id": "0151",
+   "name": "cable bench press",
+   "gif": "videos/0151-7xI5MXA.gif"
+  },
+  {
+   "id": "1630",
+   "name": "cable close grip curl",
+   "gif": "videos/1630-BCGQ6J5.gif"
+  },
+  {
+   "id": "1631",
+   "name": "cable concentration curl",
+   "gif": "videos/1631-NvfE43H.gif"
+  },
+  {
+   "id": "0152",
+   "name": "cable concentration extension (on knee)",
+   "gif": "videos/0152-Db7eEgw.gif"
+  },
+  {
+   "id": "0153",
+   "name": "cable cross-over lateral pulldown",
+   "gif": "videos/0153-OQ1otBN.gif"
+  },
+  {
+   "id": "0154",
+   "name": "cable cross-over revers fly",
+   "gif": "videos/0154-aqvSOQE.gif"
+  },
+  {
+   "id": "0155",
+   "name": "cable cross-over variation",
+   "gif": "videos/0155-0CXGHya.gif"
+  },
+  {
+   "id": "0868",
+   "name": "cable curl",
+   "gif": "videos/0868-G08RZcQ.gif"
+  },
+  {
+   "id": "0157",
+   "name": "cable deadlift",
+   "gif": "videos/0157-eGDudUV.gif"
+  },
+  {
+   "id": "0158",
+   "name": "cable decline fly",
+   "gif": "videos/0158-7saC5zz.gif"
+  },
+  {
+   "id": "1260",
+   "name": "cable decline one arm press",
+   "gif": "videos/1260-KHGNa16.gif"
+  },
+  {
+   "id": "1261",
+   "name": "cable decline press",
+   "gif": "videos/1261-2Pya1cP.gif"
+  },
+  {
+   "id": "0159",
+   "name": "cable decline seated wide-grip row",
+   "gif": "videos/0159-kesXOpB.gif"
+  },
+  {
+   "id": "1632",
+   "name": "cable drag curl",
+   "gif": "videos/1632-dXz8zjF.gif"
+  },
+  {
+   "id": "0160",
+   "name": "cable floor seated wide-grip row",
+   "gif": "videos/0160-veXwo0D.gif"
+  },
+  {
+   "id": "0161",
+   "name": "cable forward raise",
+   "gif": "videos/0161-hvHhCv8.gif"
+  },
+  {
+   "id": "0162",
+   "name": "cable front raise",
+   "gif": "videos/0162-u2X71Np.gif"
+  },
+  {
+   "id": "0164",
+   "name": "cable front shoulder raise",
+   "gif": "videos/0164-mTT3KLn.gif"
+  },
+  {
+   "id": "0165",
+   "name": "cable hammer curl (with rope)",
+   "gif": "videos/0165-HPlPoQA.gif"
+  },
+  {
+   "id": "1722",
+   "name": "cable high pulley overhead tricep extension",
+   "gif": "videos/1722-1xHyxys.gif"
+  },
+  {
+   "id": "0167",
+   "name": "cable high row (kneeling)",
+   "gif": "videos/0167-ZSJNetl.gif"
+  },
+  {
+   "id": "0168",
+   "name": "cable hip adduction",
+   "gif": "videos/0168-hBGWILP.gif"
+  },
+  {
+   "id": "0169",
+   "name": "cable incline bench press",
+   "gif": "videos/0169-Vh0GsK4.gif"
+  },
+  {
+   "id": "1318",
+   "name": "cable incline bench row",
+   "gif": "videos/1318-yaMIo4D.gif"
+  },
+  {
+   "id": "0171",
+   "name": "cable incline fly",
+   "gif": "videos/0171-tBWXbIT.gif"
+  },
+  {
+   "id": "0170",
+   "name": "cable incline fly (on stability ball)",
+   "gif": "videos/0170-27NNGFr.gif"
+  },
+  {
+   "id": "0172",
+   "name": "cable incline pushdown",
+   "gif": "videos/0172-1PK5Uo3.gif"
+  },
+  {
+   "id": "0173",
+   "name": "cable incline triceps extension",
+   "gif": "videos/0173-Hx1WC8I.gif"
+  },
+  {
+   "id": "0174",
+   "name": "cable judo flip",
+   "gif": "videos/0174-MvQPqVW.gif"
+  },
+  {
+   "id": "0860",
+   "name": "cable kickback",
+   "gif": "videos/0860-HEJ6DIX.gif"
+  },
+  {
+   "id": "0175",
+   "name": "cable kneeling crunch",
+   "gif": "videos/0175-WW95auq.gif"
+  },
+  {
+   "id": "3697",
+   "name": "cable kneeling rear delt row (with rope) (male)",
+   "gif": "videos/3697-G61cXLk.gif"
+  },
+  {
+   "id": "0176",
+   "name": "cable kneeling triceps extension",
+   "gif": "videos/0176-KWdF2JI.gif"
+  },
+  {
+   "id": "2330",
+   "name": "cable lat pulldown full range of motion",
+   "gif": "videos/2330-LEprlgG.gif"
+  },
+  {
+   "id": "0177",
+   "name": "cable lateral pulldown (with rope attachment)",
+   "gif": "videos/0177-CuaWCmC.gif"
+  },
+  {
+   "id": "2616",
+   "name": "cable lateral pulldown with v-bar",
+   "gif": "videos/2616-4c9BhzB.gif"
+  },
+  {
+   "id": "0178",
+   "name": "cable lateral raise",
+   "gif": "videos/0178-goJ6ezq.gif"
+  },
+  {
+   "id": "0179",
+   "name": "cable low fly",
+   "gif": "videos/0179-FVmZVhk.gif"
+  },
+  {
+   "id": "0180",
+   "name": "cable low seated row",
+   "gif": "videos/0180-hvV79Si.gif"
+  },
+  {
+   "id": "1634",
+   "name": "cable lying bicep curl",
+   "gif": "videos/1634-otqIxU4.gif"
+  },
+  {
+   "id": "0182",
+   "name": "cable lying close-grip curl",
+   "gif": "videos/0182-61GrD55.gif"
+  },
+  {
+   "id": "0184",
+   "name": "cable lying extension pullover (with rope attachment)",
+   "gif": "videos/0184-Q2Eu1Ax.gif"
+  },
+  {
+   "id": "0185",
+   "name": "cable lying fly",
+   "gif": "videos/0185-lJJ7Yq8.gif"
+  },
+  {
+   "id": "0186",
+   "name": "cable lying triceps extension v. 2",
+   "gif": "videos/0186-uxJcFUU.gif"
+  },
+  {
+   "id": "0188",
+   "name": "cable middle fly",
+   "gif": "videos/0188-xLYSdtg.gif"
+  },
+  {
+   "id": "0189",
+   "name": "cable one arm bent over row",
+   "gif": "videos/0189-EIsE3u8.gif"
+  },
+  {
+   "id": "0190",
+   "name": "cable one arm curl",
+   "gif": "videos/0190-YTur5nR.gif"
+  },
+  {
+   "id": "1262",
+   "name": "cable one arm decline chest fly",
+   "gif": "videos/1262-w4dLzSx.gif"
+  },
+  {
+   "id": "1263",
+   "name": "cable one arm fly on exercise ball",
+   "gif": "videos/1263-hHy8tQG.gif"
+  },
+  {
+   "id": "1264",
+   "name": "cable one arm incline fly on exercise ball",
+   "gif": "videos/1264-P14Dz9D.gif"
+  },
+  {
+   "id": "1265",
+   "name": "cable one arm incline press",
+   "gif": "videos/1265-GKEH6jj.gif"
+  },
+  {
+   "id": "1266",
+   "name": "cable one arm incline press on exercise ball",
+   "gif": "videos/1266-6t00BsF.gif"
+  },
+  {
+   "id": "0191",
+   "name": "cable one arm lateral bent-over",
+   "gif": "videos/0191-dB07vDu.gif"
+  },
+  {
+   "id": "0192",
+   "name": "cable one arm lateral raise",
+   "gif": "videos/0192-wEulIzp.gif"
+  },
+  {
+   "id": "1633",
+   "name": "cable one arm preacher curl",
+   "gif": "videos/1633-eHBlPsa.gif"
+  },
+  {
+   "id": "1267",
+   "name": "cable one arm press on exercise ball",
+   "gif": "videos/1267-MKIelrR.gif"
+  },
+  {
+   "id": "3563",
+   "name": "cable one arm pulldown",
+   "gif": "videos/3563-U5INZY6.gif"
+  },
+  {
+   "id": "1635",
+   "name": "cable one arm reverse preacher curl",
+   "gif": "videos/1635-ZXnjcOQ.gif"
+  },
+  {
+   "id": "0193",
+   "name": "cable one arm straight back high row (kneeling)",
+   "gif": "videos/0193-WrYPP2g.gif"
+  },
+  {
+   "id": "1723",
+   "name": "cable one arm tricep pushdown",
+   "gif": "videos/1723-qRZ5S1N.gif"
+  },
+  {
+   "id": "1636",
+   "name": "cable overhead curl",
+   "gif": "videos/1636-wDUqY2u.gif"
+  },
+  {
+   "id": "1637",
+   "name": "cable overhead curl on exercise ball",
+   "gif": "videos/1637-ioTf098.gif"
+  },
+  {
+   "id": "0194",
+   "name": "cable overhead triceps extension (rope attachment)",
+   "gif": "videos/0194-2IxROQ1.gif"
+  },
+  {
+   "id": "1319",
+   "name": "cable palm rotational row",
+   "gif": "videos/1319-OmQ8w0p.gif"
+  },
+  {
+   "id": "0195",
+   "name": "cable preacher curl",
+   "gif": "videos/0195-P2lNrGL.gif"
+  },
+  {
+   "id": "1268",
+   "name": "cable press on exercise ball",
+   "gif": "videos/1268-vAwm6rK.gif"
+  },
+  {
+   "id": "0196",
+   "name": "cable pull through (with rope)",
+   "gif": "videos/0196-OM46QHm.gif"
+  },
+  {
+   "id": "0198",
+   "name": "cable pulldown",
+   "gif": "videos/0198-RVwzP10.gif"
+  },
+  {
+   "id": "0197",
+   "name": "cable pulldown (pro lat bar)",
+   "gif": "videos/0197-qdRxqCj.gif"
+  },
+  {
+   "id": "1638",
+   "name": "cable pulldown bicep curl",
+   "gif": "videos/1638-QTXKWPh.gif"
+  },
+  {
+   "id": "0201",
+   "name": "cable pushdown",
+   "gif": "videos/0201-3ZflifB.gif"
+  },
+  {
+   "id": "0199",
+   "name": "cable pushdown (straight arm) v. 2",
+   "gif": "videos/0199-PskORrA.gif"
+  },
+  {
+   "id": "0200",
+   "name": "cable pushdown (with rope attachment)",
+   "gif": "videos/0200-dU605di.gif"
+  },
+  {
+   "id": "0202",
+   "name": "cable rear delt row (stirrups)",
+   "gif": "videos/0202-yUdIGNs.gif"
+  },
+  {
+   "id": "0203",
+   "name": "cable rear delt row (with rope)",
+   "gif": "videos/0203-wqNPGCg.gif"
+  },
+  {
+   "id": "0204",
+   "name": "cable rear drive",
+   "gif": "videos/0204-c3QQLPi.gif"
+  },
+  {
+   "id": "0205",
+   "name": "cable rear pulldown",
+   "gif": "videos/0205-SpsOSXk.gif"
+  },
+  {
+   "id": "0873",
+   "name": "cable reverse crunch",
+   "gif": "videos/0873-RqOtqD7.gif"
+  },
+  {
+   "id": "0206",
+   "name": "cable reverse curl",
+   "gif": "videos/0206-eOG0r6v.gif"
+  },
+  {
+   "id": "2406",
+   "name": "cable reverse grip triceps pushdown (sz-bar) (with arm blaster)",
+   "gif": "videos/2406-ThKP69G.gif"
+  },
+  {
+   "id": "1413",
+   "name": "cable reverse one arm curl",
+   "gif": "videos/1413-gVlnLIJ.gif"
+  },
+  {
+   "id": "0209",
+   "name": "cable reverse preacher curl",
+   "gif": "videos/0209-IwX5NqK.gif"
+  },
+  {
+   "id": "0210",
+   "name": "cable reverse wrist curl",
+   "gif": "videos/0210-eYmsEPR.gif"
+  },
+  {
+   "id": "0207",
+   "name": "cable reverse-grip pushdown",
+   "gif": "videos/0207-VjYliFZ.gif"
+  },
+  {
+   "id": "0208",
+   "name": "cable reverse-grip straight back seated high row",
+   "gif": "videos/0208-PNtsX17.gif"
+  },
+  {
+   "id": "1320",
+   "name": "cable rope crossover seated row",
+   "gif": "videos/1320-UFGF6gk.gif"
+  },
+  {
+   "id": "1321",
+   "name": "cable rope elevated seated row",
+   "gif": "videos/1321-c8oybX6.gif"
+  },
+  {
+   "id": "1322",
+   "name": "cable rope extension incline bench row",
+   "gif": "videos/1322-MgKwAAo.gif"
+  },
+  {
+   "id": "1639",
+   "name": "cable rope hammer preacher curl",
+   "gif": "videos/1639-PcPe0P5.gif"
+  },
+  {
+   "id": "1724",
+   "name": "cable rope high pulley overhead tricep extension",
+   "gif": "videos/1724-NN8nSNT.gif"
+  },
+  {
+   "id": "1725",
+   "name": "cable rope incline tricep extension",
+   "gif": "videos/1725-ZujAdR9.gif"
+  },
+  {
+   "id": "1726",
+   "name": "cable rope lying on floor tricep extension",
+   "gif": "videos/1726-U3ffHlY.gif"
+  },
+  {
+   "id": "1640",
+   "name": "cable rope one arm hammer preacher curl",
+   "gif": "videos/1640-4hATdoB.gif"
+  },
+  {
+   "id": "1323",
+   "name": "cable rope seated row",
+   "gif": "videos/1323-SJqRxOt.gif"
+  },
+  {
+   "id": "0211",
+   "name": "cable russian twists (on stability ball)",
+   "gif": "videos/0211-d9Xaxq6.gif"
+  },
+  {
+   "id": "2144",
+   "name": "cable seated chest press",
+   "gif": "videos/2144-nIR4Rwl.gif"
+  },
+  {
+   "id": "0212",
+   "name": "cable seated crunch",
+   "gif": "videos/0212-8xUv4J7.gif"
+  },
+  {
+   "id": "1641",
+   "name": "cable seated curl",
+   "gif": "videos/1641-8oYqOt9.gif"
+  },
+  {
+   "id": "0213",
+   "name": "cable seated high row (v-bar)",
+   "gif": "videos/0213-pwt0pnM.gif"
+  },
+  {
+   "id": "0214",
+   "name": "cable seated one arm alternate row",
+   "gif": "videos/0214-vpp9Ku2.gif"
+  },
+  {
+   "id": "1642",
+   "name": "cable seated one arm concentration curl",
+   "gif": "videos/1642-rZ80Gbp.gif"
+  },
+  {
+   "id": "1643",
+   "name": "cable seated overhead curl",
+   "gif": "videos/1643-DpWMFP5.gif"
+  },
+  {
+   "id": "0215",
+   "name": "cable seated rear lateral raise",
+   "gif": "videos/0215-x825CZm.gif"
+  },
+  {
+   "id": "0861",
+   "name": "cable seated row",
+   "gif": "videos/0861-fUBheHs.gif"
+  },
+  {
+   "id": "0216",
+   "name": "cable seated shoulder internal rotation",
+   "gif": "videos/0216-YPoVrBi.gif"
+  },
+  {
+   "id": "2399",
+   "name": "cable seated twist",
+   "gif": "videos/2399-UEjSrKI.gif"
+  },
+  {
+   "id": "0218",
+   "name": "cable seated wide-grip row",
+   "gif": "videos/0218-qcY50ZD.gif"
+  },
+  {
+   "id": "0219",
+   "name": "cable shoulder press",
+   "gif": "videos/0219-PzQanLE.gif"
+  },
+  {
+   "id": "0220",
+   "name": "cable shrug",
+   "gif": "videos/0220-Eg98Ft9.gif"
+  },
+  {
+   "id": "0222",
+   "name": "cable side bend",
+   "gif": "videos/0222-wPypxFY.gif"
+  },
+  {
+   "id": "0221",
+   "name": "cable side bend crunch (bosu ball)",
+   "gif": "videos/0221-qatbkEd.gif"
+  },
+  {
+   "id": "0223",
+   "name": "cable side crunch",
+   "gif": "videos/0223-q2ADGqV.gif"
+  },
+  {
+   "id": "1717",
+   "name": "cable squat row (with rope attachment)",
+   "gif": "videos/1717-f7fnAIB.gif"
+  },
+  {
+   "id": "1644",
+   "name": "cable squatting curl",
+   "gif": "videos/1644-3XFdb1Z.gif"
+  },
+  {
+   "id": "0224",
+   "name": "cable standing back wrist curl",
+   "gif": "videos/0224-VhX2JdE.gif"
+  },
+  {
+   "id": "1375",
+   "name": "cable standing calf raise",
+   "gif": "videos/1375-yl2IYyy.gif"
+  },
+  {
+   "id": "0225",
+   "name": "cable standing cross-over high reverse fly",
+   "gif": "videos/0225-P5p0j8B.gif"
+  },
+  {
+   "id": "0226",
+   "name": "cable standing crunch",
+   "gif": "videos/0226-jpgqxiS.gif"
+  },
+  {
+   "id": "0874",
+   "name": "cable standing crunch (with rope attachment)",
+   "gif": "videos/0874-XU3ePuv.gif"
+  },
+  {
+   "id": "0227",
+   "name": "cable standing fly",
+   "gif": "videos/0227-Pr9Rhf4.gif"
+  },
+  {
+   "id": "0228",
+   "name": "cable standing hip extension",
+   "gif": "videos/0228-Kpajagk.gif"
+  },
+  {
+   "id": "0229",
+   "name": "cable standing inner curl",
+   "gif": "videos/0229-YwnI4ja.gif"
+  },
+  {
+   "id": "0230",
+   "name": "cable standing lift",
+   "gif": "videos/0230-qFpAkpP.gif"
+  },
+  {
+   "id": "0231",
+   "name": "cable standing one arm triceps extension",
+   "gif": "videos/0231-sYCcnon.gif"
+  },
+  {
+   "id": "1376",
+   "name": "cable standing one leg calf raise",
+   "gif": "videos/1376-fgc9Xdl.gif"
+  },
+  {
+   "id": "0232",
+   "name": "cable standing pulldown (with rope)",
+   "gif": "videos/0232-CvPn9WV.gif"
+  },
+  {
+   "id": "0233",
+   "name": "cable standing rear delt row (with rope)",
+   "gif": "videos/0233-ZfyAGhK.gif"
+  },
+  {
+   "id": "1727",
+   "name": "cable standing reverse grip one arm overhead tricep extension",
+   "gif": "videos/1727-i11JWU7.gif"
+  },
+  {
+   "id": "0234",
+   "name": "cable standing row (v-bar)",
+   "gif": "videos/0234-4f8RXP8.gif"
+  },
+  {
+   "id": "0235",
+   "name": "cable standing shoulder external rotation",
+   "gif": "videos/0235-FWdVhcW.gif"
+  },
+  {
+   "id": "0236",
+   "name": "cable standing twist row (v-bar)",
+   "gif": "videos/0236-JOZhu2h.gif"
+  },
+  {
+   "id": "1269",
+   "name": "cable standing up straight crossovers",
+   "gif": "videos/1269-UKWTJWR.gif"
+  },
+  {
+   "id": "0238",
+   "name": "cable straight arm pulldown",
+   "gif": "videos/0238-x69MAlq.gif"
+  },
+  {
+   "id": "0237",
+   "name": "cable straight arm pulldown (with rope)",
+   "gif": "videos/0237-DT14T9T.gif"
+  },
+  {
+   "id": "0239",
+   "name": "cable straight back seated row",
+   "gif": "videos/0239-Tq6gbK6.gif"
+  },
+  {
+   "id": "0240",
+   "name": "cable supine reverse fly",
+   "gif": "videos/0240-PQcUlDi.gif"
+  },
+  {
+   "id": "2464",
+   "name": "cable thibaudeau kayak row",
+   "gif": "videos/2464-ZgwWBoC.gif"
+  },
+  {
+   "id": "0241",
+   "name": "cable triceps pushdown (v-bar)",
+   "gif": "videos/0241-gAwDzB3.gif"
+  },
+  {
+   "id": "2405",
+   "name": "cable triceps pushdown (v-bar) (with arm blaster)",
+   "gif": "videos/2405-OxJk1fg.gif"
+  },
+  {
+   "id": "0242",
+   "name": "cable tuck reverse crunch",
+   "gif": "videos/0242-TXtXc84.gif"
+  },
+  {
+   "id": "0243",
+   "name": "cable twist",
+   "gif": "videos/0243-aVs3BR3.gif"
+  },
+  {
+   "id": "0862",
+   "name": "cable twist (up-down)",
+   "gif": "videos/0862-fhZQPlV.gif"
+  },
+  {
+   "id": "0244",
+   "name": "cable twisting pull",
+   "gif": "videos/0244-zCgxPbV.gif"
+  },
+  {
+   "id": "1645",
+   "name": "cable two arm curl on incline bench",
+   "gif": "videos/1645-H9y3Dkr.gif"
+  },
+  {
+   "id": "1728",
+   "name": "cable two arm tricep kickback",
+   "gif": "videos/1728-vvNjDJS.gif"
+  },
+  {
+   "id": "0245",
+   "name": "cable underhand pulldown",
+   "gif": "videos/0245-xBYcQHj.gif"
+  },
+  {
+   "id": "1270",
+   "name": "cable upper chest crossovers",
+   "gif": "videos/1270-j7XMAyn.gif"
+  },
+  {
+   "id": "1324",
+   "name": "cable upper row",
+   "gif": "videos/1324-PQStVXH.gif"
+  },
+  {
+   "id": "0246",
+   "name": "cable upright row",
+   "gif": "videos/0246-cALKspW.gif"
+  },
+  {
+   "id": "1325",
+   "name": "cable wide grip rear pulldown behind neck",
+   "gif": "videos/1325-CmEr4pM.gif"
+  },
+  {
+   "id": "0247",
+   "name": "cable wrist curl",
+   "gif": "videos/0247-LrV4s90.gif"
+  },
+  {
+   "id": "1407",
+   "name": "calf push stretch with hands against wall",
+   "gif": "videos/1407-PzNxakt.gif"
+  },
+  {
+   "id": "1377",
+   "name": "calf stretch with hands against wall",
+   "gif": "videos/1377-m0tCHqc.gif"
+  },
+  {
+   "id": "1378",
+   "name": "calf stretch with rope",
+   "gif": "videos/1378-1LVFcEn.gif"
+  },
+  {
+   "id": "0248",
+   "name": "cambered bar lying row",
+   "gif": "videos/0248-R5swFnc.gif"
+  },
+  {
+   "id": "2963",
+   "name": "captains chair straight leg raise",
+   "gif": "videos/2963-weoDEpH.gif"
+  },
+  {
+   "id": "1548",
+   "name": "chair leg extended stretch",
+   "gif": "videos/1548-xGgAGPm.gif"
+  },
+  {
+   "id": "1271",
+   "name": "chest and front of shoulder stretch",
+   "gif": "videos/1271-Uto7l43.gif"
+  },
+  {
+   "id": "0251",
+   "name": "chest dip",
+   "gif": "videos/0251-9WTm7dq.gif"
+  },
+  {
+   "id": "1430",
+   "name": "chest dip (on dip-pull-up cage)",
+   "gif": "videos/1430-XgWyAiA.gif"
+  },
+  {
+   "id": "2462",
+   "name": "chest dip on straight bar",
+   "gif": "videos/2462-LQFOrMn.gif"
+  },
+  {
+   "id": "1272",
+   "name": "chest stretch with exercise ball",
+   "gif": "videos/1272-ykA5tU7.gif"
+  },
+  {
+   "id": "3216",
+   "name": "chest tap push-up (male)",
+   "gif": "videos/3216-7E06s6d.gif"
+  },
+  {
+   "id": "1326",
+   "name": "chin-up",
+   "gif": "videos/1326-T2mxWqc.gif"
+  },
+  {
+   "id": "0253",
+   "name": "chin-ups (narrow parallel grip)",
+   "gif": "videos/0253-G70mEAJ.gif"
+  },
+  {
+   "id": "0257",
+   "name": "circles knee stretch",
+   "gif": "videos/0257-X7jbxra.gif"
+  },
+  {
+   "id": "1273",
+   "name": "clap push up",
+   "gif": "videos/1273-wigSg76.gif"
+  },
+  {
+   "id": "0258",
+   "name": "clock push-up",
+   "gif": "videos/0258-CMAxnsG.gif"
+  },
+  {
+   "id": "1327",
+   "name": "close grip chin-up",
+   "gif": "videos/1327-VnfUNW7.gif"
+  },
+  {
+   "id": "0259",
+   "name": "close-grip push-up",
+   "gif": "videos/0259-x6KpKpq.gif"
+  },
+  {
+   "id": "2398",
+   "name": "close-grip push-up (on knees)",
+   "gif": "videos/2398-v3vLFW0.gif"
+  },
+  {
+   "id": "0260",
+   "name": "cocoons",
+   "gif": "videos/0260-SLKj2pX.gif"
+  },
+  {
+   "id": "1468",
+   "name": "crab twist toe touch",
+   "gif": "videos/1468-xgsGFVM.gif"
+  },
+  {
+   "id": "0262",
+   "name": "cross body crunch",
+   "gif": "videos/0262-rbu5UUb.gif"
+  },
+  {
+   "id": "0267",
+   "name": "crunch (hands overhead)",
+   "gif": "videos/0267-kjJ3VoQ.gif"
+  },
+  {
+   "id": "0271",
+   "name": "crunch (on stability ball)",
+   "gif": "videos/0271-MCUhf1F.gif"
+  },
+  {
+   "id": "0272",
+   "name": "crunch (on stability ball, arms straight)",
+   "gif": "videos/0272-Sn8wxAI.gif"
+  },
+  {
+   "id": "0274",
+   "name": "crunch floor",
+   "gif": "videos/0274-TFqbd8t.gif"
+  },
+  {
+   "id": "3016",
+   "name": "curl-up",
+   "gif": "videos/3016-g2oKspu.gif"
+  },
+  {
+   "id": "3769",
+   "name": "curtsey squat",
+   "gif": "videos/3769-gUjqdei.gif"
+  },
+  {
+   "id": "2331",
+   "name": "cycle cross trainer",
+   "gif": "videos/2331-XSCHmiI.gif"
+  },
+  {
+   "id": "0276",
+   "name": "dead bug",
+   "gif": "videos/0276-iny3m5y.gif"
+  },
+  {
+   "id": "0277",
+   "name": "decline crunch",
+   "gif": "videos/0277-9Ap7miY.gif"
+  },
+  {
+   "id": "0279",
+   "name": "decline push-up",
+   "gif": "videos/0279-i5cEhka.gif"
+  },
+  {
+   "id": "0282",
+   "name": "decline sit-up",
+   "gif": "videos/0282-QLL2gdc.gif"
+  },
+  {
+   "id": "1274",
+   "name": "deep push up",
+   "gif": "videos/1274-vptOQ4N.gif"
+  },
+  {
+   "id": "0283",
+   "name": "diamond push-up",
+   "gif": "videos/0283-soIB2rj.gif"
+  },
+  {
+   "id": "0284",
+   "name": "donkey calf raise",
+   "gif": "videos/0284-u5ESqzH.gif"
+  },
+  {
+   "id": "1275",
+   "name": "drop push up",
+   "gif": "videos/1275-Q497lAE.gif"
+  },
+  {
+   "id": "0285",
+   "name": "dumbbell alternate biceps curl",
+   "gif": "videos/0285-BU15nH4.gif"
+  },
+  {
+   "id": "2403",
+   "name": "dumbbell alternate biceps curl (with arm blaster)",
+   "gif": "videos/2403-CfKsRbG.gif"
+  },
+  {
+   "id": "1646",
+   "name": "dumbbell alternate hammer preacher curl",
+   "gif": "videos/1646-fy7Tgy4.gif"
+  },
+  {
+   "id": "1647",
+   "name": "dumbbell alternate preacher curl",
+   "gif": "videos/1647-NlfIbzq.gif"
+  },
+  {
+   "id": "1648",
+   "name": "dumbbell alternate seated hammer curl",
+   "gif": "videos/1648-6em2Dxj.gif"
+  },
+  {
+   "id": "0286",
+   "name": "dumbbell alternate side press",
+   "gif": "videos/0286-izMnLqz.gif"
+  },
+  {
+   "id": "1649",
+   "name": "dumbbell alternating bicep curl with leg raised on exercise ball",
+   "gif": "videos/1649-Zwiw7XR.gif"
+  },
+  {
+   "id": "1650",
+   "name": "dumbbell alternating seated bicep curl on exercise ball",
+   "gif": "videos/1650-J74XlNf.gif"
+  },
+  {
+   "id": "2137",
+   "name": "dumbbell arnold press",
+   "gif": "videos/2137-Xy4jlWA.gif"
+  },
+  {
+   "id": "0287",
+   "name": "dumbbell arnold press v. 2",
+   "gif": "videos/0287-eOrFCnx.gif"
+  },
+  {
+   "id": "0288",
+   "name": "dumbbell around pullover",
+   "gif": "videos/0288-vi8EhoE.gif"
+  },
+  {
+   "id": "0289",
+   "name": "dumbbell bench press",
+   "gif": "videos/0289-SpYC0Kp.gif"
+  },
+  {
+   "id": "0290",
+   "name": "dumbbell bench seated press",
+   "gif": "videos/0290-3d7wHyd.gif"
+  },
+  {
+   "id": "0291",
+   "name": "dumbbell bench squat",
+   "gif": "videos/0291-mnzcrIB.gif"
+  },
+  {
+   "id": "0293",
+   "name": "dumbbell bent over row",
+   "gif": "videos/0293-BJ0Hz5L.gif"
+  },
+  {
+   "id": "1651",
+   "name": "dumbbell bicep curl lunge with bowling motion",
+   "gif": "videos/1651-1VpF8db.gif"
+  },
+  {
+   "id": "1652",
+   "name": "dumbbell bicep curl on exercise ball with leg raised",
+   "gif": "videos/1652-2NImIAG.gif"
+  },
+  {
+   "id": "1653",
+   "name": "dumbbell bicep curl with stork stance",
+   "gif": "videos/1653-uSkDMYl.gif"
+  },
+  {
+   "id": "0294",
+   "name": "dumbbell biceps curl",
+   "gif": "videos/0294-NbVPDMW.gif"
+  },
+  {
+   "id": "2401",
+   "name": "dumbbell biceps curl (with arm blaster)",
+   "gif": "videos/2401-nlJsbkW.gif"
+  },
+  {
+   "id": "1654",
+   "name": "dumbbell biceps curl reverse",
+   "gif": "videos/1654-nFc4FyV.gif"
+  },
+  {
+   "id": "1655",
+   "name": "dumbbell biceps curl squat",
+   "gif": "videos/1655-niXESDw.gif"
+  },
+  {
+   "id": "1656",
+   "name": "dumbbell biceps curl v sit on bosu ball",
+   "gif": "videos/1656-H1XAdpk.gif"
+  },
+  {
+   "id": "1201",
+   "name": "dumbbell burpee",
+   "gif": "videos/1201-0JtKWum.gif"
+  },
+  {
+   "id": "0295",
+   "name": "dumbbell clean",
+   "gif": "videos/0295-7Hg55JG.gif"
+  },
+  {
+   "id": "1731",
+   "name": "dumbbell close grip press",
+   "gif": "videos/1731-7jGOBF3.gif"
+  },
+  {
+   "id": "0296",
+   "name": "dumbbell close-grip press",
+   "gif": "videos/0296-RxayqAZ.gif"
+  },
+  {
+   "id": "0297",
+   "name": "dumbbell concentration curl",
+   "gif": "videos/0297-gvsWLQw.gif"
+  },
+  {
+   "id": "3635",
+   "name": "dumbbell contralateral forward lunge",
+   "gif": "videos/3635-ecl28tP.gif"
+  },
+  {
+   "id": "0298",
+   "name": "dumbbell cross body hammer curl",
+   "gif": "videos/0298-Qyk5J3p.gif"
+  },
+  {
+   "id": "1657",
+   "name": "dumbbell cross body hammer curl v. 2",
+   "gif": "videos/1657-HDYiZcY.gif"
+  },
+  {
+   "id": "0299",
+   "name": "dumbbell cuban press",
+   "gif": "videos/0299-QfAKy1G.gif"
+  },
+  {
+   "id": "2136",
+   "name": "dumbbell cuban press v. 2",
+   "gif": "videos/2136-BqgCRif.gif"
+  },
+  {
+   "id": "0300",
+   "name": "dumbbell deadlift",
+   "gif": "videos/0300-nUwVh7b.gif"
+  },
+  {
+   "id": "0301",
+   "name": "dumbbell decline bench press",
+   "gif": "videos/0301-DwhEmmE.gif"
+  },
+  {
+   "id": "0302",
+   "name": "dumbbell decline fly",
+   "gif": "videos/0302-xXm4nYq.gif"
+  },
+  {
+   "id": "0303",
+   "name": "dumbbell decline hammer press",
+   "gif": "videos/0303-1qrWgZ2.gif"
+  },
+  {
+   "id": "1276",
+   "name": "dumbbell decline one arm fly",
+   "gif": "videos/1276-NL6YBwN.gif"
+  },
+  {
+   "id": "1617",
+   "name": "dumbbell decline one arm hammer press",
+   "gif": "videos/1617-SHUMp5H.gif"
+  },
+  {
+   "id": "0305",
+   "name": "dumbbell decline shrug",
+   "gif": "videos/0305-cwsAI4G.gif"
+  },
+  {
+   "id": "0304",
+   "name": "dumbbell decline shrug v. 2",
+   "gif": "videos/0304-bRlbdjK.gif"
+  },
+  {
+   "id": "0306",
+   "name": "dumbbell decline triceps extension",
+   "gif": "videos/0306-OTgkHwR.gif"
+  },
+  {
+   "id": "0307",
+   "name": "dumbbell decline twist fly",
+   "gif": "videos/0307-reFHapa.gif"
+  },
+  {
+   "id": "1437",
+   "name": "dumbbell finger curls",
+   "gif": "videos/1437-mtXengz.gif"
+  },
+  {
+   "id": "0308",
+   "name": "dumbbell fly",
+   "gif": "videos/0308-yz9nUhF.gif"
+  },
+  {
+   "id": "1277",
+   "name": "dumbbell fly on exercise ball",
+   "gif": "videos/1277-Lt3iWnf.gif"
+  },
+  {
+   "id": "1732",
+   "name": "dumbbell forward lunge triceps extension",
+   "gif": "videos/1732-XalXcvM.gif"
+  },
+  {
+   "id": "0310",
+   "name": "dumbbell front raise",
+   "gif": "videos/0310-3eGE2JC.gif"
+  },
+  {
+   "id": "0309",
+   "name": "dumbbell front raise v. 2",
+   "gif": "videos/0309-Rr7S3yg.gif"
+  },
+  {
+   "id": "0311",
+   "name": "dumbbell full can lateral raise",
+   "gif": "videos/0311-AQ0mC4Y.gif"
+  },
+  {
+   "id": "1760",
+   "name": "dumbbell goblet squat",
+   "gif": "videos/1760-yn8yg1r.gif"
+  },
+  {
+   "id": "0313",
+   "name": "dumbbell hammer curl",
+   "gif": "videos/0313-slDvUAU.gif"
+  },
+  {
+   "id": "1659",
+   "name": "dumbbell hammer curl on exercise ball",
+   "gif": "videos/1659-fY68AyX.gif"
+  },
+  {
+   "id": "0312",
+   "name": "dumbbell hammer curl v. 2",
+   "gif": "videos/0312-2NpxjC1.gif"
+  },
+  {
+   "id": "2402",
+   "name": "dumbbell hammer curls (with arm blaster)",
+   "gif": "videos/2402-GNhAeJ0.gif"
+  },
+  {
+   "id": "1664",
+   "name": "dumbbell high curl",
+   "gif": "videos/1664-qAmNMJY.gif"
+  },
+  {
+   "id": "3545",
+   "name": "dumbbell incline alternate press",
+   "gif": "videos/3545-TVdivgY.gif"
+  },
+  {
+   "id": "0314",
+   "name": "dumbbell incline bench press",
+   "gif": "videos/0314-ns0SIbU.gif"
+  },
+  {
+   "id": "0315",
+   "name": "dumbbell incline biceps curl",
+   "gif": "videos/0315-F3xgbjF.gif"
+  },
+  {
+   "id": "0316",
+   "name": "dumbbell incline breeding",
+   "gif": "videos/0316-B3Rxp6L.gif"
+  },
+  {
+   "id": "0318",
+   "name": "dumbbell incline curl",
+   "gif": "videos/0318-ae9UoXQ.gif"
+  },
+  {
+   "id": "0317",
+   "name": "dumbbell incline curl v. 2",
+   "gif": "videos/0317-RaflbWD.gif"
+  },
+  {
+   "id": "0319",
+   "name": "dumbbell incline fly",
+   "gif": "videos/0319-ESOd5Pl.gif"
+  },
+  {
+   "id": "1278",
+   "name": "dumbbell incline fly on exercise ball",
+   "gif": "videos/1278-HYe1ZqR.gif"
+  },
+  {
+   "id": "0320",
+   "name": "dumbbell incline hammer curl",
+   "gif": "videos/0320-ByX0WxV.gif"
+  },
+  {
+   "id": "0321",
+   "name": "dumbbell incline hammer press",
+   "gif": "videos/0321-PG1kcIb.gif"
+  },
+  {
+   "id": "1618",
+   "name": "dumbbell incline hammer press on exercise ball",
+   "gif": "videos/1618-wkgnGfb.gif"
+  },
+  {
+   "id": "0322",
+   "name": "dumbbell incline inner biceps curl",
+   "gif": "videos/0322-LCtQPn8.gif"
+  },
+  {
+   "id": "1279",
+   "name": "dumbbell incline one arm fly",
+   "gif": "videos/1279-Gw2HFvW.gif"
+  },
+  {
+   "id": "1280",
+   "name": "dumbbell incline one arm fly on exercise ball",
+   "gif": "videos/1280-LLNh6q5.gif"
+  },
+  {
+   "id": "1619",
+   "name": "dumbbell incline one arm hammer press",
+   "gif": "videos/1619-LL1UiTX.gif"
+  },
+  {
+   "id": "1620",
+   "name": "dumbbell incline one arm hammer press on exercise ball",
+   "gif": "videos/1620-jDnrkar.gif"
+  },
+  {
+   "id": "0323",
+   "name": "dumbbell incline one arm lateral raise",
+   "gif": "videos/0323-aTNKZiC.gif"
+  },
+  {
+   "id": "1281",
+   "name": "dumbbell incline one arm press",
+   "gif": "videos/1281-rDAiRf9.gif"
+  },
+  {
+   "id": "1282",
+   "name": "dumbbell incline one arm press on exercise ball",
+   "gif": "videos/1282-Bg5JKSH.gif"
+  },
+  {
+   "id": "0324",
+   "name": "dumbbell incline palm-in press",
+   "gif": "videos/0324-OVLmUuL.gif"
+  },
+  {
+   "id": "1283",
+   "name": "dumbbell incline press on exercise ball",
+   "gif": "videos/1283-bfiHMpI.gif"
+  },
+  {
+   "id": "0325",
+   "name": "dumbbell incline raise",
+   "gif": "videos/0325-nxW6BkN.gif"
+  },
+  {
+   "id": "0326",
+   "name": "dumbbell incline rear lateral raise",
+   "gif": "videos/0326-vYk8lqw.gif"
+  },
+  {
+   "id": "0327",
+   "name": "dumbbell incline row",
+   "gif": "videos/0327-7vG5o25.gif"
+  },
+  {
+   "id": "0328",
+   "name": "dumbbell incline shoulder raise",
+   "gif": "videos/0328-6e2DcYX.gif"
+  },
+  {
+   "id": "0329",
+   "name": "dumbbell incline shrug",
+   "gif": "videos/0329-JymLInS.gif"
+  },
+  {
+   "id": "3542",
+   "name": "dumbbell incline t-raise",
+   "gif": "videos/3542-jgbvVJ0.gif"
+  },
+  {
+   "id": "0330",
+   "name": "dumbbell incline triceps extension",
+   "gif": "videos/0330-OVIKwsd.gif"
+  },
+  {
+   "id": "0331",
+   "name": "dumbbell incline twisted flyes",
+   "gif": "videos/0331-1PLE8e9.gif"
+  },
+  {
+   "id": "1733",
+   "name": "dumbbell incline two arm extension",
+   "gif": "videos/1733-U7D9Fx3.gif"
+  },
+  {
+   "id": "3541",
+   "name": "dumbbell incline y-raise",
+   "gif": "videos/3541-PbzNu7c.gif"
+  },
+  {
+   "id": "0332",
+   "name": "dumbbell iron cross",
+   "gif": "videos/0332-cALkHHX.gif"
+  },
+  {
+   "id": "0333",
+   "name": "dumbbell kickback",
+   "gif": "videos/0333-W6PxUkg.gif"
+  },
+  {
+   "id": "1734",
+   "name": "dumbbell kickbacks on exercise ball",
+   "gif": "videos/1734-cAvTaSg.gif"
+  },
+  {
+   "id": "1660",
+   "name": "dumbbell kneeling bicep curl exercise ball",
+   "gif": "videos/1660-2JCuFTU.gif"
+  },
+  {
+   "id": "0334",
+   "name": "dumbbell lateral raise",
+   "gif": "videos/0334-DsgkuIt.gif"
+  },
+  {
+   "id": "0335",
+   "name": "dumbbell lateral to front raise",
+   "gif": "videos/0335-xMjBKwn.gif"
+  },
+  {
+   "id": "0336",
+   "name": "dumbbell lunge",
+   "gif": "videos/0336-RRWFUcw.gif"
+  },
+  {
+   "id": "1658",
+   "name": "dumbbell lunge with bicep curl",
+   "gif": "videos/1658-Mz6lLcW.gif"
+  },
+  {
+   "id": "0337",
+   "name": "dumbbell lying extension (across face)",
+   "gif": "videos/0337-L2V5Nan.gif"
+  },
+  {
+   "id": "1729",
+   "name": "dumbbell lying alternate extension",
+   "gif": "videos/1729-NfP83rA.gif"
+  },
+  {
+   "id": "0338",
+   "name": "dumbbell lying elbow press",
+   "gif": "videos/0338-eOCOwIR.gif"
+  },
+  {
+   "id": "0863",
+   "name": "dumbbell lying external shoulder rotation",
+   "gif": "videos/0863-bmBf7LN.gif"
+  },
+  {
+   "id": "0339",
+   "name": "dumbbell lying femoral",
+   "gif": "videos/0339-FkBIE6a.gif"
+  },
+  {
+   "id": "0340",
+   "name": "dumbbell lying hammer press",
+   "gif": "videos/0340-7gdLIXa.gif"
+  },
+  {
+   "id": "2470",
+   "name": "dumbbell lying on floor rear delt raise",
+   "gif": "videos/2470-Ion0XWz.gif"
+  },
+  {
+   "id": "0341",
+   "name": "dumbbell lying one arm deltoid rear",
+   "gif": "videos/0341-gSw59a4.gif"
+  },
+  {
+   "id": "0343",
+   "name": "dumbbell lying one arm press",
+   "gif": "videos/0343-zGSIWQi.gif"
+  },
+  {
+   "id": "0342",
+   "name": "dumbbell lying one arm press v. 2",
+   "gif": "videos/0342-K3dIO25.gif"
+  },
+  {
+   "id": "0344",
+   "name": "dumbbell lying one arm pronated triceps extension",
+   "gif": "videos/0344-wyaqzOS.gif"
+  },
+  {
+   "id": "0345",
+   "name": "dumbbell lying one arm rear lateral raise",
+   "gif": "videos/0345-KwFGiEP.gif"
+  },
+  {
+   "id": "0346",
+   "name": "dumbbell lying one arm supinated triceps extension",
+   "gif": "videos/0346-zZlORz6.gif"
+  },
+  {
+   "id": "0347",
+   "name": "dumbbell lying pronation",
+   "gif": "videos/0347-mym4hJo.gif"
+  },
+  {
+   "id": "2705",
+   "name": "dumbbell lying pronation on floor",
+   "gif": "videos/2705-7RWNjiB.gif"
+  },
+  {
+   "id": "1284",
+   "name": "dumbbell lying pullover on exercise ball",
+   "gif": "videos/1284-iK59oEA.gif"
+  },
+  {
+   "id": "1328",
+   "name": "dumbbell lying rear delt row",
+   "gif": "videos/1328-XUUD0Fs.gif"
+  },
+  {
+   "id": "0348",
+   "name": "dumbbell lying rear lateral raise",
+   "gif": "videos/0348-53Ttlck.gif"
+  },
+  {
+   "id": "1735",
+   "name": "dumbbell lying single extension",
+   "gif": "videos/1735-6MfS53i.gif"
+  },
+  {
+   "id": "0349",
+   "name": "dumbbell lying supination",
+   "gif": "videos/0349-M2Pm3zj.gif"
+  },
+  {
+   "id": "2706",
+   "name": "dumbbell lying supination on floor",
+   "gif": "videos/2706-rEhi2o5.gif"
+  },
+  {
+   "id": "1661",
+   "name": "dumbbell lying supine biceps curl",
+   "gif": "videos/1661-XVzF3iZ.gif"
+  },
+  {
+   "id": "0350",
+   "name": "dumbbell lying supine curl",
+   "gif": "videos/0350-KUaZst7.gif"
+  },
+  {
+   "id": "0351",
+   "name": "dumbbell lying triceps extension",
+   "gif": "videos/0351-mpKZGWz.gif"
+  },
+  {
+   "id": "1662",
+   "name": "dumbbell lying wide curl",
+   "gif": "videos/1662-qm9veZw.gif"
+  },
+  {
+   "id": "0352",
+   "name": "dumbbell neutral grip bench press",
+   "gif": "videos/0352-pP8wP2P.gif"
+  },
+  {
+   "id": "1285",
+   "name": "dumbbell one arm bench fly",
+   "gif": "videos/1285-o5Jsk92.gif"
+  },
+  {
+   "id": "0292",
+   "name": "dumbbell one arm bent-over row",
+   "gif": "videos/0292-C0MA9bC.gif"
+  },
+  {
+   "id": "1286",
+   "name": "dumbbell one arm chest fly on exercise ball",
+   "gif": "videos/1286-Bpkf41o.gif"
+  },
+  {
+   "id": "0353",
+   "name": "dumbbell one arm concentration curl (on stability ball)",
+   "gif": "videos/0353-k5IpyHg.gif"
+  },
+  {
+   "id": "1287",
+   "name": "dumbbell one arm decline chest press",
+   "gif": "videos/1287-REGM1dE.gif"
+  },
+  {
+   "id": "1288",
+   "name": "dumbbell one arm fly on exercise ball",
+   "gif": "videos/1288-Am02iPd.gif"
+  },
+  {
+   "id": "1736",
+   "name": "dumbbell one arm french press on exercise ball",
+   "gif": "videos/1736-ziFKQXP.gif"
+  },
+  {
+   "id": "1663",
+   "name": "dumbbell one arm hammer preacher curl",
+   "gif": "videos/1663-4dF3maG.gif"
+  },
+  {
+   "id": "1621",
+   "name": "dumbbell one arm hammer press on exercise ball",
+   "gif": "videos/1621-VYmYxK5.gif"
+  },
+  {
+   "id": "1289",
+   "name": "dumbbell one arm incline chest press",
+   "gif": "videos/1289-PDaMuyV.gif"
+  },
+  {
+   "id": "0354",
+   "name": "dumbbell one arm kickback",
+   "gif": "videos/0354-bQy2Eni.gif"
+  },
+  {
+   "id": "0355",
+   "name": "dumbbell one arm lateral raise",
+   "gif": "videos/0355-n5cWCsI.gif"
+  },
+  {
+   "id": "0356",
+   "name": "dumbbell one arm lateral raise with support",
+   "gif": "videos/0356-Yg7MJAT.gif"
+  },
+  {
+   "id": "1290",
+   "name": "dumbbell one arm press on exercise ball",
+   "gif": "videos/1290-QZFv5ui.gif"
+  },
+  {
+   "id": "1665",
+   "name": "dumbbell one arm prone curl",
+   "gif": "videos/1665-JWjujiY.gif"
+  },
+  {
+   "id": "1666",
+   "name": "dumbbell one arm prone hammer curl",
+   "gif": "videos/1666-LIGZSTA.gif"
+  },
+  {
+   "id": "1291",
+   "name": "dumbbell one arm pullover on exercise ball",
+   "gif": "videos/1291-bQHPBU3.gif"
+  },
+  {
+   "id": "0358",
+   "name": "dumbbell one arm reverse wrist curl",
+   "gif": "videos/0358-BwSNDGt.gif"
+  },
+  {
+   "id": "0359",
+   "name": "dumbbell one arm reverse fly (with support)",
+   "gif": "videos/0359-e25F58f.gif"
+  },
+  {
+   "id": "1622",
+   "name": "dumbbell one arm reverse grip press",
+   "gif": "videos/1622-Ze7MoIb.gif"
+  },
+  {
+   "id": "1414",
+   "name": "dumbbell one arm reverse preacher curl",
+   "gif": "videos/1414-bWxq4op.gif"
+  },
+  {
+   "id": "1667",
+   "name": "dumbbell one arm reverse spider curl",
+   "gif": "videos/1667-VdLZ3nB.gif"
+  },
+  {
+   "id": "1668",
+   "name": "dumbbell one arm seated bicep curl on exercise ball",
+   "gif": "videos/1668-s999Hdo.gif"
+  },
+  {
+   "id": "1669",
+   "name": "dumbbell one arm seated hammer curl",
+   "gif": "videos/1669-jK2hZ6n.gif"
+  },
+  {
+   "id": "1415",
+   "name": "dumbbell one arm seated neutral wrist curl",
+   "gif": "videos/1415-YtaCTYl.gif"
+  },
+  {
+   "id": "0361",
+   "name": "dumbbell one arm shoulder press",
+   "gif": "videos/0361-84RyJf8.gif"
+  },
+  {
+   "id": "0360",
+   "name": "dumbbell one arm shoulder press v. 2",
+   "gif": "videos/0360-1TkiAFK.gif"
+  },
+  {
+   "id": "3888",
+   "name": "dumbbell one arm snatch",
+   "gif": "videos/3888-6pTkI99.gif"
+  },
+  {
+   "id": "1670",
+   "name": "dumbbell one arm standing curl",
+   "gif": "videos/1670-ffQsyBj.gif"
+  },
+  {
+   "id": "1671",
+   "name": "dumbbell one arm standing hammer curl",
+   "gif": "videos/1671-2sQGZ5b.gif"
+  },
+  {
+   "id": "0362",
+   "name": "dumbbell one arm triceps extension (on bench)",
+   "gif": "videos/0362-nAuHPcD.gif"
+  },
+  {
+   "id": "0363",
+   "name": "dumbbell one arm upright row",
+   "gif": "videos/0363-6cKQC5E.gif"
+  },
+  {
+   "id": "0364",
+   "name": "dumbbell one arm wrist curl",
+   "gif": "videos/0364-q8aHNoF.gif"
+  },
+  {
+   "id": "1672",
+   "name": "dumbbell one arm zottman preacher curl",
+   "gif": "videos/1672-sxY5Biu.gif"
+  },
+  {
+   "id": "1292",
+   "name": "dumbbell one leg fly on exercise ball",
+   "gif": "videos/1292-pH2x2jj.gif"
+  },
+  {
+   "id": "0365",
+   "name": "dumbbell over bench neutral wrist curl",
+   "gif": "videos/0365-BKa8dmT.gif"
+  },
+  {
+   "id": "0366",
+   "name": "dumbbell over bench one arm neutral wrist curl",
+   "gif": "videos/0366-IvV6C9M.gif"
+  },
+  {
+   "id": "1441",
+   "name": "dumbbell over bench one arm reverse wrist curl",
+   "gif": "videos/1441-4Jc36XM.gif"
+  },
+  {
+   "id": "0367",
+   "name": "dumbbell over bench one arm wrist curl",
+   "gif": "videos/0367-KI1DjNN.gif"
+  },
+  {
+   "id": "0368",
+   "name": "dumbbell over bench revers wrist curl",
+   "gif": "videos/0368-3tAXPQ6.gif"
+  },
+  {
+   "id": "0369",
+   "name": "dumbbell over bench wrist curl",
+   "gif": "videos/0369-D1xYJAU.gif"
+  },
+  {
+   "id": "1329",
+   "name": "dumbbell palm rotational bent over row",
+   "gif": "videos/1329-wt6rwjk.gif"
+  },
+  {
+   "id": "1623",
+   "name": "dumbbell palms in incline bench press",
+   "gif": "videos/1623-8eqjhOl.gif"
+  },
+  {
+   "id": "0370",
+   "name": "dumbbell peacher hammer curl",
+   "gif": "videos/0370-F1KxjBa.gif"
+  },
+  {
+   "id": "0371",
+   "name": "dumbbell plyo squat",
+   "gif": "videos/0371-S4pwGlc.gif"
+  },
+  {
+   "id": "0372",
+   "name": "dumbbell preacher curl",
+   "gif": "videos/0372-jivWf8n.gif"
+  },
+  {
+   "id": "1673",
+   "name": "dumbbell preacher curl over exercise ball",
+   "gif": "videos/1673-hwygydB.gif"
+  },
+  {
+   "id": "1293",
+   "name": "dumbbell press on exercise ball",
+   "gif": "videos/1293-O8o7q4d.gif"
+  },
+  {
+   "id": "0373",
+   "name": "dumbbell pronate-grip triceps extension",
+   "gif": "videos/0373-bpJL2Qs.gif"
+  },
+  {
+   "id": "0374",
+   "name": "dumbbell prone incline curl",
+   "gif": "videos/0374-mwpPcr1.gif"
+  },
+  {
+   "id": "1674",
+   "name": "dumbbell prone incline hammer curl",
+   "gif": "videos/1674-cWemPG8.gif"
+  },
+  {
+   "id": "0375",
+   "name": "dumbbell pullover",
+   "gif": "videos/0375-9XjtHvS.gif"
+  },
+  {
+   "id": "1294",
+   "name": "dumbbell pullover hip extension on exercise ball",
+   "gif": "videos/1294-lI7easp.gif"
+  },
+  {
+   "id": "1295",
+   "name": "dumbbell pullover on exercise ball",
+   "gif": "videos/1295-FSD6PGL.gif"
+  },
+  {
+   "id": "1700",
+   "name": "dumbbell push press",
+   "gif": "videos/1700-FS63wTN.gif"
+  },
+  {
+   "id": "0376",
+   "name": "dumbbell raise",
+   "gif": "videos/0376-c9MnDRp.gif"
+  },
+  {
+   "id": "2292",
+   "name": "dumbbell rear delt raise",
+   "gif": "videos/2292-mu5Guxt.gif"
+  },
+  {
+   "id": "0377",
+   "name": "dumbbell rear delt row_shoulder",
+   "gif": "videos/0377-EKXOMEh.gif"
+  },
+  {
+   "id": "0378",
+   "name": "dumbbell rear fly",
+   "gif": "videos/0378-8DiFDVA.gif"
+  },
+  {
+   "id": "0380",
+   "name": "dumbbell rear lateral raise",
+   "gif": "videos/0380-v1qBec9.gif"
+  },
+  {
+   "id": "0379",
+   "name": "dumbbell rear lateral raise (support head)",
+   "gif": "videos/0379-UzkLrem.gif"
+  },
+  {
+   "id": "0381",
+   "name": "dumbbell rear lunge",
+   "gif": "videos/0381-SSsBDwB.gif"
+  },
+  {
+   "id": "0382",
+   "name": "dumbbell revers grip biceps curl",
+   "gif": "videos/0382-e4ojVhP.gif"
+  },
+  {
+   "id": "1624",
+   "name": "dumbbell reverse bench press",
+   "gif": "videos/1624-UIbGx6H.gif"
+  },
+  {
+   "id": "0383",
+   "name": "dumbbell reverse fly",
+   "gif": "videos/0383-EAs3xL9.gif"
+  },
+  {
+   "id": "1330",
+   "name": "dumbbell reverse grip incline bench one arm row",
+   "gif": "videos/1330-ZIViNh1.gif"
+  },
+  {
+   "id": "1331",
+   "name": "dumbbell reverse grip incline bench two arm row",
+   "gif": "videos/1331-9pQSkH8.gif"
+  },
+  {
+   "id": "2327",
+   "name": "dumbbell reverse grip row (female)",
+   "gif": "videos/2327-Nh3mvOO.gif"
+  },
+  {
+   "id": "0384",
+   "name": "dumbbell reverse preacher curl",
+   "gif": "videos/0384-O8Aq69u.gif"
+  },
+  {
+   "id": "1675",
+   "name": "dumbbell reverse spider curl",
+   "gif": "videos/1675-6sMAmNv.gif"
+  },
+  {
+   "id": "0385",
+   "name": "dumbbell reverse wrist curl",
+   "gif": "videos/0385-BLCvwr2.gif"
+  },
+  {
+   "id": "1459",
+   "name": "dumbbell romanian deadlift",
+   "gif": "videos/1459-rR0LJzx.gif"
+  },
+  {
+   "id": "0386",
+   "name": "dumbbell rotation reverse fly",
+   "gif": "videos/0386-prbWx1D.gif"
+  },
+  {
+   "id": "2397",
+   "name": "dumbbell scott press",
+   "gif": "videos/2397-5vfAI0I.gif"
+  },
+  {
+   "id": "0387",
+   "name": "dumbbell seated alternate front raise",
+   "gif": "videos/0387-gH5fRsC.gif"
+  },
+  {
+   "id": "1676",
+   "name": "dumbbell seated alternate hammer curl on exercise ball",
+   "gif": "videos/1676-QLRmNeT.gif"
+  },
+  {
+   "id": "0388",
+   "name": "dumbbell seated alternate press",
+   "gif": "videos/0388-QT5Q0nK.gif"
+  },
+  {
+   "id": "3546",
+   "name": "dumbbell seated alternate shoulder",
+   "gif": "videos/3546-q7qkONO.gif"
+  },
+  {
+   "id": "0389",
+   "name": "dumbbell seated bench extension",
+   "gif": "videos/0389-JhYSVwT.gif"
+  },
+  {
+   "id": "2317",
+   "name": "dumbbell seated bent arm lateral raise",
+   "gif": "videos/2317-JzQbv7J.gif"
+  },
+  {
+   "id": "1730",
+   "name": "dumbbell seated bent over alternate kickback",
+   "gif": "videos/1730-x0lwvfq.gif"
+  },
+  {
+   "id": "1737",
+   "name": "dumbbell seated bent over triceps extension",
+   "gif": "videos/1737-4ievMJ9.gif"
+  },
+  {
+   "id": "1677",
+   "name": "dumbbell seated bicep curl",
+   "gif": "videos/1677-xiA6lRr.gif"
+  },
+  {
+   "id": "0390",
+   "name": "dumbbell seated biceps curl (on stability ball)",
+   "gif": "videos/0390-WgJnBH5.gif"
+  },
+  {
+   "id": "3547",
+   "name": "dumbbell seated biceps curl to shoulder press",
+   "gif": "videos/3547-OeL23VY.gif"
+  },
+  {
+   "id": "1379",
+   "name": "dumbbell seated calf raise",
+   "gif": "videos/1379-r29jP7S.gif"
+  },
+  {
+   "id": "0391",
+   "name": "dumbbell seated curl",
+   "gif": "videos/0391-TiaZTxx.gif"
+  },
+  {
+   "id": "0392",
+   "name": "dumbbell seated front raise",
+   "gif": "videos/0392-Ys97II0.gif"
+  },
+  {
+   "id": "1678",
+   "name": "dumbbell seated hammer curl",
+   "gif": "videos/1678-IGtBdNT.gif"
+  },
+  {
+   "id": "0393",
+   "name": "dumbbell seated inner biceps curl",
+   "gif": "videos/0393-KXyoEtA.gif"
+  },
+  {
+   "id": "0394",
+   "name": "dumbbell seated kickback",
+   "gif": "videos/0394-en550rk.gif"
+  },
+  {
+   "id": "0396",
+   "name": "dumbbell seated lateral raise",
+   "gif": "videos/0396-hxyTtWj.gif"
+  },
+  {
+   "id": "0395",
+   "name": "dumbbell seated lateral raise v. 2",
+   "gif": "videos/0395-hrrS0Ed.gif"
+  },
+  {
+   "id": "0397",
+   "name": "dumbbell seated neutral wrist curl",
+   "gif": "videos/0397-uJmK7Z1.gif"
+  },
+  {
+   "id": "1679",
+   "name": "dumbbell seated one arm bicep curl on exercise ball with leg raised",
+   "gif": "videos/1679-84sESNy.gif"
+  },
+  {
+   "id": "0398",
+   "name": "dumbbell seated one arm kickback",
+   "gif": "videos/0398-VQ3sNCn.gif"
+  },
+  {
+   "id": "0399",
+   "name": "dumbbell seated one arm rotate",
+   "gif": "videos/0399-7f2jsqP.gif"
+  },
+  {
+   "id": "0400",
+   "name": "dumbbell seated one leg calf raise",
+   "gif": "videos/0400-Ia7tumC.gif"
+  },
+  {
+   "id": "1380",
+   "name": "dumbbell seated one leg calf raise - hammer grip",
+   "gif": "videos/1380-FxhcxUW.gif"
+  },
+  {
+   "id": "1381",
+   "name": "dumbbell seated one leg calf raise - palm up",
+   "gif": "videos/1381-VW88JNd.gif"
+  },
+  {
+   "id": "0401",
+   "name": "dumbbell seated palms up wrist curl",
+   "gif": "videos/0401-2dImyQ8.gif"
+  },
+  {
+   "id": "0402",
+   "name": "dumbbell seated preacher curl",
+   "gif": "videos/0402-7D5bgLT.gif"
+  },
+  {
+   "id": "0403",
+   "name": "dumbbell seated revers grip concentration curl",
+   "gif": "videos/0403-lyKCLmK.gif"
+  },
+  {
+   "id": "1738",
+   "name": "dumbbell seated reverse grip one arm overhead tricep extension",
+   "gif": "videos/1738-5fKX7wi.gif"
+  },
+  {
+   "id": "0405",
+   "name": "dumbbell seated shoulder press",
+   "gif": "videos/0405-znQUdHY.gif"
+  },
+  {
+   "id": "0404",
+   "name": "dumbbell seated shoulder press (parallel grip)",
+   "gif": "videos/0404-f1jf47L.gif"
+  },
+  {
+   "id": "2188",
+   "name": "dumbbell seated triceps extension",
+   "gif": "videos/2188-kont8Ut.gif"
+  },
+  {
+   "id": "0406",
+   "name": "dumbbell shrug",
+   "gif": "videos/0406-NJzBsGJ.gif"
+  },
+  {
+   "id": "0407",
+   "name": "dumbbell side bend",
+   "gif": "videos/0407-IpONWYv.gif"
+  },
+  {
+   "id": "0408",
+   "name": "dumbbell side lying one hand raise",
+   "gif": "videos/0408-fTlkJop.gif"
+  },
+  {
+   "id": "3664",
+   "name": "dumbbell side plank with rear fly",
+   "gif": "videos/3664-X6ytgYZ.gif"
+  },
+  {
+   "id": "3548",
+   "name": "dumbbell single arm overhead carry",
+   "gif": "videos/3548-mWBtgmb.gif"
+  },
+  {
+   "id": "0409",
+   "name": "dumbbell single leg calf raise",
+   "gif": "videos/0409-1kB3Wmk.gif"
+  },
+  {
+   "id": "1757",
+   "name": "dumbbell single leg deadlift",
+   "gif": "videos/1757-gKozT8X.gif"
+  },
+  {
+   "id": "2805",
+   "name": "dumbbell single leg deadlift with stepbox support",
+   "gif": "videos/2805-daBmy1Y.gif"
+  },
+  {
+   "id": "0410",
+   "name": "dumbbell single leg split squat",
+   "gif": "videos/0410-qx4fgX7.gif"
+  },
+  {
+   "id": "0411",
+   "name": "dumbbell single leg squat",
+   "gif": "videos/0411-H6ybluc.gif"
+  },
+  {
+   "id": "0413",
+   "name": "dumbbell squat",
+   "gif": "videos/0413-HsvHqgf.gif"
+  },
+  {
+   "id": "3560",
+   "name": "dumbbell standing alternate hammer curl and press",
+   "gif": "videos/3560-LeaZOIz.gif"
+  },
+  {
+   "id": "0414",
+   "name": "dumbbell standing alternate overhead press",
+   "gif": "videos/0414-bBi35y3.gif"
+  },
+  {
+   "id": "0415",
+   "name": "dumbbell standing alternate raise",
+   "gif": "videos/0415-SxHteRW.gif"
+  },
+  {
+   "id": "1739",
+   "name": "dumbbell standing alternating tricep kickback",
+   "gif": "videos/1739-Gi2BXfK.gif"
+  },
+  {
+   "id": "2143",
+   "name": "dumbbell standing around world",
+   "gif": "videos/2143-RSOsp5d.gif"
+  },
+  {
+   "id": "1740",
+   "name": "dumbbell standing bent over one arm triceps extension",
+   "gif": "videos/1740-CJwa0vD.gif"
+  },
+  {
+   "id": "1741",
+   "name": "dumbbell standing bent over two arm triceps extension",
+   "gif": "videos/1741-3T12T87.gif"
+  },
+  {
+   "id": "0416",
+   "name": "dumbbell standing biceps curl",
+   "gif": "videos/0416-3s4NnTh.gif"
+  },
+  {
+   "id": "0417",
+   "name": "dumbbell standing calf raise",
+   "gif": "videos/0417-dPmaUaU.gif"
+  },
+  {
+   "id": "0418",
+   "name": "dumbbell standing concentration curl",
+   "gif": "videos/0418-7inpWch.gif"
+  },
+  {
+   "id": "0419",
+   "name": "dumbbell standing front raise above head",
+   "gif": "videos/0419-laVRfDf.gif"
+  },
+  {
+   "id": "2321",
+   "name": "dumbbell standing inner biceps curl v. 2",
+   "gif": "videos/2321-vKilzz3.gif"
+  },
+  {
+   "id": "0420",
+   "name": "dumbbell standing kickback",
+   "gif": "videos/0420-UmpPAAe.gif"
+  },
+  {
+   "id": "0421",
+   "name": "dumbbell standing one arm concentration curl",
+   "gif": "videos/0421-8fgqP5a.gif"
+  },
+  {
+   "id": "0422",
+   "name": "dumbbell standing one arm curl (over incline bench)",
+   "gif": "videos/0422-BIb1tGo.gif"
+  },
+  {
+   "id": "1680",
+   "name": "dumbbell standing one arm curl over incline bench",
+   "gif": "videos/1680-EmlJR2y.gif"
+  },
+  {
+   "id": "0423",
+   "name": "dumbbell standing one arm extension",
+   "gif": "videos/0423-BCUR88E.gif"
+  },
+  {
+   "id": "0424",
+   "name": "dumbbell standing one arm palm in press",
+   "gif": "videos/0424-ocYc6Db.gif"
+  },
+  {
+   "id": "0425",
+   "name": "dumbbell standing one arm reverse curl",
+   "gif": "videos/0425-DU5Kkj2.gif"
+  },
+  {
+   "id": "0426",
+   "name": "dumbbell standing overhead press",
+   "gif": "videos/0426-A6wtbuL.gif"
+  },
+  {
+   "id": "0427",
+   "name": "dumbbell standing palms in press",
+   "gif": "videos/0427-UilDHSs.gif"
+  },
+  {
+   "id": "0428",
+   "name": "dumbbell standing preacher curl",
+   "gif": "videos/0428-hq2hyDH.gif"
+  },
+  {
+   "id": "0429",
+   "name": "dumbbell standing reverse curl",
+   "gif": "videos/0429-0IgNjSM.gif"
+  },
+  {
+   "id": "0430",
+   "name": "dumbbell standing triceps extension",
+   "gif": "videos/0430-PdmaD0N.gif"
+  },
+  {
+   "id": "2293",
+   "name": "dumbbell standing zottman preacher curl",
+   "gif": "videos/2293-P2nRiUa.gif"
+  },
+  {
+   "id": "1684",
+   "name": "dumbbell step up single leg balance with bicep curl",
+   "gif": "videos/1684-76vfTdU.gif"
+  },
+  {
+   "id": "0431",
+   "name": "dumbbell step-up",
+   "gif": "videos/0431-aXtJhlg.gif"
+  },
+  {
+   "id": "2796",
+   "name": "dumbbell step-up lunge",
+   "gif": "videos/2796-gFyFj9z.gif"
+  },
+  {
+   "id": "2812",
+   "name": "dumbbell step-up split squat",
+   "gif": "videos/2812-QjE2DcA.gif"
+  },
+  {
+   "id": "0432",
+   "name": "dumbbell stiff leg deadlift",
+   "gif": "videos/0432-5eLRITT.gif"
+  },
+  {
+   "id": "0433",
+   "name": "dumbbell straight arm pullover",
+   "gif": "videos/0433-i8BdLTK.gif"
+  },
+  {
+   "id": "0434",
+   "name": "dumbbell straight leg deadlift",
+   "gif": "videos/0434-oom75KC.gif"
+  },
+  {
+   "id": "2808",
+   "name": "dumbbell sumo pull through",
+   "gif": "videos/2808-BmrwWzo.gif"
+  },
+  {
+   "id": "2803",
+   "name": "dumbbell supported squat",
+   "gif": "videos/2803-r5DgrW9.gif"
+  },
+  {
+   "id": "0436",
+   "name": "dumbbell tate press",
+   "gif": "videos/0436-s5PdDyY.gif"
+  },
+  {
+   "id": "1742",
+   "name": "dumbbell tricep kickback with stork stance",
+   "gif": "videos/1742-wOLmCXc.gif"
+  },
+  {
+   "id": "1743",
+   "name": "dumbbell twisting bench press",
+   "gif": "videos/1743-z6TAHoT.gif"
+  },
+  {
+   "id": "0437",
+   "name": "dumbbell upright row",
+   "gif": "videos/0437-ainizkb.gif"
+  },
+  {
+   "id": "1765",
+   "name": "dumbbell upright row (back pov)",
+   "gif": "videos/1765-Iptlv6x.gif"
+  },
+  {
+   "id": "0864",
+   "name": "dumbbell upright shoulder external rotation",
+   "gif": "videos/0864-x306lCW.gif"
+  },
+  {
+   "id": "5201",
+   "name": "dumbbell waiter biceps curl",
+   "gif": "videos/5201-KOpzGBL.gif"
+  },
+  {
+   "id": "0438",
+   "name": "dumbbell w-press",
+   "gif": "videos/0438-vmwLyCg.gif"
+  },
+  {
+   "id": "0439",
+   "name": "dumbbell zottman curl",
+   "gif": "videos/0439-kXaIn5A.gif"
+  },
+  {
+   "id": "2294",
+   "name": "dumbbell zottman preacher curl",
+   "gif": "videos/2294-y5U5B9Y.gif"
+  },
+  {
+   "id": "2189",
+   "name": "dumbbells seated triceps extension",
+   "gif": "videos/2189-FQXdXzY.gif"
+  },
+  {
+   "id": "1167",
+   "name": "dynamic chest stretch (male)",
+   "gif": "videos/1167-3uj0Ozg.gif"
+  },
+  {
+   "id": "3287",
+   "name": "elbow dips",
+   "gif": "videos/3287-LkoAWAE.gif"
+  },
+  {
+   "id": "1772",
+   "name": "elbow lift - reverse push-up",
+   "gif": "videos/1772-wbUYILZ.gif"
+  },
+  {
+   "id": "0443",
+   "name": "elbow-to-knee",
+   "gif": "videos/0443-jvp6DiD.gif"
+  },
+  {
+   "id": "3292",
+   "name": "elevator",
+   "gif": "videos/3292-zYmNaoY.gif"
+  },
+  {
+   "id": "1332",
+   "name": "exercise ball alternating arm ups",
+   "gif": "videos/1332-EyLrNC2.gif"
+  },
+  {
+   "id": "1333",
+   "name": "exercise ball back extension with arms extended",
+   "gif": "videos/1333-PERjVm8.gif"
+  },
+  {
+   "id": "1334",
+   "name": "exercise ball back extension with hands behind head",
+   "gif": "videos/1334-o1HGDSq.gif"
+  },
+  {
+   "id": "1335",
+   "name": "exercise ball back extension with knees off ground",
+   "gif": "videos/1335-WME869U.gif"
+  },
+  {
+   "id": "1336",
+   "name": "exercise ball back extension with rotation",
+   "gif": "videos/1336-WVD66ff.gif"
+  },
+  {
+   "id": "1744",
+   "name": "exercise ball dip",
+   "gif": "videos/1744-kprile3.gif"
+  },
+  {
+   "id": "1559",
+   "name": "exercise ball hip flexor stretch",
+   "gif": "videos/1559-2LQkNPW.gif"
+  },
+  {
+   "id": "1338",
+   "name": "exercise ball hug",
+   "gif": "videos/1338-d7z1Y7V.gif"
+  },
+  {
+   "id": "1339",
+   "name": "exercise ball lat stretch",
+   "gif": "videos/1339-sM84pE4.gif"
+  },
+  {
+   "id": "1341",
+   "name": "exercise ball lower back stretch (pyramid)",
+   "gif": "videos/1341-yU7w7CA.gif"
+  },
+  {
+   "id": "1342",
+   "name": "exercise ball lying side lat stretch",
+   "gif": "videos/1342-rTbyBYV.gif"
+  },
+  {
+   "id": "1382",
+   "name": "exercise ball on the wall calf raise",
+   "gif": "videos/1382-xo6sENf.gif"
+  },
+  {
+   "id": "3241",
+   "name": "exercise ball on the wall calf raise (tennis ball between ankles)",
+   "gif": "videos/3241-FY3UdNT.gif"
+  },
+  {
+   "id": "3240",
+   "name": "exercise ball on the wall calf raise (tennis ball between knees)",
+   "gif": "videos/3240-j74M6Zn.gif"
+  },
+  {
+   "id": "1416",
+   "name": "exercise ball one leg prone lower body rotation",
+   "gif": "videos/1416-M72BExt.gif"
+  },
+  {
+   "id": "1417",
+   "name": "exercise ball one legged diagonal kick hamstring curl",
+   "gif": "videos/1417-GOJKFfO.gif"
+  },
+  {
+   "id": "1296",
+   "name": "exercise ball pike push up",
+   "gif": "videos/1296-sVvXT5J.gif"
+  },
+  {
+   "id": "1343",
+   "name": "exercise ball prone leg raise",
+   "gif": "videos/1343-lCKm4Rs.gif"
+  },
+  {
+   "id": "1560",
+   "name": "exercise ball seated hamstring stretch",
+   "gif": "videos/1560-yRYyfdA.gif"
+  },
+  {
+   "id": "1745",
+   "name": "exercise ball seated triceps stretch",
+   "gif": "videos/1745-7ePTw4B.gif"
+  },
+  {
+   "id": "1746",
+   "name": "exercise ball supine triceps extension",
+   "gif": "videos/1746-Gm2Uv1z.gif"
+  },
+  {
+   "id": "1747",
+   "name": "ez bar french press on exercise ball",
+   "gif": "videos/1747-CFN9P8G.gif"
+  },
+  {
+   "id": "3010",
+   "name": "ez bar lying bent arms pullover",
+   "gif": "videos/3010-nDK1HJ0.gif"
+  },
+  {
+   "id": "1748",
+   "name": "ez bar lying close grip triceps extension behind head",
+   "gif": "videos/1748-6CKUx7o.gif"
+  },
+  {
+   "id": "1344",
+   "name": "ez bar reverse grip bent over row",
+   "gif": "videos/1344-G8dXpNG.gif"
+  },
+  {
+   "id": "1682",
+   "name": "ez bar seated close grip concentration curl",
+   "gif": "videos/1682-Dsfz0Id.gif"
+  },
+  {
+   "id": "1749",
+   "name": "ez bar standing french press",
+   "gif": "videos/1749-1cTf2Ux.gif"
+  },
+  {
+   "id": "0445",
+   "name": "ez barbell anti gravity press",
+   "gif": "videos/0445-fprd84i.gif"
+  },
+  {
+   "id": "1627",
+   "name": "ez barbell close grip preacher curl",
+   "gif": "videos/1627-hacCyUv.gif"
+  },
+  {
+   "id": "0446",
+   "name": "ez barbell close-grip curl",
+   "gif": "videos/0446-V4ryaZa.gif"
+  },
+  {
+   "id": "0447",
+   "name": "ez barbell curl",
+   "gif": "videos/0447-6TG6x2w.gif"
+  },
+  {
+   "id": "0448",
+   "name": "ez barbell decline close grip face press",
+   "gif": "videos/0448-DgZQ11d.gif"
+  },
+  {
+   "id": "2186",
+   "name": "ez barbell decline triceps extension",
+   "gif": "videos/2186-CQHoDm0.gif"
+  },
+  {
+   "id": "0449",
+   "name": "ez barbell incline triceps extension",
+   "gif": "videos/0449-KyLtiLT.gif"
+  },
+  {
+   "id": "0450",
+   "name": "ez barbell jm bench press",
+   "gif": "videos/0450-hnOYgH3.gif"
+  },
+  {
+   "id": "0451",
+   "name": "ez barbell reverse grip curl",
+   "gif": "videos/0451-Y5X65IB.gif"
+  },
+  {
+   "id": "0452",
+   "name": "ez barbell reverse grip preacher curl",
+   "gif": "videos/0452-vBNyir7.gif"
+  },
+  {
+   "id": "1458",
+   "name": "ez barbell seated curls",
+   "gif": "videos/1458-jtFKbt5.gif"
+  },
+  {
+   "id": "0453",
+   "name": "ez barbell seated triceps extension",
+   "gif": "videos/0453-iaapw0g.gif"
+  },
+  {
+   "id": "0454",
+   "name": "ez barbell spider curl",
+   "gif": "videos/0454-Ye5Qxb0.gif"
+  },
+  {
+   "id": "1628",
+   "name": "ez barbell spider curl",
+   "gif": "videos/1628-2kattbR.gif"
+  },
+  {
+   "id": "2404",
+   "name": "ez-bar biceps curl (with arm blaster)",
+   "gif": "videos/2404-tJ5nYqo.gif"
+  },
+  {
+   "id": "2432",
+   "name": "ez-bar close-grip bench press",
+   "gif": "videos/2432-da4cXST.gif"
+  },
+  {
+   "id": "2741",
+   "name": "ez-barbell standing wide grip biceps curl",
+   "gif": "videos/2741-OVTZ65k.gif"
+  },
+  {
+   "id": "2133",
+   "name": "farmers walk",
+   "gif": "videos/2133-qPEzJjA.gif"
+  },
+  {
+   "id": "0455",
+   "name": "finger curls",
+   "gif": "videos/0455-awG04cF.gif"
+  },
+  {
+   "id": "3303",
+   "name": "flag",
+   "gif": "videos/3303-pQ0Mx1Z.gif"
+  },
+  {
+   "id": "0456",
+   "name": "flexion leg sit up (bent knee)",
+   "gif": "videos/0456-AR0ig3o.gif"
+  },
+  {
+   "id": "0457",
+   "name": "flexion leg sit up (straight arm)",
+   "gif": "videos/0457-KZn52RC.gif"
+  },
+  {
+   "id": "0458",
+   "name": "floor fly (with barbell)",
+   "gif": "videos/0458-neonEDL.gif"
+  },
+  {
+   "id": "0459",
+   "name": "flutter kicks",
+   "gif": "videos/0459-UVo2Qs2.gif"
+  },
+  {
+   "id": "1472",
+   "name": "forward jump",
+   "gif": "videos/1472-uZKq7lo.gif"
+  },
+  {
+   "id": "3470",
+   "name": "forward lunge (male)",
+   "gif": "videos/3470-kMzUs9Y.gif"
+  },
+  {
+   "id": "3194",
+   "name": "frankenstein squat",
+   "gif": "videos/3194-bdWcbaU.gif"
+  },
+  {
+   "id": "2429",
+   "name": "frog crunch",
+   "gif": "videos/2429-FFRP97T.gif"
+  },
+  {
+   "id": "3301",
+   "name": "frog planche",
+   "gif": "videos/3301-rQhGcin.gif"
+  },
+  {
+   "id": "3296",
+   "name": "front lever",
+   "gif": "videos/3296-PkCN2lv.gif"
+  },
+  {
+   "id": "3295",
+   "name": "front lever reps",
+   "gif": "videos/3295-hbY9wqG.gif"
+  },
+  {
+   "id": "0464",
+   "name": "front plank with twist",
+   "gif": "videos/0464-CosupLu.gif"
+  },
+  {
+   "id": "3315",
+   "name": "full maltese",
+   "gif": "videos/3315-YRaCa5Y.gif"
+  },
+  {
+   "id": "3299",
+   "name": "full planche",
+   "gif": "videos/3299-YZ4961r.gif"
+  },
+  {
+   "id": "3327",
+   "name": "full planche push-up",
+   "gif": "videos/3327-gw9PqGk.gif"
+  },
+  {
+   "id": "0466",
+   "name": "gironda sternum chin",
+   "gif": "videos/0466-IL0JUxR.gif"
+  },
+  {
+   "id": "3561",
+   "name": "glute bridge march",
+   "gif": "videos/3561-GibBPPg.gif"
+  },
+  {
+   "id": "3523",
+   "name": "glute bridge two legs on bench (male)",
+   "gif": "videos/3523-aWedzZX.gif"
+  },
+  {
+   "id": "3193",
+   "name": "glute-ham raise",
+   "gif": "videos/3193-Vvwjz6N.gif"
+  },
+  {
+   "id": "0467",
+   "name": "gorilla chin",
+   "gif": "videos/0467-bmwlYvD.gif"
+  },
+  {
+   "id": "0469",
+   "name": "groin crunch",
+   "gif": "videos/0469-mWppALS.gif"
+  },
+  {
+   "id": "1383",
+   "name": "hack calf raise",
+   "gif": "videos/1383-2ORFMoR.gif"
+  },
+  {
+   "id": "1384",
+   "name": "hack one leg calf raise",
+   "gif": "videos/1384-AxFoqAD.gif"
+  },
+  {
+   "id": "3221",
+   "name": "half knee bends (male)",
+   "gif": "videos/3221-ia6kIIl.gif"
+  },
+  {
+   "id": "3202",
+   "name": "half sit-up (male)",
+   "gif": "videos/3202-iQ241UP.gif"
+  },
+  {
+   "id": "1511",
+   "name": "hamstring stretch",
+   "gif": "videos/1511-99rWm7w.gif"
+  },
+  {
+   "id": "2139",
+   "name": "hands bike",
+   "gif": "videos/2139-pAIWRGu.gif"
+  },
+  {
+   "id": "3218",
+   "name": "hands clasped circular toe touch (male)",
+   "gif": "videos/3218-B5xca8s.gif"
+  },
+  {
+   "id": "3215",
+   "name": "hands reversed clasped circular toe touch (male)",
+   "gif": "videos/3215-yq3GAJX.gif"
+  },
+  {
+   "id": "3302",
+   "name": "handstand",
+   "gif": "videos/3302-XooAdhl.gif"
+  },
+  {
+   "id": "0471",
+   "name": "handstand push-up",
+   "gif": "videos/0471-rQxwMxO.gif"
+  },
+  {
+   "id": "1764",
+   "name": "hanging leg hip raise",
+   "gif": "videos/1764-VEcJRo2.gif"
+  },
+  {
+   "id": "0472",
+   "name": "hanging leg raise",
+   "gif": "videos/0472-I3tsCnC.gif"
+  },
+  {
+   "id": "1761",
+   "name": "hanging oblique knee raise",
+   "gif": "videos/1761-BaE7O6U.gif"
+  },
+  {
+   "id": "0473",
+   "name": "hanging pike",
+   "gif": "videos/0473-nuBF9MO.gif"
+  },
+  {
+   "id": "0474",
+   "name": "hanging straight leg hip raise",
+   "gif": "videos/0474-pj0X0tF.gif"
+  },
+  {
+   "id": "0475",
+   "name": "hanging straight leg raise",
+   "gif": "videos/0475-4Ml7QFO.gif"
+  },
+  {
+   "id": "0476",
+   "name": "hanging straight twisting leg hip raise",
+   "gif": "videos/0476-Q6bvyen.gif"
+  },
+  {
+   "id": "3636",
+   "name": "high knee against wall",
+   "gif": "videos/3636-ealLwvX.gif"
+  },
+  {
+   "id": "0484",
+   "name": "hip raise (bent knee)",
+   "gif": "videos/0484-196HJGw.gif"
+  },
+  {
+   "id": "1418",
+   "name": "hug keens to chest",
+   "gif": "videos/1418-znP9SIh.gif"
+  },
+  {
+   "id": "3234",
+   "name": "hyght dumbbell fly",
+   "gif": "videos/3234-P9ZRyLT.gif"
+  },
+  {
+   "id": "0489",
+   "name": "hyperextension",
+   "gif": "videos/0489-zhMwOwE.gif"
+  },
+  {
+   "id": "0488",
+   "name": "hyperextension (on bench)",
+   "gif": "videos/0488-zkgRrbK.gif"
+  },
+  {
+   "id": "3289",
+   "name": "impossible dips",
+   "gif": "videos/3289-05Cf2v8.gif"
+  },
+  {
+   "id": "1471",
+   "name": "inchworm",
+   "gif": "videos/1471-ZgsNQ6d.gif"
+  },
+  {
+   "id": "3698",
+   "name": "inchworm v. 2",
+   "gif": "videos/3698-TV87DNB.gif"
+  },
+  {
+   "id": "0490",
+   "name": "incline close-grip push-up",
+   "gif": "videos/0490-1YB40kg.gif"
+  },
+  {
+   "id": "0491",
+   "name": "incline leg hip raise (leg straight)",
+   "gif": "videos/0491-eVxAzgz.gif"
+  },
+  {
+   "id": "0492",
+   "name": "incline push up depth jump",
+   "gif": "videos/0492-CB8WET1.gif"
+  },
+  {
+   "id": "0493",
+   "name": "incline push-up",
+   "gif": "videos/0493-B1EVP9F.gif"
+  },
+  {
+   "id": "3785",
+   "name": "incline push-up (on box)",
+   "gif": "videos/3785-F7vjXqT.gif"
+  },
+  {
+   "id": "0494",
+   "name": "incline reverse grip push-up",
+   "gif": "videos/0494-XaaRnRn.gif"
+  },
+  {
+   "id": "3011",
+   "name": "incline scapula push up",
+   "gif": "videos/3011-GdMa1ET.gif"
+  },
+  {
+   "id": "0495",
+   "name": "incline twisting sit-up",
+   "gif": "videos/0495-9ZGZuOD.gif"
+  },
+  {
+   "id": "1564",
+   "name": "intermediate hip flexor and quad stretch",
+   "gif": "videos/1564-tFGKm99.gif"
+  },
+  {
+   "id": "0496",
+   "name": "inverse leg curl (bench support)",
+   "gif": "videos/0496-ms7tjSG.gif"
+  },
+  {
+   "id": "2400",
+   "name": "inverse leg curl (on pull-up cable machine)",
+   "gif": "videos/2400-0rHfvy9.gif"
+  },
+  {
+   "id": "0499",
+   "name": "inverted row",
+   "gif": "videos/0499-bZGHsAZ.gif"
+  },
+  {
+   "id": "2300",
+   "name": "inverted row bent knees",
+   "gif": "videos/2300-VPPtusI.gif"
+  },
+  {
+   "id": "2298",
+   "name": "inverted row on bench",
+   "gif": "videos/2298-Mxa7Cr8.gif"
+  },
+  {
+   "id": "0497",
+   "name": "inverted row v. 2",
+   "gif": "videos/0497-uX3sUBz.gif"
+  },
+  {
+   "id": "0498",
+   "name": "inverted row with straps",
+   "gif": "videos/0498-jdiExfW.gif"
+  },
+  {
+   "id": "1419",
+   "name": "iron cross stretch",
+   "gif": "videos/1419-pZwUsKB.gif"
+  },
+  {
+   "id": "1297",
+   "name": "isometric chest squeeze",
+   "gif": "videos/1297-HbSG1Pw.gif"
+  },
+  {
+   "id": "0500",
+   "name": "isometric wipers",
+   "gif": "videos/0500-11wrviz.gif"
+  },
+  {
+   "id": "0501",
+   "name": "jack burpee",
+   "gif": "videos/0501-mr7pkqP.gif"
+  },
+  {
+   "id": "3224",
+   "name": "jack jump (male)",
+   "gif": "videos/3224-1g5bPpA.gif"
+  },
+  {
+   "id": "0507",
+   "name": "jackknife sit-up",
+   "gif": "videos/0507-mbkgB44.gif"
+  },
+  {
+   "id": "0508",
+   "name": "janda sit-up",
+   "gif": "videos/0508-1GPHRyK.gif"
+  },
+  {
+   "id": "2612",
+   "name": "jump rope",
+   "gif": "videos/2612-e1e76I2.gif"
+  },
+  {
+   "id": "0514",
+   "name": "jump squat",
+   "gif": "videos/0514-LIlE5Tn.gif"
+  },
+  {
+   "id": "0513",
+   "name": "jump squat v. 2",
+   "gif": "videos/0513-TDYiji6.gif"
+  },
+  {
+   "id": "0517",
+   "name": "kettlebell advanced windmill",
+   "gif": "videos/0517-Kal9cQQ.gif"
+  },
+  {
+   "id": "0518",
+   "name": "kettlebell alternating hang clean",
+   "gif": "videos/0518-I4tibZG.gif"
+  },
+  {
+   "id": "0520",
+   "name": "kettlebell alternating press",
+   "gif": "videos/0520-5KLbZWx.gif"
+  },
+  {
+   "id": "0519",
+   "name": "kettlebell alternating press on floor",
+   "gif": "videos/0519-7w6i0vE.gif"
+  },
+  {
+   "id": "0521",
+   "name": "kettlebell alternating renegade row",
+   "gif": "videos/0521-b9kqlBy.gif"
+  },
+  {
+   "id": "0522",
+   "name": "kettlebell alternating row",
+   "gif": "videos/0522-Ca76jUE.gif"
+  },
+  {
+   "id": "0523",
+   "name": "kettlebell arnold press",
+   "gif": "videos/0523-UM8mgyG.gif"
+  },
+  {
+   "id": "0524",
+   "name": "kettlebell bent press",
+   "gif": "videos/0524-kjE55n5.gif"
+  },
+  {
+   "id": "0525",
+   "name": "kettlebell bottoms up clean from the hang position",
+   "gif": "videos/0525-4KJEpzb.gif"
+  },
+  {
+   "id": "0526",
+   "name": "kettlebell double alternating hang clean",
+   "gif": "videos/0526-a4F9Oyc.gif"
+  },
+  {
+   "id": "0527",
+   "name": "kettlebell double jerk",
+   "gif": "videos/0527-tznL2Ad.gif"
+  },
+  {
+   "id": "0528",
+   "name": "kettlebell double push press",
+   "gif": "videos/0528-I4KkPdl.gif"
+  },
+  {
+   "id": "0529",
+   "name": "kettlebell double snatch",
+   "gif": "videos/0529-M74kdvm.gif"
+  },
+  {
+   "id": "0530",
+   "name": "kettlebell double windmill",
+   "gif": "videos/0530-OaE7CpD.gif"
+  },
+  {
+   "id": "0531",
+   "name": "kettlebell extended range one arm press on floor",
+   "gif": "videos/0531-rseLfH3.gif"
+  },
+  {
+   "id": "0532",
+   "name": "kettlebell figure 8",
+   "gif": "videos/0532-L4ay0PW.gif"
+  },
+  {
+   "id": "0533",
+   "name": "kettlebell front squat",
+   "gif": "videos/0533-DB0n8AG.gif"
+  },
+  {
+   "id": "0534",
+   "name": "kettlebell goblet squat",
+   "gif": "videos/0534-ZA8b5hc.gif"
+  },
+  {
+   "id": "0535",
+   "name": "kettlebell hang clean",
+   "gif": "videos/0535-LHWF7us.gif"
+  },
+  {
+   "id": "0536",
+   "name": "kettlebell lunge pass through",
+   "gif": "videos/0536-WKMQzCD.gif"
+  },
+  {
+   "id": "0537",
+   "name": "kettlebell one arm clean and jerk",
+   "gif": "videos/0537-vzAxBtt.gif"
+  },
+  {
+   "id": "1298",
+   "name": "kettlebell one arm floor press",
+   "gif": "videos/1298-rg59QCH.gif"
+  },
+  {
+   "id": "0538",
+   "name": "kettlebell one arm jerk",
+   "gif": "videos/0538-S37C94C.gif"
+  },
+  {
+   "id": "0539",
+   "name": "kettlebell one arm military press to the side",
+   "gif": "videos/0539-yCvYdi7.gif"
+  },
+  {
+   "id": "0540",
+   "name": "kettlebell one arm push press",
+   "gif": "videos/0540-osdXT3K.gif"
+  },
+  {
+   "id": "0541",
+   "name": "kettlebell one arm row",
+   "gif": "videos/0541-g9AsZ8P.gif"
+  },
+  {
+   "id": "0542",
+   "name": "kettlebell one arm snatch",
+   "gif": "videos/0542-aXcUyKb.gif"
+  },
+  {
+   "id": "0543",
+   "name": "kettlebell pirate supper legs",
+   "gif": "videos/0543-kuXhl0o.gif"
+  },
+  {
+   "id": "0544",
+   "name": "kettlebell pistol squat",
+   "gif": "videos/0544-5bpPTHv.gif"
+  },
+  {
+   "id": "0545",
+   "name": "kettlebell plyo push-up",
+   "gif": "videos/0545-ktf3nvW.gif"
+  },
+  {
+   "id": "0546",
+   "name": "kettlebell seated press",
+   "gif": "videos/0546-BkxB8LW.gif"
+  },
+  {
+   "id": "1438",
+   "name": "kettlebell seated two arm military press",
+   "gif": "videos/1438-ZEkjZDi.gif"
+  },
+  {
+   "id": "0547",
+   "name": "kettlebell seesaw press",
+   "gif": "videos/0547-UDm6cGl.gif"
+  },
+  {
+   "id": "0548",
+   "name": "kettlebell sumo high pull",
+   "gif": "videos/0548-8ARQ9Hw.gif"
+  },
+  {
+   "id": "0549",
+   "name": "kettlebell swing",
+   "gif": "videos/0549-UHJlbu3.gif"
+  },
+  {
+   "id": "0550",
+   "name": "kettlebell thruster",
+   "gif": "videos/0550-yWxMvB5.gif"
+  },
+  {
+   "id": "0551",
+   "name": "kettlebell turkish get up (squat style)",
+   "gif": "videos/0551-Ha7SZ3y.gif"
+  },
+  {
+   "id": "0552",
+   "name": "kettlebell two arm clean",
+   "gif": "videos/0552-7Ba7bQ2.gif"
+  },
+  {
+   "id": "0553",
+   "name": "kettlebell two arm military press",
+   "gif": "videos/0553-blBXysN.gif"
+  },
+  {
+   "id": "1345",
+   "name": "kettlebell two arm row",
+   "gif": "videos/1345-wf24o8S.gif"
+  },
+  {
+   "id": "0554",
+   "name": "kettlebell windmill",
+   "gif": "videos/0554-9Tkqa9O.gif"
+  },
+  {
+   "id": "0555",
+   "name": "kick out sit",
+   "gif": "videos/0555-v7p5bYl.gif"
+  },
+  {
+   "id": "0558",
+   "name": "kipping muscle up",
+   "gif": "videos/0558-pM07UxU.gif"
+  },
+  {
+   "id": "3640",
+   "name": "knee touch crunch",
+   "gif": "videos/3640-dTg95eZ.gif"
+  },
+  {
+   "id": "1420",
+   "name": "kneeling jump squat",
+   "gif": "videos/1420-UgDm3oy.gif"
+  },
+  {
+   "id": "1346",
+   "name": "kneeling lat stretch",
+   "gif": "videos/1346-f38OEuO.gif"
+  },
+  {
+   "id": "3239",
+   "name": "kneeling plank tap shoulder (male)",
+   "gif": "videos/3239-h1ezqSu.gif"
+  },
+  {
+   "id": "3211",
+   "name": "kneeling push-up (male)",
+   "gif": "videos/3211-ZOuKWir.gif"
+  },
+  {
+   "id": "3288",
+   "name": "korean dips",
+   "gif": "videos/3288-rWoBmi5.gif"
+  },
+  {
+   "id": "3418",
+   "name": "l-pull-up",
+   "gif": "videos/3418-d1GgzTU.gif"
+  },
+  {
+   "id": "3419",
+   "name": "l-sit on floor",
+   "gif": "videos/3419-UpWmA5E.gif"
+  },
+  {
+   "id": "0562",
+   "name": "landmine 180",
+   "gif": "videos/0562-QYysSLV.gif"
+  },
+  {
+   "id": "3237",
+   "name": "landmine lateral raise",
+   "gif": "videos/3237-eXMFHww.gif"
+  },
+  {
+   "id": "3300",
+   "name": "lean planche",
+   "gif": "videos/3300-LYJodFS.gif"
+  },
+  {
+   "id": "2271",
+   "name": "left hook. boxing",
+   "gif": "videos/2271-hoXt6wv.gif"
+  },
+  {
+   "id": "0570",
+   "name": "leg pull in flat bench",
+   "gif": "videos/0570-OyoZ3Pu.gif"
+  },
+  {
+   "id": "1576",
+   "name": "leg up hamstring stretch",
+   "gif": "videos/1576-sU5BrfP.gif"
+  },
+  {
+   "id": "2287",
+   "name": "lever alternate leg press",
+   "gif": "videos/2287-V07qpXy.gif"
+  },
+  {
+   "id": "0571",
+   "name": "lever alternating narrow grip seated row",
+   "gif": "videos/0571-w2oRpuH.gif"
+  },
+  {
+   "id": "0572",
+   "name": "lever assisted chin-up",
+   "gif": "videos/0572-MaMuGH6.gif"
+  },
+  {
+   "id": "0573",
+   "name": "lever back extension",
+   "gif": "videos/0573-rUXfn3R.gif"
+  },
+  {
+   "id": "0574",
+   "name": "lever bent over row",
+   "gif": "videos/0574-X3cqyXz.gif"
+  },
+  {
+   "id": "3200",
+   "name": "lever bent-over row with v-bar",
+   "gif": "videos/3200-LuBEORI.gif"
+  },
+  {
+   "id": "0575",
+   "name": "lever bicep curl",
+   "gif": "videos/0575-q6y3OhV.gif"
+  },
+  {
+   "id": "2289",
+   "name": "lever calf press",
+   "gif": "videos/2289-7B4F5nZ.gif"
+  },
+  {
+   "id": "0577",
+   "name": "lever chest press",
+   "gif": "videos/0577-T0yTjgW.gif"
+  },
+  {
+   "id": "0576",
+   "name": "lever chest press",
+   "gif": "videos/0576-DOoWcnA.gif"
+  },
+  {
+   "id": "0578",
+   "name": "lever deadlift",
+   "gif": "videos/0578-GUT8I22.gif"
+  },
+  {
+   "id": "1300",
+   "name": "lever decline chest press",
+   "gif": "videos/1300-vsVoPHt.gif"
+  },
+  {
+   "id": "1253",
+   "name": "lever donkey calf raise",
+   "gif": "videos/1253-C9LuR4A.gif"
+  },
+  {
+   "id": "0579",
+   "name": "lever front pulldown",
+   "gif": "videos/0579-7F1DVzn.gif"
+  },
+  {
+   "id": "0580",
+   "name": "lever gripless shrug",
+   "gif": "videos/0580-f91FwXG.gif"
+  },
+  {
+   "id": "1439",
+   "name": "lever gripless shrug v. 2",
+   "gif": "videos/1439-cbuFJrn.gif"
+  },
+  {
+   "id": "2288",
+   "name": "lever gripper hands",
+   "gif": "videos/2288-mKwcrHn.gif"
+  },
+  {
+   "id": "1615",
+   "name": "lever hammer grip preacher curl",
+   "gif": "videos/1615-OAguZoG.gif"
+  },
+  {
+   "id": "0581",
+   "name": "lever high row",
+   "gif": "videos/0581-nZZZy9m.gif"
+  },
+  {
+   "id": "2286",
+   "name": "lever hip extension v. 2",
+   "gif": "videos/2286-OPqShYN.gif"
+  },
+  {
+   "id": "2611",
+   "name": "lever horizontal one leg press",
+   "gif": "videos/2611-9KU9TYF.gif"
+  },
+  {
+   "id": "1299",
+   "name": "lever incline chest press",
+   "gif": "videos/1299-jHAnWmT.gif"
+  },
+  {
+   "id": "1479",
+   "name": "lever incline chest press v. 2",
+   "gif": "videos/1479-o17Jfkt.gif"
+  },
+  {
+   "id": "0582",
+   "name": "lever kneeling leg curl",
+   "gif": "videos/0582-nnmCTLN.gif"
+  },
+  {
+   "id": "0583",
+   "name": "lever kneeling twist",
+   "gif": "videos/0583-sZOR9EV.gif"
+  },
+  {
+   "id": "0584",
+   "name": "lever lateral raise",
+   "gif": "videos/0584-dRTfGZT.gif"
+  },
+  {
+   "id": "0585",
+   "name": "lever leg extension",
+   "gif": "videos/0585-my33uHU.gif"
+  },
+  {
+   "id": "0586",
+   "name": "lever lying leg curl",
+   "gif": "videos/0586-17lJ1kr.gif"
+  },
+  {
+   "id": "3195",
+   "name": "lever lying two-one leg curl",
+   "gif": "videos/3195-UXpKJoq.gif"
+  },
+  {
+   "id": "0587",
+   "name": "lever military press",
+   "gif": "videos/0587-CggQhII.gif"
+  },
+  {
+   "id": "0588",
+   "name": "lever narrow grip seated row",
+   "gif": "videos/0588-IGjKj1v.gif"
+  },
+  {
+   "id": "0589",
+   "name": "lever one arm bent over row",
+   "gif": "videos/0589-Fhdtwf3.gif"
+  },
+  {
+   "id": "1356",
+   "name": "lever one arm lateral high row",
+   "gif": "videos/1356-OIFMAp1.gif"
+  },
+  {
+   "id": "1347",
+   "name": "lever one arm lateral wide pulldown",
+   "gif": "videos/1347-tTuZSDT.gif"
+  },
+  {
+   "id": "0590",
+   "name": "lever one arm shoulder press",
+   "gif": "videos/0590-2KGnL6M.gif"
+  },
+  {
+   "id": "0591",
+   "name": "lever overhand triceps dip",
+   "gif": "videos/0591-D5yqP2p.gif"
+  },
+  {
+   "id": "0592",
+   "name": "lever preacher curl",
+   "gif": "videos/0592-b6hQYMb.gif"
+  },
+  {
+   "id": "1614",
+   "name": "lever preacher curl v. 2",
+   "gif": "videos/1614-ye84CTU.gif"
+  },
+  {
+   "id": "2285",
+   "name": "lever pullover",
+   "gif": "videos/2285-4U7iLb5.gif"
+  },
+  {
+   "id": "2736",
+   "name": "lever reverse grip lateral pulldown",
+   "gif": "videos/2736-ky8FLU8.gif"
+  },
+  {
+   "id": "1616",
+   "name": "lever reverse grip preacher curl",
+   "gif": "videos/1616-kj3hy6W.gif"
+  },
+  {
+   "id": "1348",
+   "name": "lever reverse grip vertical row",
+   "gif": "videos/1348-ZqNOWQ6.gif"
+  },
+  {
+   "id": "0593",
+   "name": "lever reverse hyperextension",
+   "gif": "videos/0593-Krmb3cB.gif"
+  },
+  {
+   "id": "1349",
+   "name": "lever reverse t-bar row",
+   "gif": "videos/1349-BgljGjd.gif"
+  },
+  {
+   "id": "2315",
+   "name": "lever rotary calf",
+   "gif": "videos/2315-MrgP9L6.gif"
+  },
+  {
+   "id": "2335",
+   "name": "lever seated calf press",
+   "gif": "videos/2335-Ie9UGty.gif"
+  },
+  {
+   "id": "0594",
+   "name": "lever seated calf raise",
+   "gif": "videos/0594-bOOdeyc.gif"
+  },
+  {
+   "id": "1452",
+   "name": "lever seated crunch",
+   "gif": "videos/1452-Wgaz7pm.gif"
+  },
+  {
+   "id": "0595",
+   "name": "lever seated crunch (chest pad)",
+   "gif": "videos/0595-ZnJHhMk.gif"
+  },
+  {
+   "id": "3760",
+   "name": "lever seated crunch v. 2",
+   "gif": "videos/3760-eXFXCY0.gif"
+  },
+  {
+   "id": "1451",
+   "name": "lever seated dip",
+   "gif": "videos/1451-BRImeP8.gif"
+  },
+  {
+   "id": "0596",
+   "name": "lever seated fly",
+   "gif": "videos/0596-v3xmPAR.gif"
+  },
+  {
+   "id": "3759",
+   "name": "lever seated good morning",
+   "gif": "videos/3759-XsCcxCC.gif"
+  },
+  {
+   "id": "0597",
+   "name": "lever seated hip abduction",
+   "gif": "videos/0597-CHpahtl.gif"
+  },
+  {
+   "id": "0598",
+   "name": "lever seated hip adduction",
+   "gif": "videos/0598-oHsrypV.gif"
+  },
+  {
+   "id": "0599",
+   "name": "lever seated leg curl",
+   "gif": "videos/0599-Zg3XY7P.gif"
+  },
+  {
+   "id": "0600",
+   "name": "lever seated leg raise crunch",
+   "gif": "videos/0600-PQ2AtC3.gif"
+  },
+  {
+   "id": "0602",
+   "name": "lever seated reverse fly",
+   "gif": "videos/0602-myfUsKf.gif"
+  },
+  {
+   "id": "0601",
+   "name": "lever seated reverse fly (parallel grip)",
+   "gif": "videos/0601-xiHiJcA.gif"
+  },
+  {
+   "id": "1350",
+   "name": "lever seated row",
+   "gif": "videos/1350-7I6LNUG.gif"
+  },
+  {
+   "id": "1385",
+   "name": "lever seated squat calf raise on leg press machine",
+   "gif": "videos/1385-IeDEXTe.gif"
+  },
+  {
+   "id": "0603",
+   "name": "lever shoulder press",
+   "gif": "videos/0603-67n3r98.gif"
+  },
+  {
+   "id": "0869",
+   "name": "lever shoulder press v. 2",
+   "gif": "videos/0869-vqsbmL0.gif"
+  },
+  {
+   "id": "2318",
+   "name": "lever shoulder press v. 3",
+   "gif": "videos/2318-dNFYIU1.gif"
+  },
+  {
+   "id": "0604",
+   "name": "lever shrug",
+   "gif": "videos/0604-ZZKbeMw.gif"
+  },
+  {
+   "id": "0605",
+   "name": "lever standing calf raise",
+   "gif": "videos/0605-ykUOVze.gif"
+  },
+  {
+   "id": "3758",
+   "name": "lever standing chest press",
+   "gif": "videos/3758-WbNq5Xu.gif"
+  },
+  {
+   "id": "0606",
+   "name": "lever t bar row",
+   "gif": "videos/0606-aaXr7ld.gif"
+  },
+  {
+   "id": "1351",
+   "name": "lever t-bar reverse grip row",
+   "gif": "videos/1351-FVM1AUZ.gif"
+  },
+  {
+   "id": "0607",
+   "name": "lever triceps extension",
+   "gif": "videos/0607-Ser9eQp.gif"
+  },
+  {
+   "id": "1313",
+   "name": "lever unilateral row",
+   "gif": "videos/1313-oROuvrX.gif"
+  },
+  {
+   "id": "0609",
+   "name": "london bridge",
+   "gif": "videos/0609-bLyQokI.gif"
+  },
+  {
+   "id": "3013",
+   "name": "low glute bridge on floor",
+   "gif": "videos/3013-u0cNiij.gif"
+  },
+  {
+   "id": "1352",
+   "name": "lower back curl",
+   "gif": "videos/1352-ANbbry2.gif"
+  },
+  {
+   "id": "3582",
+   "name": "lunge with jump",
+   "gif": "videos/3582-PM1PZjg.gif"
+  },
+  {
+   "id": "1688",
+   "name": "lunge with twist",
+   "gif": "videos/1688-K9VL0Jq.gif"
+  },
+  {
+   "id": "0613",
+   "name": "lying (side) quads stretch",
+   "gif": "videos/0613-BWnJR72.gif"
+  },
+  {
+   "id": "2312",
+   "name": "lying elbow to knee",
+   "gif": "videos/2312-AQIhRjM.gif"
+  },
+  {
+   "id": "0620",
+   "name": "lying leg raise flat bench",
+   "gif": "videos/0620-WhuFnR7.gif"
+  },
+  {
+   "id": "0865",
+   "name": "lying leg-hip raise",
+   "gif": "videos/0865-9IxJdtC.gif"
+  },
+  {
+   "id": "1301",
+   "name": "machine inner chest press",
+   "gif": "videos/1301-wDN97Ca.gif"
+  },
+  {
+   "id": "0624",
+   "name": "march sit (wall)",
+   "gif": "videos/0624-sVQCCeG.gif"
+  },
+  {
+   "id": "1353",
+   "name": "medicine ball catch and overhead throw",
+   "gif": "videos/1353-PsVS1QP.gif"
+  },
+  {
+   "id": "1302",
+   "name": "medicine ball chest pass",
+   "gif": "videos/1302-aDoFKrE.gif"
+  },
+  {
+   "id": "1303",
+   "name": "medicine ball chest push from 3 point stance",
+   "gif": "videos/1303-dCJnuVq.gif"
+  },
+  {
+   "id": "1304",
+   "name": "medicine ball chest push multiple response",
+   "gif": "videos/1304-7aolH9D.gif"
+  },
+  {
+   "id": "1305",
+   "name": "medicine ball chest push single response",
+   "gif": "videos/1305-jeHtrlO.gif"
+  },
+  {
+   "id": "1312",
+   "name": "medicine ball chest push with run release",
+   "gif": "videos/1312-pX9Elbe.gif"
+  },
+  {
+   "id": "1701",
+   "name": "medicine ball close grip push up",
+   "gif": "videos/1701-8K7m2SS.gif"
+  },
+  {
+   "id": "1354",
+   "name": "medicine ball overhead slam",
+   "gif": "videos/1354-oHg8eop.gif"
+  },
+  {
+   "id": "1750",
+   "name": "medicine ball supine chest throw",
+   "gif": "videos/1750-Al3tP0D.gif"
+  },
+  {
+   "id": "0627",
+   "name": "mixed grip chin-up",
+   "gif": "videos/0627-T8UpLkb.gif"
+  },
+  {
+   "id": "3217",
+   "name": "modified hindu push-up (male)",
+   "gif": "videos/3217-epOSYUZ.gif"
+  },
+  {
+   "id": "1421",
+   "name": "modified push up to lower arms",
+   "gif": "videos/1421-arvaszz.gif"
+  },
+  {
+   "id": "0628",
+   "name": "monster walk",
+   "gif": "videos/0628-O95afRA.gif"
+  },
+  {
+   "id": "0630",
+   "name": "mountain climber",
+   "gif": "videos/0630-RJgzwny.gif"
+  },
+  {
+   "id": "0631",
+   "name": "muscle up",
+   "gif": "videos/0631-yJUHKTn.gif"
+  },
+  {
+   "id": "1401",
+   "name": "muscle-up (on vertical bar)",
+   "gif": "videos/1401-Af0EW2I.gif"
+  },
+  {
+   "id": "2328",
+   "name": "narrow push-up on exercise ball",
+   "gif": "videos/2328-4cWjYEN.gif"
+  },
+  {
+   "id": "1403",
+   "name": "neck side stretch",
+   "gif": "videos/1403-x2chWLO.gif"
+  },
+  {
+   "id": "0634",
+   "name": "negative crunch",
+   "gif": "videos/0634-szIn2UK.gif"
+  },
+  {
+   "id": "1495",
+   "name": "oblique crunch v. 2",
+   "gif": "videos/1495-cJgSTmh.gif"
+  },
+  {
+   "id": "0635",
+   "name": "oblique crunches floor",
+   "gif": "videos/0635-QUDd8WS.gif"
+  },
+  {
+   "id": "0636",
+   "name": "olympic barbell hammer curl",
+   "gif": "videos/0636-o1ntciW.gif"
+  },
+  {
+   "id": "0637",
+   "name": "olympic barbell triceps extension",
+   "gif": "videos/0637-wu5LXwz.gif"
+  },
+  {
+   "id": "1355",
+   "name": "one arm against wall",
+   "gif": "videos/1355-ZZTGMKh.gif"
+  },
+  {
+   "id": "0638",
+   "name": "one arm chin-up",
+   "gif": "videos/0638-HjdqmZa.gif"
+  },
+  {
+   "id": "0639",
+   "name": "one arm dip",
+   "gif": "videos/0639-FAoIFMw.gif"
+  },
+  {
+   "id": "0640",
+   "name": "one arm slam (with medicine ball)",
+   "gif": "videos/0640-jCrtE9b.gif"
+  },
+  {
+   "id": "1773",
+   "name": "one arm towel row",
+   "gif": "videos/1773-bKWbrTA.gif"
+  },
+  {
+   "id": "1386",
+   "name": "one leg donkey calf raise",
+   "gif": "videos/1386-A2upspL.gif"
+  },
+  {
+   "id": "1387",
+   "name": "one leg floor calf raise",
+   "gif": "videos/1387-0jp9Rlz.gif"
+  },
+  {
+   "id": "1476",
+   "name": "one leg squat",
+   "gif": "videos/1476-C31LMnP.gif"
+  },
+  {
+   "id": "0641",
+   "name": "otis up",
+   "gif": "videos/0641-UVL20oz.gif"
+  },
+  {
+   "id": "0642",
+   "name": "outside leg kick push-up",
+   "gif": "videos/0642-jNU1gFQ.gif"
+  },
+  {
+   "id": "0643",
+   "name": "overhead triceps stretch",
+   "gif": "videos/0643-Z5YStHW.gif"
+  },
+  {
+   "id": "3147",
+   "name": "pelvic tilt",
+   "gif": "videos/3147-NKJ8o6x.gif"
+  },
+  {
+   "id": "1422",
+   "name": "pelvic tilt into bridge",
+   "gif": "videos/1422-D9qe7CM.gif"
+  },
+  {
+   "id": "1388",
+   "name": "peroneals stretch",
+   "gif": "videos/1388-XhfS1DZ.gif"
+  },
+  {
+   "id": "3662",
+   "name": "pike-to-cobra push-up",
+   "gif": "videos/3662-XPUDTt7.gif"
+  },
+  {
+   "id": "1306",
+   "name": "plyo push up",
+   "gif": "videos/1306-Snj1wSv.gif"
+  },
+  {
+   "id": "1687",
+   "name": "posterior step to overhead reach",
+   "gif": "videos/1687-ErqK3UL.gif"
+  },
+  {
+   "id": "1389",
+   "name": "posterior tibialis stretch",
+   "gif": "videos/1389-DEEqoI2.gif"
+  },
+  {
+   "id": "3119",
+   "name": "potty squat",
+   "gif": "videos/3119-75Bgtjy.gif"
+  },
+  {
+   "id": "3132",
+   "name": "potty squat with support",
+   "gif": "videos/3132-b63ZzGe.gif"
+  },
+  {
+   "id": "0648",
+   "name": "power clean",
+   "gif": "videos/0648-SiWCcTN.gif"
+  },
+  {
+   "id": "3665",
+   "name": "power point plank",
+   "gif": "videos/3665-hCjGsRQ.gif"
+  },
+  {
+   "id": "3203",
+   "name": "prisoner half sit-up (male)",
+   "gif": "videos/3203-mgejmGP.gif"
+  },
+  {
+   "id": "1707",
+   "name": "prone twist on stability ball",
+   "gif": "videos/1707-1IG6gVF.gif"
+  },
+  {
+   "id": "0651",
+   "name": "pull up (neutral grip)",
+   "gif": "videos/0651-0V2YQjW.gif"
+  },
+  {
+   "id": "0650",
+   "name": "pull-in (on stability ball)",
+   "gif": "videos/0650-UQr48Oi.gif"
+  },
+  {
+   "id": "0652",
+   "name": "pull-up",
+   "gif": "videos/0652-lBDjFxJ.gif"
+  },
+  {
+   "id": "1689",
+   "name": "push and pull bodyweight",
+   "gif": "videos/1689-wXvUZC8.gif"
+  },
+  {
+   "id": "3638",
+   "name": "push to run",
+   "gif": "videos/3638-PrQbjvB.gif"
+  },
+  {
+   "id": "1307",
+   "name": "push up on bosu ball",
+   "gif": "videos/1307-wVompEp.gif"
+  },
+  {
+   "id": "0662",
+   "name": "push-up",
+   "gif": "videos/0662-I4hDWkc.gif"
+  },
+  {
+   "id": "0653",
+   "name": "push-up (bosu ball)",
+   "gif": "videos/0653-2kr2lWy.gif"
+  },
+  {
+   "id": "0655",
+   "name": "push-up (on stability ball)",
+   "gif": "videos/0655-Y4BRNQF.gif"
+  },
+  {
+   "id": "0656",
+   "name": "push-up (on stability ball)",
+   "gif": "videos/0656-tgryw5Y.gif"
+  },
+  {
+   "id": "0659",
+   "name": "push-up (wall)",
+   "gif": "videos/0659-LEH9jxP.gif"
+  },
+  {
+   "id": "0658",
+   "name": "push-up (wall) v. 2",
+   "gif": "videos/0658-NCmbLCw.gif"
+  },
+  {
+   "id": "0660",
+   "name": "push-up close-grip off dumbbell",
+   "gif": "videos/0660-KZXAtKQ.gif"
+  },
+  {
+   "id": "0661",
+   "name": "push-up inside leg kick",
+   "gif": "videos/0661-0br45wL.gif"
+  },
+  {
+   "id": "0663",
+   "name": "push-up medicine ball",
+   "gif": "videos/0663-W8KAlkI.gif"
+  },
+  {
+   "id": "1467",
+   "name": "push-up on lower arms",
+   "gif": "videos/1467-4Jt8QsQ.gif"
+  },
+  {
+   "id": "3145",
+   "name": "push-up plus",
+   "gif": "videos/3145-pvBMLHA.gif"
+  },
+  {
+   "id": "0664",
+   "name": "push-up to side plank",
+   "gif": "videos/0664-KhHJ338.gif"
+  },
+  {
+   "id": "3533",
+   "name": "quads",
+   "gif": "videos/3533-6YUfHPL.gif"
+  },
+  {
+   "id": "3201",
+   "name": "quarter sit-up",
+   "gif": "videos/3201-enxnJcM.gif"
+  },
+  {
+   "id": "3552",
+   "name": "quick feet v. 2",
+   "gif": "videos/3552-mweqJin.gif"
+  },
+  {
+   "id": "0666",
+   "name": "raise single arm push-up",
+   "gif": "videos/0666-13TpY4H.gif"
+  },
+  {
+   "id": "0668",
+   "name": "rear decline bridge",
+   "gif": "videos/0668-UpAlold.gif"
+  },
+  {
+   "id": "0669",
+   "name": "rear deltoid stretch",
+   "gif": "videos/0669-xifhB5W.gif"
+  },
+  {
+   "id": "0670",
+   "name": "rear pull-up",
+   "gif": "videos/0670-CbFSYC1.gif"
+  },
+  {
+   "id": "1582",
+   "name": "reclining big toe pose with rope",
+   "gif": "videos/1582-K5xgdvI.gif"
+  },
+  {
+   "id": "3236",
+   "name": "resistance band hip thrusts on knees (female)",
+   "gif": "videos/3236-Pjbc0Kt.gif"
+  },
+  {
+   "id": "3007",
+   "name": "resistance band leg extension",
+   "gif": "videos/3007-Y1MsI1l.gif"
+  },
+  {
+   "id": "3123",
+   "name": "resistance band seated biceps curl",
+   "gif": "videos/3123-XFc3vpY.gif"
+  },
+  {
+   "id": "3124",
+   "name": "resistance band seated chest press",
+   "gif": "videos/3124-4x5Okof.gif"
+  },
+  {
+   "id": "3006",
+   "name": "resistance band seated hip abduction",
+   "gif": "videos/3006-0xDpB4L.gif"
+  },
+  {
+   "id": "3122",
+   "name": "resistance band seated shoulder press",
+   "gif": "videos/3122-S93zLTG.gif"
+  },
+  {
+   "id": "3144",
+   "name": "resistance band seated straight back row",
+   "gif": "videos/3144-Nu7jqFE.gif"
+  },
+  {
+   "id": "0872",
+   "name": "reverse crunch",
+   "gif": "videos/0872-nCU1Ekp.gif"
+  },
+  {
+   "id": "0672",
+   "name": "reverse dip",
+   "gif": "videos/0672-NZ5Qqkz.gif"
+  },
+  {
+   "id": "0673",
+   "name": "reverse grip machine lat pulldown",
+   "gif": "videos/0673-ecpY0rH.gif"
+  },
+  {
+   "id": "0674",
+   "name": "reverse grip pull-up",
+   "gif": "videos/0674-YAk5dIw.gif"
+  },
+  {
+   "id": "0675",
+   "name": "reverse hyper extension (on stability ball)",
+   "gif": "videos/0675-vM5YS2g.gif"
+  },
+  {
+   "id": "1423",
+   "name": "reverse hyper on flat bench",
+   "gif": "videos/1423-OrETs32.gif"
+  },
+  {
+   "id": "3663",
+   "name": "reverse plank with leg lift",
+   "gif": "videos/3663-tFToB7l.gif"
+  },
+  {
+   "id": "0677",
+   "name": "ring dips",
+   "gif": "videos/0677-ezTvXcr.gif"
+  },
+  {
+   "id": "2571",
+   "name": "rocking frog stretch",
+   "gif": "videos/2571-2Dk4xQV.gif"
+  },
+  {
+   "id": "0678",
+   "name": "rocky pull-up pulldown",
+   "gif": "videos/0678-cQ19bBP.gif"
+  },
+  {
+   "id": "2208",
+   "name": "roller back stretch",
+   "gif": "videos/2208-isofgzg.gif"
+  },
+  {
+   "id": "2204",
+   "name": "roller body saw",
+   "gif": "videos/2204-XeMvLgE.gif"
+  },
+  {
+   "id": "2205",
+   "name": "roller hip lat stretch",
+   "gif": "videos/2205-0L2KwtI.gif"
+  },
+  {
+   "id": "2202",
+   "name": "roller hip stretch",
+   "gif": "videos/2202-oMypNrz.gif"
+  },
+  {
+   "id": "2206",
+   "name": "roller reverse crunch",
+   "gif": "videos/2206-SKXQAx3.gif"
+  },
+  {
+   "id": "2203",
+   "name": "roller seated shoulder flexor depresor retractor",
+   "gif": "videos/2203-8coXSYU.gif"
+  },
+  {
+   "id": "2209",
+   "name": "roller seated single leg shoulder flexor depresor retractor",
+   "gif": "videos/2209-CjETvlw.gif"
+  },
+  {
+   "id": "2207",
+   "name": "roller side lat stretch",
+   "gif": "videos/2207-c3Pfhti.gif"
+  },
+  {
+   "id": "0680",
+   "name": "rope climb",
+   "gif": "videos/0680-yaAxcQr.gif"
+  },
+  {
+   "id": "0685",
+   "name": "run",
+   "gif": "videos/0685-oLrKqDH.gif"
+  },
+  {
+   "id": "0684",
+   "name": "run (equipment)",
+   "gif": "videos/0684-y5p0H8a.gif"
+  },
+  {
+   "id": "1585",
+   "name": "runners stretch",
+   "gif": "videos/1585-0mB6wHO.gif"
+  },
+  {
+   "id": "0687",
+   "name": "russian twist",
+   "gif": "videos/0687-XVDdcoj.gif"
+  },
+  {
+   "id": "3012",
+   "name": "scapula dips",
+   "gif": "videos/3012-7xeukSt.gif"
+  },
+  {
+   "id": "3021",
+   "name": "scapula push-up",
+   "gif": "videos/3021-jV65tKx.gif"
+  },
+  {
+   "id": "0688",
+   "name": "scapular pull-up",
+   "gif": "videos/0688-uTBt1HV.gif"
+  },
+  {
+   "id": "3219",
+   "name": "scissor jumps (male)",
+   "gif": "videos/3219-Eh2v5Iu.gif"
+  },
+  {
+   "id": "1390",
+   "name": "seated calf stretch (male)",
+   "gif": "videos/1390-17bqEXD.gif"
+  },
+  {
+   "id": "1424",
+   "name": "seated glute stretch",
+   "gif": "videos/1424-DeDThfG.gif"
+  },
+  {
+   "id": "0689",
+   "name": "seated leg raise",
+   "gif": "videos/0689-Hgs6Nl1.gif"
+  },
+  {
+   "id": "0690",
+   "name": "seated lower back stretch",
+   "gif": "videos/0690-QFmz6ch.gif"
+  },
+  {
+   "id": "2567",
+   "name": "seated piriformis stretch",
+   "gif": "videos/2567-QY39eBr.gif"
+  },
+  {
+   "id": "0691",
+   "name": "seated side crunch (wall)",
+   "gif": "videos/0691-Y9hNPcN.gif"
+  },
+  {
+   "id": "1587",
+   "name": "seated wide angle pose sequence",
+   "gif": "videos/1587-HIgYKAB.gif"
+  },
+  {
+   "id": "0697",
+   "name": "self assisted inverse leg curl",
+   "gif": "videos/0697-GwYwElT.gif"
+  },
+  {
+   "id": "1766",
+   "name": "self assisted inverse leg curl",
+   "gif": "videos/1766-ZSY3MsL.gif"
+  },
+  {
+   "id": "0696",
+   "name": "self assisted inverse leg curl (on floor)",
+   "gif": "videos/0696-E4PwJqI.gif"
+  },
+  {
+   "id": "3222",
+   "name": "semi squat jump (male)",
+   "gif": "videos/3222-6FMU51h.gif"
+  },
+  {
+   "id": "3656",
+   "name": "short stride run",
+   "gif": "videos/3656-CcWEoWV.gif"
+  },
+  {
+   "id": "1763",
+   "name": "shoulder grip pull-up",
+   "gif": "videos/1763-YtgD7Xq.gif"
+  },
+  {
+   "id": "3699",
+   "name": "shoulder tap",
+   "gif": "videos/3699-yRpV5TC.gif"
+  },
+  {
+   "id": "0699",
+   "name": "shoulder tap push-up",
+   "gif": "videos/0699-qEse6fe.gif"
+  },
+  {
+   "id": "1774",
+   "name": "side bridge hip abduction",
+   "gif": "videos/1774-WL4EmxJ.gif"
+  },
+  {
+   "id": "0705",
+   "name": "side bridge v. 2",
+   "gif": "videos/0705-RKjH6Lt.gif"
+  },
+  {
+   "id": "0709",
+   "name": "side hip (on parallel bars)",
+   "gif": "videos/0709-jTkSc6o.gif"
+  },
+  {
+   "id": "0710",
+   "name": "side hip abduction",
+   "gif": "videos/0710-7WaDzyL.gif"
+  },
+  {
+   "id": "1358",
+   "name": "side lying floor stretch",
+   "gif": "videos/1358-jDOKRM5.gif"
+  },
+  {
+   "id": "3667",
+   "name": "side lying hip adduction (male)",
+   "gif": "videos/3667-c8f5cSY.gif"
+  },
+  {
+   "id": "1775",
+   "name": "side plank hip adduction",
+   "gif": "videos/1775-VO2qeJg.gif"
+  },
+  {
+   "id": "0716",
+   "name": "side push neck stretch",
+   "gif": "videos/0716-oQRJYkC.gif"
+  },
+  {
+   "id": "0717",
+   "name": "side push-up",
+   "gif": "videos/0717-wpbD28t.gif"
+  },
+  {
+   "id": "0721",
+   "name": "side wrist pull stretch",
+   "gif": "videos/0721-UtmIqcI.gif"
+  },
+  {
+   "id": "0720",
+   "name": "side-to-side chin",
+   "gif": "videos/0720-isAAZWA.gif"
+  },
+  {
+   "id": "3213",
+   "name": "side-to-side toe touch (male)",
+   "gif": "videos/3213-WCAvOfC.gif"
+  },
+  {
+   "id": "0725",
+   "name": "single arm push-up",
+   "gif": "videos/0725-MUic5zN.gif"
+  },
+  {
+   "id": "3645",
+   "name": "single leg bridge with outstretched leg",
+   "gif": "videos/3645-rmEukuS.gif"
+  },
+  {
+   "id": "0727",
+   "name": "single leg calf raise (on a dumbbell)",
+   "gif": "videos/0727-fKZgDEO.gif"
+  },
+  {
+   "id": "0730",
+   "name": "single leg platform slide",
+   "gif": "videos/0730-LNE3wfo.gif"
+  },
+  {
+   "id": "1759",
+   "name": "single leg squat (pistol) male",
+   "gif": "videos/1759-nqs5HGV.gif"
+  },
+  {
+   "id": "1489",
+   "name": "sissy squat",
+   "gif": "videos/1489-xdYPUtE.gif"
+  },
+  {
+   "id": "0735",
+   "name": "sit-up v. 2",
+   "gif": "videos/0735-Bn6TXyO.gif"
+  },
+  {
+   "id": "3679",
+   "name": "sit-up with arms on chest",
+   "gif": "videos/3679-6ZCiYWQ.gif"
+  },
+  {
+   "id": "3361",
+   "name": "skater hops",
+   "gif": "videos/3361-zfNHMN9.gif"
+  },
+  {
+   "id": "2142",
+   "name": "ski ergometer",
+   "gif": "videos/2142-vpQaQkH.gif"
+  },
+  {
+   "id": "3671",
+   "name": "ski step",
+   "gif": "videos/3671-5MRH8H2.gif"
+  },
+  {
+   "id": "3304",
+   "name": "skin the cat",
+   "gif": "videos/3304-MSfvriJ.gif"
+  },
+  {
+   "id": "1425",
+   "name": "sled 45 degrees one leg press",
+   "gif": "videos/1425-WWD6FzI.gif"
+  },
+  {
+   "id": "0738",
+   "name": "sled 45в° calf press",
+   "gif": "videos/0738-qCNVnaU.gif"
+  },
+  {
+   "id": "0739",
+   "name": "sled 45в° leg press",
+   "gif": "videos/0739-10Z2DXU.gif"
+  },
+  {
+   "id": "1464",
+   "name": "sled 45в° leg press (back pov)",
+   "gif": "videos/1464-yn2lLSI.gif"
+  },
+  {
+   "id": "1463",
+   "name": "sled 45° leg press (side pov)",
+   "gif": "videos/1463-2Qh2J1e.gif"
+  },
+  {
+   "id": "0740",
+   "name": "sled 45в° leg wide press",
+   "gif": "videos/0740-tj41Nu6.gif"
+  },
+  {
+   "id": "1391",
+   "name": "sled calf press on leg press",
+   "gif": "videos/1391-ykHcWme.gif"
+  },
+  {
+   "id": "0741",
+   "name": "sled closer hack squat",
+   "gif": "videos/0741-gf3ZjB9.gif"
+  },
+  {
+   "id": "0742",
+   "name": "sled forward angled calf raise",
+   "gif": "videos/0742-XDOiFns.gif"
+  },
+  {
+   "id": "0743",
+   "name": "sled hack squat",
+   "gif": "videos/0743-Qa55kX1.gif"
+  },
+  {
+   "id": "2334",
+   "name": "sled lying calf press",
+   "gif": "videos/2334-g376LuL.gif"
+  },
+  {
+   "id": "0744",
+   "name": "sled lying squat",
+   "gif": "videos/0744-9n2149Z.gif"
+  },
+  {
+   "id": "1392",
+   "name": "sled one leg calf press on leg press",
+   "gif": "videos/1392-u0pLNgz.gif"
+  },
+  {
+   "id": "1496",
+   "name": "sledge hammer",
+   "gif": "videos/1496-REXmfVC.gif"
+  },
+  {
+   "id": "0746",
+   "name": "smith back shrug",
+   "gif": "videos/0746-MzNnwx9.gif"
+  },
+  {
+   "id": "0747",
+   "name": "smith behind neck press",
+   "gif": "videos/0747-Gpn4ADc.gif"
+  },
+  {
+   "id": "0748",
+   "name": "smith bench press",
+   "gif": "videos/0748-trqKQv2.gif"
+  },
+  {
+   "id": "0749",
+   "name": "smith bent knee good morning",
+   "gif": "videos/0749-1bQkKZK.gif"
+  },
+  {
+   "id": "1359",
+   "name": "smith bent over row",
+   "gif": "videos/1359-ZX9UZmj.gif"
+  },
+  {
+   "id": "0750",
+   "name": "smith chair squat",
+   "gif": "videos/0750-Gu2rNJd.gif"
+  },
+  {
+   "id": "0751",
+   "name": "smith close-grip bench press",
+   "gif": "videos/0751-WcHl7ru.gif"
+  },
+  {
+   "id": "0752",
+   "name": "smith deadlift",
+   "gif": "videos/0752-UfePqpx.gif"
+  },
+  {
+   "id": "0753",
+   "name": "smith decline bench press",
+   "gif": "videos/0753-ETZfAbZ.gif"
+  },
+  {
+   "id": "0754",
+   "name": "smith decline reverse-grip press",
+   "gif": "videos/0754-MY9P1WA.gif"
+  },
+  {
+   "id": "1433",
+   "name": "smith front squat (clean grip)",
+   "gif": "videos/1433-lFhb2Rw.gif"
+  },
+  {
+   "id": "3281",
+   "name": "smith full squat",
+   "gif": "videos/3281-NNoHCEA.gif"
+  },
+  {
+   "id": "0755",
+   "name": "smith hack squat",
+   "gif": "videos/0755-ZuPXtCK.gif"
+  },
+  {
+   "id": "0756",
+   "name": "smith hip raise",
+   "gif": "videos/0756-CqhoytW.gif"
+  },
+  {
+   "id": "0757",
+   "name": "smith incline bench press",
+   "gif": "videos/0757-5v7KYld.gif"
+  },
+  {
+   "id": "0758",
+   "name": "smith incline reverse-grip press",
+   "gif": "videos/0758-78VqWQK.gif"
+  },
+  {
+   "id": "0759",
+   "name": "smith incline shoulder raises",
+   "gif": "videos/0759-ayAHcEm.gif"
+  },
+  {
+   "id": "0760",
+   "name": "smith leg press",
+   "gif": "videos/0760-7zdxRTl.gif"
+  },
+  {
+   "id": "1434",
+   "name": "smith low bar squat",
+   "gif": "videos/1434-RGLscZM.gif"
+  },
+  {
+   "id": "1683",
+   "name": "smith machine bicep curl",
+   "gif": "videos/1683-zILLZ98.gif"
+  },
+  {
+   "id": "1625",
+   "name": "smith machine decline close grip bench press",
+   "gif": "videos/1625-yB9SvIF.gif"
+  },
+  {
+   "id": "1752",
+   "name": "smith machine incline tricep extension",
+   "gif": "videos/1752-o8aOcrz.gif"
+  },
+  {
+   "id": "1626",
+   "name": "smith machine reverse decline close grip bench press",
+   "gif": "videos/1626-QyO6Uma.gif"
+  },
+  {
+   "id": "0761",
+   "name": "smith narrow row",
+   "gif": "videos/0761-JGKowMS.gif"
+  },
+  {
+   "id": "1360",
+   "name": "smith one arm row",
+   "gif": "videos/1360-Q4DSJPC.gif"
+  },
+  {
+   "id": "1393",
+   "name": "smith one leg floor calf raise",
+   "gif": "videos/1393-9GXrTE6.gif"
+  },
+  {
+   "id": "0762",
+   "name": "smith rear delt row",
+   "gif": "videos/0762-nFUwqG6.gif"
+  },
+  {
+   "id": "0763",
+   "name": "smith reverse calf raises",
+   "gif": "videos/0763-ywaNfuh.gif"
+  },
+  {
+   "id": "1394",
+   "name": "smith reverse calf raises",
+   "gif": "videos/1394-Lsqrgh4.gif"
+  },
+  {
+   "id": "1361",
+   "name": "smith reverse grip bent over row",
+   "gif": "videos/1361-aaxA3cm.gif"
+  },
+  {
+   "id": "0764",
+   "name": "smith reverse-grip press",
+   "gif": "videos/0764-zK8Fu1W.gif"
+  },
+  {
+   "id": "1395",
+   "name": "smith seated one leg calf raise",
+   "gif": "videos/1395-0S75mYG.gif"
+  },
+  {
+   "id": "0765",
+   "name": "smith seated shoulder press",
+   "gif": "videos/0765-xUwnBMT.gif"
+  },
+  {
+   "id": "1426",
+   "name": "smith seated wrist curl",
+   "gif": "videos/1426-B6dAO1t.gif"
+  },
+  {
+   "id": "0766",
+   "name": "smith shoulder press",
+   "gif": "videos/0766-903mzG8.gif"
+  },
+  {
+   "id": "0767",
+   "name": "smith shrug",
+   "gif": "videos/0767-OUQ0ZyW.gif"
+  },
+  {
+   "id": "0768",
+   "name": "smith single leg split squat",
+   "gif": "videos/0768-wWFspEi.gif"
+  },
+  {
+   "id": "0769",
+   "name": "smith sprint lunge",
+   "gif": "videos/0769-HsjbB1z.gif"
+  },
+  {
+   "id": "0770",
+   "name": "smith squat",
+   "gif": "videos/0770-jFtipLl.gif"
+  },
+  {
+   "id": "0771",
+   "name": "smith standing back wrist curl",
+   "gif": "videos/0771-hfmQ0Tz.gif"
+  },
+  {
+   "id": "0772",
+   "name": "smith standing behind head military press",
+   "gif": "videos/0772-ht8xDrP.gif"
+  },
+  {
+   "id": "0773",
+   "name": "smith standing leg calf raise",
+   "gif": "videos/0773-6MaEjVA.gif"
+  },
+  {
+   "id": "0774",
+   "name": "smith standing military press",
+   "gif": "videos/0774-jjUPrze.gif"
+  },
+  {
+   "id": "3142",
+   "name": "smith sumo squat",
+   "gif": "videos/3142-dzz6BiV.gif"
+  },
+  {
+   "id": "1396",
+   "name": "smith toe raise",
+   "gif": "videos/1396-Y4QlY8z.gif"
+  },
+  {
+   "id": "0775",
+   "name": "smith upright row",
+   "gif": "videos/0775-1DN3iz4.gif"
+  },
+  {
+   "id": "1308",
+   "name": "smith wide grip bench press",
+   "gif": "videos/1308-zoOvPcx.gif"
+  },
+  {
+   "id": "1309",
+   "name": "smith wide grip decline bench press",
+   "gif": "videos/1309-wi2H9QX.gif"
+  },
+  {
+   "id": "0776",
+   "name": "snatch pull",
+   "gif": "videos/0776-dG5Smob.gif"
+  },
+  {
+   "id": "0777",
+   "name": "spell caster",
+   "gif": "videos/0777-p9cCe2r.gif"
+  },
+  {
+   "id": "1362",
+   "name": "sphinx",
+   "gif": "videos/1362-DIVyqrU.gif"
+  },
+  {
+   "id": "0778",
+   "name": "spider crawl push up",
+   "gif": "videos/0778-P9GFBME.gif"
+  },
+  {
+   "id": "1363",
+   "name": "spine stretch",
+   "gif": "videos/1363-JbC2iaV.gif"
+  },
+  {
+   "id": "2329",
+   "name": "spine twist",
+   "gif": "videos/2329-2jl9K55.gif"
+  },
+  {
+   "id": "2368",
+   "name": "split squats",
+   "gif": "videos/2368-9E25EOx.gif"
+  },
+  {
+   "id": "0786",
+   "name": "squat jerk",
+   "gif": "videos/0786-IMRsOCn.gif"
+  },
+  {
+   "id": "1705",
+   "name": "squat on bosu ball",
+   "gif": "videos/1705-T2fA5Ir.gif"
+  },
+  {
+   "id": "1685",
+   "name": "squat to overhead reach",
+   "gif": "videos/1685-QChZi3x.gif"
+  },
+  {
+   "id": "1686",
+   "name": "squat to overhead reach with twist",
+   "gif": "videos/1686-5BZHW9s.gif"
+  },
+  {
+   "id": "2297",
+   "name": "stability ball crunch (full range hands behind head)",
+   "gif": "videos/2297-Gn5FwYT.gif"
+  },
+  {
+   "id": "3291",
+   "name": "stalder press",
+   "gif": "videos/3291-zd4P4B2.gif"
+  },
+  {
+   "id": "3669",
+   "name": "standing archer",
+   "gif": "videos/3669-JF8AkMX.gif"
+  },
+  {
+   "id": "0788",
+   "name": "standing behind neck press",
+   "gif": "videos/0788-xDh0lJr.gif"
+  },
+  {
+   "id": "1490",
+   "name": "standing calf raise (on a staircase)",
+   "gif": "videos/1490-6HmFgmx.gif"
+  },
+  {
+   "id": "1397",
+   "name": "standing calves",
+   "gif": "videos/1397-XIHEoCG.gif"
+  },
+  {
+   "id": "1398",
+   "name": "standing calves calf stretch",
+   "gif": "videos/1398-qOKcgVP.gif"
+  },
+  {
+   "id": "1599",
+   "name": "standing hamstring and calf stretch with strap",
+   "gif": "videos/1599-xTjr103.gif"
+  },
+  {
+   "id": "0794",
+   "name": "standing lateral stretch",
+   "gif": "videos/0794-1jXLYEw.gif"
+  },
+  {
+   "id": "1364",
+   "name": "standing pelvic tilt",
+   "gif": "videos/1364-cuKYxhu.gif"
+  },
+  {
+   "id": "0795",
+   "name": "standing single leg curl",
+   "gif": "videos/0795-C5jncD2.gif"
+  },
+  {
+   "id": "0796",
+   "name": "standing wheel rollerout",
+   "gif": "videos/0796-KtRomty.gif"
+  },
+  {
+   "id": "3223",
+   "name": "star jump (male)",
+   "gif": "videos/3223-HtfCpfi.gif"
+  },
+  {
+   "id": "2138",
+   "name": "stationary bike run v. 3",
+   "gif": "videos/2138-H1PESYI.gif"
+  },
+  {
+   "id": "0798",
+   "name": "stationary bike walk",
+   "gif": "videos/0798-a8VDgLw.gif"
+  },
+  {
+   "id": "3314",
+   "name": "straddle maltese",
+   "gif": "videos/3314-HfqciZF.gif"
+  },
+  {
+   "id": "3298",
+   "name": "straddle planche",
+   "gif": "videos/3298-BL3GHeY.gif"
+  },
+  {
+   "id": "1427",
+   "name": "straight leg outer hip abductor",
+   "gif": "videos/1427-mQ1tBXn.gif"
+  },
+  {
+   "id": "0803",
+   "name": "superman push-up",
+   "gif": "videos/0803-4GqRrAk.gif"
+  },
+  {
+   "id": "0805",
+   "name": "suspended abdominal fallout",
+   "gif": "videos/0805-X3TCNEU.gif"
+  },
+  {
+   "id": "0806",
+   "name": "suspended push-up",
+   "gif": "videos/0806-IaGQCrC.gif"
+  },
+  {
+   "id": "0807",
+   "name": "suspended reverse crunch",
+   "gif": "videos/0807-R1WYG5D.gif"
+  },
+  {
+   "id": "0808",
+   "name": "suspended row",
+   "gif": "videos/0808-4OaumBr.gif"
+  },
+  {
+   "id": "0809",
+   "name": "suspended split squat",
+   "gif": "videos/0809-QpXqiq8.gif"
+  },
+  {
+   "id": "3433",
+   "name": "swimmer kicks v. 2 (male)",
+   "gif": "videos/3433-SP3hUez.gif"
+  },
+  {
+   "id": "3318",
+   "name": "swing 360",
+   "gif": "videos/3318-tnaj0mT.gif"
+  },
+  {
+   "id": "1753",
+   "name": "three bench dip",
+   "gif": "videos/1753-DQ0cqkT.gif"
+  },
+  {
+   "id": "2459",
+   "name": "tire flip",
+   "gif": "videos/2459-oZjMu1t.gif"
+  },
+  {
+   "id": "0811",
+   "name": "trap bar deadlift",
+   "gif": "videos/0811-jQGwmxN.gif"
+  },
+  {
+   "id": "0814",
+   "name": "triceps dip",
+   "gif": "videos/0814-X6C6i5Y.gif"
+  },
+  {
+   "id": "0812",
+   "name": "triceps dip (bench leg)",
+   "gif": "videos/0812-VuoerH0.gif"
+  },
+  {
+   "id": "0813",
+   "name": "triceps dip (between benches)",
+   "gif": "videos/0813-Wgbn9qo.gif"
+  },
+  {
+   "id": "0815",
+   "name": "triceps dips floor",
+   "gif": "videos/0815-7aVz15j.gif"
+  },
+  {
+   "id": "0816",
+   "name": "triceps press",
+   "gif": "videos/0816-fSrPP6B.gif"
+  },
+  {
+   "id": "0817",
+   "name": "triceps stretch",
+   "gif": "videos/0817-uOV3Itw.gif"
+  },
+  {
+   "id": "0871",
+   "name": "tuck crunch",
+   "gif": "videos/0871-BMMolZ3.gif"
+  },
+  {
+   "id": "0818",
+   "name": "twin handle parallel grip lat pulldown",
+   "gif": "videos/0818-rkg41Fb.gif"
+  },
+  {
+   "id": "1466",
+   "name": "twist hip lift",
+   "gif": "videos/1466-AX1kB0o.gif"
+  },
+  {
+   "id": "2802",
+   "name": "twisted leg raise",
+   "gif": "videos/2802-C0eCeEt.gif"
+  },
+  {
+   "id": "2801",
+   "name": "twisted leg raise (female)",
+   "gif": "videos/2801-yT9tk17.gif"
+  },
+  {
+   "id": "3231",
+   "name": "two toe touch (male)",
+   "gif": "videos/3231-p195zsJ.gif"
+  },
+  {
+   "id": "1365",
+   "name": "upper back stretch",
+   "gif": "videos/1365-GSDioYu.gif"
+  },
+  {
+   "id": "1366",
+   "name": "upward facing dog",
+   "gif": "videos/1366-01qpYSe.gif"
+  },
+  {
+   "id": "3420",
+   "name": "v-sit on floor",
+   "gif": "videos/3420-ZuXu4Eq.gif"
+  },
+  {
+   "id": "0826",
+   "name": "vertical leg raise (on parallel bars)",
+   "gif": "videos/0826-ZNgOYQU.gif"
+  },
+  {
+   "id": "2141",
+   "name": "walk elliptical cross trainer",
+   "gif": "videos/2141-rjtuP6X.gif"
+  },
+  {
+   "id": "3655",
+   "name": "walking high knees lunge",
+   "gif": "videos/3655-J9zIWig.gif"
+  },
+  {
+   "id": "1460",
+   "name": "walking lunge",
+   "gif": "videos/1460-IZVHb27.gif"
+  },
+  {
+   "id": "3666",
+   "name": "walking on incline treadmill",
+   "gif": "videos/3666-rjiM4L3.gif"
+  },
+  {
+   "id": "2311",
+   "name": "walking on stepmill",
+   "gif": "videos/2311-j9Q5crt.gif"
+  },
+  {
+   "id": "0830",
+   "name": "weighted bench dip",
+   "gif": "videos/0830-MU9HnE7.gif"
+  },
+  {
+   "id": "2987",
+   "name": "weighted close grip chin-up on dip cage",
+   "gif": "videos/2987-Gk1r408.gif"
+  },
+  {
+   "id": "3643",
+   "name": "weighted cossack squats (male)",
+   "gif": "videos/3643-GWoKnIm.gif"
+  },
+  {
+   "id": "0832",
+   "name": "weighted crunch",
+   "gif": "videos/0832-s8nrDXF.gif"
+  },
+  {
+   "id": "3670",
+   "name": "weighted decline sit-up",
+   "gif": "videos/3670-EZeDVzO.gif"
+  },
+  {
+   "id": "0833",
+   "name": "weighted donkey calf raise",
+   "gif": "videos/0833-LmaFNZS.gif"
+  },
+  {
+   "id": "1310",
+   "name": "weighted drop push up",
+   "gif": "videos/1310-PSlvNMs.gif"
+  },
+  {
+   "id": "2135",
+   "name": "weighted front plank",
+   "gif": "videos/2135-VBAWRPG.gif"
+  },
+  {
+   "id": "0834",
+   "name": "weighted front raise",
+   "gif": "videos/0834-e4aFmFY.gif"
+  },
+  {
+   "id": "0866",
+   "name": "weighted hanging leg-hip raise",
+   "gif": "videos/0866-QOA0FD0.gif"
+  },
+  {
+   "id": "0835",
+   "name": "weighted hyperextension (on stability ball)",
+   "gif": "videos/0835-8urJS9b.gif"
+  },
+  {
+   "id": "3641",
+   "name": "weighted kneeling step with swing",
+   "gif": "videos/3641-7uFJuXp.gif"
+  },
+  {
+   "id": "3644",
+   "name": "weighted lunge with swing",
+   "gif": "videos/3644-5WiFcYk.gif"
+  },
+  {
+   "id": "3286",
+   "name": "weighted muscle up",
+   "gif": "videos/3286-JsOV1SU.gif"
+  },
+  {
+   "id": "3312",
+   "name": "weighted muscle up (on bar)",
+   "gif": "videos/3312-MCkqdKE.gif"
+  },
+  {
+   "id": "3290",
+   "name": "weighted one hand pull up",
+   "gif": "videos/3290-fXfqg1E.gif"
+  },
+  {
+   "id": "0840",
+   "name": "weighted overhead crunch (on stability ball)",
+   "gif": "videos/0840-xmM75XG.gif"
+  },
+  {
+   "id": "0841",
+   "name": "weighted pull-up",
+   "gif": "videos/0841-HMzLjXx.gif"
+  },
+  {
+   "id": "0844",
+   "name": "weighted round arm",
+   "gif": "videos/0844-VLYXo8S.gif"
+  },
+  {
+   "id": "0846",
+   "name": "weighted russian twist",
+   "gif": "videos/0846-fZFZ704.gif"
+  },
+  {
+   "id": "0845",
+   "name": "weighted russian twist (legs up)",
+   "gif": "videos/0845-WU9BLIs.gif"
+  },
+  {
+   "id": "2371",
+   "name": "weighted russian twist v. 2",
+   "gif": "videos/2371-YIUAtYf.gif"
+  },
+  {
+   "id": "0847",
+   "name": "weighted seated bicep curl (on stability ball)",
+   "gif": "videos/0847-b4b6afT.gif"
+  },
+  {
+   "id": "0849",
+   "name": "weighted seated twist (on stability ball)",
+   "gif": "videos/0849-s34Y4LR.gif"
+  },
+  {
+   "id": "0850",
+   "name": "weighted side bend (on stability ball)",
+   "gif": "videos/0850-6bOA1Oi.gif"
+  },
+  {
+   "id": "0851",
+   "name": "weighted sissy squat",
+   "gif": "videos/0851-0lQnxMZ.gif"
+  },
+  {
+   "id": "0852",
+   "name": "weighted squat",
+   "gif": "videos/0852-JZuApnB.gif"
+  },
+  {
+   "id": "0853",
+   "name": "weighted standing curl",
+   "gif": "videos/0853-M5Y7GPg.gif"
+  },
+  {
+   "id": "0854",
+   "name": "weighted standing hand squeeze",
+   "gif": "videos/0854-bjqbauy.gif"
+  },
+  {
+   "id": "3313",
+   "name": "weighted straight bar dip",
+   "gif": "videos/3313-Ff18ItA.gif"
+  },
+  {
+   "id": "3642",
+   "name": "weighted stretch lunge",
+   "gif": "videos/3642-13VW2VO.gif"
+  },
+  {
+   "id": "0856",
+   "name": "weighted svend press",
+   "gif": "videos/0856-I1OBLnn.gif"
+  },
+  {
+   "id": "1754",
+   "name": "weighted three bench dips",
+   "gif": "videos/1754-gtO1ErP.gif"
+  },
+  {
+   "id": "1755",
+   "name": "weighted tricep dips",
+   "gif": "videos/1755-bZq4bwK.gif"
+  },
+  {
+   "id": "1767",
+   "name": "weighted triceps dip on high parallel bars",
+   "gif": "videos/1767-K1vlode.gif"
+  },
+  {
+   "id": "0857",
+   "name": "wheel rollerout",
+   "gif": "videos/0857-NAgVB3t.gif"
+  },
+  {
+   "id": "3637",
+   "name": "wheel run",
+   "gif": "videos/3637-km2Ljzj.gif"
+  },
+  {
+   "id": "1429",
+   "name": "wide grip pull-up",
+   "gif": "videos/1429-Qqi7bko.gif"
+  },
+  {
+   "id": "1367",
+   "name": "wide grip rear pull-up",
+   "gif": "videos/1367-OYFhXVD.gif"
+  },
+  {
+   "id": "1311",
+   "name": "wide hand push up",
+   "gif": "videos/1311-JmMVpR3.gif"
+  },
+  {
+   "id": "2363",
+   "name": "wide-grip chest dip on high parallel bars",
+   "gif": "videos/2363-O2K9Vb5.gif"
+  },
+  {
+   "id": "0858",
+   "name": "wind sprints",
+   "gif": "videos/0858-Qoujh3Q.gif"
+  },
+  {
+   "id": "1604",
+   "name": "world greatest stretch",
+   "gif": "videos/1604-DFGXwZr.gif"
+  },
+  {
+   "id": "1428",
+   "name": "wrist circles",
+   "gif": "videos/1428-2zNKRUB.gif"
+  },
+  {
+   "id": "0859",
+   "name": "wrist rollerer",
+   "gif": "videos/0859-bd5b860.gif"
+  }
+ ]
+}

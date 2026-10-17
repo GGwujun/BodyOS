@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .line-chart {
   width: 100%;
   position: relative;
@@ -7,15 +9,29 @@
   display: block;
 }
 
+/* 图下面那一行:没点过是「点曲线看具体数值」,点过就是那个点的日期和值。
+   同一个位置只摆一句 —— 提示和读数叠成两行的话,手机上图表下面会越来越长 */
+.line-chart__read {
+  display: block;
+  margin-top: 4px;
+  font-size: $fs-nano;
+  color: $color-text-tertiary;
+
+  &.is-on {
+    color: $color-primary-dark;
+    font-weight: $fw-bold;
+  }
+}
+
 .chart-empty {
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f0f0f0;
-  border-radius: 12px;
+  border-radius: $radius-md;
 }
 
 .chart-empty-text {
-  font-size: 12px;
+  font-size: $fs-mini;
   color: #888;
 }

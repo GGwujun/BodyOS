@@ -1,26 +1,45 @@
 @import '../../styles/variables.scss';
 
-/* 记录体重底部弹层(体重数据页/方案页共用) */
+/* 记录体重底部弹层 —— 速记 / 记录 / 体重数据 / 方案 / 训练中 共用一份 */
 .ws-mask {
   position: fixed; inset: 0;
   background: rgba(15, 23, 42, .45); z-index: 1000;
   display: flex; align-items: flex-end;
 }
 .ws-sheet {
-  width: 100%; background: #fff;
+  width: 100%; background: $color-bg-card;
   border-radius: $radius-lg $radius-lg 0 0;
   padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 .ws-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
-.ws-title { display: block; font-size: 18px; font-weight: 700; color: $color-text-primary; }
+.ws-title { display: block; font-size: $fs-h2; font-weight: 700; color: $color-text-primary; }
 .ws-input-row { display: flex; align-items: baseline; gap: 8px; margin: 20px 0 24px; }
 .ws-input {
-  flex: 1; font-size: 34px; font-weight: 600;
+  flex: 1; font-size: $fs-emoji; font-weight: 600;
   color: $color-primary-dark; border-bottom: 2px solid $color-primary; padding: 8px 0;
 }
-.ws-unit { font-size: 15px; color: $color-text-secondary; }
+.ws-unit { font-size: $fs-medium; color: $color-text-secondary; }
 .ws-save {
-  background: $color-primary !important; color: #fff !important;
-  border-radius: $radius-md !important; font-size: 15px !important;
+  background: $color-primary !important; color: $color-text-inverse !important;
+  border-radius: $radius-md !important; font-size: $fs-medium !important;
+  margin: 0;
+  /* 原生 <button> 那圈描边画在 ::after 上,光覆盖 background 是盖不掉的 */
+  &::after { border: 0; }
 }
+
+/* 历史 —— 记错一笔能就地改:这一截以前只有记录页那个自己写的弹层有 */
+.ws-history { margin-top: 22px; }
+.ws-history__title { display: block; font-size: $fs-small; font-weight: 700; color: $color-text-primary; }
+.ws-history__empty { display: block; margin-top: 10px; font-size: $fs-mini; color: $color-text-tertiary; }
+.ws-history__list { max-height: 220px; overflow-y: auto; }
+.ws-history__row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 0; border-bottom: 1px solid $color-divider;
+
+  &:last-child { border-bottom: none; }
+}
+.ws-history__date { flex: 1; font-size: $fs-mini; color: $color-text-secondary; }
+.ws-history__value { font-size: $fs-caption; font-weight: 600; color: $color-text-primary; }
+.ws-history__del { color: $color-text-tertiary; padding: 4px 6px; }
+.ws-history__del.is-busy { opacity: .4; }

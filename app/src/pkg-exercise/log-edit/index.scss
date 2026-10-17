@@ -1,0 +1,222 @@
+@import '../../styles/variables.scss';
+
+/* ============ 补录 / 修改训练(分包) ============ */
+.le-page {
+  background: $color-bg;
+  gap: 10px;
+  padding-bottom: 30px;
+
+  .le-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 44px 24px;
+    text-align: center;
+  }
+  .le-empty-cta { margin-top: 10px; }
+
+  /* 日期 / 训练日 */
+  .le-head { display: flex; flex-direction: column; gap: 8px; }
+  .le-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .le-field-k { font-size: $fs-caption; color: $color-text-primary; font-weight: $fw-medium; }
+  .le-pick { font-size: $fs-medium; color: $color-info; font-weight: $fw-bold; }
+  .le-total-muted { color: $color-text-secondary; font-weight: $fw-medium; }
+
+  .le-days { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 2px; }
+  .le-chip {
+    padding: 5px 11px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+
+    &.on {
+      color: $color-primary-dark;
+      background: $color-primary-bg;
+      border-color: $color-primary;
+      font-weight: $fw-bold;
+    }
+  }
+
+  /* 合计条 */
+  .le-total {
+    display: flex;
+    flex-wrap: wrap;   /* 时长那一行自己占一整行(见 .le-dur),和上面几个数字挤一列会看串 */
+    align-items: baseline;
+    gap: 5px;
+    padding: 12px 14px;
+  }
+  .le-total-v {
+    font-size: $fs-h2;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+  /* 时长:满宽一行,标签在左、加减在右 */
+  .le-dur {
+    flex-basis: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid $color-divider;
+  }
+  .le-dur-k { flex: 1; font-size: $fs-small; color: $color-text-primary; }
+  .le-dur-step { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+  .le-dur-hint { flex-basis: 100%; margin-top: 2px; }
+
+  /* 动作卡 */
+  .le-row { display: flex; flex-direction: column; gap: 2px; }
+  .le-row-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 2px 0 6px;
+  }
+  .le-row-title { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+  .le-row-name { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+  .le-sided {
+    flex-shrink: 0;
+    padding: 1px 6px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+  }
+  .le-row-del { font-size: $fs-mini; color: $color-danger; padding: 2px 4px; flex-shrink: 0; }
+
+  .le-set {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid $color-divider;
+  }
+  .le-set:last-of-type { border-bottom: none; }
+  .le-set-no {
+    width: 14px;
+    text-align: center;
+    font-size: $fs-small;
+    color: $color-text-secondary;
+    flex-shrink: 0;
+  }
+
+  .le-step { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+  .le-step-btn {
+    width: 24px;
+    height: 26px;
+    border-radius: $radius-sm;
+    background: $color-fill;
+    font-size: $fs-medium;
+    color: $color-text-primary;
+    text-align: center;
+    line-height: 26px;
+
+    &:active { background: $color-border; }
+  }
+  .le-step-val {
+    min-width: 38px;
+    text-align: center;
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+  .le-step-val-in {
+    min-width: 34px;
+    height: 26px;
+    padding: 0;
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+  }
+  .le-step-unit { font-size: $fs-nano; font-weight: $fw-regular; color: $color-text-secondary; margin-left: 1px; }
+  .le-step-bw { min-width: 38px; }
+
+  .le-set-del { font-size: $fs-small; color: $color-text-tertiary; padding: 2px 4px; }
+
+  .le-addset { font-size: $fs-mini; color: $color-info; padding: 8px 0 2px; }
+
+  .le-addrow {
+    display: block;
+    padding: 13px;
+    text-align: center;
+    font-size: $fs-caption;
+    color: $color-info;
+    font-weight: $fw-medium;
+    background: $color-bg-card;
+    border: 1px dashed $color-border;
+    border-radius: $radius-card;
+  }
+
+  .le-note { display: flex; flex-direction: column; gap: 8px; }
+  .le-note-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+    font-size: $fs-caption;
+    color: $color-text-primary;
+  }
+  .le-ph { color: $color-text-tertiary; font-size: $fs-small; }
+
+  .le-foot { display: block; line-height: 1.7; padding: 0 2px; }
+}
+
+/* ============ 添加动作弹层(fixed,页面类作用域外) ============ */
+.le-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  z-index: 110;
+}
+
+.le-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 111;
+  box-sizing: border-box;
+  max-height: 84vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+
+  .le-sheet-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .le-sheet-title { display: flex; flex-direction: column; gap: 2px; }
+  .le-sheet-close { padding: 4px 6px; font-size: $fs-medium; color: $color-text-secondary; }
+
+  .le-pool { display: flex; flex-direction: column; }
+  .le-pool-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px;
+    border-radius: $radius-md;
+    border-bottom: 1px solid $color-divider;
+
+    &.on { background: $color-primary-bg; }
+    &:active { background: $color-bg-soft; }
+  }
+  .le-pool-name { font-size: $fs-medium; color: $color-text-primary; font-weight: $fw-medium; }
+  .le-pool-tick { font-size: $fs-mini; color: $color-primary-dark; font-weight: $fw-bold; }
+}

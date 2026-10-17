@@ -1,0 +1,286 @@
+@import '../../styles/variables.scss';
+
+/* ============ 训练统计(分包) ============ */
+.st-page {
+  background: $color-bg;
+  gap: 10px;
+  padding-bottom: 30px;
+
+  /* 空态 */
+  .st-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .st-empty-emoji { font-size: $fs-emoji; }
+  .st-empty-cta { margin-top: 8px; }
+
+  .st-block { display: flex; flex-direction: column; gap: 10px; }
+  .st-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .st-legend { font-size: $fs-nano; color: $color-text-tertiary; }
+  /* 卡片标题右侧的「全部 ›」—— 同一条 legend 位置,但它是能点的,给主色 */
+  .st-legend-link { color: $color-info; font-weight: $fw-medium; }
+  .st-foot { line-height: 1.7; }
+
+  /* 顶上四个数 —— 进来先给结论:练了多少次、这个月、连着几天、总共几天。
+     四格等宽、竖线分隔:它们是同一层的四个读数,不该有谁长得像主按钮 */
+  .st-tiles { display: flex; align-items: stretch; padding: 14px 4px; }
+  .st-tile {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+
+    & + .st-tile { border-left: 1px solid $color-divider; }
+  }
+  .st-tile-v {
+    font-size: $fs-h1;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+
+    /* 「连着几天」这一格用品牌色:它是四个数里唯一会掉的那个,也最该被看见 */
+    &--accent { color: $color-primary-dark; }
+  }
+
+  /* 肌肉平衡 */
+  .st-bal {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    padding: 2px 0;
+  }
+  .st-bal-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 14px;
+  }
+  .st-bal-key { display: flex; align-items: center; gap: 4px; }
+  .st-bal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &--low { background: $color-muscle-low; }
+    &--ok { background: $color-primary; }
+    &--high { background: $color-muscle-high; }
+    &--none { background: $color-border; }
+  }
+  .st-bal-rows { display: flex; flex-direction: column; gap: 7px; }
+  .st-bal-row { display: flex; align-items: center; gap: 8px; }
+  .st-bal-name {
+    width: 62px;
+    flex-shrink: 0;
+    font-size: $fs-small;
+    color: $color-text-primary;
+
+    &.is-on { color: $color-primary-dark; font-weight: $fw-bold; }
+  }
+  .st-bal-bar {
+    flex: 1;
+    min-width: 0;
+    height: 8px;
+    border-radius: $radius-pill;
+    background: $color-fill;
+    overflow: hidden;
+  }
+  .st-bal-fill {
+    height: 100%;
+    border-radius: $radius-pill;
+    transition: width 0.25s ease;
+
+    /* 色档和身体图用同一套(见 muscles/BodyMap.scss):图上深、条上必须也深 */
+    &--low { background: $color-muscle-low; }
+    &--fresh { background: $color-primary; }
+    &--high { background: $color-muscle-high; }
+    &--none { background: transparent; }
+  }
+  .st-bal-v {
+    width: 34px;
+    flex-shrink: 0;
+    text-align: right;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    font-variant-numeric: tabular-nums;
+  }
+  .st-bal-more {
+    display: block;
+    text-align: center;
+    color: $color-info;
+    font-weight: $fw-medium;
+    padding-top: 2px;
+  }
+
+  /* 图卡:图上一句提示,图下一行读数(LineChart 自己带) */
+  .st-chart { display: flex; flex-direction: column; gap: 2px; padding-top: 2px; }
+
+  /* 体重卡底下的两个入口:围度 / 进度照片 —— 它们不属于训练统计,
+     但「练成什么样」这件事用户会在这儿接着看 */
+  .st-links { display: flex; gap: 18px; padding-top: 2px; }
+  .st-link { color: $color-info; font-weight: $fw-medium; }
+
+  /* 热力图 */
+  /* 色阶口径开关:紧挨着格子图摆(它管的就是这张图),样式复用上面那排档位 chip */
+  .st-heat-metrics { display: flex; gap: 6px; }
+  .st-heat { width: 100%; }
+  .st-heat-inner { display: inline-flex; flex-direction: column; gap: 4px; }
+  .st-heat-months { display: flex; padding-left: 26px; }
+  .st-heat-month {
+    width: 30px;
+    flex-shrink: 0;
+    font-size: $fs-nano;
+    color: $color-text-tertiary;
+    white-space: nowrap;
+  }
+  .st-heat-body { display: flex; gap: 2px; }
+  .st-heat-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 24px;
+    flex-shrink: 0;
+  }
+  .st-heat-row {
+    height: 26px;
+    line-height: 26px;
+    font-size: $fs-nano;
+    color: $color-text-tertiary;
+  }
+  .st-heat-grid { display: flex; gap: 4px; }
+  .st-heat-col { display: flex; flex-direction: column; gap: 4px; }
+  /* 格子绑着「点一下看那天的数据」,是这一页唯一的日期入口,26px 手指够不着。
+     视觉尺寸不动,命中区外扩 2px —— 格间距是 4px,两边各扩 2 正好补齐缝,
+     再多一格就会去抢隔壁那天的点击 */
+  .st-cell {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    border-radius: $radius-sm;
+    background: $color-fill;
+
+    &--0 { background: $color-fill; }
+    &--1 { background: #a7f3d0; }
+    &--2 { background: #6ee7b7; }
+    &--3 { background: $color-primary; }
+    &--4 { background: $color-primary-dark; }
+    &--on { box-shadow: 0 0 0 2px rgba(17, 24, 39, .35); }
+    /* 请假 —— 空心底色,一眼区别于「没练」(灰)和「练了」(绿)。
+       要的就是让人看热力图时不会把发烧那几天读成偷懒。 */
+    &--off {
+      background: rgba(56, 117, 237, .14);
+      box-shadow: inset 0 0 0 1.5px $color-info;
+    }
+  }
+  /* 图例里那个小方块:尺寸跟色阶一样,别撑成一格 */
+  .st-heat-offkey { width: 16px; height: 16px; border-radius: 4px; }
+  .st-heat-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .st-heat-scale { display: flex; align-items: center; gap: 4px; }
+  .st-heat-grid .st-cell::after { content: ''; position: absolute; inset: -2px; }
+  .st-heat-scale .st-cell { width: 16px; height: 16px; border-radius: 4px; }
+
+  .st-pick {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    background: $color-bg-soft;
+    border-radius: $radius-md;
+    min-height: 44px;
+    justify-content: center;
+  }
+  .st-pick-k { font-size: $fs-small; font-weight: $fw-medium; color: $color-text-primary; }
+  .st-pick-off { color: $color-info; }
+  .st-pick-op { font-size: $fs-small; color: $color-text-secondary; text-decoration: underline; margin-top: 2px; }
+
+  /* 阶段汇总 */
+  /* 时间档现在自成一行(管着下面两张卡),不再挂在某一张卡的标题底下 */
+  .st-ranges { display: flex; gap: 6px; }
+  .st-chip {
+    font-size: $fs-mini;
+    padding: 4px 12px;
+    border-radius: $radius-pill;
+    background: $color-fill;
+    color: $color-text-secondary;
+
+    &--on { background: $color-primary-bg; color: $color-primary-dark; font-weight: $fw-medium; }
+  }
+  .st-nums {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .st-num {
+    width: calc(33.33% - 6px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 10px 4px;
+    background: $color-bg-soft;
+    border-radius: $radius-md;
+  }
+  .st-num-v {
+    font-size: $fs-h2;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 强度分布:一条按档位铺满的条 + 下面一行说明。
+     颜色**不写在这里** —— 每一段的色值由页面从 engine/effort.ts 的色带取(和打分时的色带同一份),
+     换刻度的时候不用回来改样式,也不会出现「打分是紫的、统计是红的」 */
+  .st-eff-bar {
+    display: flex;
+    height: 10px;
+    border-radius: $radius-pill;
+    overflow: hidden;
+    background: $color-fill;
+  }
+  .st-eff-seg { height: 100%; }
+  .st-eff-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .st-eff-item { display: flex; align-items: center; gap: 4px; }
+  .st-eff-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* 纪录 */
+  .st-prs { display: flex; flex-direction: column; }
+  .st-pr {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid $color-divider;
+
+    &:last-child { border-bottom: none; }
+  }
+  .st-pr-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .st-pr-name { font-size: $fs-caption; font-weight: $fw-medium; color: $color-text-primary; }
+  /* 「历史最好 → 今天大概」:掉的这件事本身要用颜色说出来,但别做成警报 */
+  .st-keep-v { color: $color-warning; font-variant-numeric: tabular-nums; }
+  .st-pr-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+}

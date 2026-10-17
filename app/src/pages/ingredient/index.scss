@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .ing-page {
   .intro-card {
     display: flex;
@@ -9,7 +11,7 @@
   }
 
   .intro-emoji {
-    font-size: 44px;
+    font-size: $fs-mega;
     line-height: 1;
   }
 
@@ -24,7 +26,7 @@
     gap: 6px;
     font-size: 26rpx;
     font-weight: 600;
-    color: #b45309;
+    color: $color-amber-dark;
   }
 
   .ing-list {
@@ -37,7 +39,7 @@
     align-items: center;
     gap: 10px;
     padding: 12px 0;
-    border-bottom: 1rpx solid #f1f5f9;
+    border-bottom: 1rpx solid $color-fill;
 
     &:last-child {
       border-bottom: none;
@@ -49,7 +51,7 @@
     width: 40rpx;
     height: 40rpx;
     border-radius: 50%;
-    background: #f1f5f9;
+    background: $color-fill;
     color: #64748b;
     font-size: 22rpx;
     display: flex;
@@ -58,8 +60,8 @@
     text-align: center;
 
     &.is-top {
-      background: #fef3c7;
-      color: #b45309;
+      background: $color-amber-bg;
+      color: $color-amber-dark;
       font-weight: 600;
     }
   }
@@ -67,16 +69,16 @@
   .ing-name {
     flex: 1;
     font-size: 26rpx;
-    color: #1e293b;
+    color: $color-text-primary;
     word-break: break-all;
   }
 
   .ing-flag {
     flex-shrink: 0;
     font-size: 20rpx;
-    color: #b45309;
-    background: #fef3c7;
-    border-radius: 8rpx;
+    color: $color-amber-dark;
+    background: $color-amber-bg;
+    border-radius: $radius-sm;
     padding: 2rpx 10rpx;
   }
 
@@ -85,7 +87,7 @@
     align-items: flex-start;
     gap: 10px;
     padding: 12rpx 16rpx;
-    border-radius: 12rpx;
+    border-radius: $radius-sm;
     margin-top: 12rpx;
 
     &--warn {
@@ -98,7 +100,7 @@
     &--info {
       background: rgba(2, 132, 199, 0.06);
 
-      .note-dot { background: #0284c7; }
+      .note-dot { background: $color-sky; }
       .note-text { color: #0c4a6e; }
     }
   }
@@ -108,7 +110,7 @@
     width: 32rpx;
     height: 32rpx;
     border-radius: 50%;
-    color: #fff;
+    color: $color-text-inverse;
     font-size: 22rpx;
     display: flex;
     align-items: center;

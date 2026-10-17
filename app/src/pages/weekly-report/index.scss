@@ -3,29 +3,39 @@
 /* ============ 本周报告页 ============ */
 .weekly-report-page {
   background: $color-bg;
-  padding: 4px 0 calc(24px + env(safe-area-inset-bottom));
+  /* 同上:简写的左右 0 会把 .safe-x 的 16px 覆盖掉,卡片贴屏幕边 */
+  padding-top: 4px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
   gap: 12px;
 
   /* 周评分卡:品牌渐变(与我的页 hero 同源) */
   .score-card {
     border: 0; border-radius: $radius-card; padding: 20px 18px;
-    background: $color-primary-gradient; color: #fff;
+    background: $color-primary-gradient; color: $color-text-inverse;
     display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
     position: relative; overflow: hidden;
     box-shadow: $shadow-primary;
   }
-  .score-value { font-size: 46px; font-weight: 700; color: #fff; line-height: 1.15; letter-spacing: 1px; }
+  .score-value { font-size: $fs-mega; font-weight: 700; color: $color-text-inverse; line-height: 1.15; letter-spacing: 1px; }
   .score-card .fs-mini, .score-card .fs-caption { color: rgba(255, 255, 255, .85); }
 
   /* 往期切换 */
   .week-nav {
     display: flex; align-items: center; justify-content: space-between;
     background: $color-bg-card; border: 1px solid $color-border; border-radius: $radius-md;
-    padding: 10px 16px; font-size: 22px; color: $color-text-primary;
+    padding: 10px 16px; font-size: $fs-num; color: $color-text-primary;
     box-shadow: $shadow-card;
   }
-  .week-label { font-size: 14px; font-weight: $fw-bold; color: $color-text-primary; }
-  .week-arrow-disabled { color: #cbd5e1; font-size: 22px; }
+  .week-label { font-size: $fs-caption; font-weight: $fw-bold; color: $color-text-primary; }
+  /* 翻周是这一页唯一的导航件,而箭头本身只有 22px。包一层把命中区撑到 44,
+     箭头视觉不变;按下去也要有反馈 —— 它以前按下去屏幕完全不动 */
+  .week-arrow, .week-arrow-disabled {
+    display: flex; align-items: center; justify-content: center;
+    padding: 12px; font-size: $fs-num;
+  }
+  .week-arrow { color: $color-text-primary; }
+  .week-arrow:active { opacity: 0.6; }
+  .week-arrow-disabled { color: $color-text-disabled; }
   .cache-row {
     display: flex; align-items: center; justify-content: center; gap: 2px;
   }
@@ -34,15 +44,15 @@
   /* 关键数据行 */
   .report-row {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 11px 0; border-bottom: 1px solid $color-divider; font-size: 13px;
+    padding: 11px 0; border-bottom: 1px solid $color-divider; font-size: $fs-small;
   }
   .report-row:last-child { border-bottom: none; }
   .report-row .fs-caption { display: flex; align-items: center; gap: 6px; color: $color-text-secondary; }
-  .fs-h1 { display: flex; align-items: center; gap: 6px; font-size: 15px; }
+  .fs-h1 { display: flex; align-items: center; gap: 6px; font-size: $fs-medium; }
 
   .win-card { display: flex; flex-direction: column; gap: 6px; }
   .issue-card { display: flex; flex-direction: column; gap: 6px; }
-  .ai-card { display: flex; flex-direction: column; gap: 6px; color: #475569; line-height: 1.7; }
+  .ai-card { display: flex; flex-direction: column; gap: 6px; color: $color-slate-600; line-height: 1.7; }
 
   /* 失败面板 */
   .error-panel {
@@ -50,13 +60,18 @@
     border: 1px solid $color-border; border-radius: $radius-card;
     padding: 32px 20px;
     display: flex; flex-direction: column; align-items: center; gap: 10px;
-    color: $color-primary; font-size: 34px;
+    color: $color-primary; font-size: $fs-display;
     box-shadow: $shadow-card;
   }
-  .error-title { font-size: 17px; font-weight: 700; color: $color-text-primary; }
-  .error-copy { font-size: 12px; color: $color-text-secondary; }
+  .error-title { font-size: $fs-h2; font-weight: $fw-bold; color: $color-text-primary; }
+  .error-copy { font-size: $fs-mini; color: $color-text-secondary; }
   .retry {
-    margin-top: 8px; background: $color-primary; color: #fff;
-    font-size: 13px; padding: 9px 28px; border-radius: $radius-pill;
+    margin-top: 8px; background: $color-primary; color: $color-text-inverse;
+    font-size: $fs-small; padding: 13px 28px; border-radius: $radius-pill;
+  }
+  /* 次要出路写成文字链,别跟上面的主按钮抢「下一步在这儿」 */
+  .retry-alt {
+    margin-top: 2px; padding: 13px 12px;
+    font-size: $fs-small; color: $color-text-secondary;
   }
 }

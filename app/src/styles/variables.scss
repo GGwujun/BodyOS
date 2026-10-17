@@ -8,7 +8,7 @@
 /* 品牌主色 — emerald,与 tabBar 选中色/Logo 渐变一致 */
 $color-primary: #10b981;
 $color-primary-dark: #059669;
-$color-primary-light: #a7e8cf;
+$color-primary-light: #b5ecd6; /* 主色浅描边/浅边线(训练分包那几张选中卡的边) */
 /* 品牌浅底(选中态背景/高亮填充) */
 $color-primary-bg: #ecfdf5;
 /* 品牌渐变(主按钮/进度条) */
@@ -31,6 +31,40 @@ $color-text-primary: #111827;
 $color-text-secondary: #6b7280;
 $color-text-tertiary: #94a3b8;
 $color-text-inverse: #ffffff;
+$color-text-disabled: #cbd5e1; /* 空值占位(「—」那种,比 tertiary 再淡一档) */
+
+/* 专题色 —— 一个主题一套(底 + 字)。别拿它们当通用灰/绿使:
+   水的蓝、热量的琥珀、脂肪的玫红,各自只在那一类东西上出现 */
+$color-sky: #0284c7;
+/* 水分那一套的浅端(进度条渐变的两头)—— 同一个蓝的两档,收在一处才不会各写各的 */
+$color-sky-light: #0ea5e9;
+$color-sky-pale: #38bdf8;
+/* 肌群量级色(练得多/练得少)—— 蓝紫这一支只给肌群统计用 */
+$color-muscle-high: #8b5cf6;
+$color-muscle-low: #3b82f6;
+$color-sky-dark: #0369a1;
+$color-sky-bg: #e0f2fe;
+$color-amber-dark: #b45309;
+$color-amber-bg: #fef3c7;
+$color-rose: #be123c;
+/* 灰阶里比 secondary 深、比 primary 浅的一档(读数区正文) */
+$color-slate-600: #475569;
+/* 虚线空态面板的描边 —— 实线那档($color-border)太淡,虚线会看不出来 */
+$color-border-dashed: #dbe2ea;
+/* 未勾选的圈(复选框/单选的描边)——比 $color-border 深,不然空心圈看不见 */
+$color-border-strong: #c3ccd6;
+/* 提示面板的两块软底(蓝=说明,琥珀=注意),训练那几个页面里反复出现 */
+$color-info-bg: #eff6ff;
+$color-warning-bg: #fffbeb;
+
+/* 语义色的半透明底(胶囊/Tag/浅底按钮)。和 $color-primary-bg 那种实底色并存,
+   是因为有些位置要叠在彩色卡上,半透明才不糊。写法统一收在这儿,别在页面里现配 rgba */
+$color-primary-a10: rgba(16, 185, 129, .10);
+$color-primary-a20: rgba(16, 185, 129, .20);
+$color-info-a12: rgba(56, 117, 237, .12);
+$color-sky-a12: rgba(14, 165, 233, .12);
+$color-warning-a12: rgba(245, 158, 11, .12);
+$color-danger-a10: rgba(239, 68, 68, .10);
 
 /* 语义别名 */
 $color-success: $color-primary;
@@ -40,13 +74,23 @@ $color-link: $color-info;
 $font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue',
   Helvetica, 'Segoe UI', Arial, sans-serif;
 
-$fs-display: 32px; /* Body Score 等超大数值 */
+/* 字号梯子。它曾经只有 7 档,而实际写出来的有 12 种字号 —— 梯子没描述应用长成的样子,
+   于是「按梯子取值」和「看着合适取值」成了两件事。补齐到实际档位,之后新写的从这里取。
+   相邻两档至少差 1px,所以**别再插新档** —— 插了就说明该合并了。 */
+$fs-mega: 40px;    /* 全页唯一的主读数(分数环)/大 emoji */
+$fs-emoji: 36px;   /* 空态/入口上那个大 emoji(装饰性字形,不参与字号比较) */
+$fs-display: 32px; /* 大数字(平均体重/工具结果) */
+$fs-hero: 26px;    /* 环里的读数 */
 $fs-title: 24px;   /* 页面主标题 */
+$fs-num: 22px;     /* 卡内中等读数 */
 $fs-h1: 20px;      /* 模块标题 */
 $fs-h2: 18px;      /* 关键信息/数据标签 */
 $fs-body: 16px;    /* 正文 */
+$fs-medium: 15px;  /* 卡内小标题/弹层里的次级标题 */
 $fs-caption: 14px; /* 次要文字 */
+$fs-small: 13px;   /* 行内动作/次要正文 */
 $fs-mini: 12px;    /* 辅助说明 */
+$fs-nano: 11px;    /* 徽标/极小辅助文字 —— 这是下限,没有 $fs-10 那种东西 */
 
 $fw-bold: 600;     /* 苹方 Bold */
 $fw-medium: 500;   /* 苹方 Medium */

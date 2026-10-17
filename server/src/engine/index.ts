@@ -1,5 +1,5 @@
 import { prisma } from '../db';
-import { ageFromBirth, toDate, todayStr, toDateStr } from '../lib/date';
+import { addDays, ageFromBirth, endOfLocalDay, startOfLocalDay, toDate, todayStr, toDateStr } from '../lib/date';
 import { ENGINE_VERSION } from './constants';
 import { calcEnergy } from './energy';
 import { calcMacroTarget, nutritionScore, type NutritionAggregate } from './nutrition';
@@ -9,6 +9,66 @@ import { hasEnergyProfile } from './dataAvailability';
 
 export { ENGINE_VERSION };
 
+type GoalRow = { id: string; type: string; targetValue: number; unit: string; startDate: Date } | null;
+
+/**
+ * 目标进度快照 —— 起始体重取「目标日开始前最后一条」,当前体重取「到当天为止最新一条」。
+ *
+ * 以前两处都只看近 14 天窗口:目标开始得早、或者 14 天里没称过,起始/当前就会
+ * 退化成窗口边缘那两条,进度凭空跳到 0 或 100。这里各查一条锚点,不拉整段历史。
+ *
+ * 同时把结果写回 `Goal.progress`(0-100):首页那张目标卡读的就是这一列,
+ * 而这个列以前从没人写过,恒为 0。
+ */
+async function goalProgressFor(
+  userId: string,
+  goal: GoalRow,
+  endOfDay: Date,
+  weightPoints: WeightPoint[],
+  effectiveWeight: number
+): Promise<{ startWeight: number; currentWeight: number; progress: number }> {
+  const goalStartStr = goal ? toDateStr(goal.startDate) : null;
+  const [startBefore, startAfter, latestWeight] = await Promise.all([
+    goalStartStr
+      ? prisma.bodyMeasurement.findFirst({
+          where: { userId, weightKg: { not: null }, measuredAt: { lt: endOfLocalDay(goalStartStr) } },
+          orderBy: { measuredAt: 'desc' }
+        })
+      : null,
+    goalStartStr
+      ? prisma.bodyMeasurement.findFirst({
+          where: { userId, weightKg: { not: null }, measuredAt: { gte: endOfLocalDay(goalStartStr), lt: endOfDay } },
+          orderBy: { measuredAt: 'asc' }
+        })
+      : null,
+    prisma.bodyMeasurement.findFirst({
+      where: { userId, weightKg: { not: null }, measuredAt: { lt: endOfDay } },
+      orderBy: { measuredAt: 'desc' }
+    })
+  ]);
+  const startWeight = startBefore?.weightKg ?? startAfter?.weightKg ?? weightPoints[0]?.weightKg ?? effectiveWeight;
+  const currentWeight = latestWeight?.weightKg ?? weightPoints[weightPoints.length - 1]?.weightKg ?? effectiveWeight;
+
+  // 维持/耐力目标的目标值不是「还要减/增多少公斤」,套减脂公式只会得到一个假进度
+  const changeByKg = goal != null && goal.unit === 'kg' && (goal.type === 'fat_loss' || goal.type === 'muscle_gain');
+  const progress = changeByKg
+    ? goalProgress({
+        type: goal!.type,
+        startValue: startWeight,
+        currentValue: currentWeight,
+        targetChange: goal!.targetValue
+      })
+    : 0;
+
+  if (goal) {
+    await prisma.goal.update({
+      where: { id: goal.id },
+      data: { progress: Math.round(progress * 100) }
+    });
+  }
+  return { startWeight, currentWeight, progress };
+}
+
 /**
  * 重算某用户某天的 DailySummary,并 upsert。
  * 食物/运动增删、同步、体重测量后调用。
@@ -17,14 +77,17 @@ export async function recomputeDaily(userId: string, dateStr = todayStr()) {
   const date = toDate(dateStr);
 
   // 1-3,5,6 并行查询(消除串行等待);连续记录天数一次查 distinct date(消除逐天 N+1)
-  const fourteenAgo = new Date(date.getTime() - 14 * 86400_000);
+  // measuredAt 是真实瞬时值,窗口边界要用**本地日界**:以前写 `lte: date`
+  // (UTC 零点),在东八区等于把当天 08:00 之后的称重全部排除在趋势/进度之外。
+  const fourteenAgo = startOfLocalDay(addDays(dateStr, -14));
+  const endOfDay = endOfLocalDay(dateStr);
   const [profile, foodLogs, activities, goal, measurements, recentFoodRows, waterLog] = await Promise.all([
     prisma.userProfile.findUnique({ where: { userId } }),
     prisma.foodLog.findMany({ where: { userId, date, deletedAt: null } }),
     prisma.activityRecord.findMany({ where: { userId, date, deletedAt: null } }),
     prisma.goal.findFirst({ where: { userId, isActive: true }, orderBy: { createdAt: 'desc' } }),
     prisma.bodyMeasurement.findMany({
-      where: { userId, measuredAt: { gte: fourteenAgo, lte: date } },
+      where: { userId, measuredAt: { gte: fourteenAgo, lt: endOfDay } },
       orderBy: { measuredAt: 'asc' }
     }),
     prisma.foodLog.findMany({
@@ -62,6 +125,14 @@ export async function recomputeDaily(userId: string, dateStr = todayStr()) {
   const exerciseMin = formalExercises.reduce((s, a) => s + (a.durationMin ?? 0), 0);
   const exerciseCalories = formalExercises.reduce((s, a) => s + a.calories, 0);
 
+  // 目标进度只依赖体重记录,不依赖今天有没有吃饭/运动 ——
+  // 放在「没有能量数据就提前返回」之前,单称了一次体重也能让首页目标卡动起来。
+  const weightPoints: WeightPoint[] = measurements
+    .filter((m) => m.weightKg != null)
+    .map((m) => ({ date: toDateStr(m.measuredAt), weightKg: m.weightKg as number }));
+  const trend = weightTrend(weightPoints);
+  const { progress } = await goalProgressFor(userId, goal, endOfDay, weightPoints, effectiveWeight);
+
   if (!hasEnergyProfile({gender,age,heightCm,weightKg}) || (!foodLogs.length && !activities.length)) {
     const observed = {
       bodyScore:null,energyScore:null,nutritionScore:null,activityScore:null,recoveryScore:null,goalScore:null,
@@ -89,20 +160,6 @@ export async function recomputeDaily(userId: string, dateStr = todayStr()) {
   const macroTarget = calcMacroTarget({ tdee: energy.tdee, goalType, weightKg: effectiveWeight });
   const targetNetCalories = macroTarget.targetCalories - energy.burnCalories;
 
-  const weightPoints: WeightPoint[] = measurements
-    .filter((m) => m.weightKg != null)
-    .map((m) => ({ date: toDateStr(m.measuredAt), weightKg: m.weightKg as number }));
-  const trend = weightTrend(weightPoints);
-  const startWeight = weightPoints[0]?.weightKg ?? effectiveWeight;
-  const currentWeight = weightPoints[weightPoints.length - 1]?.weightKg ?? effectiveWeight;
-  const progress = goal
-    ? goalProgress({
-        type: goal.type,
-        startValue: startWeight,
-        currentValue: currentWeight,
-        targetChange: goal.targetValue
-      })
-    : 0;
   const gScore = goal
     ? goalScore({ progress, trend, type: goal.type, isActive: true })
     : 70;

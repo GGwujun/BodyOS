@@ -32,6 +32,8 @@ model User {
   authTokens    AuthToken[]
   weeklyReports WeeklyReport[]
   waterLogs     WaterLog[]
+  trainingDocs  TrainingDoc[]
+  reminder      TrainingReminder?
 }
 
 /// 登录令牌(不透明随机串;签发后 30 天过期,客户端存本地)
@@ -112,9 +114,13 @@ model ActivityRecord {
   type         String
   durationMin  Int?
   calories     Float
+  /// 距离(米)。只存距离和时长,配速/速度在客户端算 —— 同一件事存两份迟早自相矛盾
+  distanceM    Int?
+  /// 跑步机坡度(%),0.5 一格。沿用 openGym 同一口径(那里叫 incline)
+  inclinePct   Float?
   steps        Int?
   startedAt    DateTime
-  source       String    @default("manual") // manual|ai_text|wechat|apple_health|mi|huami
+  source       String    @default("manual") // manual|ai_text|wechat|apple_health|mi|huami|training
   provider     String?
   externalId   String?
   deduplicated Boolean   @default(false)
@@ -175,6 +181,12 @@ model BodyMeasurement {
   weightKg   Float?
   bodyFatPct Float?
   muscleKg   Float?
+  /// 围度(厘米),按量取部位分开存;一次只量一两处也允许
+  waistCm    Float?
+  chestCm    Float?
+  hipCm      Float?
+  armCm      Float?
+  thighCm    Float?
   createdAt  DateTime @default(now())
 
   @@index([userId, measuredAt])
@@ -245,4 +257,56 @@ model WeeklyReport {
   generatedAt DateTime @default(now())
 
   @@unique([userId, weekStart])
+}
+
+/// 训练域文档云端镜像(计划/渐进/日志/备注/器材/照片索引/请假条)。
+/// 客户端原本只存在本机 storage,换设备即丢;这里按「文档」粒度存:
+/// plan/progress/notes/kit/daynotes 各一个文档,每条训练日志单独一个文档 —— 合并时不必解开大 blob,
+/// 冲突也只影响单条。服务端只做 last-write-wins 的哑存储,真正的合并规则在客户端(见 utils/training-sync)。
+model TrainingDoc {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// plan | progress | logs | notes | kit | photos | maxes | daynotes | dayassign | favs | custom
+  kind     String
+  /// 同一 kind 下的文档键:单例 kinds 用 "main",logs 用日志 id
+  docKey   String
+  payload  Json
+  /// 乐观并发用的版本号,每次落库 +1
+  rev      Int      @default(1)
+  /// 客户端最后修改时间 —— 冲突比较用客户端时钟(服务端 updatedAt 只记落库时间)
+  clientUpdatedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, kind, docKey])
+  @@index([userId, updatedAt])
+}
+
+/// 训练提醒设置 + 订阅消息的剩余可发次数。
+/// 为什么不走 TrainingDoc:订阅消息的「还剩几条能发」是**只有服务端知道**的状态
+/// (客户端推上去的文档带 lww 时间戳,会和它互相覆盖),而且调度器要按时间
+/// 反查所有开着的用户 —— 那是一张有索引的小表,不是一堆 JSON 文档。
+model TrainingReminder {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled     Boolean  @default(false)
+  /// 本地时间的 HH:mm
+  time        String   @default("20:00")
+  /// gentle | fun | cheer —— 和客户端 engine/nudge.ts 的三档语气对齐
+  tone        String   @default("gentle")
+  /// 计划日没练的当晚再补一次提醒
+  nudge       Boolean  @default(true)
+  /// 客户端时区相对 UTC 的分钟数(东八区 = 480)。服务端按它算「用户那边的 20:00」
+  tzOffsetMin Int      @default(480)
+  /// 订阅消息还剩几条能发:用户每授权一次 +1,发出成功一条 -1
+  grants      Int      @default(0)
+  /// 最后一次发出提醒的**用户本地日期**(YYYY-MM-DD),一天最多一条
+  lastSentOn  String?
+  lastSentAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([enabled])
 }

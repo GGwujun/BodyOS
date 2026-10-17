@@ -1,0 +1,77 @@
+@import '../../styles/variables.scss';
+
+/* ============ 训练记录(全部分包) ============ */
+.lh-page {
+  background: $color-bg;
+  gap: 10px;
+  padding-bottom: 30px;
+
+  .lh-top {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .lh-backfill { margin-top: 10px; }
+
+  /* 训练日筛选 —— 和动作库/计划编辑器同一身 chip(三处都是「筛一批东西」) */
+  .lh-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lh-chip {
+    padding: 5px 11px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+
+    &.on {
+      color: $color-primary-dark;
+      background: $color-primary-bg;
+      border-color: $color-primary;
+      font-weight: $fw-bold;
+    }
+  }
+
+  .lh-list { display: flex; flex-direction: column; }
+  .lh-empty { display: block; padding: 18px 0; text-align: center; }
+
+  /* 月份分隔 —— 一年里的记录只念月份,跨年了才带上年份(见 monthLabel) */
+  .lh-month {
+    display: block;
+    padding: 12px 0 2px;
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-text-tertiary;
+
+    &:first-child { padding-top: 2px; }
+  }
+
+  /* 请假条那一行 —— 比训练行轻,但看得见:记录里的空档得说得清 */
+  .lh-off {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 0;
+    border-bottom: 1px solid $color-divider;
+  }
+  .lh-off-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .lh-off-name {
+    padding: 1px 6px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    color: $color-info;
+    background: $color-info-bg;
+  }
+  .lh-off-text { font-size: $fs-caption; color: $color-text-secondary; }
+  .lh-off-op { align-self: flex-start; padding: 6px 0 2px; font-size: $fs-mini; color: $color-info; font-weight: $fw-medium; }
+
+  .lh-more {
+    display: block;
+    padding: 14px 0 4px;
+    text-align: center;
+    font-size: $fs-small;
+    color: $color-info;
+    font-weight: $fw-medium;
+  }
+
+  .lh-foot { display: block; padding: 0 2px; line-height: 1.7; }
+}

@@ -32,6 +32,8 @@ export const FOOD_DB: FoodEntry[] = [
   { name: '包子', category: '主食', kcal: 227, proteinG: 8.4, carbG: 38.0, fatG: 4.0, commonPortionG: 100 },
   { name: '饺子', aliases: ['水饺'], category: '主食', kcal: 240, proteinG: 9.0, carbG: 30.0, fatG: 8.0, commonPortionG: 30 },
   { name: '面包', aliases: ['白面包', '切片面包', '全麦面包'], category: '主食', kcal: 313, proteinG: 8.3, carbG: 58.6, fatG: 5.1, commonPortionG: 80 },
+  // 「油条」以前会命中油这个别名,按 884 kcal/100g 的纯油记;388 kcal 才是油条
+  { name: '油条', category: '主食', kcal: 388, proteinG: 6.9, carbG: 51.0, fatG: 17.6, commonPortionG: 60 },
   { name: '燕麦', aliases: ['燕麦片', '麦片', 'oatmeal'], category: '主食', kcal: 367, proteinG: 15.0, carbG: 61.0, fatG: 6.7, commonPortionG: 50 },
   { name: '红薯', aliases: ['地瓜', '番薯'], category: '主食', kcal: 86, proteinG: 1.6, carbG: 20.0, fatG: 0.1, commonPortionG: 200 },
   { name: '玉米', aliases: ['甜玉米', '苞谷'], category: '主食', kcal: 86, proteinG: 3.3, carbG: 19.0, fatG: 1.2, commonPortionG: 150 },
@@ -79,14 +81,16 @@ export const FOOD_DB: FoodEntry[] = [
   { name: '橙子', aliases: ['脐橙', '柳橙'], category: '水果', kcal: 48, proteinG: 0.8, carbG: 11.1, fatG: 0.2, fiberG: 0.6, commonPortionG: 200 },
   { name: '葡萄', category: '水果', kcal: 45, proteinG: 0.5, carbG: 10.3, fatG: 0.2, commonPortionG: 100 },
   { name: '西瓜', category: '水果', kcal: 30, proteinG: 0.6, carbG: 7.6, fatG: 0.1, commonPortionG: 300 },
-  { name: '蓝莓', aliases: ['草莓', '浆果'], category: '水果', kcal: 57, proteinG: 0.7, carbG: 14.5, fatG: 0.3, fiberG: 2.4, commonPortionG: 100 },
+  { name: '蓝莓', aliases: ['浆果'], category: '水果', kcal: 57, proteinG: 0.7, carbG: 14.5, fatG: 0.3, fiberG: 2.4, commonPortionG: 100 },
+  // 草莓和蓝莓是两种东西:以前把「草莓」挂在蓝莓名下,用户记一盒草莓会按蓝莓的热量算
+  { name: '草莓', aliases: ['士多啤梨'], category: '水果', kcal: 32, proteinG: 0.7, carbG: 7.7, fatG: 0.3, fiberG: 2.0, commonPortionG: 100 },
   { name: '芒果', category: '水果', kcal: 60, proteinG: 0.8, carbG: 15.0, fatG: 0.4, commonPortionG: 150 },
 
   // ===== 坚果 / 油脂 =====
   { name: '杏仁', aliases: ['巴旦木'], category: '坚果', kcal: 578, proteinG: 21.0, carbG: 21.6, fatG: 49.4, commonPortionG: 28 },
   { name: '核桃', category: '坚果', kcal: 654, proteinG: 14.9, carbG: 19.1, fatG: 58.8, commonPortionG: 28 },
   { name: '花生', aliases: ['花生米'], category: '坚果', kcal: 567, proteinG: 25.8, carbG: 16.1, fatG: 49.2, commonPortionG: 28 },
-  { name: '橄榄油', aliases: ['油'], category: '油脂', kcal: 884, proteinG: 0, carbG: 0, fatG: 100, commonPortionG: 10 },
+  { name: '橄榄油', aliases: ['食用油', '植物油'], category: '油脂', kcal: 884, proteinG: 0, carbG: 0, fatG: 100, commonPortionG: 10 },
 
   // ===== 饮品 / 其他 =====
   { name: '黑咖啡', aliases: ['美式', '咖啡'], category: '饮品', kcal: 2, proteinG: 0.1, carbG: 0, fatG: 0, commonPortionG: 250 },

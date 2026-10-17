@@ -1,1 +1,1 @@
-export default definePageConfig({ navigationBarTitleText: '快捷记录' });
+export default definePageConfig({ navigationBarTitleText: '速记' });

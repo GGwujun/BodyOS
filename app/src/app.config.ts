@@ -19,8 +19,54 @@ export default defineAppConfig({
     'pages/qa/index',
     'pages/toolbox/index',
     'pages/weight/index',
-    'pages/plan/index'
+    'pages/measure/index',
+    'pages/photos/index',
+    'pages/plan/index',
+    'pages/training/index'
   ],
+  subPackages: [
+    {
+      root: 'pkg-exercise',
+      pages: [
+        'library/index',
+        'ex-new/index',
+        'plan-create/index',
+        'plan-view/index',
+        'plan-edit/index',
+        'plan-share/index',
+        'workout/index',
+        'log-edit/index',
+        'muscles/index',
+        'stats/index',
+        'log-history/index',
+        'exercise-history/index',
+        'kit/index',
+        'sync/index',
+        'backup/index',
+        'share/index',
+        'reminder/index',
+        'coach/index'
+      ]
+    }
+  ],
+  preloadRule: {
+    /* 首页、记录页、训练 tab 都通向训练:首页那张「今天练什么」卡、记录页那格
+       「力量训练」、训练 tab 上那个「开始练」。**训练 tab 是最要紧的一个**：
+       它整页就是为了按下去开练,而那一下如果还要等分包下载,人已经站到杠铃前面了。
+       **「我的」也必须在这里**:动作库和「我的器材」的入口就在那一页的格子列表里
+       (pages/profile/index.tsx),而它不在这个名单上的那段时间,从「我的」点动作库 =
+       先站在那儿等整个分包下完 —— 用户报的「动作库经常打不开 / 打开很慢」多半就是这一段。
+       只在这台设备连着 wifi 时预下,流量下就等用户真点了再下 ——
+       预下载替用户花流量这种事不能替他决定。
+       (以前这里写的是 toolbox:训练子页都从工具箱进。搬进计划页页脚之后,
+       工具箱已经到不了分包了,预下载挂在它身上等于白下。)
+       —— 分包多大?**别再写死一个数**:开发构建(带 sourcemap、不压缩)在盘上是 4.7MB,
+       发布构建压完约 1.2MB。这个数每加一页就会再变,写死只会像上一版那句「1.6MB」一样过期。 */
+    'pages/home/index': { network: 'wifi', packages: ['pkg-exercise'] },
+    'pages/record/index': { network: 'wifi', packages: ['pkg-exercise'] },
+    'pages/training/index': { network: 'wifi', packages: ['pkg-exercise'] },
+    'pages/profile/index': { network: 'wifi', packages: ['pkg-exercise'] }
+  },
   window: {
     backgroundTextStyle: 'dark',
     navigationBarBackgroundColor: '#ffffff',
@@ -36,7 +82,11 @@ export default defineAppConfig({
     list: [
       { pagePath: 'pages/home/index', text: '首页', iconPath: 'assets/tabbar/home.png', selectedIconPath: 'assets/tabbar/home-active.png' },
       { pagePath: 'pages/record/index', text: '记录', iconPath: 'assets/tabbar/record.png', selectedIconPath: 'assets/tabbar/record-active.png' },
-      { pagePath: 'pages/quick-record/index', text: '速记', iconPath: 'assets/tabbar/quick.png', selectedIconPath: 'assets/tabbar/quick.png' },
+      /* 中间这一格以前是「速记」(喝水、体重两件事)。它让给训练的理由不是速记没用,
+         是**中间这一格的分量**:喝水/体重记完就完了,而训练是这一版里唯一有整套流程的东西,
+         它原先只能从首页一张卡进,连个自己的落脚点都没有。速记那两件事记录页本来就有
+         (喝水打卡、体重记录两格),速记页也还在(见 pages/record 顶部那条「一下记完」)。 */
+      { pagePath: 'pages/training/index', text: '训练', iconPath: 'assets/tabbar/train.png', selectedIconPath: 'assets/tabbar/train-active.png' },
       { pagePath: 'pages/trends/index', text: '趋势', iconPath: 'assets/tabbar/trends.png', selectedIconPath: 'assets/tabbar/trends-active.png' },
       { pagePath: 'pages/profile/index', text: '我的', iconPath: 'assets/tabbar/profile.png', selectedIconPath: 'assets/tabbar/profile-active.png' }
     ]

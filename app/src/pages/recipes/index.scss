@@ -8,7 +8,7 @@
 }
 .recipes-detail-sheet {
   width: 100%; max-height: 82vh; overflow-y: auto;
-  background: #fff; border-radius: $radius-lg $radius-lg 0 0;
+  background: $color-bg-card; border-radius: $radius-lg $radius-lg 0 0;
   padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
   box-sizing: border-box;
   display: flex; flex-direction: column; gap: 12px;
@@ -24,13 +24,13 @@
   .meal-chips { display: flex; gap: 6px; }
   .chip {
     flex: 1; text-align: center; padding: 7px 0;
-    border-radius: $radius-pill; font-size: 12px;
+    border-radius: $radius-pill; font-size: $fs-mini;
     color: $color-text-secondary; background: $color-bg-card;
     border: 1px solid $color-border;
   }
   .chip.active {
     background: $color-primary-bg; color: $color-primary-dark;
-    border-color: #b5ecd6; font-weight: $fw-bold;
+    border-color: $color-primary-light; font-weight: $fw-bold;
   }
 
   .recipe-list { display: flex; flex-direction: column; gap: 10px; }
@@ -41,30 +41,30 @@
     display: flex; flex-direction: column; gap: 9px;
   }
   .recipe-head { display: flex; align-items: center; justify-content: space-between; }
-  .recipe-name { font-size: 15px; font-weight: 700; color: $color-text-primary; }
-  .recipe-kcal { font-size: 14px; font-weight: 700; color: $color-primary-dark; }
+  .recipe-name { font-size: $fs-medium; font-weight: 700; color: $color-text-primary; }
+  .recipe-kcal { font-size: $fs-caption; font-weight: 700; color: $color-primary-dark; }
   .recipe-macros { display: flex; gap: 6px; }
-  .macro { font-size: 11px; padding: 3px 8px; border-radius: $radius-sm; }
-  .m-protein { color: #0284c7; background: #e0f2fe; }
-  .m-carb { color: #b45309; background: #fef3e2; }
-  .m-fat { color: #be123c; background: #ffe4e9; }
+  .macro { font-size: $fs-nano; padding: 3px 8px; border-radius: $radius-sm; }
+  .m-protein { color: $color-sky; background: $color-sky-bg; }
+  .m-carb { color: $color-amber-dark; background: #fef3e2; }
+  .m-fat { color: $color-rose; background: #ffe4e9; }
   .recipe-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .recipe-tag { font-size: 11px; color: $color-text-tertiary; background: $color-fill; border-radius: $radius-pill; padding: 3px 9px; }
+  .recipe-tag { font-size: $fs-nano; color: $color-text-tertiary; background: $color-fill; border-radius: $radius-pill; padding: 3px 9px; }
   .tag-meal { color: $color-primary-dark; background: $color-primary-bg; }
 
   /* 详情弹层(定位样式在页面类外层) */
   .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto; }
   .detail-head { display: flex; align-items: center; gap: 12px; }
-  .detail-name { font-size: 18px; font-weight: 700; color: $color-text-primary; }
-  .detail-kcal { font-size: 26px; font-weight: 700; color: $color-primary-dark; }
-  .detail-kcal-unit { font-size: 12px; font-weight: 600; color: $color-text-secondary; }
+  .detail-name { font-size: $fs-h2; font-weight: 700; color: $color-text-primary; }
+  .detail-kcal { font-size: $fs-hero; font-weight: 700; color: $color-primary-dark; }
+  .detail-kcal-unit { font-size: $fs-mini; font-weight: 600; color: $color-text-secondary; }
 
   .nutri-card {
     background: $color-bg-soft; border-radius: $radius-md;
     padding: 12px 14px; display: flex; flex-direction: column; gap: 7px;
   }
-  .nutri-title { font-size: 13px; font-weight: 700; color: $color-text-primary; }
-  .nutri-line { font-size: 12px; color: $color-text-secondary; line-height: 1.7; }
+  .nutri-title { font-size: $fs-small; font-weight: 700; color: $color-text-primary; }
+  .nutri-line { font-size: $fs-mini; color: $color-text-secondary; line-height: 1.7; }
 
   /* 供能比环形图 + 图例 */
   .nutri-main { display: flex; align-items: center; gap: 18px; }
@@ -74,28 +74,28 @@
     flex-shrink: 0;
   }
   .donut__inner {
-    width: 78px; height: 78px; border-radius: 50%; background: #fff;
+    width: 78px; height: 78px; border-radius: 50%; background: $color-bg-card;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .donut__kcal { font-size: 21px; font-weight: 700; line-height: 24px; color: $color-text-primary; }
-  .donut__unit { font-size: 10px; color: $color-text-tertiary; }
+  .donut__kcal { font-size: $fs-num; font-weight: 700; line-height: 24px; color: $color-text-primary; }
+  .donut__unit { font-size: $fs-nano; color: $color-text-tertiary; }
   .nutri-legend { flex: 1; display: flex; flex-direction: column; gap: 9px; }
   .legend-row { display: flex; align-items: center; gap: 7px; }
   .legend-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
-  .legend-label { font-size: 12px; color: $color-text-primary; }
-  .legend-pct { margin-left: auto; font-size: 12px; color: $color-text-secondary; }
+  .legend-label { font-size: $fs-mini; color: $color-text-primary; }
+  .legend-pct { margin-left: auto; font-size: $fs-mini; color: $color-text-secondary; }
 
   /* 营养问答 */
   .qa-card { background: rgba(16, 185, 129, .06); }
-  .qa-q { font-size: 13px; font-weight: 700; color: $color-primary-dark; line-height: 1.6; }
-  .qa-a { font-size: 12px; color: $color-text-secondary; line-height: 1.75; }
+  .qa-q { font-size: $fs-small; font-weight: 700; color: $color-primary-dark; line-height: 1.6; }
+  .qa-a { font-size: $fs-mini; color: $color-text-secondary; line-height: 1.75; }
 
-  .meal-pick-label { display: block; font-size: 13px; font-weight: 700; color: $color-text-primary; margin-top: 2px; }
+  .meal-pick-label { display: block; font-size: $fs-small; font-weight: 700; color: $color-text-primary; margin-top: 2px; }
   .meal-pick { display: flex; gap: 6px; }
   .meal-pick .chip { flex: 1; }
 
   .log-btn {
-    background: $color-primary !important; color: #fff !important;
-    border-radius: $radius-md !important; font-size: 15px !important;
+    background: $color-primary !important; color: $color-text-inverse !important;
+    border-radius: $radius-md !important; font-size: $fs-medium !important;
   }
 }

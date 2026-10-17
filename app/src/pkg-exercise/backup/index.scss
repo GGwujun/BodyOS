@@ -1,0 +1,91 @@
+@import '../../styles/variables.scss';
+
+/* ============ 导出与备份(分包) ============ */
+.bk-page {
+  background: $color-bg;
+  gap: 10px;
+
+  .bk-head { gap: 6px; }
+
+  .bk-block { gap: 6px; }
+
+  .bk-title {
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+  }
+
+  .bk-note { line-height: 18px; }
+
+  .bk-meta {
+    line-height: 18px;
+    word-break: break-all;
+  }
+
+  .bk-warn {
+    color: $color-warning;
+    line-height: 18px;
+  }
+
+  .bk-ok {
+    color: $color-primary-dark;
+    line-height: 18px;
+  }
+
+  .bk-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 2px;
+  }
+
+  .bk-act {
+    flex: 1;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-pill;
+    background: $color-bg-soft;
+    color: $color-primary-dark;
+    font-size: $fs-small;
+  }
+
+  .bk-act-btn {
+    flex: 1;
+  }
+
+  /* 备份文本用来手动选中复制,等宽更易读 */
+  .bk-area {
+    width: 100%;
+    height: 150px;
+    box-sizing: border-box;
+    background: $color-bg-soft;
+    border-radius: $radius-md;
+    padding: 8px;
+    font-size: $fs-nano;
+    line-height: 16px;
+    color: $color-text-secondary;
+  }
+
+  .bk-area--in {
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+    font-size: $fs-mini;
+  }
+
+  .bk-result { gap: 4px; }
+
+  .bk-result-title {
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    padding-bottom: 2px;
+  }
+
+  .bk-line {
+    display: block;
+    line-height: 20px;
+    color: $color-text-secondary;
+  }
+
+  .bk-tip { gap: 4px; }
+}

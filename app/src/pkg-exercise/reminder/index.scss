@@ -1,0 +1,124 @@
+@import '../../styles/variables.scss';
+
+/* ============ 训练提醒(分包) ============ */
+.rm-page {
+  background: $color-bg;
+  gap: 10px;
+
+  .rm-head { gap: 6px; }
+
+  /* ---- 今天的提醒长什么样 ---- */
+  .rm-preview {
+    gap: 6px;
+    background: $color-primary-bg;
+  }
+
+  .rm-preview-label {
+    font-size: $fs-mini;
+    color: $color-primary-dark;
+  }
+
+  .rm-preview-title {
+    font-size: $fs-h2;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+
+  .rm-preview-line {
+    font-size: $fs-medium;
+    line-height: 22px;
+    color: $color-text-primary;
+  }
+
+  /* ---- 语气 ---- */
+  .rm-tone { gap: 6px; }
+
+  .rm-chips {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .rm-chip {
+    flex: 1;
+    padding: 10px 8px;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-bg-card;
+    text-align: center;
+
+    &.is-on {
+      border-color: $color-primary;
+      background: $color-primary-bg;
+    }
+  }
+
+  .rm-chip-name {
+    display: block;
+    font-size: $fs-caption;
+    font-weight: $fw-medium;
+    color: $color-text-primary;
+  }
+
+  .rm-chip-desc {
+    display: block;
+    margin-top: 2px;
+    line-height: 16px;
+    color: $color-text-secondary;
+  }
+
+  /* ---- 消息提醒 ---- */
+  .rm-msg { gap: 12px; }
+
+  .rm-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .rm-row--sub { padding-top: 10px; border-top: 1px solid $color-border; }
+
+  .rm-row-text { flex: 1; }
+
+  .rm-row-title {
+    display: block;
+    font-size: $fs-medium;
+    color: $color-text-primary;
+  }
+
+  .rm-time {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .rm-picker {
+    padding: 7px 14px;
+    border: 1px solid $color-border;
+    border-radius: $radius-pill;
+    font-size: $fs-caption;
+    color: $color-primary-dark;
+    background: $color-bg-soft;
+  }
+
+  .rm-grant { margin-top: 2px; }
+
+  /* ---- 练的时候(保屏 / 震动,本机设置) ---- */
+  .rm-alert { gap: 10px; }
+
+  /* ---- 实话 ---- */
+  .rm-note { gap: 4px; }
+
+  .rm-note-title {
+    font-size: $fs-caption;
+    font-weight: $fw-medium;
+    color: $color-text-primary;
+  }
+
+  .rm-note-line {
+    display: block;
+    line-height: 18px;
+    color: $color-text-secondary;
+  }
+}

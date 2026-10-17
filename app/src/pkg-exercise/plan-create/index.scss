@@ -1,0 +1,107 @@
+@import '../../styles/variables.scss';
+
+/* ============ 计划生成(分包) ============ */
+.pcreate-page {
+  background: $color-bg;
+  gap: 10px;
+  padding-bottom: 30px;
+
+  .pc-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 20px 20px;
+    text-align: center;
+  }
+  .pc-intro-emoji { font-size: $fs-emoji; line-height: 1; }
+
+  .pc-sec-title { display: block; padding: 4px 0 10px; }
+
+  /* 用登记的器材清单折算器械条件 — 排在四档预设之前,因为它比预设更贴他的实际情况 */
+  .pc-kit {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 11px 14px;
+    margin-bottom: 9px;
+    border-radius: $radius-md;
+    background: $color-primary-bg;
+    border: 1px solid $color-primary-light;
+
+    &.on { border-width: 2px; border-color: $color-primary; }
+
+    .pc-kit-t { font-size: $fs-caption; font-weight: $fw-bold; color: $color-primary-dark; }
+  }
+
+  .pc-kit-foot { display: block; line-height: 18px; padding-top: 2px; }
+
+  .pc-opt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 13px 14px;
+    margin-bottom: 9px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1.5px solid transparent;
+
+    &:last-of-type { margin-bottom: 2px; }
+
+    &.active {
+      background: rgba(16, 185, 129, 0.07);
+      border-color: $color-primary;
+    }
+  }
+
+  .pc-opt-copy { display: flex; flex-direction: column; gap: 3px; }
+  .pc-opt-label { font-size: $fs-caption; color: $color-text-primary; font-weight: $fw-medium; }
+  .pc-opt-desc { font-size: $fs-nano; color: $color-text-secondary; }
+
+  .pc-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid $color-border-strong;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.checked {
+      border-color: $color-primary;
+      background: $color-primary;
+    }
+  }
+  .pc-tick { font-size: $fs-mini; color: $color-text-inverse; line-height: 1; }
+
+  .pc-chiprow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 2px 0 10px;
+  }
+
+  .pc-chip {
+    padding: 7px 18px;
+    border-radius: $radius-pill;
+    font-size: $fs-small;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+    border: 1.5px solid transparent;
+
+    &.active {
+      background: rgba(16, 185, 129, 0.07);
+      border-color: $color-primary;
+      color: $color-primary-dark;
+      font-weight: $fw-bold;
+    }
+  }
+
+  .pc-preview { padding: 4px 0 2px; }
+
+  .pc-submit { margin-top: 4px; }
+
+  .pc-foot { display: block; text-align: center; line-height: 1.7; }
+}

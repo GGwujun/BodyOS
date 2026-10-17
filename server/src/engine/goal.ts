@@ -63,9 +63,21 @@ export function goalScore(params: {
 }): number {
   if (!params.isActive) return 70;
   const progressPart = params.progress * 70;
-  // 趋势一致性:减脂期望 trend<0,增肌期望 trend>0
-  const expectsNegative = params.type !== 'muscle_gain';
-  const trendOk = expectsNegative ? params.trend <= 0 : params.trend >= 0;
-  const trendPart = trendOk ? Math.min(30, Math.abs(params.trend) * 30 * 7 + 15) : Math.max(0, 15 - Math.abs(params.trend) * 100);
+  // 趋势一致性按目标方向判:减脂期望往下、增肌期望往上。
+  // 维持看「稳不稳」(一周变化不超过 0.3kg),耐力目标与体重方向无关,趋势那部分给中性分。
+  let trendPart: number;
+  if (params.type === 'muscle_gain') {
+    trendPart = params.trend >= 0
+      ? Math.min(30, Math.abs(params.trend) * 30 * 7 + 15)
+      : Math.max(0, 15 - Math.abs(params.trend) * 100);
+  } else if (params.type === 'fat_loss') {
+    trendPart = params.trend <= 0
+      ? Math.min(30, Math.abs(params.trend) * 30 * 7 + 15)
+      : Math.max(0, 15 - Math.abs(params.trend) * 100);
+  } else if (params.type === 'maintain') {
+    trendPart = Math.max(0, 30 - Math.abs(params.trend) * 7 * 40);
+  } else {
+    trendPart = 15;
+  }
   return Math.round(clamp(progressPart + trendPart, 0, 100));
 }

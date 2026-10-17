@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Replay } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import Screen from '@/components/Screen';
 import { summaryApi } from '@/services';
+import { onIf } from '@/utils/taro-events';
 import type { WeeklyAnalysis } from '@/services/types';
 import { FireOutlined, GoldCoinOutlined, BarChartOutlined, BulbOutlined } from '@taroify/icons';
 import './index.scss';
@@ -37,11 +38,18 @@ export default function WeeklyReport() {
   return (
     <Screen className="weekly-report-page">
       <View className="week-nav">
-        <ArrowLeft onClick={() => setWeekOffset((v) => v - 1)} />
+        <View className="week-arrow" onClick={() => setWeekOffset((v) => v - 1)}><ArrowLeft /></View>
         <Text className="week-label">{isCurrentWeek ? `本周 · ${label}` : label}</Text>
-        {isCurrentWeek
-          ? <View className="week-arrow-disabled"><ArrowRight /></View>
-          : <ArrowRight onClick={() => setWeekOffset((v) => v + 1)} />}
+        {/* 写成**一个** View 而不是「禁用的一支 / 可点的一支」:两个分支同标签,
+            React 会认成同一个节点去改 props,回到本周时那个 onClick 就被摘掉 ——
+            「事件属性从函数变成没有」会让整棵子树崩掉(见 utils/taro-events)。
+            禁用与否只是 className,能不能点写在函数体里。 */}
+        <View
+          className={isCurrentWeek ? 'week-arrow-disabled' : 'week-arrow'}
+          onClick={onIf(!isCurrentWeek, () => setWeekOffset((v) => v + 1))}
+        >
+          <ArrowRight />
+        </View>
       </View>
 
       {loading && (
@@ -55,8 +63,9 @@ export default function WeeklyReport() {
           <BulbOutlined />
           <Text className="error-title">周报暂时无法生成</Text>
           <Text className="error-copy">{error || '数据不足，暂时无法生成报告。'}</Text>
+          {/* 主路是「再算一次」;去记录是另一条路(数据不够时才是它),所以是次要长相 */}
           <Text className="retry" onClick={() => refresh()}>重新生成</Text>
-          <Text className="retry" onClick={() => Taro.switchTab({ url: '/pages/record/index' })}>去记录本周数据 ›</Text>
+          <Text className="retry-alt" onClick={() => Taro.switchTab({ url: '/pages/record/index' })}>去记录本周数据 ›</Text>
         </View>
       )}
 

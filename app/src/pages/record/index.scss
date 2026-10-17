@@ -3,10 +3,26 @@
 /* ============ 记录页 ============ */
 .record-page {
   background: $color-bg;
-  padding: 4px 0 calc(24px + env(safe-area-inset-bottom));
+  /* 只写上下:左右那 16px 是 Screen 的 .safe-x 给的 —— 简写 padding 和它是同一个属性,
+     不是叠加而是覆盖,而页面样式在 app.wxss 之后加载,左右会真的变成 0 */
+  padding-top: 4px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
   gap: 14px;
 
-  .record-header { padding: 0 2px 2px; font-size: 24px; line-height: 1.35; font-weight: 700; color: $color-text-primary; }
+  /* 标题右边那条「一下记完」—— 它得比标题轻:这一页的主语是下面那一摞卡片,
+     而它是去另一页的近路(速记页原先在 tabBar 中间那一格上,现在从这儿进) */
+  .record-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 2px 2px;
+    font-size: $fs-title;
+    line-height: 1.35;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+  .record-quick { flex-shrink: 0; font-size: $fs-mini; font-weight: $fw-medium; color: $color-info; }
 
   /* 三个入口卡 */
   .entry-list { display: flex; flex-direction: column; gap: 10px; }
@@ -17,22 +33,22 @@
     box-shadow: $shadow-card;
   }
   .entry-icon {
-    width: 46px; height: 46px; border-radius: 14px;
+    width: 46px; height: 46px; border-radius: $radius-md;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px; margin-right: 14px; flex-shrink: 0;
+    font-size: $fs-num; margin-right: 14px; flex-shrink: 0;
   }
   .entry-icon.mint { background: #d9f6e9; color: $color-primary; }
   .entry-icon.blue { background: #e8efff; color: $color-info; }
-  .entry-icon.dark { background: #e9edf2; color: #1e293b; }
-  .entry-icon.sky { background: #e0f2fe; color: #0369a1; }
-  .entry-icon.warm { background: #fef3e2; color: #b45309; }
-  .entry-emoji { font-size: 20px; line-height: 1; }
+  .entry-icon.dark { background: #e9edf2; color: $color-text-primary; }
+  .entry-icon.sky { background: $color-sky-bg; color: $color-sky-dark; }
+  .entry-icon.warm { background: #fef3e2; color: $color-amber-dark; }
+  .entry-emoji { font-size: $fs-h1; line-height: 1; }
   .entry-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-  .entry-name { font-size: 16px; font-weight: 700; color: $color-text-primary; }
-  .entry-desc { color: $color-text-secondary; font-size: 12px; }
-  .entry-arrow { color: $color-text-tertiary; font-size: 16px; }
+  .entry-name { font-size: $fs-body; font-weight: 700; color: $color-text-primary; }
+  .entry-desc { color: $color-text-secondary; font-size: $fs-mini; }
+  .entry-arrow { color: $color-text-tertiary; font-size: $fs-body; }
 
-  .section-kicker { text-align: center; color: $color-text-tertiary; font-size: 11px; letter-spacing: 3px; margin: 2px 0 -2px; }
+  .section-kicker { text-align: center; color: $color-text-tertiary; font-size: $fs-nano; letter-spacing: 3px; margin: 2px 0 -2px; }
 
   /* 数据源卡 */
   .source-card, .recent-card {
@@ -43,98 +59,50 @@
   .source-row { display: flex; align-items: center; padding: 12px 14px; border-bottom: 1px solid $color-divider; }
   .source-row:last-child { border-bottom: 0; }
   .source-icon {
-    width: 32px; height: 32px; border-radius: 10px;
+    width: 32px; height: 32px; border-radius: $radius-sm;
     display: flex; align-items: center; justify-content: center;
-    margin-right: 12px; color: $color-primary; background: $color-primary-bg; font-size: 16px;
+    margin-right: 12px; color: $color-primary; background: $color-primary-bg; font-size: $fs-body;
   }
   .source-icon.s1 { color: $color-info; background: #eef3ff; }
   .source-icon.s2 { color: #6d5ae8; background: #f1eeff; }
   .source-icon.s3 { color: #ef4961; background: #ffeef1; }
-  .source-copy { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: $color-text-primary; }
-  .source-copy text:last-child, .source-copy taro-text-core:last-child { font-size: 11px; color: $color-text-tertiary; }
-  .source-ok { color: $color-primary; font-size: 18px; }
+  .source-copy { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: $fs-caption; color: $color-text-primary; }
+  .source-copy text:last-child, .source-copy taro-text-core:last-child { font-size: $fs-nano; color: $color-text-tertiary; }
+  .source-ok { color: $color-primary; font-size: $fs-h2; }
   .source-empty { width: 9px; height: 9px; border: 1.5px solid #b6c0cc; border-radius: 50%; margin-right: 3px; }
 
-  .record-empty { padding: 20px; text-align: center; color: $color-text-tertiary; font-size: 12px; }
+  .record-empty { padding: 20px; text-align: center; color: $color-text-tertiary; font-size: $fs-mini; }
 
   /* 加载失败 */
   .record-load-error {
     padding: 16px; background: $color-bg-card;
     border: 1px solid $color-border; border-radius: $radius-card;
-    color: #dc2626; font-size: 13px;
+    color: $color-danger; font-size: $fs-small;
     display: flex; flex-direction: column; gap: 10px;
   }
-  .record-load-error button, .record-load-error taro-button-core {
-    margin: 0; padding: 0; height: 38px; line-height: 38px;
-    color: $color-primary-dark; background: $color-primary-bg;
-    font-size: 13px; border-radius: $radius-sm;
-  }
+  /* 按钮长相交给 .btn--mini —— 这里再写一条会以 0,1,1 压过它,长得和别处不一样 */
 
   /* 今天的记录 */
   .recent-card { padding: 14px 16px; }
-  .recent-title { font-size: 14px; font-weight: 700; color: $color-text-primary; }
-  .recent-line { display: flex; justify-content: space-between; margin-top: 10px; font-size: 13px; color: $color-text-secondary; }
+  .recent-title { font-size: $fs-caption; font-weight: $fw-bold; color: $color-text-primary; }
+  .recent-line { display: flex; justify-content: space-between; margin-top: 10px; font-size: $fs-small; color: $color-text-secondary; }
 
-  /* 体重底部弹层 */
+  /* 底部弹层 —— 这一页**只剩喝水那一个**用它:体重弹层换成共用组件了
+     (components/WeightSheet,速记页那一份也是它),所以下面只留遮罩和壳 */
   .mask {
     position: fixed; inset: 0;
     background: rgba(15, 23, 42, .45); z-index: 1000;
     display: flex; align-items: flex-end;
   }
   .weight-sheet {
-    width: 100%; background: #fff;
+    width: 100%; background: $color-bg-card;
     border-radius: $radius-lg $radius-lg 0 0;
     padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
     box-sizing: border-box;
   }
   .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
-  .sheet-title { display: block; font-size: 18px; font-weight: 700; color: $color-text-primary; }
-  .weight-input-row { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 18px; }
-  .weight-input {
-    flex: 1; font-size: 24px; font-weight: 600;
-    color: $color-primary-dark; border-bottom: 2px solid $color-primary; padding: 4px 0;
-  }
-  .weight-unit { font-size: 13px; color: $color-text-secondary; }
-  .sheet-save {
-    background: $color-primary !important; color: #fff !important;
-    border-radius: $radius-md !important; font-size: 15px !important;
-  }
+  .sheet-title { display: block; font-size: $fs-h2; font-weight: 700; color: $color-text-primary; }
 
-  /* 体重历史 */
-  .history-block { margin-top: 22px; }
-  .history-title { display: block; font-size: 13px; font-weight: 700; color: $color-text-primary; }
-  .history-empty { display: block; margin-top: 10px; font-size: 12px; color: $color-text-tertiary; }
-  .history-list { max-height: 220px; overflow-y: auto; }
-  .history-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: 11px 0; border-bottom: 1px solid $color-divider;
-    &:last-child { border-bottom: none; }
-  }
-  .history-date { flex: 1; font-size: 12px; color: $color-text-secondary; }
-  .history-value { font-size: 14px; font-weight: 600; color: $color-text-primary; }
-  .history-del { color: $color-text-tertiary; padding: 4px 6px; }
-  .history-del.is-busy { opacity: .4; }
-
-  /* 喝水打卡弹层 */
-  .water-status { display: flex; align-items: baseline; gap: 6px; margin: 18px 0 10px; }
-  .water-amount { font-size: 36px; font-weight: 700; color: $color-primary-dark; }
-  .water-goal { font-size: 13px; color: $color-text-secondary; }
-  .water-done { font-size: 11px; color: $color-success; background: rgba(16,185,129,.1); border-radius: $radius-pill; padding: 2px 8px; margin-left: 6px; }
-  .water-bar { height: 8px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
-  .water-bar__fill { height: 100%; border-radius: $radius-pill; background: linear-gradient(90deg, #38bdf8, #0ea5e9); transition: width .3s ease; }
-  .water-pct { display: block; margin-top: 6px; font-size: 11px; color: $color-text-tertiary; }
-  .water-chips { display: flex; gap: 8px; margin-top: 16px; }
-  .water-chip {
-    flex: 1; text-align: center; padding: 10px 0;
-    background: rgba(14, 165, 233, .08); color: #0369a1;
-    border: 1px solid rgba(14, 165, 233, .25); border-radius: $radius-md;
-    font-size: 13px; font-weight: 600;
-  }
-  .water-chip.is-busy { opacity: .5; }
-  .water-custom { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-  .water-custom-input {
-    flex: 1; font-size: 14px; padding: 8px 0;
-    color: $color-text-primary; border-bottom: 2px solid #0ea5e9;
-  }
-  .water-reset { display: block; margin-top: 14px; font-size: 11px; color: $color-text-tertiary; text-decoration: underline; }
+  /* 体重弹层的输入框/历史那一整套样式跟着组件走了 —— 见 components/WeightSheet/index.scss;
+     喝水那一块同理,见 components/WaterQuickAdd/index.scss */
 }

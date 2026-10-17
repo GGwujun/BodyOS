@@ -76,10 +76,9 @@ export default function Onboarding() {
     <Text className="duration-title">预计达成时间</Text>
     <View className="duration-row">{DURATIONS.map(value => <Text key={value} className={weeks===value?'active':''} onClick={() => setWeeks(value)}>{value}周</Text>)}</View>
     </>}
-    {step === 2 && <View className="onboarding-head"><Text>设定具体目标</Text><Text>{targetLabel}（{unit}）</Text><Input type="digit" value={target} placeholder="输入你的目标数值" onInput={e=>setTarget(e.detail.value)} /></View>}
-    {step === 3 && <View className="onboarding-head"><Text>确认你的计划</Text><Text>{GOALS.find(item=>item.key===goal)?.title} · {weeks}周</Text><Text>{targetLabel}：{target} {unit}</Text><Text>确认后此计划将成为当前目标。</Text></View>}
-    {step > 1 && <Button onClick={()=>setStep(step-1)}>上一步</Button>}
+    {step === 2 && <View className="onboarding-head"><Text>设定具体目标</Text><Text>{targetLabel}（{unit}）</Text><Input className="head-input" type="digit" value={target} placeholder="输入你的目标数值" onInput={e=>setTarget(e.detail.value)} /></View>}
+    {step === 3 && <View className="onboarding-head"><Text>确认你的计划</Text><Text className="head-kv">{GOALS.find(item=>item.key===goal)?.title} · {weeks}周</Text><Text className="head-kv">{targetLabel}：{target} {unit}</Text><Text>确认后此计划将成为当前目标。</Text></View>}
+    {step > 1 && <Button className="btn btn--secondary btn--block" onClick={()=>setStep(step-1)}>上一步</Button>}
     <Button className="next-btn" disabled={saving} loading={saving} onClick={()=>{if(step===3){submit();return;}if(step===2 && (!Number.isFinite(Number(target)) || Number(target)<=0)){toast('请输入有效的目标数值','none');return;}setStep(step+1);}}>{step===3?'确认并保存':'下一步'}</Button>
-    <View className="step-dots">{[1,2,3].map(value=><View key={value} className={step===value?'active':''}/>)}</View>
   </Screen>;
 }

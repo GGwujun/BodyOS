@@ -10,9 +10,9 @@
     display: flex; flex-direction: column; align-items: center; gap: 8px;
     padding: 26px 22px 22px; text-align: center;
   }
-  .intro-emoji { font-size: 36px; line-height: 1; }
-  .intro-title { font-size: 20px; font-weight: 700; color: $color-text-primary; }
-  .intro-copy { font-size: 12px; color: $color-text-secondary; line-height: 1.8; }
+  .intro-emoji { font-size: $fs-emoji; line-height: 1; }
+  .intro-title { font-size: $fs-h1; font-weight: 700; color: $color-text-primary; }
+  .intro-copy { font-size: $fs-mini; color: $color-text-secondary; line-height: 1.8; }
 
   /* 测评列表行 */
   .as-row {
@@ -20,38 +20,42 @@
     padding: 15px 16px;
   }
   .as-icon {
-    width: 48px; height: 48px; border-radius: 14px;
+    width: 48px; height: 48px; border-radius: $radius-md;
     display: flex; align-items: center; justify-content: center;
-    font-size: 24px; flex-shrink: 0;
+    font-size: $fs-title; flex-shrink: 0;
   }
   .as-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-  .as-name { font-size: 15px; font-weight: 700; color: $color-text-primary; }
-  .as-tag { font-size: 12px; color: $color-text-secondary; }
-  .as-meta { font-size: 11px; color: $color-text-tertiary; }
+  .as-name { font-size: $fs-medium; font-weight: 700; color: $color-text-primary; }
+  .as-tag { font-size: $fs-mini; color: $color-text-secondary; }
+  .as-meta { font-size: $fs-nano; color: $color-text-tertiary; }
   .as-side { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
-  .as-score { font-size: 11px; color: $color-primary-dark; background: $color-primary-bg; border-radius: $radius-pill; padding: 3px 9px; }
+  .as-score { font-size: $fs-nano; color: $color-primary-dark; background: $color-primary-bg; border-radius: $radius-pill; padding: 3px 9px; }
   .as-score--empty { color: $color-text-tertiary; background: $color-fill; }
-  .as-go { font-size: 12px; color: #ea580c; font-weight: 600; }
+  .as-go { font-size: $fs-mini; color: #ea580c; font-weight: 600; }
 
   /* 答题 */
   .quiz-card { display: flex; flex-direction: column; gap: 14px; padding-bottom: 18px; }
-  .quiz-progress { display: flex; justify-content: space-between; }
-  .quiz-step { font-size: 13px; font-weight: 700; color: $color-text-primary; }
-  .quiz-pct { font-size: 12px; color: $color-text-tertiary; }
+  .quiz-progress { display: flex; justify-content: space-between; align-items: center; }
+  .quiz-head-right { display: flex; align-items: center; gap: 14px; }
+  /* 出口给得小、给得灰:它要一直在,但不该和「下一题」抢注意力 */
+  .quiz-exit { font-size: $fs-small; color: $color-text-secondary; padding: 10px 4px; }
+  .quiz-exit:active { opacity: .6; }
+  .quiz-step { font-size: $fs-small; font-weight: 700; color: $color-text-primary; }
+  .quiz-pct { font-size: $fs-mini; color: $color-text-tertiary; }
   .quiz-bar { height: 6px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
   .quiz-bar__fill { height: 100%; border-radius: $radius-pill; background: $color-primary-gradient; transition: width .3s ease; }
   .quiz-dim {
     align-self: flex-start;
-    font-size: 11px; color: $color-primary-dark; background: $color-primary-bg;
+    font-size: $fs-nano; color: $color-primary-dark; background: $color-primary-bg;
     border-radius: $radius-pill; padding: 3px 10px;
   }
-  .quiz-title { font-size: 19px; font-weight: 700; color: $color-text-primary; line-height: 1.5; }
+  .quiz-title { font-size: $fs-h1; font-weight: 700; color: $color-text-primary; line-height: 1.5; }
   .quiz-options { display: flex; flex-direction: column; gap: 9px; }
   .quiz-option {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 14px; border-radius: $radius-md;
     background: $color-bg-soft; border: 1.5px solid transparent;
-    font-size: 14px; color: $color-text-primary;
+    font-size: $fs-caption; color: $color-text-primary;
   }
   .quiz-option.active {
     background: rgba(16, 185, 129, .07);
@@ -59,22 +63,22 @@
   }
   .quiz-check {
     width: 20px; height: 20px; border-radius: 50%;
-    border: 1.5px solid #c3ccd6; flex-shrink: 0;
+    border: 1.5px solid $color-border-strong; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
   }
   .quiz-check.checked { border-color: $color-primary; background: $color-primary; }
-  .quiz-tick { font-size: 12px; color: #fff; line-height: 1; }
+  .quiz-tick { font-size: $fs-mini; color: $color-text-inverse; line-height: 1; }
   .quiz-nav { display: flex; gap: 10px; }
   .nav-back {
     width: 96px; border-radius: $radius-pill !important;
     background: $color-bg-soft !important; color: $color-text-secondary !important;
-    font-size: 14px !important;
+    font-size: $fs-caption !important;
   }
   .nav-next { flex: 1; }
 
   /* 结果 */
   .result-page { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 26px 20px 20px; }
-  .result-name { font-size: 15px; font-weight: 700; color: $color-text-secondary; }
+  .result-name { font-size: $fs-medium; font-weight: 700; color: $color-text-secondary; }
   .score-ring {
     --score: 0deg;
     width: 128px; height: 128px; padding: 9px; border-radius: 50%;
@@ -82,33 +86,33 @@
     transform: rotate(-90deg); box-sizing: border-box;
   }
   .score-ring__inner {
-    width: 100%; height: 100%; border-radius: 50%; background: #fff;
+    width: 100%; height: 100%; border-radius: 50%; background: $color-bg-card;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     transform: rotate(90deg);
   }
-  .score-num { font-size: 38px; line-height: 42px; font-weight: 700; color: $color-text-primary; }
-  .score-dim-label { font-size: 11px; color: $color-text-tertiary; letter-spacing: 2px; }
-  .level-pill { font-size: 14px; font-weight: 700; border-radius: $radius-pill; padding: 5px 18px; }
+  .score-num { font-size: $fs-mega; line-height: 42px; font-weight: 700; color: $color-text-primary; }
+  .score-dim-label { font-size: $fs-nano; color: $color-text-tertiary; letter-spacing: 2px; }
+  .level-pill { font-size: $fs-caption; font-weight: 700; border-radius: $radius-pill; padding: 5px 18px; }
   .level--green { color: $color-success; background: rgba(16, 185, 129, .12); }
   .level--amber { color: $color-warning; background: rgba(245, 158, 11, .14); }
   .level--red { color: $color-danger; background: $color-danger-bg; }
-  .level-copy { font-size: 13px; color: $color-text-secondary; line-height: 1.7; text-align: center; }
+  .level-copy { font-size: $fs-small; color: $color-text-secondary; line-height: 1.7; text-align: center; }
 
   .dim-list { width: 100%; display: flex; flex-direction: column; gap: 9px; margin-top: 4px; }
   .dim-row { display: flex; align-items: center; gap: 10px; }
-  .dim-name { width: 40px; font-size: 12px; color: $color-text-secondary; flex-shrink: 0; }
+  .dim-name { width: 40px; font-size: $fs-mini; color: $color-text-secondary; flex-shrink: 0; }
   .dim-track { flex: 1; height: 7px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
   .dim-fill { height: 100%; border-radius: $radius-pill; background: $color-primary-gradient; transition: width .4s ease; }
-  .dim-value { width: 30px; text-align: right; font-size: 12px; color: $color-text-tertiary; flex-shrink: 0; }
+  .dim-value { width: 30px; text-align: right; font-size: $fs-mini; color: $color-text-tertiary; flex-shrink: 0; }
 
   .advice-block {
     width: 100%; background: $color-bg-soft; border-radius: $radius-md;
     padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
   }
-  .advice-title { font-size: 13px; font-weight: 700; color: $color-text-primary; }
+  .advice-title { font-size: $fs-small; font-weight: 700; color: $color-text-primary; }
   .advice-group { display: flex; flex-direction: column; gap: 4px; }
-  .advice-dim { font-size: 12px; font-weight: 700; color: $color-primary-dark; }
-  .advice-line { font-size: 12px; color: $color-text-secondary; line-height: 1.7; }
+  .advice-dim { font-size: $fs-mini; font-weight: 700; color: $color-primary-dark; }
+  .advice-line { font-size: $fs-mini; color: $color-text-secondary; line-height: 1.7; }
 
-  .result-foot { font-size: 11px; color: $color-text-tertiary; text-align: center; }
+  .result-foot { font-size: $fs-nano; color: $color-text-tertiary; text-align: center; }
 }

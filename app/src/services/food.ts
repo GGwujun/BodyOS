@@ -1,3 +1,4 @@
+import { markFirst } from '../utils/activation';
 import { request } from './request';
 import type { FoodItem, FoodLog, FoodParseInput, FoodParseResult, FrequentFood, PageResult } from './types';
 
@@ -10,16 +11,24 @@ export interface FoodLogInput {
 }
 
 /** GET /food-logs?date=YYYY-MM-DD */
-export const listFoodLogs = (date: string) =>
-  request<PageResult<FoodLog>>({ url: `/food-logs?date=${encodeURIComponent(date)}` });
+/**
+ * 一天的饮食记录。默认 pageSize 是 20 —— 但这一页要拿**全天**的日志算营养素合计,
+ * 只取第一页的话第 21 条之后吃的东西不会进「今日蛋白/碳水/脂肪」。
+ * 服务端单页上限 100,按 100 拿;一天吃到 100 条以上不是这个功能要服务的场景。
+ */
+export const listFoodLogs = (date: string, pageSize = 100) =>
+  request<PageResult<FoodLog>>({ url: `/food-logs?date=${encodeURIComponent(date)}&pageSize=${pageSize}` });
 
 /** GET /food-logs/frequent — 常用食物(近 30 天频次聚合) */
 export const listFrequentFoods = () =>
   request<{ items: FrequentFood[] }>({ url: '/food-logs/frequent' });
 
-/** POST /food-logs */
-export const createFoodLog = (data: FoodLogInput) =>
-  request<{ foodLog: FoodLog; summary: unknown }>({ url: `/food-logs`, method: 'POST', data });
+/** POST /food-logs(激活埋点挂在这里,不放页面 —— 见 utils/activation.ts 的文件头) */
+export const createFoodLog = async (data: FoodLogInput) => {
+  const res = await request<{ foodLog: FoodLog; summary: unknown }>({ url: `/food-logs`, method: 'POST', data });
+  markFirst('food');
+  return res;
+};
 
 /** PUT /food-logs/:id — 编辑 */
 export const updateFoodLog = (id: string, data: Partial<FoodLogInput>) =>

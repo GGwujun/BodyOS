@@ -1,0 +1,255 @@
+@import '../../styles/variables.scss';
+
+/* ============ 我的器材(分包) ============ */
+.kit-page {
+  background: $color-bg;
+  gap: 10px;
+
+  .kt-intro { gap: 6px; }
+
+  .kt-block { gap: 4px; }
+
+  .kt-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .kt-legend { font-size: $fs-mini; color: $color-text-secondary; }
+
+  .kt-note {
+    display: block;
+    line-height: 18px;
+    padding-bottom: 6px;
+  }
+
+  /* ---- 计算器 ---- */
+  .kt-calc-in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 0 2px;
+  }
+
+  .kt-calc-label { font-size: $fs-caption; color: $color-text-primary; }
+
+  .kt-calc-field {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+  }
+
+  .kt-input {
+    width: 120rpx;
+    text-align: right;
+    font-size: $fs-h1;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+
+  .kt-calc-unit { font-size: $fs-mini; color: $color-text-secondary; }
+
+  .kt-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 0 4px;
+  }
+
+  .kt-chip {
+    padding: 5px 12px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &--on {
+      background: $color-primary-bg;
+      color: $color-primary-dark;
+      border-color: $color-primary-light;
+      font-weight: $fw-bold;
+    }
+  }
+
+  .kt-result {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 10px;
+    padding: 14px 14px 12px;
+    border-radius: $radius-card;
+    background: $color-primary-bg;
+  }
+
+  .kt-result-k { font-size: $fs-mini; color: $color-primary-dark; }
+
+  .kt-result-v {
+    font-size: $fs-display;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    line-height: 34px;
+  }
+
+  .kt-result-u { font-size: $fs-caption; font-weight: $fw-medium; margin-left: 2px; }
+
+  .kt-result-plates {
+    margin-top: 4px;
+    font-size: $fs-h2;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+
+  .kt-result-sub { display: block; padding-top: 2px; }
+  .kt-result-warn { display: block; font-size: $fs-mini; color: $color-warning; padding-top: 2px; }
+  .kt-calc-foot { display: block; padding: 12px 0 2px; }
+
+  /* ---- 行(片/杆) ---- */
+  .kt-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 0;
+    border-bottom: 1px solid $color-divider;
+  }
+
+  .kt-row-k { font-size: $fs-caption; color: $color-text-primary; }
+  .kt-row-u { font-size: $fs-nano; color: $color-text-secondary; margin-left: 2px; }
+  .kt-row-clear { font-size: $fs-mini; color: $color-primary-dark; padding: 4px 0 4px 10px; }
+
+  .kt-stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 配片的 −/＋:全包只剩这一处用 rpx,换成 px 跟其它页对齐;62rpx 在不同屏宽上
+     还会忽大忽小,而它本来就不到 44px */
+  .kt-step {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 50%;
+    background: $color-fill;
+    color: $color-text-primary;
+    font-size: $fs-h1;
+  }
+
+  .kt-step-v {
+    min-width: 108rpx;
+    text-align: center;
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+
+    &--off { color: $color-text-secondary; font-weight: $fw-medium; }
+  }
+
+  .kt-reset {
+    display: block;
+    text-align: center;
+    padding: 12px 0 2px;
+    font-size: $fs-small;
+    color: $color-primary-dark;
+  }
+
+  /* ---- 哑铃档位 ---- */
+  .kt-bells {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 0 2px;
+  }
+
+  .kt-bell {
+    width: 82rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    text-align: center;
+    border-radius: $radius-md;
+    font-size: $fs-small;
+    color: $color-text-secondary;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &--on {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-text-inverse;
+      font-weight: $fw-bold;
+    }
+  }
+
+  /* ---- 器械清单 ---- */
+  .kt-equips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 0 2px;
+  }
+
+  .kt-equip {
+    padding: 6px 12px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &--on {
+      background: $color-primary-bg;
+      color: $color-primary-dark;
+      border-color: $color-primary-light;
+      font-weight: $fw-bold;
+    }
+  }
+
+  /* 我存的几套(健身房/家里/出差)—— 点一下切过去,当前那套打勾 */
+  .kt-profs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 0 2px;
+  }
+
+  .kt-prof {
+    padding: 6px 12px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+
+    &--on {
+      background: $color-primary-bg;
+      color: $color-primary-dark;
+      border-color: $color-primary-light;
+      font-weight: $fw-bold;
+    }
+  }
+
+  .kt-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0 2px;
+  }
+
+  .kt-quick-btn {
+    padding: 7px 14px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+  }
+
+  .kt-foot { display: block; padding: 2px 2px 8px; line-height: 18px; }
+}
