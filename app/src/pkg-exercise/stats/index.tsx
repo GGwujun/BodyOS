@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Button, ScrollView, Text, View } from '@tarojs/components';
+import { Button, Image, ScrollView, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import statsIcon from '@/assets/icons/stats.png';
 import { track } from '@/services/analytics';
 import { loadLogs } from '../engine/store';
 import { backfillWorkoutEnergy } from '../engine/workout-energy';
@@ -225,7 +226,7 @@ export default function Stats() {
     <Screen className="st-page">
       {!hasLogs && (
         <View className="card st-empty">
-          <Text className="st-empty-emoji">📈</Text>
+          <Image className="st-empty-icon" src={statsIcon} mode="aspectFit" />
           <Text className="fs-h1">还没有训练记录</Text>
           <Text className="fs-mini text-secondary">完成一次训练后,这里会开始记录你的打卡和成绩</Text>
           <Button

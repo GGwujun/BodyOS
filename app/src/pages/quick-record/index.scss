@@ -11,19 +11,25 @@
   gap: 14px;
 }
 
-.quick-header { padding: 0 2px 2px; display: flex; flex-direction: column; gap: 2px; }
-.quick-title { font-size: $fs-title; line-height: 1.35; font-weight: 700; color: $color-text-primary; }
-.quick-sub { font-size: $fs-mini; color: $color-text-secondary; }
+.quick-header { padding: 0 2px 2px; display: flex; flex-direction: column; gap: 5px; }
+.quick-title { font-size: $fs-hero; line-height: $line-height-tight; font-weight: $fw-bold; color: $color-text-primary; letter-spacing: -.5px; }
+.quick-sub { font-size: $fs-mini; color: $color-text-tertiary; }
 
 .quick-card {
   background: $color-bg-card;
+  border: 1px solid $color-border;
   border-radius: $radius-card;
-  padding: 16px;
+  padding: 18px;
   box-shadow: $shadow-card;
 }
-.quick-card__head { display: flex; align-items: center; gap: 6px; }
-.quick-card__emoji { font-size: $fs-body; }
-.quick-card__title { flex: 1; font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+.quick-card__head { display: flex; align-items: center; gap: 10px; }
+.quick-card__icon {
+  width: 34px; height: 34px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: $radius-md; background: $color-primary-bg;
+}
+.quick-card__icon-img { width: 19px; height: 19px; display: block; }
+.quick-card__title { flex: 1; font-size: 16px; font-weight: $fw-bold; color: $color-text-primary; }
 .quick-card__hint { font-size: $fs-nano; color: $color-text-tertiary; }
 
 /* 体重:记过和没记过是两种长相 —— 记过先给读数(那是他要确认的东西),

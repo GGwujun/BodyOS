@@ -33,7 +33,7 @@
   .picker-hits {
     position: absolute; top: 100%; left: 0; right: 0; z-index: 30;
     background: $color-bg-card; border: 1px solid $color-border;
-    border-radius: $radius-md; box-shadow: 0 6px 18px rgba(15, 23, 42, .12);
+    border-radius: $radius-md; box-shadow: 0 6px 18px rgba(23, 43, 41, .12);
     overflow: hidden;
   }
   .picker-hit {
@@ -72,7 +72,13 @@
     padding: 11px 0; border-bottom: 1px solid $color-divider;
   }
   .ref-row:last-child { border-bottom: 0; }
-  .ref-icon { font-size: $fs-num; width: 36px; text-align: center; flex-shrink: 0; }
+  .ref-icon {
+    width: 34px; height: 34px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: $color-primary-bg; color: $color-primary-dark;
+    font-size: $fs-small; font-weight: $fw-bold;
+  }
   .ref-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
   .ref-name { font-size: $fs-small; font-weight: 700; color: $color-text-primary; }
   .ref-desc { font-size: $fs-nano; color: $color-text-secondary; line-height: 1.6; }
@@ -82,10 +88,12 @@
     margin-top: 12px; padding: 13px 14px;
     border-radius: $radius-md; display: flex; flex-direction: column; gap: 4px;
   }
-  .gr-sec--green { background: rgba(16, 185, 129, .07); }
-  .gr-sec--red { background: rgba(239, 68, 68, .06); }
+  .gr-sec--green { background: $color-primary-bg; }
+  .gr-sec--red { background: $color-danger-bg; }
   .gr-title { font-size: $fs-small; font-weight: 700; color: $color-text-primary; margin-bottom: 4px; }
-  .gr-row { padding: 6px 0; border-bottom: 1px dashed rgba(15, 23, 42, .08); }
+  .gr-title--green { color: $color-primary-dark; }
+  .gr-title--red { color: $color-danger; }
+  .gr-row { padding: 6px 0; border-bottom: 1px dashed rgba(23, 43, 41, .08); }
   .gr-row:last-child { border-bottom: 0; }
   .gr-name { display: block; font-size: $fs-small; font-weight: 600; color: $color-text-primary; }
   .gr-note { display: block; margin-top: 2px; font-size: $fs-nano; color: $color-text-secondary; line-height: 1.6; }

@@ -1,3 +1,4 @@
+import { themedColor } from '@/utils/theme';
 import { useEffect, useState } from 'react';
 import { Button, Picker, Switch, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
@@ -251,7 +252,7 @@ export default function ReminderPage() {
           <Switch
             checked={s.enabled}
             disabled={!online || !tmplId || busy}
-            color={THEME.primary}
+            color={themedColor(THEME.primary)}
             onChange={(e) => void toggle(e.detail.value)}
           />
         </View>
@@ -275,7 +276,7 @@ export default function ReminderPage() {
             <Text className="rm-row-title">计划日没练也提一句</Text>
             <Text className="fs-mini text-secondary">该练没练的日子,当晚再说一次,不会天天念</Text>
           </View>
-          <Switch checked={s.nudge} color={THEME.primary} onChange={(e) => void apply({ nudge: e.detail.value })} />
+          <Switch checked={s.nudge} color={themedColor(THEME.primary)} onChange={(e) => void apply({ nudge: e.detail.value })} />
         </View>
 
         {online && tmplId && s.enabled ? (
@@ -299,7 +300,7 @@ export default function ReminderPage() {
           </View>
           <Switch
             checked={alert.keepAwake}
-            color={THEME.primary}
+            color={themedColor(THEME.primary)}
             onChange={(e) => setAlertPref({ keepAwake: e.detail.value })}
           />
         </View>
@@ -313,7 +314,7 @@ export default function ReminderPage() {
           </View>
           <Switch
             checked={alert.vibrate}
-            color={THEME.primary}
+            color={themedColor(THEME.primary)}
             onChange={(e) => setAlertPref({ vibrate: e.detail.value })}
           />
         </View>

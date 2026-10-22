@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Input, Text, View } from '@tarojs/components';
+import { Button, Image, Input, Text, View } from '@tarojs/components';
+import rulerIcon from '@/assets/icons/ruler.png';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { Delete } from '@taroify/icons';
 import Screen from '@/components/Screen';
@@ -95,7 +96,7 @@ export default function MeasurePage() {
 
       {!failed && records != null && withGirth.length === 0 && (
         <View className="card mc-empty">
-          <Text className="mc-empty-emoji">📐</Text>
+          <Image className="mc-empty-icon" src={rulerIcon} mode="aspectFit" />
           <Text className="fs-h1">还没有围度记录</Text>
           <Text className="fs-caption">量一次腰围只要十秒,却比体重更能说明这段时间练得对不对</Text>
           <Button className="btn btn--primary mc-cta" onClick={() => setSheetOpen(true)}>记一次围度</Button>

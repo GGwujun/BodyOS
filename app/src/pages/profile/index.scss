@@ -3,76 +3,161 @@
 /* ============ 我的页 ============ */
 .profile-page {
   background: $color-bg;
-  padding: 0 16px calc(24px + env(safe-area-inset-bottom));
-  gap: 12px;
+  /* 自定义导航:状态栏那一块交给页头自己铺绿 */
+  padding-top: 0;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  gap: 14px;
 
-  /* 品牌渐变 hero(与 Logo 同源:emerald 渐变) */
+  /* 品牌 hero:深林绿渐变 + 叶子 + 一圈极淡的光晕。
+     左右/顶部超出安全边距,铺到屏幕边缘 —— 这一页的第一屏该是「你的空间」,
+     而不是一张漂在纸上的卡片 */
   .profile-hero {
-    margin: 0 -16px; padding: 30px 20px 54px;
-    background: $color-primary-gradient;
-    display: flex; align-items: center; gap: 14px; position: relative;
+    position: relative;
+    overflow: hidden;
+    margin: 0 (-$safe-margin);
+    padding: 0 20px 60px;
+    background: linear-gradient(150deg, #176b55 0%, #11503f 62%, #0d4537 100%);
+    border-radius: 0 0 26px 26px;
   }
+  .hero-leaves {
+    position: absolute; left: 0; top: 0;
+    width: 100%; height: auto;
+    pointer-events: none;
+  }
+  .hero-glow {
+    position: absolute;
+    right: -70px; top: -110px;
+    width: 260px; height: 260px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(169, 195, 176, .34) 0%, rgba(169, 195, 176, 0) 68%);
+    pointer-events: none;
+  }
+  .hero-glow::after {
+    content: '';
+    position: absolute;
+    left: -190px; top: 190px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 253, 247, .10) 0%, rgba(255, 253, 247, 0) 70%);
+  }
+  /* 往下让一截:右上角还有微信胶囊,头像那一行不能从状态栏正下方起 */
+  .hero-top { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; margin-top: 16px; }
   .avatar {
-    width: 58px; height: 58px; border-radius: 50%;
-    background: rgba(255, 255, 255, .92); color: $color-primary-dark;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255, 253, 247, .94); color: $color-primary-dark;
     display: flex; align-items: center; justify-content: center;
-    font-size: $fs-display; border: 2px solid rgba(255, 255, 255, .65);
-    flex-shrink: 0;
+    font-size: 30px; flex-shrink: 0;
+    box-shadow: 0 8px 20px -10px rgba(8, 34, 27, .55);
   }
-  .hero-copy { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .hero-copy view { display: flex; align-items: center; gap: 8px; }
-  .user-name { font-size: $fs-h1; font-weight: 700; color: $color-text-inverse; }
+  .hero-copy { display: flex; flex-direction: column; gap: 7px; flex: 1; min-width: 0; }
+  .hero-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .hero-name-row:active { opacity: .82; }
+  .user-name {
+    font-size: 22px; font-weight: $fw-bold; color: $color-text-inverse;
+    letter-spacing: -.3px;
+  }
   .goal-pill {
-    font-size: $fs-nano; background: rgba(255, 255, 255, .22);
-    color: $color-text-inverse; padding: 3px 8px; border-radius: $radius-sm;
+    font-size: $fs-nano; background: rgba(255, 253, 247, .18);
+    border: 1px solid rgba(255, 253, 247, .26);
+    color: $color-text-inverse; padding: 3px 9px; border-radius: $radius-pill;
+    line-height: 1.4;
   }
-  .user-id { font-size: $fs-nano; color: rgba(255, 255, 255, .8); }
-  .edit-icon { font-size: $fs-h1; color: $color-text-inverse; }
+  .user-id { font-size: $fs-mini; color: rgba(255, 253, 247, .72); }
+  /* 齿轮:裸图标压在右上角,不抢名字那一行的注意力 */
+  .hero-edit {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    color: $color-text-inverse; font-size: 21px;
+  }
 
-  /* 悬浮统计卡(压在 hero 上) */
+  /* 悬浮统计卡(压在 hero 下沿,上半截在绿底上、下半截落在纸面上) */
   .stat-card {
-    margin-top: -36px; z-index: 2; position: relative;
-    background: $color-bg-card; border-radius: $radius-card;
-    display: flex; box-shadow: 0 6px 18px rgba(15, 23, 42, .07);
+    position: relative; z-index: 2;
+    margin: -50px 0 0;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+    border-radius: 18px;
+    display: flex;
+    box-shadow: 0 14px 30px -18px rgba(23, 43, 41, .42);
   }
-  .stat-card view {
+  .stat {
     flex: 1; display: flex; flex-direction: column; align-items: center;
-    padding: 14px 0; gap: 5px; border-right: 1px solid $color-divider;
+    padding: 17px 0 16px; gap: 7px; border-right: 1px solid $color-divider;
   }
-  .stat-card view:last-child { border-right: 0; }
-  .stat-card text:first-child { font-size: $fs-nano; color: $color-text-secondary; }
-  .stat-card text:last-child { font-size: $fs-body; font-weight: 700; color: $color-text-primary; }
+  .stat:last-child { border-right: 0; }
+  .stat-label { font-size: $fs-mini; color: $color-text-secondary; }
+  .stat-pair { display: flex; align-items: baseline; gap: 3px; }
+  .stat-value {
+    font-size: 22px; line-height: 1.15; font-weight: $fw-bold; color: $color-text-primary;
+    font-variant-numeric: tabular-nums; letter-spacing: -.4px;
+  }
+  .stat-unit { font-size: $fs-nano; color: $color-text-tertiary; }
+  /* 没填的那一格不该和读数一样大 —— 「未填写」是一个状态,不是一个数 */
+  .stat-value.is-empty { font-size: $fs-caption; font-weight: $fw-regular; color: $color-text-tertiary; letter-spacing: 0; }
 
-  /* 菜单组 */
+  /* 菜单组:几个白卡直接摞,不再有分组标题 —— 卡与卡之间的缝就是分组 */
+  .menu-group { display: flex; flex-direction: column; gap: 8px; }
   .menu-card {
     background: $color-bg-card; border: 1px solid $color-border;
     border-radius: $radius-card; overflow: hidden;
     box-shadow: $shadow-card;
   }
   .menu-row {
-    min-height: 48px; display: flex; align-items: center;
-    padding: 0 14px; border-bottom: 1px solid $color-divider;
+    min-height: 58px; display: flex; align-items: center;
+    gap: 14px;
+    padding: 9px 16px;
+    border-bottom: 1px solid $color-divider;
+    transition: background .12s ease;
   }
+  /* 客服那一行是原生 button(open-type=contact 只能由按钮触发),但长相必须是
+     同一行菜单:清掉微信按钮的灰底、圆角、行高和 ::after 描边,尺寸交给 .menu-row */
+  .menu-row--btn {
+    width: 100%;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    /* border:0 会连菜单行底下的分隔线一起清掉 —— 客服那行后面还有「关于」,
+       没有这条线,它看起来像和上一行粘成了一格 */
+    border-bottom: 1px solid $color-divider;
+    border-radius: 0;
+    line-height: normal;
+    text-align: left;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 9px 16px;
+
+    &::after { border: 0; }
+  }
+  .menu-row:active { background: $color-bg-soft; }
   .menu-row:last-child { border-bottom: 0; }
-  .menu-icon { width: 26px; color: $color-primary; font-size: $fs-h2; display: flex; margin-right: 4px; }
-  .menu-label { flex: 1; color: $color-text-primary; font-size: $fs-caption; }
-  .menu-value { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: $fs-nano; color: $color-text-tertiary; margin-right: 6px; }
-  .menu-row taroify-icon, .menu-row .taroify-icon { color: $color-text-tertiary; font-size: $fs-caption; }
+  .menu-icon {
+    width: 26px; height: 26px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: $color-text-primary;
+    font-size: 21px;
+  }
+  .menu-label { flex: 1; min-width: 0; color: $color-text-primary; font-size: $fs-body; font-weight: $fw-bold; letter-spacing: -.1px; }
+  .menu-value {
+    flex-shrink: 0;
+    max-width: 156px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-size: $fs-small; color: $color-text-tertiary;
+  }
+  .menu-arrow { flex-shrink: 0; color: $color-text-tertiary; font-size: 15px; }
 
   /* 底部弹层 */
   .mask {
     position: fixed; inset: 0;
-    background: rgba(15, 23, 42, .45); z-index: 1000;
+    background: rgba(23, 43, 41, .46); z-index: 1000;
     display: flex; align-items: flex-end;
   }
   .edit-sheet {
     width: 100%; background: $color-bg-card;
-    border-radius: $radius-lg $radius-lg 0 0;
+    border-radius: 24px 24px 0 0;
     padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
     box-sizing: border-box;
+    box-shadow: 0 -12px 40px -20px rgba(23, 43, 41, .4);
   }
   .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
-  .sheet-title { display: block; font-size: $fs-h2; font-weight: 700; color: $color-text-primary; }
+  .sheet-title { display: block; font-size: $fs-h2; font-weight: $fw-bold; color: $color-text-primary; }
   .body-sheet { max-height: 88vh; overflow-y: auto; }
   .diet-help { display: block; margin: 10px 0 14px; font-size: $fs-mini; line-height: 1.6; color: $color-text-secondary; }
   .field-row {
@@ -83,24 +168,35 @@
   .picker-value { color: $color-primary-dark; font-size: $fs-caption; }
   .diet-input {
     width: 100%; height: 120px; padding: 12px;
-    border: 1px solid $color-border; border-radius: $radius-md;
+    border: 1px solid $color-border; border-radius: $radius-panel;
     background: $color-bg-soft; box-sizing: border-box; font-size: $fs-caption;
   }
   .nick-input {
-    width: 100%; height: 44px; padding: 0 12px;
-    border: 1px solid $color-border; border-radius: $radius-md;
+    width: 100%; height: 48px; padding: 0 14px;
+    border: 1px solid $color-border; border-radius: $radius-panel;
     background: $color-bg-soft; box-sizing: border-box; font-size: $fs-caption;
   }
   .diet-count { display: block; text-align: right; font-size: $fs-nano; color: $color-text-tertiary; margin: 6px 0 4px; }
   .diet-error { display: block; color: $color-danger; font-size: $fs-mini; margin-bottom: 6px; }
   .sheet-save {
-    margin-top: 14px; height: 44px;
+    margin-top: 14px; height: 48px;
     background: $color-primary !important; color: $color-text-inverse !important;
-    border-radius: $radius-md !important; font-size: $fs-medium !important;
+    border-radius: $radius-md !important; font-size: $fs-medium !important; font-weight: $fw-bold !important;
   }
   .edit-sheet taro-button-core.sheet-cancel, .edit-sheet button.sheet-cancel {
-    margin-top: 10px; height: 44px;
-    color: $color-text-secondary; background: $color-fill;
+    margin-top: 10px; height: 46px;
+    color: $color-text-secondary; background: $color-bg-soft;
     border-radius: $radius-md !important; font-size: $fs-medium !important;
   }
+}
+
+@media (min-width: 600px) { .profile-page { max-width: 430px; margin: 0 auto; } }
+
+/* ---- 深色模式:hero 渐变换成亮苔绿后,上面的米白胶囊/小字翻成近墨 ---- */
+@media (prefers-color-scheme: dark) {
+  .profile-page .goal-pill {
+    background: rgba(13, 33, 26, .14);
+    border-color: rgba(13, 33, 26, .24);
+  }
+  .profile-page .user-id { color: rgba(13, 33, 26, .72); }
 }

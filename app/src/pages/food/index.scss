@@ -35,7 +35,7 @@
   /* 描述输入面板(品牌浅绿) */
   .food-prompt {
     background: $color-primary-bg;
-    border: 1px solid #c9f0dd; border-radius: $radius-card;
+    border: 1px solid $color-primary-light; border-radius: $radius-card;
     padding: 14px;
   }
   .prompt-title {
@@ -68,10 +68,12 @@
     background: $color-bg-soft; border-radius: $radius-sm; padding: 5px 8px;
   }
   .edit-del { color: $color-danger; font-size: $fs-small; }
+  /* 「存进我的食物」:和删除对称的小动作,主色而不用红 —— 一个是收藏一个是移除 */
+  .edit-save { color: $color-primary-dark; font-size: $fs-small; }
   .add-manual {
     display: block; padding: 11px 0; text-align: center;
     color: $color-primary; font-size: $fs-small;
-    border: 1px dashed #bfe6d5; border-radius: $radius-md;
+    border: 1px dashed $color-primary-light; border-radius: $radius-md;
     margin-top: 10px; background: $color-bg-soft;
   }
   .manual-row { display: flex; gap: 8px; align-items: center; padding: 8px 0; }
@@ -92,6 +94,23 @@
   .day-macros__seg.is-f { background: $color-rose; }
   .day-macros__line { display: block; margin-top: 8px; font-size: $fs-small; color: $color-text-primary; }
   .day-macros__share { display: block; margin-top: 2px; font-size: $fs-nano; color: $color-text-tertiary; }
+
+  /* 有目标时的三行「吃了多少 / 该吃多少」。三色沿用上面那条 bar 的同一套 ——
+     占比条和目标行是同一件事的两种答案(配比/够不够),颜色换了就要重新认一遍 */
+  .day-macros__goals { display: flex; flex-direction: column; gap: 8px; }
+  .day-macros__goal { display: flex; align-items: center; gap: 8px; }
+  .day-macros__glabel { flex-shrink: 0; width: 3em; font-size: $fs-small; color: $color-text-secondary; }
+  .day-macros__glabel.is-p { color: $color-sky; }
+  .day-macros__glabel.is-c { color: $color-amber-dark; }
+  .day-macros__glabel.is-f { color: $color-rose; }
+  .day-macros__gtrack { flex: 1; height: 8px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
+  .day-macros__gfill { height: 100%; border-radius: $radius-pill; }
+  .day-macros__gfill.is-p { background: $color-sky; }
+  .day-macros__gfill.is-c { background: $color-amber-dark; }
+  .day-macros__gfill.is-f { background: $color-rose; }
+  /* 超了不换颜色只换虚实:红是「错」,而超目标多半只是「这顿吃多了」,不是要报警的事 */
+  .day-macros__gfill.is-over { opacity: 0.55; }
+  .day-macros__gval { flex-shrink: 0; min-width: 6.5em; text-align: right; font-size: $fs-small; color: $color-text-primary; }
 
   /* 按餐次分组 */
   .meal-group { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
@@ -122,4 +141,9 @@
     border-color: $color-primary-light; font-weight: $fw-bold;
   }
   .lib-more { display: block; margin-top: 8px; text-align: center; }
+}
+
+/* ---- 深色模式:识别中那张浅蓝卡翻成信息蓝的深底 ---- */
+@media (prefers-color-scheme: dark) {
+  .food-page .ai-card { background: #1a2427; border-color: #2f4147; }
 }

@@ -3,32 +3,47 @@
 /* ============ 趋势页 ============ */
 .trends-page {
   background: $color-bg;
+  background-image: radial-gradient(120% 30% at 50% 0%, #fffdf8 0%, rgba(255, 253, 248, 0) 100%);
+  background-repeat: no-repeat;
   /* 只写上下:左右那 16px 是 Screen 的 .safe-x 给的 —— 简写 padding 和它是同一个属性,
      不是叠加而是覆盖,而页面样式在 app.wxss 之后加载,左右会真的变成 0 */
-  padding-top: 12px;
+  padding-top: 10px;
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
   gap: 14px;
 
-  /* 顶部分段切换(白底胶囊,选中段绿底白字) */
+  /* 顶部分段切换 —— 设计稿是一枚实心的深绿选中段,整条是白底浅描边 */
   .section-tabs {
-    display: flex; padding: 3px;
+    display: flex; padding: 4px;
     background: $color-bg-card; border: 1px solid $color-border;
-    border-radius: $radius-md; box-shadow: $shadow-card;
+    border-radius: 16px;
+    box-shadow: $shadow-card;
   }
   .section-tabs text, .section-tabs taro-text-core {
-    flex: 1; text-align: center; padding: 12px 0;
-    font-size: $fs-small; color: $color-text-secondary;
-    border-radius: $radius-sm; transition: all .2s ease;
+    position: relative;
+    flex: 1; text-align: center; padding: 11px 0;
+    font-size: $fs-small; color: $color-text-primary;
+    border-radius: $radius-md; transition: all .2s ease;
   }
-  .section-tabs .active { background: $color-primary; color: $color-text-inverse; font-weight: $fw-bold; }
+  .section-tabs text:last-child::before, .section-tabs taro-text-core:last-child::before {
+    content: ''; position: absolute; left: 0; top: 13px; bottom: 13px;
+    width: 1px; background: $color-divider;
+  }
+  .section-tabs text:active, .section-tabs taro-text-core:active { opacity: .78; }
+  .section-tabs .active {
+    background: $color-primary; color: $color-text-inverse; font-weight: $fw-bold;
+    box-shadow: $shadow-primary;
+  }
+  .section-tabs .active::before { display: none; }
 
   /* 时间范围胶囊 */
   .range-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   .range-tabs text, .range-tabs taro-text-core {
-    display: block; padding: 11px 0; text-align: center;
+    display: block; padding: 13px 0; text-align: center;
     background: $color-bg-card; border: 1px solid $color-border;
-    border-radius: $radius-pill; color: $color-text-secondary; font-size: $fs-mini;
+    border-radius: $radius-pill; color: $color-text-primary; font-size: $fs-mini;
+    transition: background .15s ease;
   }
+  .range-tabs text:active, .range-tabs taro-text-core:active { background: $color-bg-soft; }
   .range-tabs .active { background: $color-primary; border-color: $color-primary; color: $color-text-inverse; font-weight: $fw-bold; }
   .range-tabs picker, .range-tabs taro-picker-core { min-width: 0; width: 100%; }
   .range-tabs picker text, .range-tabs taro-picker-core text,
@@ -54,6 +69,34 @@
   .good { color: $color-primary-dark; background: $color-primary-bg; font-size: $fs-nano; padding: 3px 9px; border-radius: $radius-pill; }
   .warn { color: $color-amber-dark; background: $color-amber-bg; font-size: $fs-nano; padding: 3px 9px; border-radius: $radius-pill; }
   .muted { color: $color-text-tertiary; font-size: $fs-nano; }
+
+  /* 体重大卡:设计稿里读数最大、涨跌是一枚胶囊,曲线下面再写两端读数 */
+  .weight-trend-card { padding: 20px 18px 16px; }
+  .weight-trend-value {
+    font-size: 42px; line-height: 1.05; letter-spacing: -1.6px;
+    margin-top: 2px;
+  }
+  .weight-trend-card .metric-delta {
+    flex-shrink: 0;
+    padding: 5px 11px; border-radius: $radius-pill;
+    font-size: $fs-small; font-weight: $fw-bold;
+    font-variant-numeric: tabular-nums;
+  }
+  .weight-trend-card .metric-delta.good { color: $color-primary-dark; background: $color-primary-bg; }
+  .weight-trend-card .metric-delta.warn { color: $color-amber-dark; background: $color-amber-bg; }
+  .weight-trend-card .metric-delta.muted { color: $color-text-secondary; background: $color-bg-soft; }
+  .weight-trend-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 2px 0; margin-top: 2px;
+    border-top: 1px dashed $color-divider;
+  }
+  .weight-trend-foot__item { font-size: $fs-mini; color: $color-text-secondary; font-variant-numeric: tabular-nums; }
+  /* 平台期提示:琥珀而不是主色 —— 它是「值得看一眼」,不是「该去点」 */
+  .weight-plateau {
+    display: block; margin-top: 10px; padding: 9px 12px;
+    background: $color-warning-bg; border: 1px solid $color-warning-border; border-radius: $radius-md;
+    font-size: $fs-mini; color: $color-warning; line-height: 1.6;
+  }
 
   /* 主图表 */
   .main-chart { padding-bottom: 12px; }
@@ -107,7 +150,32 @@
     padding: 15px 0;
     font-size: $fs-small; font-weight: $fw-medium; color: $color-primary-dark;
 
+    &:active { background: $color-bg-soft; }
     & + .body-link { border-left: 1px solid $color-border; }
+  }
+
+  /* 训练空态:虚线面板 + 圆形哑铃图标 + 居中两行字,底下一条通栏动作 */
+  .train-empty-card { padding-bottom: 0; }
+  .train-empty {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    margin-top: 14px; padding: 26px 16px 24px;
+    border: 1px dashed $color-border-dashed; border-radius: 16px;
+    background: $color-bg-soft;
+  }
+  .train-empty__icon {
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: $color-bg-card; border: 1px solid $color-border;
+    margin-bottom: 4px;
+  }
+  .train-empty__icon-img { width: 28px; height: 28px; display: block; }
+  .train-empty__title { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+  .train-empty__hint { font-size: $fs-mini; color: $color-text-tertiary; }
+  .train-empty__action {
+    display: block; margin-top: 6px; padding: 15px 0 17px;
+    border-top: 1px solid $color-divider;
+    text-align: center; font-size: $fs-small; font-weight: $fw-bold;
+    color: $color-primary-dark;
   }
 
   /* 训练那一块 —— 首行是一句话不是一个数,所以不用 .metric-value(30px 的字号
@@ -156,5 +224,12 @@
   .insight .action {
     background: $color-primary-bg; color: $color-primary-dark;
     border-radius: $radius-md; padding: 9px 12px; margin-top: 2px;
+  }
+}
+
+/* ---- 深色模式:顶部纸面高光换成主色微光(和首页/训练页同一口径) ---- */
+@media (prefers-color-scheme: dark) {
+  .trends-page {
+    background-image: radial-gradient(120% 30% at 50% 0%, rgba(63, 165, 132, .08) 0%, rgba(63, 165, 132, 0) 100%);
   }
 }

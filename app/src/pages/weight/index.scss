@@ -15,13 +15,13 @@
     flex-shrink: 0;
     width: 124px; height: 124px; padding: 8px;
     border-radius: 50%;
-    background: conic-gradient($color-primary var(--pct), $color-fill 0);
-    box-sizing: border-box; transform: rotate(-90deg);
+    /* 和首页那个环同一口径:conic-gradient 默认从 12 点顺时针 */
+    background: conic-gradient(from 0deg, $color-primary var(--pct), $color-primary-bg 0);
+    box-sizing: border-box;
   }
   .wp-ring__inner {
     width: 100%; height: 100%; border-radius: 50%; background: $color-bg-card;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    transform: rotate(90deg);
   }
   /* 读数/标签和首页那个环同一档 —— 同一个环在两页长得不一样,读起来像两个东西 */
   .wp-ring__num { font-size: $fs-display; line-height: 40px; font-weight: 700; color: $color-text-primary; }

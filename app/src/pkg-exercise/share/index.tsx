@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Button, Canvas, Text, View } from '@tarojs/components';
+import { Button, Canvas, Image, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import dumbbellIcon from '@/assets/icons/dumbbell.png';
 import { track } from '@/services/analytics';
 import { copyText, toast } from '@/utils/ui';
 import { navigate } from '@/utils/nav';
@@ -108,7 +109,7 @@ export default function SharePage() {
     return (
       <Screen className="sh-page">
         <View className="card sh-empty">
-          <Text className="sh-empty-emoji">🏋️</Text>
+          <Image className="sh-empty-icon" src={dumbbellIcon} mode="aspectFit" />
           <Text className="fs-h1">还没有训练记录</Text>
           <Text className="fs-caption text-secondary">
             先完成一次训练,这里才有可以分享的内容。

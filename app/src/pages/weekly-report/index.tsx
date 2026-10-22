@@ -1,13 +1,18 @@
-import { useMemo, useState } from 'react';
-import { View, Text } from '@tarojs/components';
+import { themedColor } from '@/utils/theme';
+import { useEffect, useMemo, useState } from 'react';
+import { View, Text, Switch } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { ArrowLeft, ArrowRight, Replay } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import Screen from '@/components/Screen';
-import { summaryApi } from '@/services';
+import { summaryApi, weeklyPushApi } from '@/services';
+import { track } from '@/services/analytics';
 import { onIf } from '@/utils/taro-events';
+import { switchTab } from '@/utils/nav';
+import { toast } from '@/utils/ui';
 import type { WeeklyAnalysis } from '@/services/types';
 import { FireOutlined, GoldCoinOutlined, BarChartOutlined, BulbOutlined } from '@taroify/icons';
+import { THEME } from '@/constants/theme';
 import './index.scss';
 
 /** 本地时区 YYYY-MM-DD(避免 toISOString 的 UTC 偏移把日期挪一天) */
@@ -18,6 +23,9 @@ function localDateStr(offsetDays: number): string {
   const day = String(d.getDate()).padStart(2, '0');
   return `${d.getFullYear()}-${m}-${day}`;
 }
+
+/** 微信订阅消息的申请结果:每个模板 id 一个 'accept' | 'reject' | 'ban' */
+type SubResult = Record<string, string>;
 
 /** 06 Weekly Report — 周评分 / 变化 / Wins / Issues / 下周行动,支持切换往期 */
 export default function WeeklyReport() {
@@ -31,6 +39,94 @@ export default function WeeklyReport() {
     () => summaryApi.weeklyAnalysis(weekStart, forceCount > 0),
     [weekStart, forceCount]
   );
+
+  // —— 周报推送(每周一早上把上周摘要发给你)—— 开关和额度都在服务器上,
+  // 这里只是照搬提醒页(训练 → 提醒)的同款流程:开关、领额度、如实说明配没配模板。
+  const [pushOn, setPushOn] = useState(false);
+  const [tmplId, setTmplId] = useState('');
+  const [grants, setGrants] = useState(0);
+  const [pushOnline, setPushOnline] = useState(true);
+  const [pushBusy, setPushBusy] = useState(false);
+
+  useEffect(() => {
+    track('weekly_push_view', 'other');
+    void weeklyPushApi.getWeeklyPush().then((dto) => {
+      setPushOn(dto.enabled);
+      setTmplId(dto.tmplId);
+      setGrants(dto.grants);
+    }).catch(() => setPushOnline(false));
+  }, []);
+
+  /** 申请一次订阅消息授权。必须在用户点击的同步调用链里(微信的规矩) ——
+   *  所以模板 id 用的是本页加载时缓存的那份,不能在这里先发请求再问。 */
+  const askSubscribe = async (): Promise<number> => {
+    const fn = (Taro as unknown as {
+      requestSubscribeMessage?: (o: { tmplIds: string[] }) => Promise<SubResult>;
+    }).requestSubscribeMessage;
+    if (!fn) return 0; // 基础库太老,没有这个接口
+    try {
+      const res = await fn.call(Taro, { tmplIds: [tmplId] });
+      return res?.[tmplId] === 'accept' ? 1 : 0;
+    } catch {
+      return 0;
+    }
+  };
+
+  const togglePush = async (v: boolean) => {
+    if (pushBusy) return;
+    if (!v) {
+      try {
+        const dto = await weeklyPushApi.putWeeklyPush({ enabled: false });
+        setPushOn(dto.enabled);
+        toast('关了,周报还在小程序里看');
+      } catch { setPushOnline(false); }
+      return;
+    }
+    if (!tmplId) {
+      toast('推送模板还没配好,先在小程序里看吧');
+      return;
+    }
+    setPushBusy(true);
+    try {
+      const accepted = await askSubscribe();
+      if (!accepted) {
+        toast('没拿到微信授权,推送发不出来;周报照常在小程序里');
+        return;
+      }
+      const dto = await weeklyPushApi.putWeeklyPush({ enabled: true });
+      setPushOn(dto.enabled);
+      const after = await weeklyPushApi.grantWeeklyPush(accepted);
+      setGrants(after.grants);
+      track('weekly_push_toggle', 'other', { enabled: true, grants: after.grants });
+      toast('设好了,每周一早上给你发上周的摘要');
+    } catch {
+      setPushOnline(false);
+      toast('没连上服务器,稍后再开一次');
+    } finally {
+      setPushBusy(false);
+    }
+  };
+
+  const addGrant = async () => {
+    if (pushBusy) return;
+    setPushBusy(true);
+    try {
+      const accepted = await askSubscribe();
+      if (!accepted) {
+        toast('这次没授权,下次再点');
+        return;
+      }
+      const dto = await weeklyPushApi.grantWeeklyPush(accepted);
+      setGrants(dto.grants);
+      toast('好了,又能多发一周');
+    } catch {
+      setPushOnline(false);
+      toast('没连上服务器,稍后再试');
+    } finally {
+      setPushBusy(false);
+    }
+  };
+
 
   const isCurrentWeek = weekOffset === 0;
   const label = `${weekStart.slice(5).replace('-', '.')} - ${weekEnd.slice(5).replace('-', '.')}`;
@@ -65,7 +161,7 @@ export default function WeeklyReport() {
           <Text className="error-copy">{error || '数据不足，暂时无法生成报告。'}</Text>
           {/* 主路是「再算一次」;去记录是另一条路(数据不够时才是它),所以是次要长相 */}
           <Text className="retry" onClick={() => refresh()}>重新生成</Text>
-          <Text className="retry-alt" onClick={() => Taro.switchTab({ url: '/pages/record/index' })}>去记录本周数据 ›</Text>
+          <Text className="retry-alt" onClick={() => switchTab('/pages/record/index')}>去记录本周数据 ›</Text>
         </View>
       )}
 
@@ -119,6 +215,42 @@ export default function WeeklyReport() {
           </View>
         </>
       )}
+
+      {/* 推送开关放在条件外面:报告生成失败时它照样能用 —— 推的是上周的数字摘要,不依赖本周报告 */}
+      <View className="card push-card">
+        <View className="push-row">
+          <View className="push-row-text">
+            <Text className="push-row-title">每周一早上发摘要给我</Text>
+            <Text className="fs-mini text-secondary">
+              {!pushOnline
+                ? '没连上服务器,这项设置暂时存不了'
+                : !tmplId
+                  ? '推送模板还没配好,先在小程序里看'
+                  : pushOn
+                    ? `开着 · 还能发 ${grants} 条`
+                    : '关着'}
+            </Text>
+          </View>
+          <Switch
+            checked={pushOn}
+            disabled={!pushOnline || !tmplId || pushBusy}
+            color={themedColor(THEME.primary)}
+            onChange={(e) => void togglePush(e.detail.value)}
+          />
+        </View>
+        <Text className="fs-mini push-note">
+          微信规定一次授权只发一条,发完要再点一次。内容是上周的评分、体重变化和记录天数,
+          点进去就是这份报告。
+        </Text>
+        {pushOnline && tmplId && pushOn ? (
+          <Text
+            className="push-grant"
+            onClick={onIf(!pushBusy, () => void addGrant())}
+          >
+            再领一条额度{grants > 0 ? `(还剩 ${grants} 条)` : ''}
+          </Text>
+        ) : null}
+      </View>
     </Screen>
   );
 }

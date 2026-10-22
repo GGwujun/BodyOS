@@ -53,12 +53,12 @@ export const CARD_MAX_ENTRIES = 6;
 
 const WEEK = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 const C = {
-  green: '#10b981',
-  greenDark: '#059669',
-  ink: '#111827',
-  sub: '#6b7280',
-  faint: '#e8edf2',
-  white: '#ffffff'
+  green: '#176b55',
+  greenDark: '#11503f',
+  ink: '#172b29',
+  sub: '#66756e',
+  faint: '#e8e4d9',
+  white: '#fffefa'
 };
 
 /* ============ 纯排版计算(可单测) ============ */
@@ -316,7 +316,7 @@ export function drawCard(ctx: Ctx2D, data: CardData): void {
   // 个人纪录
   if (data.prText) {
     const y = 606 + rows.length * 44 + 14;
-    ctx.fillStyle = '#ecfdf5';
+    ctx.fillStyle = '#edf2ea';
     ctx.fillRect(PAD, y - 30, W - PAD * 2, 60);
     ctx.fillStyle = C.greenDark;
     ctx.font = '600 26px sans-serif';

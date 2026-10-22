@@ -28,14 +28,14 @@
     display: flex; align-items: center; justify-content: center;
     font-size: $fs-nano; font-weight: 700; flex-shrink: 0;
   }
-  .rank-no--red { background: #ffe4e9; color: $color-rose; }
+  .rank-no--red { background: $color-danger-bg; color: $color-rose; }
   .rank-no--green { background: rgba(16, 185, 129, .12); color: $color-success; }
   .rank-no--blue { background: $color-sky-bg; color: $color-sky-dark; }
   .rank-copy { flex: 1; display: flex; flex-direction: column; gap: 4px; }
   .rank-name { font-size: $fs-caption; font-weight: 600; color: $color-text-primary; }
   .rank-bar { height: 5px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
   .rank-fill { height: 100%; border-radius: $radius-pill; }
-  .rank-fill--red { background: linear-gradient(90deg, #fb7185, #e11d48); }
+  .rank-fill--red { background: linear-gradient(90deg, $color-rose, $color-danger); }
   .rank-fill--green { background: $color-primary-gradient; }
   .rank-fill--blue { background: linear-gradient(90deg, $color-sky-pale, $color-sky-light); }
   .rank-desc { font-size: $fs-nano; color: $color-text-tertiary; }

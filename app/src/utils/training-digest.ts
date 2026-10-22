@@ -210,10 +210,9 @@ export function weekDotMap(d: TrainingDigest | null): Record<string, WeekState> 
  * 得是同一个长相(绿=该练了、灰蓝=请假),各写一份的话迟早会分叉 ——
  * 而「该练了」是绿的、「请假」是另一种说法,靠的就是这两处颜色一致。
  * 值是 CSS 类名的后缀,两边的 scss 各自接上自己的前缀。
+ *
+ * 图标不在这儿:emoji 已经换成 components/TrainStateIcon 里的线性图标了。
  */
-export const STATE_EMOJI: Record<TrainingState, string> = {
-  none: '🗂', todo: '🏋️', done: '✅', rest: '🛌', off: '🌙'
-};
 export const STATE_TONE: Record<TrainingState, string> = {
   none: '', todo: ' is-due', done: ' is-done', rest: '', off: ' is-off'
 };

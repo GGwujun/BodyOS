@@ -34,7 +34,7 @@
     padding: 30px 16px;
     text-align: center;
   }
-  .ph-empty-emoji { font-size: $fs-emoji; }
+  .ph-empty-icon { width: 46px; height: 46px; display: block; }
 
   /* 对比舞台:固定尺寸,裁剪层才能在真机上稳定对齐 */
   .ph-compare { display: flex; flex-direction: column; gap: 8px; }
@@ -67,14 +67,14 @@
     width: 2px;
     height: 100%;
     background: $color-bg-card;
-    box-shadow: 0 0 6px rgba(15, 23, 42, .4);
+    box-shadow: 0 0 6px rgba(23, 43, 41, .4);
   }
   .ph-tag {
     position: absolute;
     bottom: 12px;
     font-size: $fs-nano;
     color: $color-text-inverse;
-    background: rgba(15, 23, 42, .55);
+    background: rgba(23, 43, 41, .55);
     border-radius: $radius-pill;
     padding: 3px 10px;
 
@@ -125,7 +125,7 @@
     font-size: $fs-nano;
     color: $color-text-inverse;
     text-align: center;
-    background: rgba(15, 23, 42, .5);
+    background: rgba(23, 43, 41, .5);
     padding: 1px 0;
   }
   .ph-badge {

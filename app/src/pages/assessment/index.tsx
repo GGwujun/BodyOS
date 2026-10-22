@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Button } from '@tarojs/components';
+import { View, Text, Button, Image } from '@tarojs/components';
+import compassIcon from '@/assets/icons/compass.png';
+import timerIcon from '@/assets/icons/timer.png';
+import foodIcon from '@/assets/icons/food.png';
+import runIcon from '@/assets/icons/run.png';
+import checkIcon from '@/assets/icons/check.png';
+import dropIcon from '@/assets/icons/drop.png';
 import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { ASSESSMENTS, estimateMinutes, scoreAssessment } from '@/data/assessments';
@@ -13,6 +19,21 @@ const storageKey = (id: string) => `assessment_${id}_last`;
 const readLast = (id: string): LastResult | null => {
   try { return Taro.getStorageSync(storageKey(id)) || null; } catch { return null; }
 };
+
+/**
+ * 每套测评的线性图标。数据文件里还留着一个 emoji 字段(旧版本的渲染),
+ * 这一页不再读它 —— emoji 在不同微信版本里字形不一样,和全站的线性图标也像两种语言。
+ * 认不出 id 的一律给勾选图标:它表示「做完了给结论」,不会说错什么。
+ */
+const ASSESS_ICON: Record<string, string> = {
+  lifestyle: compassIcon,
+  sleep: timerIcon,
+  diet: foodIcon,
+  stress: compassIcon,
+  exercise: runIcon,
+  'blood-sugar': dropIcon
+};
+const assessIcon = (id: string) => ASSESS_ICON[id] ?? checkIcon;
 
 /**
  * 测评中心 — 健康测评:列表 → 答题(支持多选) → 结果
@@ -105,7 +126,7 @@ export default function Assessment() {
   return <Screen className="assess-page">
     {phase === 'list' && (
       <View className="card intro-card">
-        <Text className="intro-emoji">🧭</Text>
+        <View className="intro-icon"><Image className="intro-icon__img" src={compassIcon} mode="aspectFit" /></View>
         <Text className="intro-title">测评中心</Text>
         <Text className="intro-copy">{ASSESSMENTS.length} 套健康测评,凭最近的真实状态作答,即时出结果。结果按固定规则计算,仅供参考,血糖/血压类测评不能替代测量与诊疗。</Text>
       </View>
@@ -113,7 +134,7 @@ export default function Assessment() {
 
     {phase === 'list' && ASSESSMENTS.map((a) => (
       <View className="card as-row" key={a.id} onClick={() => start(a)}>
-        <View className="as-icon" style={{ background: a.color }}>{a.emoji}</View>
+        <View className="as-icon"><Image className="as-icon__img" src={assessIcon(a.id)} mode="aspectFit" /></View>
         <View className="as-copy">
           <Text className="as-name">{a.name}</Text>
           <Text className="as-tag">{a.tagline}</Text>

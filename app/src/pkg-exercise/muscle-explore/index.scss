@@ -1,0 +1,197 @@
+@import '../../styles/variables.scss';
+
+/* ============ 探索肌肉(分包) ============
+   动作库的「按肌肉看」落到这一页:选一块肌肉,列出练得到它的动作。
+   **不读训练日志、不读计划** —— 这一页回答的是「有什么动作」,
+   和「我这周练了多少」是两件事。 */
+.me-page {
+  background: $color-bg;
+  gap: 10px;
+  padding-bottom: 30px;
+
+  .me-intro { display: flex; flex-direction: column; gap: 5px; }
+  .me-intro .fs-mini { line-height: 1.7; }
+
+  /* ===== 身体图 + 肌群 ===== */
+  .me-map { display: flex; flex-direction: column; gap: 10px; }
+  .me-map-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .me-clear { font-size: $fs-mini; font-weight: $fw-medium; color: $color-primary-dark; }
+
+  .me-map-row {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    padding: 2px 0 4px;
+    /* 比统计页那张大一点:这一页身体图是主入口,不是配角 */
+    .bm-figure { width: 138px; height: 220px; }
+  }
+
+  /* 横向滚动:七个肌群 + 数字,放不下就滑,不折成两行把图往下顶 */
+  .me-scroll { width: 100%; white-space: nowrap; }
+  .me-chip-row { display: inline-flex; gap: 8px; padding: 2px 0; }
+
+  .me-chip {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: $radius-pill;
+    background: $color-bg-soft;
+    border: 1px solid $color-border;
+
+    &.is-on {
+      background: $color-primary;
+      border-color: $color-primary;
+      .me-chip-name, .me-chip-count { color: $color-text-inverse; }
+    }
+  }
+  .me-chip-name { font-size: $fs-mini; font-weight: $fw-medium; color: $color-text-primary; }
+  .me-chip-count { font-size: $fs-nano; color: $color-text-tertiary; }
+
+  .me-tip { line-height: 1.6; }
+
+  /* ===== 选完之后的列表 ===== */
+  .me-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 2px 2px 0;
+  }
+  .me-count { display: block; margin-top: 2px; }
+
+  .me-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    border-radius: $radius-pill;
+    background: $color-bg-card;
+    border: 1px solid $color-border;
+  }
+  .me-search-input {
+    width: 100%;
+    height: 38px;
+    padding: 0 42px 0 15px;
+    font-size: $fs-mini;
+  }
+  .me-search-ph { color: $color-text-tertiary; }
+  .me-search-clear {
+    position: absolute;
+    right: 14px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    font-size: $fs-mini;
+    color: $color-text-tertiary;
+  }
+
+  .me-scroll--filters { margin-top: -2px; }
+  .me-filter-row { display: inline-flex; gap: 8px; padding: 2px 0; }
+  .me-filter-chip {
+    flex: none;
+    height: 32px;
+    line-height: 30px;
+    padding: 0 13px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-text-secondary;
+    background: $color-bg-soft;
+    border: 1px solid transparent;
+
+    &.is-on {
+      color: $color-primary-dark;
+      font-weight: $fw-bold;
+      background: $color-primary-bg;
+      border-color: $color-primary-light;
+    }
+  }
+
+  .me-list { padding-top: 2px; padding-bottom: 4px; }
+  .me-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 0;
+
+    & + .me-row { border-top: 1px solid $color-divider; }
+    &:active { opacity: .72; }
+  }
+  .me-row-thumb {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+  }
+  .me-row-thumb--none {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-text-tertiary;
+  }
+  .me-row-thumb-t { font-size: 22px; line-height: 1; }
+  .me-row-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .me-row-main { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .me-row-name { font-size: $fs-medium; font-weight: $fw-bold; line-height: 1.35; color: $color-text-primary; }
+  .me-tag {
+    padding: 1px 7px;
+    border-radius: $radius-pill;
+    font-size: $fs-nano;
+    line-height: 1.5;
+    color: $color-text-tertiary;
+    background: $color-bg-soft;
+
+    &.is-primary { color: $color-primary-dark; background: $color-primary-bg; }
+  }
+  .me-row-sub { font-size: $fs-mini; line-height: 1.5; color: $color-text-tertiary; }
+  .me-plan {
+    flex: none;
+    height: 28px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    font-weight: $fw-bold;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+    border: 1px solid $color-primary-light;
+  }
+
+  .me-none { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 24px 12px; text-align: center; }
+  .me-none-title { font-size: $fs-medium; font-weight: $fw-bold; }
+  .me-fuzzy { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; }
+  .me-fuzzy-chip {
+    padding: 4px 10px;
+    border-radius: $radius-pill;
+    font-size: $fs-mini;
+    color: $color-primary-dark;
+    background: $color-primary-bg;
+  }
+
+  .me-more {
+    display: block;
+    padding: 14px 0 6px;
+    text-align: center;
+    font-size: $fs-mini;
+    font-weight: $fw-medium;
+    color: $color-primary-dark;
+  }
+
+  .me-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .me-empty-icon { width: 46px; height: 46px; display: block; }
+
+  .me-foot { line-height: 1.7; padding: 0 4px; }
+  .me-credit { padding: 2px 4px 8px; font-size: $fs-nano; color: $color-text-tertiary; }
+}

@@ -98,19 +98,24 @@ function CmpRow({ label, a, b, plain, winA, winB, winnerNote }: {
 }
 
 /* ============ 估重参考 ============ */
+/**
+ * 估重参考的每一行给一个字当图标(拳/掌/捧…),而不是 emoji。
+ * 这些量词本身就是这一节要教的东西 —— 一个字摆在圆圈里,比一个手势 emoji 更清楚,
+ * 也不会在不同微信版本里变成另一种字形。
+ */
 const HAND_REFS = [
-  { icon: '✊', name: '一拳', desc: '≈ 150g 熟米饭(约一碗)/ 1 个中等水果', tip: '主食一顿一到两拳' },
-  { icon: '🖐', name: '一掌心(手掌大小)', desc: '≈ 100g 生肉 / 鱼 / 豆腐', tip: '厚度像一副扑克牌' },
-  { icon: '🤲', name: '双手一捧', desc: '≈ 100 ~ 150g 蔬菜', tip: '熟后约半碗,每餐至少一捧' },
-  { icon: '👍', name: '一个大拇指', desc: '≈ 10g 油 / 黄油 / 花生酱', tip: '一天烹调油 2.5 个拇指内' },
-  { icon: '🥄', name: '一瓷勺(平勺)', desc: '≈ 5g 盐 / 糖 / 酱料', tip: '一天盐不超一啤酒瓶盖(5~6g)' },
-  { icon: '🎾', name: '一个网球', desc: '≈ 200g 水果 / 1 个中等苹果橙子', tip: '水果一天 1~2 个网球量' },
+  { unit: '拳', name: '一拳', desc: '≈ 150g 熟米饭(约一碗)/ 1 个中等水果', tip: '主食一顿一到两拳' },
+  { unit: '掌', name: '一掌心(手掌大小)', desc: '≈ 100g 生肉 / 鱼 / 豆腐', tip: '厚度像一副扑克牌' },
+  { unit: '捧', name: '双手一捧', desc: '≈ 100 ~ 150g 蔬菜', tip: '熟后约半碗,每餐至少一捧' },
+  { unit: '指', name: '一个大拇指', desc: '≈ 10g 油 / 黄油 / 花生酱', tip: '一天烹调油 2.5 个拇指内' },
+  { unit: '勺', name: '一瓷勺(平勺)', desc: '≈ 5g 盐 / 糖 / 酱料', tip: '一天盐不超一啤酒瓶盖(5~6g)' },
+  { unit: '球', name: '一个网球', desc: '≈ 200g 水果 / 1 个中等苹果橙子', tip: '水果一天 1~2 个网球量' },
 ];
 const TABLEWARE_REFS = [
-  { icon: '🍚', name: '标准碗(直径 11cm)', desc: '≈ 150g 熟米饭 / 300ml 汤' },
-  { icon: '🥛', name: '标准杯(240ml)', desc: '≈ 250g 牛奶 / 250ml 无糖豆浆' },
-  { icon: '🥢', name: '一筷子夹起', desc: '≈ 25 ~ 30g 熟面条或蔬菜' },
-  { icon: '🍶', name: '一瓶盖', desc: '≈ 5ml 油 / 酱油,约一茶匙' },
+  { unit: '碗', name: '标准碗(直径 11cm)', desc: '≈ 150g 熟米饭 / 300ml 汤' },
+  { unit: '杯', name: '标准杯(240ml)', desc: '≈ 250g 牛奶 / 250ml 无糖豆浆' },
+  { unit: '筷', name: '一筷子夹起', desc: '≈ 25 ~ 30g 熟面条或蔬菜' },
+  { unit: '盖', name: '一瓶盖', desc: '≈ 5ml 油 / 酱油,约一茶匙' },
 ];
 
 function Estimate() {
@@ -120,13 +125,13 @@ function Estimate() {
     <Text className="est-sec fs-h2 mt-3">用手估</Text>
     {HAND_REFS.map((r) => <RefRow key={r.name} {...r} />)}
     <Text className="est-sec fs-h2 mt-3">用餐具估</Text>
-    {TABLEWARE_REFS.map((r) => <RefRow key={r.name} icon={r.icon} name={r.name} desc={r.desc} />)}
+    {TABLEWARE_REFS.map((r) => <RefRow key={r.name} unit={r.unit} name={r.name} desc={r.desc} />)}
   </View>;
 }
 
-function RefRow({ icon, name, desc, tip }: { icon: string; name: string; desc: string; tip?: string }) {
+function RefRow({ unit, name, desc, tip }: { unit: string; name: string; desc: string; tip?: string }) {
   return <View className="ref-row">
-    <Text className="ref-icon">{icon}</Text>
+    <Text className="ref-icon">{unit}</Text>
     <View className="ref-copy">
       <Text className="ref-name">{name}</Text>
       <Text className="ref-desc">{desc}{tip ? ` · ${tip}` : ''}</Text>
@@ -161,14 +166,14 @@ function GreenRedList() {
     <Text className="fs-h1">食物红黑榜</Text>
     <Text className="fs-mini text-secondary">日常点单/买菜照着挑:绿灯放心吃,红灯尽量少碰。</Text>
     <View className="gr-sec gr-sec--green">
-      <Text className="gr-title">🟢 绿灯 · 推荐常吃</Text>
+      <Text className="gr-title gr-title--green">绿灯 · 推荐常吃</Text>
       {GREEN_LIST.map((it) => <View className="gr-row" key={it.name}>
         <Text className="gr-name">{it.name}</Text>
         <Text className="gr-note">{it.note}</Text>
       </View>)}
     </View>
     <View className="gr-sec gr-sec--red">
-      <Text className="gr-title">🔴 红灯 · 尽量少碰</Text>
+      <Text className="gr-title gr-title--red">红灯 · 尽量少碰</Text>
       {RED_LIST.map((it) => <View className="gr-row" key={it.name}>
         <Text className="gr-name">{it.name}</Text>
         <Text className="gr-note">{it.note}</Text>

@@ -43,6 +43,8 @@ export interface Profile {
   activityLevel?: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
   dietPreference?: string;
   trainingPreference?: string;
+  /** 每日步数目标(默认 8000,首页步数条可改) */
+  stepGoal?: number;
 }
 
 export interface Goal {
@@ -142,6 +144,16 @@ export interface BodyMeasurement {
 }
 
 /* ============ 每日汇总 ============ */
+/** 引擎算出来的每日宏量目标(资料不全时为 null —— 不给按默认体重猜的目标)。
+ *  /trends 和 /daily-summary 返回同一形状(公式在 server engine/nutrition.macroTargetView)。
+ *  定义放这儿(而不是 trends.ts)是因为 daily-summary 也带它 —— 两处共用一个类型。 */
+export interface MacroTarget {
+  calories: number;
+  proteinG: number;
+  carbG: number;
+  fatG: number;
+}
+
 export interface DailySummary {
   date: string;
   bodyScore: number | null;
@@ -169,6 +181,8 @@ export interface DailySummary {
   exerciseCalories?: number;
   /** 当日水分合计(毫升) */
   waterMl?: number;
+  /** 昨晚睡眠时长(分钟)。没记过就是 0(真值不是缺字段,和 waterMl 同口径) */
+  sleepMinutes?: number;
   nutrition: {
     proteinG: number;
     carbG: number;
@@ -176,6 +190,13 @@ export interface DailySummary {
     fiberG?: number;
   };
   goal?: Goal;
+  /** 身体资料够不够算基础代谢/评分;缺的时候 `missingProfile` 说要补哪几项 */
+  profileReady?: boolean;
+  missingProfile?: ('birthDate' | 'heightCm' | 'weightKg')[];
+  /** 每日宏量目标(蛋白/碳水/脂肪该吃多少)。饮食页「今天的营养」对当日摄入用;没有目标时为 null */
+  macroTarget?: MacroTarget | null;
+  /** 每日步数目标(档案里自己定的,默认 8000)—— 首页步数条的另一半 */
+  stepGoal?: number;
 }
 
 /** AI 每日分析(结论 / 依据 / 行动) */
@@ -236,6 +257,18 @@ export interface FrequentFood {
   proteinG: number;
   carbG: number;
   fatG: number;
+}
+
+/** 我的食物 —— 用户显式存的条目(同名同份量再存即覆盖数字) */
+export interface CustomFood {
+  id: string;
+  name: string;
+  amount: string;
+  calories: number;
+  proteinG: number;
+  carbG: number;
+  fatG: number;
+  createdAt: string;
 }
 
 /* ============ 数据源 ============ */

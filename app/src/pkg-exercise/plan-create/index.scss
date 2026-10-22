@@ -14,7 +14,12 @@
     padding: 24px 20px 20px;
     text-align: center;
   }
-  .pc-intro-emoji { font-size: $fs-emoji; line-height: 1; }
+  .pc-intro-icon {
+    width: 56px; height: 56px; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    background: $color-primary-bg;
+  }
+  .pc-intro-icon__img { width: 30px; height: 30px; display: block; }
 
   .pc-sec-title { display: block; padding: 4px 0 10px; }
 

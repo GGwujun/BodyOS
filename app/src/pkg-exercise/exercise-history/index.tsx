@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Button, Picker, Text, View } from '@tarojs/components';
+import { Button, Image, Picker, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import statsIcon from '@/assets/icons/stats.png';
 import LineChart from '@/components/LineChart';
 import { track } from '@/services/analytics';
 import { loadLogs } from '../engine/store';
@@ -181,7 +182,7 @@ export default function ExerciseHistory() {
 
       {points.length === 0 && (
         <View className="card eh-empty">
-          <Text className="eh-empty-emoji">📉</Text>
+          <Image className="eh-empty-icon" src={statsIcon} mode="aspectFit" />
           <Text className="fs-h1">还没练过这个动作</Text>
           {/* 还没有日志可看,就只能问动作库它是不是按秒记的 —— 上面那张图和掉力是按**日志**里的
               秒数判断的(见 timed),这里没有日志,库是唯一的依据 */}

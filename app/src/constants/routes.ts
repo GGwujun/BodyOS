@@ -21,7 +21,8 @@ export enum RoutePath {
    * 按下去进分包的训练页。开练台要的数据全在主包有两张小抄(digest / progress),
    * 见 utils/training-digest.ts 的文件头。
    */
-  Training = 'pages/training/index'
+  Training = 'pages/training/index',
+  Feedback = 'pages/feedback/index'
 }
 
 /** TabBar 页面(底部导航) — 与 app.config.ts tabBar.list 保持一致 */

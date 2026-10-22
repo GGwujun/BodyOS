@@ -1,3 +1,4 @@
+import { themedColor } from '@/utils/theme';
 import { useEffect, useState } from 'react';
 import { Button, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
@@ -163,7 +164,7 @@ export default function WeightPage() {
             <LineChart
               canvasId="weight-curve"
               height={180}
-              color={THEME.primary}
+              color={themedColor(THEME.primary)}
               points={weightPoints}
               unit="公斤"
               target={plan?.targetWeight != null ? { value: plan.targetWeight, label: '目标' } : null}
@@ -199,7 +200,7 @@ export default function WeightPage() {
               <LineChart
                 canvasId="bmi-curve"
                 height={180}
-                color={THEME.warning}
+                color={themedColor(THEME.warning)}
                 points={bmiPoints}
                 target={{ value: BMI_NORMAL_MAX, label: '正常上限' }}
               />

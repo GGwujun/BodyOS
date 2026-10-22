@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, Button } from '@tarojs/components';
+import { View, Text, Button, Image } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import { THEME } from '@/constants/theme';
+import planIcon from '@/assets/icons/plan.png';
 import { track } from '@/services/analytics';
 import { loadPlan, loadProgress, loadLogs, loadNotes, savePlan, type ExerciseNotes } from '../engine/store';
 import { backfillWorkoutEnergy } from '../engine/workout-energy';
@@ -203,7 +205,7 @@ export default function PlanView() {
     return (
       <Screen className="pview-page">
         <View className="card pv-empty">
-          <Text className="pv-empty-emoji">🗂</Text>
+          <Image className="pv-empty-icon" src={planIcon} mode="aspectFit" />
           <Text className="fs-h1">还没有训练计划</Text>
           <Text className="fs-mini text-secondary">
             一分钟配置目标与器械,自动编排每周训练,完成后自动渐进
@@ -365,7 +367,7 @@ export default function PlanView() {
       title: `删除「${d.title}」?`,
       content: '这一天的动作和组次会一起删掉;练过的记录仍然留在历史里。',
       confirmText: '删除',
-      confirmColor: '#ef4444'
+      confirmColor: THEME.danger
     });
     if (!confirm) return;
     // 删人和清日程引用必须**在同一次变换里**做完:分两次 mutate 的话,

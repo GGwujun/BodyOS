@@ -53,14 +53,15 @@ export interface BmrInput {
 
 /**
  * BMR(Mifflin-St Jeor 公式估算):
- * 男 10×kg + 6.25×cm − 5×age + 5;女同式 − 161。
- * 与后端 calcBMR 同口径(非 female 按 +5 处理)。
+ * 男 10×kg + 6.25×cm − 5×age + 5;女同式 − 161;
+ * 性别未提供/其他取两者中点 − 78(与后端 calcBMR 逐字同口径)。
  */
 export function calcBmr(input: BmrInput): number | null {
   const { gender, age, heightCm, weightKg } = input;
   if (weightKg == null || heightCm == null || age == null) return null;
   const base = 10 * weightKg + 6.25 * heightCm - 5 * age;
-  return gender === 'female' ? base - 161 : base + 5;
+  const sexConstant = gender === 'male' ? 5 : gender === 'female' ? -161 : -78;
+  return base + sexConstant;
 }
 
 /** TDEE = BMR × 活动系数(缺资料按中度活动估) */

@@ -3,7 +3,7 @@
 /* ============ 详情弹层(固定定位,必须放在页面类外层,避免嵌套 padding 导致定位偏移) ============ */
 .recipes-mask {
   position: fixed; inset: 0;
-  background: rgba(15, 23, 42, .45); z-index: 1000;
+  background: rgba(23, 43, 41, .45); z-index: 1000;
   display: flex; align-items: flex-end;
 }
 .recipes-detail-sheet {
@@ -46,8 +46,8 @@
   .recipe-macros { display: flex; gap: 6px; }
   .macro { font-size: $fs-nano; padding: 3px 8px; border-radius: $radius-sm; }
   .m-protein { color: $color-sky; background: $color-sky-bg; }
-  .m-carb { color: $color-amber-dark; background: #fef3e2; }
-  .m-fat { color: $color-rose; background: #ffe4e9; }
+  .m-carb { color: $color-amber-dark; background: $color-amber-bg; }
+  .m-fat { color: $color-rose; background: $color-danger-bg; }
   .recipe-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .recipe-tag { font-size: $fs-nano; color: $color-text-tertiary; background: $color-fill; border-radius: $radius-pill; padding: 3px 9px; }
   .tag-meal { color: $color-primary-dark; background: $color-primary-bg; }

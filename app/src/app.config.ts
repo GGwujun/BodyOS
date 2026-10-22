@@ -8,6 +8,7 @@ export default defineAppConfig({
     'pages/trends/index',
     'pages/weekly-report/index',
     'pages/data-sources/index',
+    'pages/data-export/index',
     'pages/profile/index',
     'pages/onboarding/index',
     'pages/tools/index',
@@ -22,13 +23,15 @@ export default defineAppConfig({
     'pages/measure/index',
     'pages/photos/index',
     'pages/plan/index',
-    'pages/training/index'
+    'pages/training/index',
+    'pages/feedback/index'
   ],
   subPackages: [
     {
       root: 'pkg-exercise',
       pages: [
         'library/index',
+        'muscle-explore/index',
         'ex-new/index',
         'plan-create/index',
         'plan-view/index',
@@ -67,28 +70,44 @@ export default defineAppConfig({
     'pages/training/index': { network: 'wifi', packages: ['pkg-exercise'] },
     'pages/profile/index': { network: 'wifi', packages: ['pkg-exercise'] }
   },
+  /**
+   * 组件代码按需注入。
+   *
+   * 除了缩短启动时间,它也是微信社区里对
+   * `routeDone with a webviewId … is not found` 这一类路由/webview 错位报错最常见的收敛手段:
+   * 启动时不再把手头所有组件一起塞进每个 webview,页面切换期间少一大截注入竞争。
+   * (触发时通常只是控制台噪音;真正危险的是底栏点不动、页面白屏 —— 那是 webview 真丢了。)
+   */
+  lazyCodeLoading: 'requiredComponents',
+  /* 深色模式:页面样式靠 styles/tokens.scss 的 @media 切换;
+     导航栏/标签栏这些**原生**外观只能走 theme.json 的 @变量(见 src/theme.json,
+     经 config/index.ts 的 copy 原样拷进 dist)。 */
+  darkmode: true,
+  themeLocation: 'theme.json',
   window: {
-    backgroundTextStyle: 'dark',
-    navigationBarBackgroundColor: '#ffffff',
-    navigationBarTitleText: 'Body OS',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#ffffff'
+    backgroundTextStyle: '@bgTxtStyle',
+    navigationBarBackgroundColor: '@navBgColor',
+    navigationBarTitleText: '轻身记',
+    navigationBarTextStyle: '@navTxtStyle',
+    backgroundColor: '@bgColor'
   },
   tabBar: {
-    color: '#9AA3AF',
-    selectedColor: '#10B981',
-    backgroundColor: '#ffffff',
-    borderStyle: 'black',
+    color: '@tabColor',
+    selectedColor: '@tabSelectedColor',
+    backgroundColor: '@tabBgColor',
+    /* borderStyle 的类型被 Taro 收窄成 'white'|'black',但微信本身支持 @变量
+       (theme.json 里浅色=black 深色=white 的发丝线),这里只能骗一下类型 */
+    borderStyle: '@tabBorderStyle' as 'black',
     list: [
-      { pagePath: 'pages/home/index', text: '首页', iconPath: 'assets/tabbar/home.png', selectedIconPath: 'assets/tabbar/home-active.png' },
-      { pagePath: 'pages/record/index', text: '记录', iconPath: 'assets/tabbar/record.png', selectedIconPath: 'assets/tabbar/record-active.png' },
+      { pagePath: 'pages/home/index', text: '首页', iconPath: '@iconHome', selectedIconPath: '@iconHomeActive' },
+      { pagePath: 'pages/record/index', text: '记录', iconPath: '@iconRecord', selectedIconPath: '@iconRecordActive' },
       /* 中间这一格以前是「速记」(喝水、体重两件事)。它让给训练的理由不是速记没用,
          是**中间这一格的分量**:喝水/体重记完就完了,而训练是这一版里唯一有整套流程的东西,
          它原先只能从首页一张卡进,连个自己的落脚点都没有。速记那两件事记录页本来就有
          (喝水打卡、体重记录两格),速记页也还在(见 pages/record 顶部那条「一下记完」)。 */
-      { pagePath: 'pages/training/index', text: '训练', iconPath: 'assets/tabbar/train.png', selectedIconPath: 'assets/tabbar/train-active.png' },
-      { pagePath: 'pages/trends/index', text: '趋势', iconPath: 'assets/tabbar/trends.png', selectedIconPath: 'assets/tabbar/trends-active.png' },
-      { pagePath: 'pages/profile/index', text: '我的', iconPath: 'assets/tabbar/profile.png', selectedIconPath: 'assets/tabbar/profile-active.png' }
+      { pagePath: 'pages/training/index', text: '训练', iconPath: '@iconTrain', selectedIconPath: '@iconTrainActive' },
+      { pagePath: 'pages/trends/index', text: '趋势', iconPath: '@iconTrends', selectedIconPath: '@iconTrendsActive' },
+      { pagePath: 'pages/profile/index', text: '我的', iconPath: '@iconProfile', selectedIconPath: '@iconProfileActive' }
     ]
   }
 });

@@ -1,21 +1,45 @@
+import { themedColor } from '@/utils/theme';
 import { useState } from 'react';
-import { Picker, Text, View } from '@tarojs/components';
+import { Image, Picker, Text, View } from '@tarojs/components';
 import Taro, { useDidShow, usePullDownRefresh } from '@tarojs/taro';
 import { ArrowRight, ArrowDown } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import { RoutePath, TAB_PAGES } from '@/constants/routes';
-import { summaryApi } from '@/services';
+import { summaryApi, trendsApi, userApi } from '@/services';
 import { track } from '@/services/analytics';
 import { todayStr } from '@/utils/date';
+import { THEME } from '@/constants/theme';
+import TrainStateIcon from '@/components/TrainStateIcon';
+import LineChart from '@/components/LineChart';
+import dropIcon from '@/assets/icons/drop.png';
+import timerIcon from '@/assets/icons/timer.png';
+import foodIcon from '@/assets/icons/food.png';
+import runIcon from '@/assets/icons/run.png';
+import dumbbellIcon from '@/assets/icons/dumbbell.png';
+import scaleIcon from '@/assets/icons/scale.png';
+import heroBg from '@/assets/home-hero.png';
 import {
-  STATE_EMOJI, STATE_TONE, TRAINING_LOGS_URL, TRAINING_PLAN_URL, digestView, loadTrainingDigest, weekDotMap,
+  STATE_TONE, TRAINING_LOGS_URL, TRAINING_PLAN_URL, digestView, loadTrainingDigest, weekDotMap,
   type TrainingDigest, type TrainingState
 } from '@/utils/training-digest';
 import { clearDraft, draftAlreadyDone, draftBrief, loadDraft, type WorkoutDraft } from '@/utils/workout-draft';
 import { onIf } from '@/utils/taro-events';
+import { toast } from '@/utils/ui';
 import type { DailyAnalysis } from '@/services/types';
+import { openBodyEditor } from '@/utils/profile-edit';
+import { statusBarHeight } from '@/utils/status-bar';
 import './index.scss';
-import { navigate } from '@/utils/nav';
+import { navigate, switchTab } from '@/utils/nav';
+
+/** 自定义导航:状态栏高度只和这台设备有关,进来量一次就够 */
+const STATUS_BAR = statusBarHeight();
+
+/** 资料缺项的人话名字 —— 顺序跟服务端 `missingProfile` 一致 */
+const PROFILE_FIELD_LABEL: Record<'birthDate' | 'heightCm' | 'weightKg', string> = {
+  birthDate: '出生日期',
+  heightCm: '身高',
+  weightKg: '体重'
+};
 
 /* 脸色和话都搬到 utils/training-digest.ts 了 —— 训练 tab 那一页要用同一份
    (同一个状态在两个地方长出两种颜色,比说错话更像两个功能) */
@@ -46,16 +70,16 @@ function todayDot(state: TrainingState | undefined, week: StripDot | undefined):
  * 同样是在编事实。没有卡,比一句错的卡好。
  */
 function pastTrainView(dot: StripDot | undefined): {
-  emoji: string; tone: string; title: string; sub: string;
+  icon: 'done' | 'off' | 'moved'; tone: string; title: string; sub: string;
 } | null {
   if (dot === 'done') {
-    return { emoji: STATE_EMOJI.done, tone: STATE_TONE.done, title: '这天练过了', sub: '训练记录里能看到这次练了什么' };
+    return { icon: 'done', tone: STATE_TONE.done, title: '这天练过了', sub: '训练记录里能看到这次练了什么' };
   }
   if (dot === 'off') {
-    return { emoji: STATE_EMOJI.off, tone: STATE_TONE.off, title: '这天请假了', sub: '不算欠账,也不催你' };
+    return { icon: 'off', tone: STATE_TONE.off, title: '这天请假了', sub: '不算欠账,也不催你' };
   }
   if (dot === 'moved') {
-    return { emoji: '🔁', tone: '', title: '这天改过安排', sub: '当天没有留下训练记录' };
+    return { icon: 'moved', tone: '', title: '这天改过安排', sub: '当天没有留下训练记录' };
   }
   return null;
 }
@@ -67,6 +91,22 @@ export default function Home() {
   const [viewDate, setViewDate] = useState(today);
   const isToday = viewDate === today;
   const { data, loading, error, refresh } = useAsync(() => summaryApi.getDailySummary(viewDate), [viewDate]);
+
+  /** 步数目标:服务端档案里的值 + 本地即时回显(改完不等重拉就变)。1000 一档,4k~20k 盖住从散步到暴走 */
+  const STEP_GOAL_OPTIONS = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 12000, 15000, 20000];
+  const [stepGoalOverride, setStepGoalOverride] = useState<number | null>(null);
+  const stepGoal = stepGoalOverride ?? data?.stepGoal ?? 8000;
+
+  /* 近 7 天的体重 —— 首页那张趋势卡和「体重」那一行都从这里取。
+     拉失败就当没有:它不该把整页变成「数据暂未更新」,因为主数据(汇总)其实是好的 */
+  const trend = useAsync(() => trendsApi.getTrends(7).catch(() => null), []);
+  const weights = trend.data?.weights ?? [];
+  const currentWeight = trend.data?.stats.currentWeight ?? null;
+  const weightChange = trend.data?.stats.weightChange ?? null;
+  const intakeTarget = trend.data?.macroTarget?.calories ?? null;
+  /** 正在看的那一天称了多少 —— 翻到过去时看那天的记录,今天看最新一条 */
+  const dayWeight = weights.find((w) => w.date === viewDate)?.weightKg
+    ?? (isToday ? currentWeight : null);
 
   // 今天练什么(训练那半边留下的当天小抄)—— null = 今天还不知道,卡片会说一句不会错的话
   const [digest, setDigest] = useState<TrainingDigest | null>(null);
@@ -150,6 +190,7 @@ export default function Home() {
     }
   };
   const regenInsight = async () => {
+    track('daily_ai_regen', 'home');
     setInsightLoading(true);
     setInsightError('');
     try {
@@ -177,23 +218,32 @@ export default function Home() {
       setDraft(d);
     }
     void refresh();
+    void trend.refresh();
   });
   // config 已开启 enablePullDownRefresh:下拉手势刷新当日数据
   usePullDownRefresh(async () => {
-    await refresh();
+    await Promise.all([refresh(), trend.refresh()]);
     Taro.stopPullDownRefresh();
   });
 
   const go = (path: RoutePath) => TAB_PAGES.includes(path)
-    ? Taro.switchTab({url:`/${path}`}) : navigate(`/${path}`);
+    ? switchTab(`/${path}`) : navigate(`/${path}`);
   /* 拉失败时 data 是 null,而**「没有数据」和「没拉到数据」在文案上是两句话**。
      以前两者共用同一个分支,于是屏幕上一边说「数据暂未更新」,一边说「今天还没有能量记录」
      「去连数据源」—— 后者是在指控用户没记东西,而他可能刚记完。 */
   const failed = Boolean(error) && !loading;
 
-  const score = Math.round(data?.bodyScore ?? 0);
   const hasScore = data?.bodyScore != null;
-  const scoreTone = failed ? '未读取' : !hasScore ? '暂无评估' : score >= 80 ? '状态良好' : score >= 60 ? '状态一般' : '有待提升';
+  /**
+   * 没分不一定是「没记录」—— 身高/体重/出生日期缺一项,记了也不会有分。
+   * 以前两种空态共用一句「记录饮食、运动后可查看」,对没填资料的人是句错话:
+   * 他照做了,这里还是空。现在服务端把缺项一起返回,这里直接把人送去补。
+   */
+  const profileIncomplete = !failed && data?.profileReady === false;
+  const missingProfile = data?.missingProfile ?? [];
+  const missingProfileText = missingProfile.length
+    ? missingProfile.map((field) => PROFILE_FIELD_LABEL[field]).join('、')
+    : '身体资料';
   /**
    * 目标卡上的百分比。
    * 减脂/增肌看体重进度(服务端按目标日起点与当前体重算);
@@ -228,8 +278,91 @@ export default function Home() {
     ].filter(Boolean);
     return parts.length > 1 ? parts.join(' · ') : '';
   })();
+  /** 消耗为空且是资料没填全 —— 这一句既是解释,也是入口 */
+  const burnNeedsProfile = profileIncomplete && data?.burnCalories == null;
+  const burnNote = burnNeedsProfile
+    ? `补全${missingProfileText}后，自动算出基础代谢和总消耗`
+    : burnParts;
   /** 空态(读了、但今天什么都没有)—— 只有这时那句提示才是一个入口 */
   const noEnergy = !!data && !failed && !data.intakeCalories;
+
+  /* ---- 今日概览:身体评分 + 能量,合成一张卡 ---- */
+  const hasEnergy = !!data && !failed && ((data.intakeCalories ?? 0) > 0 || data.burnCalories != null || data.netCalories != null);
+  const intakeText = hasEnergy ? format(data?.intakeCalories) : '—';
+  const burnText = hasEnergy && data?.burnCalories != null ? format(data.burnCalories) : '—';
+  const netText = hasEnergy && data?.netCalories != null
+    ? `${(data.netCalories ?? 0) > 0 ? '+' : ''}${format(data.netCalories)}`
+    : '—';
+  /* 摄入的进度优先对「今日热量目标」;目标没算出来时才退回消耗,别让进度条空着 */
+  const intakeBase = intakeTarget ?? data?.burnCalories ?? 0;
+  const intakePct = hasEnergy && intakeBase > 0
+    ? Math.min(100, Math.max(0, ((data?.intakeCalories ?? 0) / intakeBase) * 100))
+    : 0;
+  /* 消耗的进度对 TDEE(基础代谢 × 活动系数) —— 这就是「今天该消耗多少」 */
+  const burnBase = data?.tdee ?? 0;
+  const burnPct = data?.burnCalories != null
+    ? (burnBase > 0 ? Math.min(100, Math.max(0, (data.burnCalories / burnBase) * 100)) : 100)
+    : 0;
+  /* 环心的百分数要如实:弧封顶在一圈,数字超了就写真数(112%)。
+     只在摄入侧把超出的数字标黄 —— 消耗超过 TDEE 是好事,不该长一张警示的脸 */
+  const intakePctLabel = hasEnergy && intakeBase > 0
+    ? Math.round(((data?.intakeCalories ?? 0) / intakeBase) * 100)
+    : 0;
+  const burnPctLabel = data?.burnCalories != null && burnBase > 0
+    ? Math.round((data.burnCalories / burnBase) * 100)
+    : 0;
+  const scoreNote = failed
+    ? '数据暂未更新，下拉可重试'
+    : profileIncomplete
+      ? `补全${missingProfileText}后，自动算出消耗和身体评分 ›`
+      : !hasScore ? '记录饮食、运动后可查看身体评估' : '';
+
+  /* ---- 今日习惯打卡 ----
+     五个格子都从当天已有的数据里读,不额外问用户任何事。练没练只认小抄里
+     「done」那一档 —— 「今天该练」不代表练了。 */
+  const trainDone = isToday ? digest?.state === 'done' : dots[viewDate] === 'done';
+  const habits: {
+    key: string; icon: string; title: string; desc: string; done: boolean;
+  }[] = [
+    { key: 'food', icon: foodIcon, title: '饮食记录', desc: '记录今天吃了什么', done: (data?.intakeCalories ?? 0) > 0 },
+    {
+      key: 'move', icon: runIcon, title: '运动记录', desc: '完成今日运动 · 走够步数',
+      done: (data?.steps ?? 0) > 0 || (data?.activeCalories ?? 0) > 0 || (data?.exerciseCalories ?? 0) > 0
+    },
+    /* 前三项就是设计稿里露出来的那三行(吃 / 动 / 称),力量训练和饮水收在「展开」里。
+       顺序是内容的一部分,别按 key 的字母排 */
+    { key: 'weight', icon: scaleIcon, title: '体重记录', desc: '早起称重 · 记录变化', done: weights.some((w) => w.date === viewDate) },
+    { key: 'train', icon: dumbbellIcon, title: '力量训练', desc: '按计划完成一次训练', done: trainDone },
+    { key: 'water', icon: dropIcon, title: '饮水打卡', desc: '给身体补点水', done: (data?.waterMl ?? 0) > 0 }
+  ];
+  const [habitOpen, setHabitOpen] = useState(false);
+  /* 默认只露三行:五行全铺出来会把这张卡撑成半屏,而设计稿里它是一张轻卡 */
+  const shownHabits = habitOpen ? habits : habits.slice(0, 3);
+  const habitDoneCount = habits.filter((h) => h.done).length;
+  /** 环里写的是「今日完成」—— 五件小事做了几件,不是身体评分。和下面那张打卡卡同一份数,不另算一套 */
+  const completionPct = Math.round((habitDoneCount / habits.length) * 100);
+  const openHabit = (key: string) => {
+    if (key === 'food') return go(RoutePath.Food);
+    if (key === 'move') return go(RoutePath.Exercise);
+    if (key === 'train') return go(RoutePath.Training);
+    if (key === 'weight') return navigate('/pages/weight/index');
+    return go(RoutePath.Record);
+  };
+
+  const weightPoints = weights.map((w) => ({ label: w.date.slice(5), value: w.weightKg }));
+  const weightDelta = weightChange == null || Math.abs(weightChange) < 0.05 ? null : weightChange;
+  /**
+   * 完成度环的两个端帽。conic-gradient 的弧是「一刀切」的平头,
+   * 环上再放两枚小圆点,弧尾才是圆的(参考稿那个环就是圆头)。
+   * 圆点在 112px 的环上走半径 51.5px —— 换成百分比就是 46%。
+   */
+  const ringDeg = loading || failed ? 0 : completionPct * 3.6;
+  const ringRad = ((ringDeg - 90) * Math.PI) / 180;
+  const ringCap = {
+    left: `${50 + Math.cos(ringRad) * 46}%`,
+    top: `${50 + Math.sin(ringRad) * 46}%`
+  };
+
   const switchDate = (d: string) => {
     if (d === viewDate) return;
     track('home_date_switch', 'home', { to: d });
@@ -238,11 +371,24 @@ export default function Home() {
 
   return (
     <View className="home-page">
-      <View className="home-header">
-        <View className="home-header__date">
-          <Text className="home-greeting">{greeting()}</Text>
-          <Text className="home-date">{formatDate(viewDate)}</Text>
-          <Text className="home-week">{weekday(viewDate)}</Text>
+      <View className="home-header" style={{ paddingTop: STATUS_BAR + 8 }}>
+        {/* 页头的那幅山水:只做背景,不参与点击;文字压在它上面 */}
+        <Image className="home-hero-bg" src={heroBg} mode="widthFix" />
+        <View className="home-header-copy">
+          {/* 品牌两行 —— 设计稿里它在原生的位置上是左对齐的,所以这一页用了自定义导航。
+              右边那块胶囊是微信自己的,页面不往那儿摆东西 */}
+          <View className="home-brand-row">
+            <Text className="home-brand">轻身记</Text>
+            <Text className="home-tagline">记录每一次变好的自己</Text>
+          </View>
+          <View className="home-eyebrow-row">
+            <Text className="home-eyebrow">
+              {isToday ? `${formatDate(viewDate)} ${weekday(viewDate)}` : `回看 · ${formatDate(viewDate)} ${weekday(viewDate)}`}
+            </Text>
+            <Text className="home-greeting">{isToday ? greeting() : '历史记录'}</Text>
+          </View>
+          <Text className="home-title">{isToday ? '今天，慢慢来。' : formatDate(viewDate)}</Text>
+          <Text className="home-subtitle">{isToday ? '健康不是一蹴而就，而是日积月累。' : '那天的记录与身体状态'}</Text>
         </View>
       </View>
 
@@ -250,10 +396,10 @@ export default function Home() {
       <View className="date-strip">
         {isToday ? (
           <Picker mode="date" end={today} value={today} onChange={(e) => switchDate(String(e.detail.value))}>
-            <View className="strip-today">今天 <Text className="strip-caret">▾</Text></View>
+            <View className="strip-today"><Text className="strip-today__text">今天</Text><Text className="strip-caret">▾</Text></View>
           </Picker>
         ) : (
-          <View className="strip-today is-back" onClick={() => switchDate(today)}>回今天</View>
+          <View className="strip-today is-back" onClick={() => switchDate(today)}><Text className="strip-today__text">回今天</Text></View>
         )}
         <View className="strip-days">
           {weekDays(viewDate, today).map((d) => {
@@ -281,7 +427,7 @@ export default function Home() {
       {isToday && brief && (
         <View className="dashboard-card live-card" onClick={resumeTraining}>
           <View className="live-main">
-            <Text className="live-emoji">⏱</Text>
+            <View className="live-icon-wrap"><Image className="live-icon" src={timerIcon} mode="aspectFit" /></View>
             <View className="live-copy">
               <Text className="live-title">{brief.title || '上次那场'}还没练完</Text>
               <Text className="live-sub">
@@ -297,23 +443,199 @@ export default function Home() {
         </View>
       )}
 
-      {/* 今天练什么 —— 训练那半边在主包只有这一张卡是它的。
-          放在身体状态**上面**:它是今天要做的一件事,而状态卡是一份读数 ——
-          读数是随时能看的,「该练了」是会过期的 */}
+      {/* 今日概览 —— 参照设计稿:左边一个完成环,右边三行读数。
+          摄入/消耗两行的进度从横条换成了右端的小环(收支各一枚,和大环同一手艺),
+          第三行是体重。净值收进底下那行小字,不再单独占一行。 */}
+      <View className="dashboard-card overview-card">
+        <View className="overview-main">
+          <View
+            className="overview-ring"
+            style={{ '--score': `${ringDeg}deg` } as React.CSSProperties}
+            onClick={() => go(RoutePath.Trends)}
+          >
+            <View className="overview-ring__inner">
+              <Text className="overview-score">{loading || failed ? '—' : `${completionPct}%`}</Text>
+              <Text className="overview-score-label">{loading ? '读取中' : failed ? '未读取' : '今日完成'}</Text>
+            </View>
+            {/* 两枚端帽:起点固定在 12 点,终点跟着进度走。0% 时一个都不画 ——
+                一颗孤零零的起点会被读成「已经有进度了」 */}
+            {ringDeg > 0 && (
+              <>
+                <View className="overview-ring__cap is-start" />
+                <View className="overview-ring__cap" style={ringCap} />
+              </>
+            )}
+          </View>
+
+          <View className="overview-metrics">
+            <View className="ov-row" onClick={() => go(RoutePath.Food)}>
+              <View className="ov-row__main">
+                <Text className="ov-label">摄入热量</Text>
+                <View className="ov-value">
+                  <Text className={`ov-value__num${intakeText === '—' ? ' is-empty' : ''}`}>{intakeText}</Text>
+                  <Text className="ov-value__unit">{intakeTarget ? `/ ${format(intakeTarget)} kcal` : 'kcal'}</Text>
+                </View>
+              </View>
+              <View
+                className={`ov-ring${hasEnergy && intakeBase > 0 ? '' : ' is-empty'}`}
+                style={{ '--score': `${Math.round(intakePct) * 3.6}deg` } as React.CSSProperties}
+              >
+                <View className="ov-ring__inner">
+                  <Text className={`ov-ring__pct${intakePctLabel > 100 ? ' is-over' : ''}`}>
+                    {hasEnergy && intakeBase > 0 ? `${intakePctLabel}%` : '—'}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="ov-row" onClick={() => (burnNeedsProfile ? openBodyEditor() : go(RoutePath.Exercise))}>
+              <View className="ov-row__main">
+                <Text className="ov-label">消耗热量</Text>
+                <View className="ov-value">
+                  <Text className={`ov-value__num${burnText === '—' ? ' is-empty' : ''}`}>{burnText}</Text>
+                  <Text className="ov-value__unit">kcal</Text>
+                </View>
+              </View>
+              <View
+                className={`ov-ring is-burn${data?.burnCalories != null && burnBase > 0 ? '' : ' is-empty'}`}
+                style={{ '--score': `${Math.round(burnPct) * 3.6}deg` } as React.CSSProperties}
+              >
+                <View className="ov-ring__inner">
+                  <Text className="ov-ring__pct">
+                    {data?.burnCalories != null && burnBase > 0 ? `${burnPctLabel}%` : '—'}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="ov-row is-static" onClick={() => navigate('/pages/weight/index')}>
+              <View className="ov-row__main">
+                <Text className="ov-label">体重</Text>
+                <View className="ov-value">
+                  <Text className={`ov-value__num${dayWeight == null ? ' is-empty' : ''}`}>
+                    {dayWeight == null ? '—' : dayWeight.toFixed(1)}
+                  </Text>
+                  <Text className="ov-value__unit">kg</Text>
+                  {weightDelta != null && (
+                    <Text className={`ov-delta ${weightDelta > 0 ? 'is-up' : 'is-down'}`}>
+                      {weightDelta > 0 ? '↑' : '↓'}{Math.abs(weightDelta).toFixed(1)}
+                    </Text>
+                  )}
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {!!scoreNote && (
+          <Text
+            className={`overview-note${profileIncomplete ? ' is-action' : ''}`}
+            onClick={onIf(profileIncomplete, openBodyEditor)}
+          >{scoreNote}</Text>
+        )}
+        {hasEnergy && netText !== '—' ? (
+          <Text className="overview-net">
+            热量净值 <Text className={`overview-net__v${(data?.netCalories ?? 0) > 0 ? ' is-pos' : ''}`}>{netText}</Text> kcal
+            {burnParts ? ` · ${burnParts}` : ''}
+          </Text>
+        ) : (
+          !!burnNote && !profileIncomplete && <Text className="overview-note">{burnNote}</Text>
+        )}
+        {noEnergy && !failed && (
+          <Text className="overview-note is-action" onClick={() => go(RoutePath.Record)}>
+            {dayLabel}还没有能量记录，点击去记一笔 ›
+          </Text>
+        )}
+      </View>
+
+      {/* 今日习惯打卡 —— 设计稿里第二张卡。做的事全是用户当天已经做过的,
+          这里只负责把「做了几件」摆出来,点一行就进对应那一页。 */}
+      <View className="dashboard-card habit-card">
+        <View className="habit-head">
+          <Text className="section-title">{isToday ? '今日习惯打卡' : '当日习惯打卡'}</Text>
+          <Text className="habit-count">{habitDoneCount}/{habits.length}</Text>
+        </View>
+        <View className="habit-list">
+          {shownHabits.map((h) => (
+            <View key={h.key} className={`habit-row${h.done ? ' is-done' : ''}`} onClick={() => openHabit(h.key)}>
+              <View className="habit-icon"><Image className="habit-icon__img" src={h.icon} mode="aspectFit" /></View>
+              <View className="habit-copy">
+                <Text className="habit-title">{h.title}</Text>
+                <Text className="habit-desc">{h.desc}</Text>
+              </View>
+              <View className={`habit-check${h.done ? ' is-on' : ''}`}>
+                {h.done && <Text className="habit-check-mark">✓</Text>}
+              </View>
+            </View>
+          ))}
+        </View>
+        {habits.length > 3 && (
+          <Text className="habit-more" onClick={() => setHabitOpen((open) => !open)}>
+            {habitOpen ? '收起' : `展开其余 ${habits.length - 3} 项`}
+            <Text className={`habit-more__caret${habitOpen ? ' is-open' : ''}`}>▾</Text>
+          </Text>
+        )}
+      </View>
+
+      {/* 体重趋势 —— 设计稿里第三张卡。图是可点选读数的同一套 LineChart,
+          标题右边直接给最新体重和近 7 天的变化。 */}
+      <View className="dashboard-card weight-card">
+        <View className="weight-head">
+          <View className="weight-head__copy">
+            <Text className="section-title">体重趋势</Text>
+            <Text className="weight-range">近7天</Text>
+          </View>
+          <Text className="weight-more" onClick={() => go(RoutePath.Trends)}>查看详情 ›</Text>
+        </View>
+        {/* 有图 / 没图是同一个容器:同位置摆两个分支时,两边的 onClick 必须都在
+            (Taro 的事件属性位置不一致会点废整棵子树,见 utils/taro-events)。
+            所以事件永远绑着,用 `onIf` 在没有数据时才生效 */}
+        <View
+          className={weightPoints.length ? 'weight-body' : 'weight-empty'}
+          onClick={onIf(!weightPoints.length, () => navigate('/pages/weight/index'))}
+        >
+          {trend.loading && !weightPoints.length ? (
+            <Text className="weight-loading">正在读取体重…</Text>
+          ) : weightPoints.length ? (
+            <>
+              {/* 最新体重不另起一行大数字,让曲线自己把它标在末点上 ——
+                  设计稿里这张卡的主角是「在往下走」这条线,不是一个孤零零的数 */}
+              <LineChart
+                canvasId="home-weight-chart"
+                points={weightPoints}
+                height={140}
+                color={themedColor(THEME.primary)}
+                unit="kg"
+                endBadge
+                hint={false}
+              />
+            </>
+          ) : (
+            <>
+              <View className="weight-empty__icon-wrap">
+                <Image className="weight-empty__icon" src={scaleIcon} mode="aspectFit" />
+              </View>
+              <View className="weight-empty__copy">
+                <Text className="weight-empty__title">还没有体重记录</Text>
+                <Text className="weight-empty__hint">称一次，趋势就从今天开始 ›</Text>
+              </View>
+            </>
+          )}
+        </View>
+      </View>
+
+      {/* 今天练什么 —— 设计稿把它放在最后,做成一张「计划入口」行卡。
+          这里保留原有的一套状态文案,只把长相换成:图标 + 标题/副标题 + 箭头。 */}
       {isToday ? (
         <View className={`dashboard-card train-card${STATE_TONE[digest?.state ?? 'todo']}`} onClick={() => openTraining(train.href)}>
           <View className="train-head">
-            <Text className="train-emoji">{STATE_EMOJI[digest?.state ?? 'todo']}</Text>
-            <Text className="train-title">{train.title}</Text>
+            <View className="train-icon-wrap"><TrainStateIcon state={digest?.state ?? 'todo'} size={26} /></View>
+            <View className="train-copy">
+              <Text className="train-title">{train.title}</Text>
+              <Text className="train-sub">{train.sub}</Text>
+            </View>
+            <Text className="train-arrow">›</Text>
           </View>
-          <View className="train-foot">
-            <Text className="train-sub">{train.sub}</Text>
-            <Text className="train-action">{train.action} ›</Text>
-          </View>
-          {/* 今天该练、但今天练不了 —— 这句话只在这一页说得出口,而计划页那两处「今天不练」
-              埋在下面半屏,想不练的人得先找到它们。只在**今天真的该练**时才出现:
-              卡片自己已经说「今天练完了」或「今天请假」的时候,再摆一条请假就是自相矛盾。
-              点击要吃掉:整张卡本身就是「去开练」 */}
           {digest?.state === 'todo' && (
             <View className="train-off-row">
               <Text className="train-off" onClick={(e) => { e.stopPropagation(); switchToday(); }}>
@@ -326,71 +648,17 @@ export default function Home() {
           )}
         </View>
       ) : past ? (
-        /* 翻到本周里的过去某天 —— 说的是**那天**发生了什么,不是今天的状态。
-           跨周就没有可查的记号,`past` 为 null,这张卡不出现(见 pastTrainView) */
         <View className={`dashboard-card train-card${past.tone}`} onClick={() => openTraining(TRAINING_LOGS_URL)}>
           <View className="train-head">
-            <Text className="train-emoji">{past.emoji}</Text>
-            <Text className="train-title">{past.title}</Text>
-          </View>
-          <View className="train-foot">
-            <Text className="train-sub">{past.sub}</Text>
-            <Text className="train-action">看训练记录 ›</Text>
+            <View className="train-icon-wrap"><TrainStateIcon state={past.icon} size={26} /></View>
+            <View className="train-copy">
+              <Text className="train-title">{past.title}</Text>
+              <Text className="train-sub">{past.sub}</Text>
+            </View>
+            <Text className="train-arrow">›</Text>
           </View>
         </View>
       ) : null}
-
-      <View className="dashboard-card score-card" onClick={() => go(hasScore ? RoutePath.Trends : RoutePath.Record)}>
-        <Heading title="身体状态" />
-        <View className="score-main">
-          <View className="score-ring" style={{ '--score': `${loading || !hasScore ? 0 : score * 3.6}deg` } as React.CSSProperties}>
-            <View className="score-ring__inner">
-              <Text className={`score-number${loading || !hasScore ? ' is-empty' : ''}`}>{loading || !hasScore ? '—' : score}</Text>
-              <Text className="score-label">{scoreTone}</Text>
-            </View>
-          </View>
-        </View>
-        <View className="score-trend">
-          <Text className="trend-copy">{failed ? '数据暂未更新,下拉可重试' : hasScore ? '综合最近的记录与身体数据' : '记录饮食、运动后可查看身体评估'}</Text>
-        </View>
-        <View className="score-dimensions">
-          <ScoreDimension label="能量" value={data?.energyScore} />
-          <ScoreDimension label="营养" value={data?.nutritionScore} tone="amber" />
-          <ScoreDimension label="恢复" value={data?.recoveryScore} tone="slate" />
-        </View>
-      </View>
-
-      {/* 整张卡**不再**是一个跳「记录」的大按钮 —— 那种写法的下场是
-          「我就想看看消耗怎么算的,点了一下被扔进记录页」。现在只有**具体那一格**
-          能点,而且点哪儿去哪儿:摄入 → 饮食记录,消耗 → 运动记录。
-          净值是两个数相减出来的,没有自己的一份明细可看,所以它不点。 */}
-      <View className="dashboard-card energy-card">
-        <Text className="section-title">{dayLabel}能量</Text>
-        <View className="energy-metrics">
-          <EnergyMetric label="摄入" value={format(data?.intakeCalories)} link onTap={() => go(RoutePath.Food)} />
-          <EnergyMetric label="消耗" value={format(data?.burnCalories)} link onTap={() => go(RoutePath.Exercise)} />
-          <EnergyMetric label="净值" value={`${(data?.netCalories ?? 0) > 0 ? '+' : ''}${format(data?.netCalories)}`} accent />
-        </View>
-        {/* 消耗是怎么来的要写出来。以前只有孤零零一个 1,792,用户没法知道里面
-            有没有算上自己刚练完的那一小时 —— 数字看不懂就等于没有这个数字。 */}
-        {burnParts && <Text className="energy-breakdown">{burnParts}</Text>}
-        <View className="energy-track">
-          <View className="energy-track__fill" style={{ width: `${Math.min(100, Math.max(0, ((data?.intakeCalories ?? 0) / Math.max(data?.burnCalories ?? 1, 1)) * 100))}%` }} />
-          <View className="energy-track__marker" />
-        </View>
-        {/* 空态那一句自己就是入口(「点击去记一笔」不能是一句空话);
-            有数据时它只是图例,点了不该有任何反应 —— 所以事件照绑,条件在函数里判 */}
-        <Text
-          className={`energy-hint${noEnergy && !failed ? ' is-action' : ''}`}
-          onClick={onIf(noEnergy && !failed, () => go(RoutePath.Record))}
-        >
-          {failed ? `${dayLabel}的能量数据没读到` : data?.intakeCalories ? '绿色为已摄入进度，圆点是消耗参考线' : `${dayLabel}还没有能量记录，点击去记一笔`}
-        </Text>
-        <View className="water-line" onClick={() => isToday && go(RoutePath.Record)}>
-          <Text className="water-line__label">💧 {dayLabel}水分 {data?.waterMl ? `${format(data.waterMl)} ml` : '未记录'}</Text>
-          {isToday && <Text className="water-line__action">去打卡</Text>}
-        </View>
-      </View>
 
       <View className="dashboard-card activity-card" onClick={() => go(RoutePath.Exercise)}>
         <Heading title={`${dayLabel}活动`} />
@@ -400,8 +668,23 @@ export default function Home() {
         </View>
         {data?.steps != null && (
           <View className="steps-progress">
-            <View className="steps-progress__track"><View className="steps-progress__fill" style={{ width: `${Math.min(100, Math.round(((data.steps ?? 0) / 8000) * 100))}%` }} /></View>
-            <Text className="steps-progress__label">{format(data.steps)} / 8,000 步</Text>
+            <View className="steps-progress__track"><View className="steps-progress__fill" style={{ width: `${Math.min(100, Math.round(((data.steps ?? 0) / Math.max(stepGoal, 1)) * 100))}%` }} /></View>
+            {/* 目标自己定:点这行数字就能改。整卡点击进运动页,所以这里先拦住冒泡 */}
+            <Picker
+              mode="selector"
+              range={STEP_GOAL_OPTIONS.map((v) => `${format(v)} 步`)}
+              value={STEP_GOAL_OPTIONS.indexOf(stepGoal) >= 0 ? STEP_GOAL_OPTIONS.indexOf(stepGoal) : 6}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                const next = STEP_GOAL_OPTIONS[Number(e.detail.value)] ?? stepGoal;
+                if (next === stepGoal) return;
+                userApi.updateProfile({ stepGoal: next })
+                  .then(() => { setStepGoalOverride(next); track('home_step_goal_change', 'home', { goal: next }); })
+                  .catch(() => toast('没能保存,请重试', 'error'));
+              }}
+            >
+              <Text className="steps-progress__label">{format(data.steps)} / {format(stepGoal)} 步 · 点我改</Text>
+            </Picker>
           </View>
         )}
         {!failed && data?.steps == null && data?.activeCalories == null && (
@@ -423,7 +706,7 @@ export default function Home() {
       {isToday && <View className="dashboard-card insight-card" onClick={toggleInsight}>
         <View className="insight-head">
           <Text className="section-title">今日解读</Text>
-          <View className={`insight-chevron${insightOpen ? ' is-open' : ''}`}><ArrowDown size={16} color="#94a3b8" /></View>
+          <View className={`insight-chevron${insightOpen ? ' is-open' : ''}`}><ArrowDown size={16} color="#8a958f" /></View>
         </View>
         {!insightOpen && <Text className="insight-hint">结合今天的记录,给出一段身体信号解读与建议</Text>}
         {insightOpen && insightLoading && <Text className="insight-loading">正在生成解读…</Text>}
@@ -460,36 +743,7 @@ export default function Home() {
 }
 
 function Heading({ title }: { title: string }) {
-  return <View className="card-heading"><Text>{title}</Text><ArrowRight size={14} color="#94a3b8" /></View>;
-}
-
-function ScoreDimension({ label, value, tone = 'green' }: { label: string; value?: number | null; tone?: 'green' | 'amber' | 'slate' }) {
-  const empty = value == null;
-  return <View className="score-dimension"><Text className="dimension-label">{label}</Text><View className="dimension-pair"><Text className={`dimension-value dimension-value--${tone}${empty ? ' is-empty' : ''}`}>{empty ? '—' : Math.round(value)}</Text><Text className="dimension-unit">%</Text></View></View>;
-}
-
-/** 什么都不做的处理器 —— 见 EnergyMetric 里为什么宁可给它 */
-const noop = () => undefined;
-
-/**
- * 一格能量数。`link` 时它是个入口,标签后面缀一个 `›`。
- *
- * 为什么不给整块加个边框/底色来暗示可点:这一行三格并排,谁有边框谁没有会看着像
- * 只有那两格是「重要的」。一个箭头足够说明「这里点得动」,又不动版式。
- *
- * 为什么「不可点」的那格也要给一个 `noop` 而不是留 `undefined`:小程序端
- * 事件属性的值取到非函数会走到崩的那一支(见 utils/taro-events)。这里传的是**裸标识符**,
- * 静态扫不出来 —— 与其赌「undefined 在挂载时不会触发 setEvent」,不如永远给个函数:
- * 收益是零风险的确定性,代价只是一个空函数。
- */
-function EnergyMetric({ label, value, accent = false, link = false, onTap }: { label: string; value: string; accent?: boolean; link?: boolean; onTap?: () => void }) {
-  const empty = value.includes('—');
-  return (
-    <View className="energy-metric" onClick={onTap ?? noop}>
-      <Text className={`metric-label${link ? ' is-link' : ''}`}>{label}{link ? ' ›' : ''}</Text>
-      <View className="metric-pair"><Text className={`metric-value${accent ? ' metric-value--accent' : ''}${empty ? ' is-empty' : ''}`}>{value}</Text><Text className="metric-unit">kcal</Text></View>
-    </View>
-  );
+  return <View className="card-heading"><Text>{title}</Text><ArrowRight size={14} color="#8a958f" /></View>;
 }
 
 function formatDate(date: string) { const [, month, day] = date.split('-').map(Number); return `${month}月${day}日`; }

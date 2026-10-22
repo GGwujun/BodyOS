@@ -1,0 +1,157 @@
+/**
+ * 运行时可换的颜色 Token(CSS 自定义属性)—— 深色模式的开关就住在这儿。
+ *
+ * variables.scss 里的 $color-* / $shadow-* 现在只是这些 var() 的编译期别名,
+ * 所以 57 个页面样式一个都不用改:系统切到深色,这里一整段被 @media 覆盖,
+ * 所有页面跟着换。**加新颜色时两边都要写**:variables.scss 的 $ 别名 + 这里的两份值。
+ *
+ * 深色那套的取色口径(和浅色那套对着定,不是反色):
+ *  · 底走暖绿黑,不发蓝灰 —— 暖是这个品牌的底色,黑了也不能变冷
+ *  · 主色反过来提亮:浅色模式里主色是压深的森林绿,深色底上再压深就成一坨,
+ *    所以深色主色是亮一档的苔绿,「主色上的反色文字」跟着从象牙白翻成近黑
+ *  · 文字对比度按 AA 小字 4.5:1 卡:secondary/tertiary 在卡片底上都过线;
+ *    text-disabled 是**故意**低对比(空值占位),两套模式都低,口径一致
+ *  · 阴影从暖棕换成纯黑基 —— 深色界面上阴影靠「更黑」成立,带色反而发脏
+ */
+
+page {
+  /* 品牌主色 */
+  --color-primary: #176b55;
+  --color-primary-dark: #11503f;
+  --color-primary-light: #a9c3b0;
+  --color-primary-bg: #edf2ea;
+  --color-primary-border: #dfe9dc;
+  --color-primary-gradient: linear-gradient(135deg, #1c735c 0%, #176b55 100%);
+  --color-primary-a10: rgba(23, 107, 85, .08);
+  --color-primary-a20: rgba(23, 107, 85, .16);
+
+  --color-sage: #8dae91;
+
+  /* 辅色 */
+  --color-info: #4f7382;
+  --color-info-bg: #eaf1f2;
+  --color-info-border: #ccdadd;
+  --color-info-a12: rgba(79, 115, 130, .12);
+  --color-warning: #b07a2a;
+  --color-warning-bg: #f7eedc;
+  --color-warning-border: #e3d2b2;
+  --color-warning-a12: rgba(176, 122, 42, .12);
+  --color-danger: #b04a3f;
+  --color-danger-bg: #f8ece8;
+  --color-danger-border: #e6c9c2;
+  --color-danger-a10: rgba(176, 74, 63, .10);
+
+  /* 中性暖灰阶 */
+  --color-bg: #f7f4eb;
+  --color-bg-card: #fffefa;
+  --color-bg-soft: #f4f1e8;
+  --color-fill: #ece8dd;
+  --color-border: #e8e4d9;
+  --color-divider: #efebe0;
+  --color-border-dashed: #d9d4c7;
+  --color-border-strong: #c4beb0;
+  --color-text-primary: #172b29;
+  --color-text-secondary: #66756e;
+  --color-text-tertiary: #8a958f;
+  --color-text-inverse: #fffdf7;
+  --color-text-disabled: #c9c4b8;
+
+  /* 专题色 */
+  --color-sky: #5a8ca0;
+  --color-sky-light: #72a4b5;
+  --color-sky-pale: #8fbcc9;
+  --color-sky-dark: #416c7e;
+  --color-sky-bg: #e9f1f2;
+  --color-sky-a12: rgba(90, 140, 160, .12);
+  --color-muscle-high: #8b7aa8;
+  --color-muscle-low: #5c7fa3;
+  --color-amber-dark: #8f6322;
+  --color-amber-bg: #f7eedc;
+  --color-rose: #a94f5c;
+  --color-slate-600: #4c5b54;
+
+  /* 语义别名 */
+  --color-success: var(--color-primary);
+  --color-link: var(--color-info);
+
+  /* 阴影 */
+  --shadow-card: 0 1px 2px rgba(23, 43, 41, .03), 0 8px 24px -16px rgba(23, 43, 41, .18);
+  --shadow-elevated: 0 12px 32px -12px rgba(23, 43, 41, .20);
+  --shadow-primary: 0 6px 16px -8px rgba(23, 107, 85, .35);
+  --shadow-hero: 0 18px 40px -24px rgba(18, 80, 63, .45);
+}
+
+@media (prefers-color-scheme: dark) {
+  page {
+    /* 品牌主色:提亮成苔绿;主色上的反色文字翻成近黑(见文件头) */
+    --color-primary: #3fa584;
+    --color-primary-dark: #8fd2b6;
+    --color-primary-light: #43604f;
+    --color-primary-bg: #1d2f27;
+    --color-primary-border: #2e4a3c;
+    --color-primary-gradient: linear-gradient(135deg, #3fa584 0%, #2f8a6c 100%);
+    --color-primary-a10: rgba(63, 165, 132, .12);
+    --color-primary-a20: rgba(63, 165, 132, .20);
+
+    --color-sage: #8dae91;
+
+    /* 辅色:全组提亮一档,浅底翻成同色系深底 */
+    --color-info: #8fb3c2;
+    --color-info-bg: #1a2427;
+    --color-info-border: #2f4147;
+    --color-info-a12: rgba(143, 179, 194, .14);
+    --color-warning: #d2a05a;
+    --color-warning-bg: #292115;
+    --color-warning-border: #453a24;
+    --color-warning-a12: rgba(210, 160, 90, .16);
+    --color-danger: #d98275;
+    --color-danger-bg: #2a1c19;
+    --color-danger-border: #47302b;
+    --color-danger-a10: rgba(217, 130, 117, .14);
+
+    /* 暖绿黑阶 */
+    --color-bg: #131714;
+    --color-bg-card: #1c211d;
+    --color-bg-soft: #232925;
+    --color-fill: #2a312b;
+    --color-border: #343c35;
+    --color-divider: #272e29;
+    --color-border-dashed: #3d453e;
+    --color-border-strong: #4b544c;
+    --color-text-primary: #ece9dd;
+    --color-text-secondary: #a8b2a9;
+    --color-text-tertiary: #838d85;
+    --color-text-inverse: #0d211a;
+    --color-text-disabled: #5f675f;
+
+    /* 专题色 */
+    --color-sky: #7fb0c2;
+    --color-sky-light: #8fbcc9;
+    --color-sky-pale: #a9cbd5;
+    --color-sky-dark: #a3c8d4;
+    --color-sky-bg: #17262b;
+    --color-sky-a12: rgba(127, 176, 194, .14);
+    --color-muscle-high: #ab9cc6;
+    --color-muscle-low: #84a8c8;
+    --color-amber-dark: #d8ab63;
+    --color-amber-bg: #292115;
+    --color-rose: #d0868f;
+    --color-slate-600: #b6c0b8;
+
+    /* 阴影:纯黑基 */
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, .25), 0 8px 24px -16px rgba(0, 0, 0, .55);
+    --shadow-elevated: 0 12px 32px -12px rgba(0, 0, 0, .55);
+    --shadow-primary: 0 6px 16px -8px rgba(0, 0, 0, .5);
+    --shadow-hero: 0 18px 40px -24px rgba(0, 0, 0, .6);
+  }
+
+  /* 浅色水墨装饰图:画的时候只考虑过暖纸底,深色上整块发白。
+     压到两成透明度,当一层隐约的纹理用 —— 图本身不重画(重画要重新过一遍
+     生成-预览流程,那是「深色装饰图」这个独立待办的事) */
+  .home-hero-bg,
+  .tr-quote-bg,
+  .hero-leaves,
+  .tr-hero-bg {
+    opacity: .22;
+  }
+}

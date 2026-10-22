@@ -1,7 +1,9 @@
+import { themedColor } from '@/utils/theme';
 import { useMemo, useState } from 'react';
 import { View, Text, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import { THEME } from '@/constants/theme';
 import { RECIPES, RECIPE_MEALS } from '@/data/recipes';
 import type { Recipe, RecipeMeal } from '@/data/recipes';
 import { foodApi } from '@/services';
@@ -85,9 +87,9 @@ export default function Recipes() {
             <View className="nutri-main">
               <Donut protein={detail.proteinG} carb={detail.carbG} fat={detail.fatG} kcal={detail.calories} />
               <View className="nutri-legend">
-                <LegendRow label="碳水" color="#d97706" grams={detail.carbG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'carb')} />
-                <LegendRow label="蛋白质" color="#0284c7" grams={detail.proteinG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'protein')} />
-                <LegendRow label="脂肪" color="#e11d48" grams={detail.fatG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'fat')} />
+                <LegendRow label="碳水" color={themedColor(THEME.amber)} grams={detail.carbG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'carb')} />
+                <LegendRow label="蛋白质" color={themedColor(THEME.sky)} grams={detail.proteinG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'protein')} />
+                <LegendRow label="脂肪" color={themedColor(THEME.rose)} grams={detail.fatG} pct={energyShare(detail.proteinG, detail.carbG, detail.fatG, 'fat')} />
               </View>
             </View>
           </View>
@@ -131,7 +133,7 @@ function energyShare(protein: number, carb: number, fat: number, kind: 'protein'
 function Donut({ protein, carb, fat, kcal }: { protein: number; carb: number; fat: number; kcal: number }) {
   const cPct = energyShare(protein, carb, fat, 'carb');
   const proteinEnd = cPct + energyShare(protein, carb, fat, 'protein');
-  const bg = `conic-gradient(#d97706 0% ${cPct}%, #0284c7 ${cPct}% ${proteinEnd}%, #e11d48 ${proteinEnd}% 100%)`;
+  const bg = `conic-gradient(${THEME.amber} 0% ${cPct}%, ${THEME.sky} ${cPct}% ${proteinEnd}%, ${THEME.rose} ${proteinEnd}% 100%)`;
   return <View className="donut" style={{ background: bg }}>
     <View className="donut__inner">
       <Text className="donut__kcal">{kcal}</Text>

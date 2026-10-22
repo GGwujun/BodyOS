@@ -8,6 +8,8 @@ app/.swc/
 # 冒烟测试的编译产物(`npm run smoke` 生成,是 src 的整份副本)—— 别让它进版本库,
 # 否则 `git add -A` 会连一整套编译出来的 js 一起提上去,和源码对不上还删不掉
 app/.smoke/
+# 身体图预览(scripts/preview-body-map.mjs 生成,开发时看看形状有没有解析坏)
+app/scripts/.preview/
 
 # 环境变量与密钥（.env.example 保留作为模板）
 server/.env

@@ -1,4 +1,7 @@
 import { request } from './request';
+import type { MacroTarget } from './types';
+
+export type { MacroTarget };
 
 export interface TrendDay {
   date: string;
@@ -12,6 +15,8 @@ export interface TrendDay {
   burnCalories: number | null;
   netCalories: number | null;
   steps: number;
+  /** 昨晚睡眠时长(分钟),0 = 没记 */
+  sleepMinutes: number;
   /** 当天三大营养素合计(服务端已按天汇总好,客户端只负责加与显示) */
   nutrition: MacroTotals;
 }
@@ -23,17 +28,16 @@ export interface MacroTotals {
   fatG: number;
 }
 
-/** 引擎算出来的每日宏量目标(资料不全时为 null —— 不给按默认体重猜的目标) */
-export interface MacroTarget {
-  calories: number;
-  proteinG: number;
-  carbG: number;
-  fatG: number;
-}
-
 export interface WeightPoint {
   date: string;
   weightKg: number;
+}
+
+/** 平台期判定(纯规则,见 server engine/plateau.ts):只在「最近三周称得够勤且体重没动」时非空 */
+export interface PlateauInfo {
+  days: number;
+  records: number;
+  changeKg: number;
 }
 
 export interface TrendResult {
@@ -41,6 +45,8 @@ export interface TrendResult {
   summaries: TrendDay[];
   weights: WeightPoint[];
   macroTarget: MacroTarget | null;
+  /** 进行中的目标下「体重三周没动」的判定;没卡住或数据不够时为 null(不下结论) */
+  plateau: PlateauInfo | null;
   /** 进行中的目标 —— 趋势页按它的方向判断「掉秤」是好事还是坏事 */
   goal: { type: 'fat_loss' | 'muscle_gain' | 'maintain' | 'endurance'; unit: string; targetValue: number } | null;
   stats: {

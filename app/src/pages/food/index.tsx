@@ -1,12 +1,12 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { View, Text, Textarea, Button, Input } from '@tarojs/components';
 import Taro, { usePullDownRefresh } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { FOOD_CATEGORIES, FOOD_LIBRARY } from '@/data/foods';
 import type { FoodEntry } from '@/data/foods';
-import { foodApi } from '@/services';
+import { foodApi, summaryApi } from '@/services';
 import { track } from '@/services/analytics';
-import type { FoodItem, FoodLog, FrequentFood } from '@/services/types';
+import type { CustomFood, FoodItem, FoodLog, FrequentFood, MacroTarget } from '@/services/types';
 import { confirmDelete, toast } from '@/utils/ui';
 import { todayStr } from '@/utils/date';
 import { anyMacros, energyShare, macroLine, shareLine, sumMacros } from '@/utils/nutrition';
@@ -40,6 +40,17 @@ export default function Food() {
   /** 今天的宏量合计与供能占比(占比在没有克数时是 null —— 没有分母) */
   const dayMacro = useMemo(() => sumMacros(logs), [logs]);
   const dayShare = useMemo(() => energyShare(dayMacro), [dayMacro]);
+  /**
+   * 每天该吃多少(蛋白/碳水/脂肪)—— 引擎按体重、目标类型、活动水平算,随 daily-summary 下发。
+   * 只在挂载时拉一次:目标跟着目标和资料走,不跟着一顿饭走(记完饭不用重拉)。
+   * 拉不到就保持 null,那三行退回「只有克数」的老样子,不拿半份目标出来比。
+   */
+  const [macroTarget, setMacroTarget] = useState<MacroTarget | null>(null);
+  useEffect(() => {
+    summaryApi.getDailySummary(today)
+      .then((r) => { setMacroTarget(r.macroTarget ?? null); })
+      .catch(() => undefined);
+  }, [today]);
   const [logsLoading, setLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState('');
   const [manualOpen, setManualOpen] = useState(false);
@@ -72,11 +83,48 @@ export default function Food() {
     const kw = libKw.trim();
     return FOOD_LIBRARY.filter((f) => (libCat === '全部' || f.category === libCat) && (!kw || f.name.includes(kw)));
   }, [libKw, libCat]);
+
+  // 我的食物(自己存的条目):切到「我的」分组时懒加载,失败给空列表(下次进来重试)
+  const [myFoods, setMyFoods] = useState<CustomFood[] | null>(null);
+  useEffect(() => {
+    if (mode !== 'library' || libCat !== '我的' || myFoods !== null) return;
+    foodApi.listCustomFoods()
+      .then((r) => setMyFoods(r.items))
+      .catch(() => setMyFoods([]));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, libCat, myFoods]);
+  const myFiltered = useMemo(() => {
+    const kw = libKw.trim();
+    return (myFoods ?? []).filter((f) => !kw || f.name.includes(kw));
+  }, [myFoods, libKw]);
   const addFromLibrary = (f: FoodEntry) => {
     setSource('manual');
     setResultConf(null);
     setItems((prev) => [...prev, { name: f.name, amount: f.amount, calories: f.calories, proteinG: f.proteinG, carbG: f.carbG, fatG: f.fatG }]);
     setState('need_confirm');
+  };
+
+  /** 存进「我的食物」:核对过一次的条目(名字/份量/热量)下次一键加回,不用再敲第二遍。
+   *  同名同份量服务端按 upsert 处理 —— 再存就是改数字,不会攒出重复行。 */
+  const saveToMyFoods = async (it: FoodItem) => {
+    if (!it.name.trim()) { toast('先填上名称再存', 'none'); return; }
+    try {
+      await foodApi.saveCustomFood({
+        name: it.name.trim(), amount: it.amount || '', calories: it.calories,
+        proteinG: it.proteinG, carbG: it.carbG, fatG: it.fatG
+      });
+      track('custom_food_save', 'other');
+      setMyFoods(null); // 让「我的」分组重新拉一次(存完数字是最新的)
+      toast('已存入我的食物');
+    } catch { toast('没能存上,请重试', 'error'); }
+  };
+  const delMyFood = async (id: string) => {
+    const confirmed = await confirmDelete('从我的食物里删除?', '只移出这份收藏,不影响已经记下的餐。');
+    if (!confirmed) return;
+    try {
+      await foodApi.deleteCustomFood(id);
+      setMyFoods((prev) => (prev ? prev.filter((f) => f.id !== id) : prev));
+    } catch { toast('删除失败', 'error'); }
   };
 
   const loadLogs = useCallback(async () => {
@@ -101,6 +149,13 @@ export default function Food() {
     loadLogs();
   }, [loadLogs]);
 
+  /** 这轮识别结果有没有被用户手动改过(改热量/删行/补一条)——
+      confirm 率只说「信不信」,这个数说「识别差多少才要人动手」,合起来才是识别质量的两个面 */
+  const aiEditedRef = useRef(false);
+  const markAiEdited = () => {
+    if (!editId && source.startsWith('ai_')) aiEditedRef.current = true;
+  };
+
   const parse = async (useImage = false) => {
     if (!useImage && !text.trim()) {
       toast('请输入食物描述', 'none');
@@ -121,6 +176,7 @@ export default function Food() {
       }
       setItems(r.items);
       setKcalDraft({});
+      aiEditedRef.current = false;
       setSource(useImage ? 'ai_image' : 'ai_text');
       setResultConf(typeof r.confidence === 'number' ? r.confidence : null);
       setState('need_confirm');
@@ -143,15 +199,18 @@ export default function Food() {
     ]);
     setManualName('');
     setManualKcal('');
+    markAiEdited();
     setManualOpen(false);
     setErrorMsg('');
     setState('need_confirm');
   };
 
   const updateItem = (i: number, patch: Partial<FoodItem>) => {
+    markAiEdited();
     setItems((prev) => prev.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
   };
   const removeItem = (i: number) => {
+    markAiEdited();
     setItems((prev) => prev.filter((_, idx) => idx !== i));
     // 草稿是按行号存的,删了一行后面全部前移 —— 不跟着挪就会串行
     setKcalDraft({});
@@ -188,6 +247,8 @@ export default function Food() {
       } else {
         await foodApi.createFoodLog({ meal, items: itemsForSave, source });
         track('ai_food_parse_confirm', 'ai', { items: items.length });
+        if (aiEditedRef.current) track('ai_food_parse_edit', 'ai', { items: items.length });
+        aiEditedRef.current = false;
         toast('已保存');
       }
       setState('idle');
@@ -274,23 +335,43 @@ export default function Food() {
 
       {mode === 'library' && <View className="card">
         <Text className="fs-h1">食物库</Text>
-        <Text className="fs-mini text-secondary">180+ 种常见食物,热量按常见份量估算,一键加入本餐。</Text>
+        <Text className="fs-mini text-secondary">{libCat === '我的' ? '你自己存下的条目,一键加回本餐。' : '180+ 种常见食物,热量按常见份量估算,一键加入本餐。'}</Text>
         <Text className="lib-tool-link" onClick={() => navigate('/pages/food-tools/index')}>小工具:食物对比 · 估重参考 · 红黑榜 ›</Text>
         <Input className="lib-search" placeholder="搜索食物名称,如:鸡胸肉" value={libKw} onInput={(e) => setLibKw(e.detail.value)} />
         <View className="lib-chips">
-          {FOOD_CATEGORIES.map((c) => <Text key={c} className={`lib-chip${libCat === c ? ' active' : ''}`} onClick={() => setLibCat(c)}>{c}</Text>)}
+          {['我的', ...FOOD_CATEGORIES].map((c) => <Text key={c} className={`lib-chip${libCat === c ? ' active' : ''}`} onClick={() => setLibCat(c)}>{c}</Text>)}
         </View>
-        {libFiltered.length === 0 && <Text className="fs-mini text-secondary">没有找到相关食物,换个关键词试试。</Text>}
-        {libFiltered.slice(0, 60).map((f) => (
-          <View className="edit-item" key={`${f.category}-${f.name}`}>
-            <View className="col flex-1">
-              <Text className="fs-caption">{f.name} · 约 {f.calories} kcal</Text>
-              <Text className="fs-mini text-secondary">{f.amount} · 蛋白 {f.proteinG}g / 碳水 {f.carbG}g / 脂肪 {f.fatG}g</Text>
+        {/* 「我的」是服务端数据,其余分组是本地静态库 —— 两边行长相近,但「我的」多一个删除 */}
+        {libCat === '我的' && <>
+          {myFoods === null && <Text className="fs-mini text-secondary">正在加载…</Text>}
+          {myFoods !== null && myFoods.length === 0 && <Text className="fs-mini text-secondary">还没有存过的食物。记一餐时点行尾的「存」,下次就能在这里一键加回。</Text>}
+          {myFoods !== null && myFoods.length > 0 && myFiltered.length === 0 && <Text className="fs-mini text-secondary">「我的」里没有匹配的,换个关键词试试。</Text>}
+          {myFiltered.map((f) => (
+            <View className="edit-item" key={f.id}>
+              <View className="col flex-1">
+                <Text className="fs-caption">{f.name} · 约 {Math.round(f.calories)} kcal</Text>
+                <Text className="fs-mini text-secondary">{f.amount || '1 份'} · 蛋白 {Math.round(f.proteinG)}g / 碳水 {Math.round(f.carbG)}g / 脂肪 {Math.round(f.fatG)}g</Text>
+              </View>
+              <View className="row" style={{ gap: 8, alignItems: 'center' }}>
+                <Button className="btn btn--mini btn--secondary" onClick={() => addFromLibrary({ name: f.name, amount: f.amount || '1 份', calories: f.calories, proteinG: f.proteinG, carbG: f.carbG, fatG: f.fatG, category: '我的' })}>加入</Button>
+                <Text className="edit-del" onClick={() => { void delMyFood(f.id); }}>✕</Text>
+              </View>
             </View>
-            <Button className="btn btn--mini btn--secondary" onClick={() => addFromLibrary(f)}>加入</Button>
-          </View>
-        ))}
-        {libFiltered.length > 60 && <Text className="lib-more fs-mini text-secondary">共 {libFiltered.length} 条,仅显示前 60 条,输入名称可精确搜索</Text>}
+          ))}
+        </>}
+        {libCat !== '我的' && <>
+          {libFiltered.length === 0 && <Text className="fs-mini text-secondary">没有找到相关食物,换个关键词试试。</Text>}
+          {libFiltered.slice(0, 60).map((f) => (
+            <View className="edit-item" key={`${f.category}-${f.name}`}>
+              <View className="col flex-1">
+                <Text className="fs-caption">{f.name} · 约 {f.calories} kcal</Text>
+                <Text className="fs-mini text-secondary">{f.amount} · 蛋白 {f.proteinG}g / 碳水 {f.carbG}g / 脂肪 {f.fatG}g</Text>
+              </View>
+              <Button className="btn btn--mini btn--secondary" onClick={() => addFromLibrary(f)}>加入</Button>
+            </View>
+          ))}
+          {libFiltered.length > 60 && <Text className="lib-more fs-mini text-secondary">共 {libFiltered.length} 条,仅显示前 60 条,输入名称可精确搜索</Text>}
+        </>}
       </View>}
 
       {mode === 'manual' && <View className="card">
@@ -363,6 +444,8 @@ export default function Food() {
                   }}
                 />
                 <Text className="fs-mini text-secondary">kcal</Text>
+                {/* 行尾两个动作:存进我的食物 / 从本餐移除。存只收这一行,不动别的 */}
+                <Text className="edit-save" onClick={() => { void saveToMyFoods(it); }}>存</Text>
                 <Text className="edit-del" onClick={() => removeItem(i)}>✕</Text>
               </View>
             </View>
@@ -399,11 +482,40 @@ export default function Food() {
             窗口日均与目标在趋势页 —— 两处口径同源(utils/nutrition)。
             手动只填名字+热量的记录克数是 0,一整天都这么记就不显示,免得摆一份假的 0 */}
         {anyMacros(logs) && <View className="day-macros">
-          <View className="day-macros__bar">
-            {dayShare && ([['p', dayShare.proteinG], ['c', dayShare.carbG], ['f', dayShare.fatG]] as const).map(([k, pct]) => (
-              <View key={k} className={`day-macros__seg is-${k}`} style={{ width: `${pct}%` }} />
-            ))}
-          </View>
+          {macroTarget ? (
+            /* 有目标 → 三行「吃了多少 / 该吃多少」。趋势页那句日均蛋白差多少是**回顾**,
+               这里是**当天**:记完一顿立刻看到还差多少,差距才有机会在下一顿补上。
+               超了封顶在 100%(条不越界),数字照实写 —— 超了多少本身是条信息 */
+            <View className="day-macros__goals">
+              {([
+                ['p', '蛋白', dayMacro.proteinG, macroTarget.proteinG],
+                ['c', '碳水', dayMacro.carbG, macroTarget.carbG],
+                ['f', '脂肪', dayMacro.fatG, macroTarget.fatG]
+              ] as const).map(([k, label, got, target]) => {
+                const pct = target > 0 ? Math.min(100, Math.round((got / target) * 100)) : 0;
+                return (
+                  <View className="day-macros__goal" key={k}>
+                    <Text className={`day-macros__glabel is-${k}`}>{label}</Text>
+                    <View className="day-macros__gtrack">
+                      <View
+                        className={`day-macros__gfill is-${k}${got > target ? ' is-over' : ''}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </View>
+                    <Text className="day-macros__gval">
+                      {Math.round(got)}/{target}g{got > target ? ' · 超了' : ''}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          ) : (
+            <View className="day-macros__bar">
+              {dayShare && ([['p', dayShare.proteinG], ['c', dayShare.carbG], ['f', dayShare.fatG]] as const).map(([k, pct]) => (
+                <View key={k} className={`day-macros__seg is-${k}`} style={{ width: `${pct}%` }} />
+              ))}
+            </View>
+          )}
           <Text className="day-macros__line">{macroLine(dayMacro)}</Text>
           {dayShare && <Text className="day-macros__share">{shareLine(dayShare)}</Text>}
         </View>}

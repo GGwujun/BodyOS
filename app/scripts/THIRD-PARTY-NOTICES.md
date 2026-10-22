@@ -91,6 +91,42 @@ SOFTWARE.
 
 重新生成:`node scripts/build-muscle-figures.mjs`(详见脚本头注释)。
 
+## 3.2 身体肌群图(按肌肉看 / 恢复 / 肌肉平衡)— MuscleMap 几何,MIT
+
+`app/src/pkg-exercise/muscles/body-geometry.ts` 是**生成文件**:`scripts/build-body-map.mjs`
+把`scripts/vendor/muscle-map-body-paths.mjs` 里的 SVG 路径摊平成折线,供 Canvas 实时上色。
+上游是 [MuscleMap](https://github.com/melihcolpan/MuscleMap) 的人体矢量图
+(MIT License,Copyright (c) 2026 Melih Colpan);该仓库以 Swift 源码形式携带路径数据。
+本项目取的是**几何形状**,并只取男体正/背面。openGym 仓库里那份转换后的
+`frontend/src/lib/body-paths.js` 是同一份 MIT 几何的中转;openGym 自身的代码是 AGPL-3.0,
+本项目**没有**复制它的组件、样式或逻辑,只用几何坐标重新实现了 Canvas 绘制与命中测试。
+
+重新生成:`node scripts/build-body-map.mjs`(改几何或分组时重跑;`--check` 只看统计)。
+
+```
+MIT License
+
+Copyright (c) 2026 Melih Colpan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ## 4. 明确未使用
 
 - openGym 的**代码**(AGPL-3.0)未复制;
@@ -101,5 +137,6 @@ SOFTWARE.
 - everkinetic/data 的**文字**(步骤/提示/引言)未使用,图片也已弃用(同上,第 3.0 节)。
 
 生成方式:`node scripts/build-exercise-lib.mjs`(动作文本)、
-`node scripts/build-exercise-gifs.mjs`(演示图)与
-`node scripts/build-muscle-figures.mjs`(肌群示意图,自绘),详见各自脚本头注释。
+`node scripts/build-exercise-gifs.mjs`(演示图)、
+`node scripts/build-muscle-figures.mjs`(动作页肌群示意图,自绘)与
+`node scripts/build-body-map.mjs`(身体肌群图,MuscleMap 几何),详见各自脚本头注释。

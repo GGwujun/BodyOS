@@ -1,7 +1,9 @@
+import { themedColor } from '@/utils/theme';
 import { useMemo, useRef, useState } from 'react';
 import { Button, Image, ScrollView, Slider, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import cameraIcon from '@/assets/icons/camera.png';
 import { toast } from '@/utils/ui';
 import { todayStr } from '@/utils/date';
 import { track } from '@/services/analytics';
@@ -133,7 +135,7 @@ export default function PhotosPage() {
 
         {strip.length === 0 && (
           <View className="ph-empty">
-            <Text className="ph-empty-emoji">📷</Text>
+            <Image className="ph-empty-icon" src={cameraIcon} mode="aspectFit" />
             <Text className="fs-h1">还没有{POSE_ZH[pose]}照片</Text>
             <Text className="fs-caption">{POSE_TIP[pose]}</Text>
           </View>
@@ -158,8 +160,8 @@ export default function PhotosPage() {
                     min={0}
                     max={100}
                     value={pct}
-                    activeColor={THEME.primary}
-                    backgroundColor="#e5e7eb"
+                    activeColor={themedColor(THEME.primary)}
+                    backgroundColor="#ece8dd"
                     blockSize={24}
                     onChange={(e) => setPct(e.detail.value)}
                   />

@@ -3,273 +3,478 @@
 /* ============ 首页 ============ */
 .home-page {
   min-height: 100vh;
-  padding: 14px 16px calc(88px + env(safe-area-inset-bottom));
+  /* 顶部由自定义导航自己让出状态栏(见 index.config.ts + utils/status-bar) */
+  padding: 0 20px calc(96px + env(safe-area-inset-bottom));
   background: $color-bg;
+  /* 顶部一层极淡的纸面高光 —— 让暖底不是一块死色 */
+  background-image: radial-gradient(120% 34% at 50% 0%, #fffdf8 0%, rgba(255, 253, 248, 0) 100%);
+  background-repeat: no-repeat;
   color: $color-text-primary;
   box-sizing: border-box;
 }
 
-/* 日期头 */
-.home-header { height: 40px; display: flex; align-items: center; margin-bottom: 12px; }
-.home-header__date { display: flex; align-items: baseline; gap: 8px; }
-.home-greeting { font-size: $fs-small; color: $color-primary; font-weight: $fw-bold; }
-.home-date { font-size: $fs-h2; font-weight: $fw-bold; letter-spacing: .2px; }
-.home-week { font-size: $fs-mini; color: $color-text-tertiary; }
+/* ============ 页头 ============ */
+/* 页头:背景是那幅淡山水,铺满整条页头(左右出血到屏幕边),
+   文字单独一层压在上面 —— 图只负责气氛,不参与点击 */
+.home-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 206px;
+  /* 左右出血到屏幕边:山水得铺满整条页头,而不是缩在安全边距里 */
+  margin: 0 (-$safe-margin) 10px;
+  padding: 0 22px 14px;
+  overflow: hidden;
+}
+.home-hero-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+.home-header-copy {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+/* 品牌两行 —— 自定义导航后它就在设计稿那个位置上。
+   右边是微信胶囊,所以这一块只往左排,宽度也只占左边 */
+.home-brand-row {
+  display: flex; flex-direction: column; gap: 4px;
+  margin-bottom: 11px;
+}
+.home-brand {
+  font-size: $fs-title; line-height: 1.2; font-weight: $fw-bold;
+  color: $color-text-primary; letter-spacing: -.4px;
+}
+.home-tagline { font-size: $fs-mini; color: $color-text-secondary; letter-spacing: .02em; }
+.home-eyebrow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.home-eyebrow { font-size: $fs-caption; color: $color-text-secondary; letter-spacing: .02em; }
+.home-greeting { flex-shrink: 0; font-size: $fs-mini; color: $color-primary-dark; font-weight: $fw-medium; }
+.home-title {
+  font-size: 32px; line-height: 1.22; font-weight: $fw-bold;
+  color: $color-text-primary; letter-spacing: -.8px;
+}
+.home-subtitle { font-size: $fs-caption; color: $color-text-secondary; }
 
-/* 日期条:今天 + 本周七日圆钮(参考同类健康应用的顶部日期选择) */
+/* ============ 日期条 ============ */
+/* 日期条不再做成一张白卡:设计稿这里是页头下面一行轻量的日期切换,
+   框和阴影会把它抬到和概览卡同一层,抢掉标题的视线 */
 .date-strip {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 12px; padding: 10px 12px;
-  background: $color-bg-card; border: 1px solid $color-border;
-  border-radius: $radius-card; box-shadow: $shadow-card;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 15px; padding: 0 2px;
 }
 .strip-today {
   flex-shrink: 0; display: flex; align-items: center; gap: 3px;
-  font-size: $fs-mini; font-weight: $fw-bold; color: $color-primary;
-  background: $color-primary-a10;
-  border-radius: $radius-pill; padding: 7px 13px;
+  white-space: nowrap;
+  font-size: $fs-mini; font-weight: $fw-bold; color: $color-primary-dark;
+  background: $color-primary-bg;
+  border-radius: $radius-pill; padding: 7px 10px; line-height: 1;
 }
 .strip-today.is-back { background: $color-primary; color: $color-text-inverse; }
+.strip-today__text { white-space: nowrap; }
 .strip-caret { font-size: $fs-nano; line-height: 1; }
 .strip-days { flex: 1; display: flex; justify-content: space-between; }
 .strip-day {
-  position: relative; width: 38px; height: 46px;
-  border-radius: $radius-md;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  position: relative; width: 34px; height: 46px;
+  border-radius: 13px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   box-sizing: border-box;
 }
-.strip-day.today .strip-day__label { color: $color-primary; }
+.strip-day.today .strip-day__label { color: $color-primary-dark; font-weight: $fw-bold; }
 .strip-day.future { opacity: .35; }
-.strip-day.active { background: $color-primary; }
-.strip-day.active .strip-day__label { color: rgba(255, 255, 255, .85); }
+.strip-day.active { background: $color-primary; box-shadow: 0 6px 14px -8px rgba(23, 107, 85, .55); }
+.strip-day.active .strip-day__label { color: rgba(255, 253, 247, .78); }
 .strip-day.active .strip-day__num { color: $color-text-inverse; }
 .strip-day__label { font-size: $fs-nano; color: $color-text-secondary; line-height: 1; }
-.strip-day__num { font-size: $fs-caption; font-weight: 600; color: $color-text-primary; line-height: 1; }
+.strip-day__num { font-size: $fs-caption; font-weight: $fw-bold; color: $color-text-primary; line-height: 1; font-variant-numeric: tabular-nums; }
 .strip-day__dot {
-  position: absolute; bottom: 4px; left: 50%; margin-left: -1.5px;
-  width: 3px; height: 3px; border-radius: 50%; background: $color-primary;
+  position: absolute; bottom: 6px; left: 50%; margin-left: -2px;
+  width: 4px; height: 4px; border-radius: 50%; background: $color-primary;
 }
-/* 训练记号:练过 = 绿点(和「今天在这儿」同一个绿)、改练 = 琥珀点、
-   请假 = 灰蓝**短横** —— 形状也和颜色一起区分,别让色弱的人只看到「有点/没点」 */
+/* 训练记号:练过 = 绿点、改练 = 琥珀点、请假 = 灰蓝短横 —— 形状和颜色一起区分 */
 .strip-day__dot.is-done { background: $color-primary; }
 .strip-day__dot.is-moved { background: $color-warning; }
 .strip-day__dot.is-off {
-  width: 6px; height: 2px; margin-left: -3px;
+  width: 7px; height: 2px; margin-left: -3.5px;
   border-radius: 1px; background: $color-info;
 }
 .strip-day.active .strip-day__dot { background: $color-bg-card; }
 
 /* 步数目标进度 */
-.steps-progress { margin-top: 12px; display: flex; flex-direction: column; gap: 5px; }
+.steps-progress { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
 .steps-progress__track { height: 6px; border-radius: $radius-pill; background: $color-fill; overflow: hidden; }
 .steps-progress__fill { height: 100%; border-radius: $radius-pill; background: linear-gradient(90deg, $color-sky-pale, $color-sky-light); transition: width .4s ease; }
 .steps-progress__label { font-size: $fs-nano; color: $color-text-tertiary; }
 
-/* 错误提示:柔和圆角 + 状态点 */
+/* 错误提示 */
 .home-notice {
   display: flex; align-items: center; gap: 7px;
-  margin-bottom: 12px; padding: 10px 14px;
-  border-radius: $radius-md; background: $color-danger-bg;
+  margin-bottom: 14px; padding: 11px 14px;
+  border-radius: $radius-panel; background: $color-danger-bg;
   color: $color-danger; font-size: $fs-mini;
 }
 .notice-dot { width: 6px; height: 6px; border-radius: 50%; background: $color-danger; flex-shrink: 0; }
 
 /* ============ 卡片基底 ============ */
 .dashboard-card {
-  margin-bottom: 14px; padding: 16px;
+  margin-bottom: 16px; padding: 18px;
   border: 1px solid $color-border; border-radius: $radius-card;
   background: $color-bg-card; box-shadow: $shadow-card;
 }
 .card-heading {
   display: flex; align-items: center; justify-content: space-between;
-  font-size: $fs-body; font-weight: $fw-bold; color: $color-text-primary;
+  font-size: 18px; font-weight: $fw-bold; color: $color-text-primary;
 }
-.section-title { display: block; font-size: $fs-body; font-weight: $fw-bold; color: $color-text-primary; }
+.section-title { display: block; font-size: 18px; font-weight: $fw-bold; color: $color-text-primary; }
 
-/* 数值占位统一弱化。`!important` 是**故意的**:各卡片的数值类都带自己的颜色
-   (.dimension-value--slate / .goal-name / .activity-value),不压住就散成好几种灰。
-   反过来说,这一条**下面**再写 .x.is-empty{color:…} 是不生效的 —— 要改就在这儿改 */
+/* 数值占位统一弱化。`!important` 是**故意的**:各卡片的数值类都带自己的颜色,
+   不压住就散成好几种灰。反之下面的 .x.is-empty 不生效,要改就在这儿改 */
 .is-empty { color: $color-text-disabled !important; }
 
-/* ============ 今天练什么(训练那半边在主包的主入口) ============ */
-.train-card { display: flex; flex-direction: column; gap: 6px; }
-/* 只有「该练」和「请假」带左边那道条,配色**照抄计划页那两张卡**:
-   绿 = 该练了、灰蓝 = 今天不练也没事 —— 同一个意思在两个页面不该有两种长相 */
-.train-card.is-due { background: $color-primary-bg; border-left: 4px solid $color-primary; }
-.train-card.is-done { border-left: 4px solid $color-primary; }
-.train-card.is-off { background: $color-bg-soft; border-left: 4px solid $color-info; }
-
-.train-head { display: flex; align-items: center; gap: 8px; }
-.train-emoji { font-size: $fs-h2; line-height: 22px; }
-.train-title { flex: 1; font-size: $fs-body; font-weight: $fw-bold; color: $color-text-primary; }
-.train-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-/* 副标题一行截断:它是配角,不能把右边那个「开始练」挤出去 */
-.train-sub {
-  flex: 1; min-width: 0; font-size: $fs-mini; color: $color-text-secondary;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.train-action { flex-shrink: 0; font-size: $fs-small; font-weight: $fw-medium; color: $color-primary-dark; }
-.is-off .train-action { color: $color-text-secondary; }
-/* 「今天不练」—— 卡片自己的次要出口,所以字号比主按钮小、颜色是次要色:
-   它和「开始练」不是二选一的两条路,一个是今天要做的事,一个是**不做时也要记的一笔** */
-/* 行内动作两个都补到 40px 触控区:字号不变,靠内边距长个 —— 撑高的是热区不是行高 */
-.train-off { display: inline-flex; align-items: center; min-height: 40px; padding: 0 4px; font-size: $fs-mini; color: $color-text-secondary; }
-/* 「今天改练 / 今天不练」并排一行 —— 两条都是「卡片说得不对」时的出路,
-   挨着摆表示它们是同一层的东西(以前只有一条,自己独占一行) */
-.train-off-row { align-self: flex-start; display: flex; gap: 8px; margin-top: -6px; }
-
-/* ============ 练到一半(继续那一场) ============
-   绿色 + 左边一道条 = 和「该练了」同一套「现在该做这件事」的配色。
-   两者可能同时出现(今天该练、昨天那场又没练完),所以这一张多一个「进行中」
-   小胶囊和一枚 ⏱ —— 光靠颜色分不出这两张卡,但一眼看得出哪张是做了一半的。 */
-.live-card { background: $color-primary-bg; border-left: 4px solid $color-primary; }
-.live-main { display: flex; align-items: center; gap: 10px; }
-.live-emoji { font-size: $fs-h1; line-height: 24px; flex-shrink: 0; }
-.live-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.live-title { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
-.live-sub { font-size: $fs-mini; color: $color-text-secondary; }
-/* 右边那两下:「放弃」是次要动作,写成灰的 —— 它是给「这一场不想再要了」留的口子,
-   不能跟「接着练」抢注意力(抢赢了就是一次误触,而那一场的数据真的没了) */
-.live-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-.live-action { font-size: $fs-small; font-weight: $fw-medium; color: $color-primary-dark; }
-/* 「放弃」是不可逆的(那一场的数据真的没了),却只有 22px 高 —— 误触的代价和热区大小反了 */
-.live-drop { flex-shrink: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; font-size: $fs-mini; color: $color-text-tertiary; }
-
-/* ============ 身体状态卡 ============ */
-.score-card { padding-bottom: 0; }
-.score-main { height: 148px; display: flex; align-items: center; justify-content: center; }
-.score-ring {
-  --score: 0deg;
-  width: 124px; height: 124px; padding: 8px; border-radius: 50%;
-  background: conic-gradient($color-primary var(--score), $color-fill 0);
-  box-sizing: border-box; transform: rotate(-90deg);
-}
-.score-ring__inner {
-  width: 100%; height: 100%; border-radius: 50%; background: $color-bg-card;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transform: rotate(90deg);
-}
-/* 和体重页那个环是同一个尺寸同一个结构,读数与标签也用同一档(见 weight/index.scss 的 .wp-ring) */
-.score-number { font-size: $fs-display; line-height: 40px; font-weight: 700; letter-spacing: -1px; color: $color-text-primary; }
-.score-label { margin-top: 2px; font-size: $fs-nano; color: $color-text-secondary; }
-.score-trend { height: 30px; display: flex; align-items: center; justify-content: center; }
-.trend-copy { font-size: $fs-mini; color: $color-text-tertiary; }
-
-/* 底部三维度:整条浅底,与卡片内容分区 */
-.score-dimensions {
-  height: 64px; margin: 10px -16px 0;
-  display: flex; background: $color-bg-soft;
-  border-top: 1px solid $color-divider;
-  border-radius: 0 0 $radius-card $radius-card;
+/* ============ 今天练什么 ============ */
+.train-card {
+  position: relative; display: flex; flex-direction: column; gap: 10px;
   overflow: hidden;
 }
-.score-dimension { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-.score-dimension + .score-dimension::before {
-  content: ''; position: absolute; left: 0; top: 16px;
-  width: 1px; height: 32px; background: $color-fill;
+/* 该练了:浅鼠尾草底 + 右上角一团极淡的绿雾,不再是左边一道 4px 色条 */
+.train-card.is-due {
+  background: linear-gradient(135deg, #f2f5ed 0%, #e4ebdf 100%);
+  border-color: #dde6d6;
 }
-.dimension-label { font-size: $fs-nano; color: $color-text-tertiary; letter-spacing: 1px; }
-.dimension-pair { margin-top: 3px; display: flex; align-items: baseline; }
-.dimension-value { font-size: $fs-h1; font-weight: 700; }
-.dimension-unit { margin-left: 2px; color: $color-text-tertiary; font-size: $fs-nano; }
-.dimension-value--green { color: $color-primary; }
-.dimension-value--amber { color: $color-warning; }
-.dimension-value--slate { color: $color-slate-600; }
+.train-card.is-due::after {
+  content: ''; position: absolute; right: -36px; top: -52px;
+  width: 150px; height: 150px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(141, 174, 145, .30) 0%, rgba(141, 174, 145, 0) 70%);
+  pointer-events: none;
+}
+.train-card.is-done { border-color: $color-border; }
+.train-card.is-off { background: $color-bg-soft; border-color: $color-border; }
+.train-head, .train-off-row { position: relative; z-index: 1; }
 
-/* ============ 今日能量卡 ============ */
-.energy-metrics { display: flex; margin-top: 14px; }
-.energy-metric { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.metric-label { color: $color-text-secondary; font-size: $fs-mini; }
-/* 能点的那一格(摄入/消耗):标签染成主色并带个箭头。整卡不再是大按钮,
-   所以「哪儿点得动」必须自己说明白 */
-.metric-label.is-link { color: $color-primary-dark; font-weight: 600; }
+/* 设计稿里的计划入口是一行:圆形图标、标题 + 副标题、右边一个箭头 */
+.train-head { display: flex; align-items: center; gap: 12px; }
+.train-icon-wrap {
+  width: 48px; height: 48px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: rgba(255, 254, 250, .86);
+  box-shadow: 0 1px 2px rgba(23, 43, 41, .04);
+}
+.train-icon-wrap .train-state-icon { display: block; }
+.train-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.train-title { font-size: $fs-body; font-weight: $fw-bold; color: $color-text-primary; letter-spacing: -.1px; }
+/* 副标题一行截断:它是配角,不能把右边的箭头挤出去 */
+.train-sub {
+  font-size: $fs-mini; color: $color-text-secondary; line-height: 1.45;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.train-arrow { flex-shrink: 0; font-size: $fs-h1; color: $color-text-tertiary; line-height: 1; }
+/* 行内动作两个都补到 40px 触控区 */
+.train-off { display: inline-flex; align-items: center; min-height: 40px; padding: 0 4px; font-size: $fs-mini; color: $color-text-secondary; }
+.train-off-row { align-self: flex-start; display: flex; gap: 14px; margin-top: 2px; }
 
-/* 消耗的构成。比图例那行重一点(它是数字的解释,不是脚注) */
-.energy-breakdown {
-  display: block; margin-top: 10px;
+/* ============ 练到一半 ============ */
+.live-card { background: $color-primary-bg; border-color: $color-primary-border; }
+.live-main { display: flex; align-items: center; gap: 10px; }
+.live-icon-wrap {
+  width: 38px; height: 38px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: $radius-panel; background: $color-bg-card;
+}
+.live-icon { width: 22px; height: 22px; display: block; }
+.live-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.live-title { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+.live-sub { font-size: $fs-mini; color: $color-text-secondary; }
+.live-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+.live-action { font-size: $fs-small; font-weight: $fw-bold; color: $color-primary-dark; }
+/* 「放弃」是不可逆的,热区补到 44px,颜色压到最轻 */
+.live-drop { flex-shrink: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; font-size: $fs-mini; color: $color-text-tertiary; }
+
+/* ============ 今日概览(完成度环 + 三行读数) ============ */
+.overview-main { display: flex; align-items: center; gap: 18px; }
+.overview-ring {
+  --score: 0deg;
+  position: relative;
+  width: 112px; height: 112px; padding: 9px; flex-shrink: 0;
+  border-radius: 50%; box-sizing: border-box;
+  /* 从 12 点起、顺时针 —— conic-gradient 默认就是这两个方向,不用再转元素。
+     轨道用主色的浅底(#edf2ea)而不是暖灰:和弧是同一族绿,环才像一整块 */
+  background: conic-gradient(from 0deg, $color-primary var(--score), $color-primary-bg 0);
+}
+.overview-ring__inner {
+  width: 100%; height: 100%; border-radius: 50%; background: $color-bg-card;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+/* 弧两端的圆帽:conic-gradient 本身是平头,这两枚小点把两端补圆。
+   位置由 JS 按进度算(见 index.tsx 的 ringCap),这里只负责长相 */
+.overview-ring__cap {
+  position: absolute;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: $color-primary;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(23, 107, 85, .22);
+}
+.overview-ring__cap.is-start { left: 50%; top: 4.02%; }
+.overview-score {
+  font-size: 30px; line-height: 1; font-weight: 700; letter-spacing: -1px;
+  color: $color-text-primary; font-variant-numeric: tabular-nums;
+}
+.overview-ring.is-empty .overview-score { color: $color-text-disabled; }
+.overview-score-label { margin-top: 5px; font-size: $fs-mini; color: $color-text-secondary; }
+
+.overview-metrics { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+
+/* 一行读数:左边「标签在上、数值在下」,右端一枚小环(摄入/消耗)。
+   参考稿这三行原是图标 + 横条;换成环以后行首的图标撤了 ——
+   那三枚图标在下面打卡卡里还各有一份,这里不再重复报信 */
+.ov-row { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.ov-row__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.ov-label { flex-shrink: 0; font-size: $fs-mini; color: $color-text-secondary; }
+.ov-value { display: flex; align-items: baseline; gap: 2px; min-width: 0; }
+.ov-value__num {
+  font-size: 17px; line-height: 1; font-weight: 700; letter-spacing: -.4px;
+  color: $color-text-primary; font-variant-numeric: tabular-nums;
+}
+.ov-value__unit { font-size: $fs-nano; color: $color-text-tertiary; white-space: nowrap; }
+/* 体重涨跌:参考稿里是一枚小胶囊,不是一串带颜色的字。
+   align-self:center 把胶囊从基线对齐里摘出来 —— 不然它会被数字的基线顶高一截 */
+.ov-delta {
+  align-self: center;
+  margin-left: 6px; padding: 2px 6px;
+  border-radius: $radius-pill;
+  font-size: $fs-nano; line-height: 1.4; font-weight: $fw-bold;
+  font-variant-numeric: tabular-nums;
+}
+.ov-delta.is-down { color: $color-primary-dark; background: $color-primary-bg; }
+.ov-delta.is-up { color: $color-amber-dark; background: $color-amber-bg; }
+/* 能量收支环:和大环同一手 conic-gradient(从 12 点、顺时针),44px 上不放端帽 ——
+   9px 的帽子按大环比例缩到这里只有 3.5px,画上去成一团。摄入绿、消耗鼠尾草绿 */
+.ov-ring {
+  --score: 0deg;
+  flex-shrink: 0;
+  width: 44px; height: 44px; padding: 4px;
+  border-radius: 50%; box-sizing: border-box;
+  background: conic-gradient(from 0deg, $color-primary var(--score), $color-primary-bg 0);
+}
+.ov-ring.is-burn { background: conic-gradient(from 0deg, $color-sage var(--score), $color-fill 0); }
+/* 没数(没记/没目标)时只剩一圈灰轨道,环心写「—」—— 空着比假装 0% 诚实 */
+.ov-ring.is-empty { background: $color-fill; }
+.ov-ring__inner {
+  width: 100%; height: 100%; border-radius: 50%; background: $color-bg-card;
+  display: flex; align-items: center; justify-content: center;
+}
+.ov-ring__pct {
+  font-size: $fs-nano; font-weight: $fw-bold; color: $color-text-secondary;
+  font-variant-numeric: tabular-nums;
+}
+.ov-ring__pct.is-over { color: $color-amber-dark; }
+.ov-ring.is-empty .ov-ring__pct { color: $color-text-disabled; }
+
+.overview-net {
+  display: block;
+  margin-top: 12px;
+  font-size: $fs-nano;
+  color: $color-text-tertiary;
+  line-height: 1.6;
+}
+.overview-net__v { color: $color-primary-dark; font-weight: $fw-bold; font-variant-numeric: tabular-nums; }
+.overview-net__v.is-pos { color: $color-warning; }
+
+.overview-note { display: block; margin-top: 10px; font-size: $fs-mini; line-height: 1.5; color: $color-text-tertiary; }
+.overview-note.is-action { color: $color-primary-dark; font-weight: $fw-bold; }
+
+.overview-dims { display: flex; gap: 8px; margin-top: 14px; }
+.overview-dim {
+  flex: 1; display: flex; flex-direction: column; gap: 4px;
+  padding: 10px 12px; background: $color-bg-soft; border-radius: $radius-panel;
+}
+.overview-dim__label { font-size: $fs-nano; color: $color-text-secondary; }
+.overview-dim__pair { display: flex; align-items: baseline; gap: 1px; }
+.overview-dim__value { font-size: $fs-h2; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; }
+.overview-dim__value--green { color: $color-primary; }
+.overview-dim__value--amber { color: $color-warning; }
+.overview-dim__value--slate { color: $color-slate-600; }
+.overview-dim__unit { font-size: $fs-nano; color: $color-text-tertiary; }
+
+.overview-water {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 16px -18px 0; padding: 13px 18px;
+  border-top: 1px solid $color-divider;
+}
+.overview-water-copy { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.water-icon { width: 16px; height: 16px; display: block; }
+.overview-water-text { font-size: $fs-mini; color: $color-text-secondary; }
+.overview-water-value { font-size: $fs-mini; font-weight: $fw-bold; color: $color-text-primary; }
+.overview-water-value.is-empty { color: $color-text-tertiary; font-weight: $fw-regular; }
+.overview-water-action { flex-shrink: 0; font-size: $fs-mini; font-weight: $fw-bold; color: $color-primary-dark; }
+
+/* ============ 今日习惯打卡 ============ */
+.habit-card { padding-bottom: 6px; }
+.habit-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 4px;
+}
+.habit-count {
+  font-size: $fs-caption; font-weight: $fw-medium; color: $color-text-secondary;
+  font-variant-numeric: tabular-nums; letter-spacing: .02em;
+}
+.habit-list { display: flex; flex-direction: column; }
+.habit-row {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 56px; padding: 7px 0;
+  border-bottom: 1px solid $color-divider;
+}
+.habit-row:last-child { border-bottom: none; }
+.habit-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px; background: $color-primary-bg;
+}
+.habit-icon__img { width: 21px; height: 21px; display: block; }
+.habit-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.habit-title { font-size: $fs-medium; font-weight: $fw-medium; color: $color-text-primary; }
+.habit-desc { font-size: $fs-mini; color: $color-text-tertiary; }
+.habit-check {
+  width: 22px; height: 22px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; border: 1.5px solid $color-border-strong;
+  box-sizing: border-box;
+}
+.habit-check.is-on { background: $color-primary; border-color: $color-primary; }
+.habit-check-mark { font-size: $fs-mini; line-height: 1; color: $color-text-inverse; }
+/* 「展开其余 N 项」—— 一行小字,不是按钮:它只是把设计稿没画的那两项收起来 */
+.habit-more {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 9px 0 4px;
+  font-size: $fs-mini; color: $color-text-tertiary;
+  border-top: 1px solid $color-divider;
+}
+.habit-more__caret {
+  font-size: $fs-nano; line-height: 1;
+  transition: transform .2s ease;
+}
+.habit-more__caret.is-open { transform: rotate(180deg); }
+
+/* ============ 体重趋势 ============ */
+.weight-card { padding-bottom: 12px; }
+.weight-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.weight-head__copy { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.weight-range { font-size: $fs-nano; color: $color-text-tertiary; }
+.weight-more {
+  flex-shrink: 0; padding: 6px 0 6px 12px;
   font-size: $fs-mini; color: $color-text-secondary;
 }
-.metric-pair { display: flex; align-items: baseline; }
-.metric-value { font-size: $fs-num; font-weight: 700; letter-spacing: -.5px; color: $color-text-primary; }
-.metric-value--accent { color: $color-primary; }
-.metric-unit { margin-left: 3px; color: $color-text-tertiary; font-size: $fs-nano; }
+.weight-body { margin-top: 2px; }
+.weight-loading {
+  display: block; padding: 16px 2px 6px;
+  font-size: $fs-mini; color: $color-text-tertiary;
+}
+.weight-empty {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 10px; padding: 14px;
+  background: $color-bg-soft; border-radius: $radius-panel;
+}
+.weight-empty__icon-wrap {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: $radius-panel; background: $color-bg-card;
+}
+.weight-empty__icon { width: 21px; height: 21px; display: block; }
+.weight-empty__copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.weight-empty__title { font-size: $fs-caption; font-weight: $fw-medium; color: $color-text-primary; }
+.weight-empty__hint { font-size: $fs-nano; color: $color-text-tertiary; }
 
-.energy-track {
-  position: relative; height: 6px; margin-top: 16px;
-  border-radius: $radius-pill; background: $color-fill;
+/* 新加的三块里能点的行:整行是热区,按下给一点反馈 */
+.ov-row,
+.habit-row,
+.weight-empty {
+  transition: opacity .12s ease;
 }
-.energy-track__fill {
-  height: 100%; border-radius: $radius-pill;
-  background: $color-primary-gradient;
-  transition: width .4s ease;
-}
-/* 消耗参考线:轨道右端,超出轨道 2px 让圆点完整可见 */
-.energy-track__marker {
-  position: absolute; left: 100%; top: 50%;
-  width: 10px; height: 10px; border: 2px solid $color-bg-card;
-  border-radius: 50%; background: $color-slate-600;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, .18);
-}
-.energy-hint { display: block; margin-top: 9px; font-size: $fs-nano; color: $color-text-tertiary; }
-/* 空态那一句是个入口(有数据时它只是图例,不会再染成可点的样子) */
-.energy-hint.is-action { color: $color-primary-dark; font-weight: 600; }
+.ov-row:active,
+.habit-row:active,
+.weight-empty:active { opacity: .9; }
 
-/* ============ 今日活动卡 ============ */
-.activity-stats { display: flex; gap: 64px; margin-top: 14px; }
-.activity-value { font-size: $fs-num; font-weight: 700; color: $color-text-primary; }
+/* ============ 今日活动 ============ */
+.activity-stats { display: flex; gap: 56px; margin-top: 16px; }
+.activity-value { font-size: $fs-display; line-height: 1.1; font-weight: 700; letter-spacing: -1px; color: $color-text-primary; font-variant-numeric: tabular-nums; }
 .activity-unit { margin-left: 4px; color: $color-text-tertiary; font-size: $fs-nano; }
 
-/* 空态:虚线软面板,不再是裸文字 */
+/* 空态:虚线软面板 */
 .activity-empty {
-  margin-top: 12px; padding: 16px 12px;
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
-  border: 1px dashed $color-border-dashed; border-radius: $radius-md;
+  margin-top: 14px; padding: 18px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  border: 1px dashed $color-border-dashed; border-radius: $radius-panel;
   background: $color-bg-soft;
 }
 .activity-empty__title { font-size: $fs-mini; color: $color-text-secondary; }
 .activity-empty__hint { font-size: $fs-nano; color: $color-text-tertiary; }
 
-/* ============ 当前目标卡 ============ */
-.goal-row { margin-top: 14px; display: flex; align-items: baseline; gap: 10px; }
+/* ============ 当前目标 ============ */
+.goal-row { margin-top: 16px; display: flex; align-items: baseline; gap: 10px; }
 .goal-name { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
 .goal-name.is-empty { color: $color-text-secondary !important; }
 .goal-meta { color: $color-text-tertiary; font-size: $fs-nano; }
 .goal-detail { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; }
-.goal-caption { color: $color-text-tertiary; font-size: $fs-nano; }
-.goal-percent { color: $color-primary; font-size: $fs-small; font-weight: $fw-bold; }
+.goal-caption { color: $color-text-tertiary; font-size: $fs-mini; }
+.goal-percent { color: $color-primary; font-size: $fs-small; font-weight: $fw-bold; font-variant-numeric: tabular-nums; }
 .goal-track {
   position: relative; height: 6px; margin-top: 8px; margin-bottom: 2px;
   border-radius: $radius-pill; background: $color-fill; overflow: hidden;
 }
-.goal-track__fill { height: 100%; border-radius: $radius-pill; background: $color-primary-gradient; transition: width .4s ease; }
+.goal-track__fill { height: 100%; border-radius: $radius-pill; background: $color-primary; transition: width .4s ease; }
 
-/* ============ 今日解读(懒加载) ============ */
-.insight-card { padding-bottom: 14px; }
+/* ============ 今日解读 ============ */
+.insight-card { padding-bottom: 16px; }
 .insight-head { display: flex; align-items: center; justify-content: space-between; }
 .insight-chevron { display: flex; transition: transform .25s ease; }
 .insight-chevron.is-open { transform: rotate(180deg); }
-.insight-hint { margin-top: 8px; font-size: $fs-nano; color: $color-text-tertiary; }
-
-/* 水分速览行 */
-.water-line {
-  margin-top: 12px; padding-top: 10px; border-top: 1px solid $color-divider;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.water-line__label { font-size: $fs-mini; color: $color-text-secondary; }
-.water-line__action { font-size: $fs-mini; color: $color-sky-dark; }
+.insight-hint { margin-top: 8px; font-size: $fs-mini; color: $color-text-tertiary; }
 .insight-loading { margin-top: 14px; font-size: $fs-mini; color: $color-text-secondary; }
 .insight-error { margin-top: 14px; font-size: $fs-mini; color: $color-warning; }
-.insight-regen { margin-top: 12px; font-size: $fs-mini; font-weight: 600; color: $color-primary-dark; }
-.insight-body { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
-.insight-summary { font-size: $fs-small; color: $color-text-primary; line-height: 1.7; }
+.insight-regen { margin-top: 12px; font-size: $fs-mini; font-weight: $fw-bold; color: $color-primary-dark; }
+.insight-body { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.insight-summary { font-size: $fs-small; color: $color-text-primary; line-height: 1.75; }
 .insight-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.insight-tag { font-size: $fs-nano; padding: 3px 10px; border-radius: $radius-pill; }
-.insight-tag--good { color: $color-success; background: $color-primary-a10; }
-.insight-tag--warn { color: $color-warning; background: $color-warning-a12; }
+.insight-tag { font-size: $fs-nano; padding: 4px 10px; border-radius: $radius-pill; }
+.insight-tag--good { color: $color-primary-dark; background: $color-primary-bg; }
+.insight-tag--warn { color: $color-amber-dark; background: $color-amber-bg; }
 .insight-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 2px; }
-.insight-action { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; background: $color-fill; border-radius: $radius-md; }
+.insight-action { display: flex; flex-direction: column; gap: 3px; padding: 12px; background: $color-bg-soft; border-radius: $radius-panel; }
 .insight-action__title { font-size: $fs-small; font-weight: $fw-bold; color: $color-text-primary; }
 .insight-action__reason { font-size: $fs-nano; color: $color-text-secondary; line-height: 1.6; }
 
 @media (min-width: 600px) { .home-page { max-width: 430px; margin: 0 auto; } }
+
+/* ---- 深色模式:变量管不到的几处手写浅色(口径见 styles/tokens.scss 文件头) ---- */
+@media (prefers-color-scheme: dark) {
+  /* 顶部那层纸面高光换成主色微光 —— 白高光在深底上像一盏顶灯 */
+  .home-page {
+    background-image: radial-gradient(120% 34% at 50% 0%, rgba(63, 165, 132, .08) 0%, rgba(63, 165, 132, 0) 100%);
+  }
+  /* 选中日:底变成了亮苔绿,标签跟着从米白翻成近墨 */
+  .home-page .strip-day.active { box-shadow: 0 6px 14px -8px rgba(0, 0, 0, .45); }
+  .home-page .strip-day.active .strip-day__label { color: rgba(13, 33, 26, .75); }
+  .home-page .train-card.is-due {
+    background: linear-gradient(135deg, #232925 0%, #1d241f 100%);
+    border-color: #2e3a30;
+  }
+  .home-page .train-icon-wrap {
+    background: rgba(28, 33, 29, .86);
+    box-shadow: none;
+  }
+}

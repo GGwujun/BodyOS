@@ -15,7 +15,7 @@
     padding: 44px 24px;
     text-align: center;
   }
-  .pv-empty-emoji { font-size: $fs-mega; }
+  .pv-empty-icon { width: 52px; height: 52px; display: block; }
   .pv-empty-cta { margin-top: 10px; }
 
   /* ============ 页头:标题 + 教练入口 ============ */
@@ -584,16 +584,16 @@
     font-size: $fs-nano;
     font-weight: $fw-bold;
     color: $color-warning;
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
+    background: $color-amber-bg;
+    border: 1px solid $color-warning-border;
   }
   .pv-streak {
     padding: 1px 8px;
     border-radius: $radius-pill;
     font-size: $fs-nano;
     color: $color-warning;
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
+    background: $color-amber-bg;
+    border: 1px solid $color-warning-border;
   }
   /* 末组尽力(AMRAP)标 */
   .pv-amrap {
@@ -603,7 +603,7 @@
     font-weight: $fw-bold;
     color: $color-info;
     background: $color-info-bg;
-    border: 1px solid #bfdbfe;
+    border: 1px solid $color-info-border;
   }
   .pv-suggest { color: $color-primary-dark; }
 
@@ -638,8 +638,8 @@
     padding: 4px 8px;
     border-radius: $radius-sm;
     background: $color-warning-bg;
-    border: 1px solid #fde68a;
-    color: #92400e;
+    border: 1px solid $color-warning-border;
+    color: $color-amber-dark;
     line-height: 1.6;
   }
 

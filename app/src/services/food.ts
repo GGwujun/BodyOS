@@ -1,6 +1,6 @@
 import { markFirst } from '../utils/activation';
 import { request } from './request';
-import type { FoodItem, FoodLog, FoodParseInput, FoodParseResult, FrequentFood, PageResult } from './types';
+import type { CustomFood, FoodItem, FoodLog, FoodParseInput, FoodParseResult, FrequentFood, PageResult } from './types';
 
 /** 创建/编辑饮食记录入参(后端据此自行计算 totalCalories 与营养汇总) */
 export interface FoodLogInput {
@@ -22,6 +22,17 @@ export const listFoodLogs = (date: string, pageSize = 100) =>
 /** GET /food-logs/frequent — 常用食物(近 30 天频次聚合) */
 export const listFrequentFoods = () =>
   request<{ items: FrequentFood[] }>({ url: '/food-logs/frequent' });
+
+/* 我的食物(用户显式存的条目)。「常用」按频次自动沉淀,这份是自己点名要留下的 ——
+   手动核过一次宏量的东西不想再敲第二遍,存一下下次一键加回。 */
+export const listCustomFoods = () =>
+  request<{ items: CustomFood[] }>({ url: '/custom-foods' });
+
+export const saveCustomFood = (data: Omit<CustomFood, 'id' | 'createdAt'>) =>
+  request<{ food: CustomFood }>({ url: '/custom-foods', method: 'POST', data });
+
+export const deleteCustomFood = (id: string) =>
+  request<{ deleted: boolean }>({ url: `/custom-foods/${id}`, method: 'DELETE' });
 
 /** POST /food-logs(激活埋点挂在这里,不放页面 —— 见 utils/activation.ts 的文件头) */
 export const createFoodLog = async (data: FoodLogInput) => {

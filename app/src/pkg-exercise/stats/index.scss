@@ -15,7 +15,7 @@
     padding: 40px 24px;
     text-align: center;
   }
-  .st-empty-emoji { font-size: $fs-emoji; }
+  .st-empty-icon { width: 46px; height: 46px; display: block; }
   .st-empty-cta { margin-top: 8px; }
 
   .st-block { display: flex; flex-direction: column; gap: 10px; }
@@ -170,15 +170,15 @@
     background: $color-fill;
 
     &--0 { background: $color-fill; }
-    &--1 { background: #a7f3d0; }
-    &--2 { background: #6ee7b7; }
+    &--1 { background: $color-primary-light; }
+    &--2 { background: $color-sage; }
     &--3 { background: $color-primary; }
     &--4 { background: $color-primary-dark; }
-    &--on { box-shadow: 0 0 0 2px rgba(17, 24, 39, .35); }
+    &--on { box-shadow: 0 0 0 2px rgba(23, 43, 41, .35); }
     /* 请假 —— 空心底色,一眼区别于「没练」(灰)和「练了」(绿)。
        要的就是让人看热力图时不会把发烧那几天读成偷懒。 */
     &--off {
-      background: rgba(56, 117, 237, .14);
+      background: $color-info-a12;
       box-shadow: inset 0 0 0 1.5px $color-info;
     }
   }

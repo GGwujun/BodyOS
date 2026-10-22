@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, Button } from '@tarojs/components';
+import { View, Text, Button, Image } from '@tarojs/components';
+import cameraIcon from '@/assets/icons/camera.png';
 import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { ingredientApi } from '@/services';
@@ -55,7 +56,7 @@ export default function Ingredient() {
     <Screen className="ing-page">
       {state === 'idle' && (
         <View className="card intro-card">
-          <View className="intro-emoji">🧾</View>
+          <View className="intro-icon"><Image className="intro-icon__img" src={cameraIcon} mode="aspectFit" /></View>
           <Text className="fs-h1">看懂配料表</Text>
           <Text className="fs-caption text-secondary">
             拍下食品包装上的配料表，按排列顺序读出配料（排得越靠前，含量越高），并给出选购提示。

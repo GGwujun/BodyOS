@@ -31,7 +31,9 @@ export default defineConfig(async (merge) => {
     copy: {
       patterns: [
         // tabBar 图标不经过 webpack 编译,直接复制到产物目录(app.config.ts 引用)
-        { from: 'src/assets/tabbar/', to: 'dist/assets/tabbar/', ignore: ['*.html'] }
+        { from: 'src/assets/tabbar/', to: 'dist/assets/tabbar/', ignore: ['*.html'] },
+        // theme.json 原样拷到 dist 根 —— app.config.ts 里 themeLocation 指的是它
+        { from: 'src/theme.json', to: 'dist/theme.json' }
       ],
       options: {}
     },
@@ -43,6 +45,18 @@ export default defineConfig(async (merge) => {
         // 移除进度条插件(webpackbar 与当前 webpack5 schema 不兼容会中断构建,
         // 它只影响终端进度条,与产物无关)
         chain.plugins.delete('webpackbar');
+      },
+      // @ts-expect-error Taro 3.6 的类型定义没收录 terser,运行时(MiniBaseConfig)支持
+      terser: {
+        config: {
+          output: {
+            // Taro 默认 ascii_only:true,中文会被压成转义序列(每个汉字 6 字节),
+            // 而 UTF-8 原文只要 3 字节 —— 动作库 1324 条数据光这一项就白占 440KB,
+            // 直接把 pkg-exercise 顶过了 2MB 分包上限。小程序运行时(V8/JSCore)读 UTF-8
+            // 没问题,关掉转义。
+            ascii_only: false
+          }
+        }
       },
       postcss: {
         pxtransform: { enable: true, config: {} },

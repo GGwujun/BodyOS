@@ -26,11 +26,77 @@ import Taro from '@tarojs/taro';
 const TAP_GAP = 600;
 let recent = { url: '', at: 0 };
 
+/**
+ * `switchTab` 的兜底。
+ *
+ * 切 tab 会销毁当前页并替换 webview;连点两下同一个 tab、或在第一次切换还没落地时
+ * 又点一次,运行时就可能报 `routeDone with a webviewId … is not found`
+ * (页面动作其实已经完成,只是路由回执找不到对应的 webview)。同目标 600ms 去重,
+ * 和 navigate() 同一套口径;失败仍然提示,并放行下一次点击。
+ */
+let recentTab = { url: '', at: 0 };
+
+/**
+ * 同一时刻只放行一次跳转 —— 「同目标去重」不够。
+ *
+ * 报错里的 `routeDone with a webviewId … is not found` 是**路由回执找不到 webview**:
+ * 第一次切换还在拆旧页,第二次跳转已经发出去,旧页没了、回执才回来。同目标连点能挡住
+ * 最常见的两下,但「先点训练、马上又点记录」这种换目标的两下仍然会同时在路上。
+ *
+ * 所以从发起到路由落地(再留 400ms 给 webview 收尾)之间,其它跳转一律不接:
+ * 屏幕已经要走了,第二下本来也到不了哪里;不接比让两个路由互相踩安全得多。
+ * 3 秒没落地就强制放行 —— 回调异常不能把底栏永久锁死。
+ */
+let navBusy = false;
+let navBusyAt = 0;
+const NAV_TAIL_MS = 400;
+const NAV_STUCK_MS = 3000;
+
+function beginNav(): boolean {
+  if (navBusy) {
+    if (Date.now() - navBusyAt < NAV_STUCK_MS) return false;
+    navBusy = false;
+  }
+  navBusy = true;
+  navBusyAt = Date.now();
+  return true;
+}
+function endNav(delay = NAV_TAIL_MS): void {
+  setTimeout(() => { navBusy = false; }, delay);
+}
+
+/** 栈顶是不是已经在目标页(route 没有前导斜杠,参数也不参与比较) */
+const barePath = (p: string) => p.replace(/^\/+/, '').split('?')[0];
+function isCurrent(url: string): boolean {
+  const stack = Taro.getCurrentPages?.() ?? [];
+  const top = stack[stack.length - 1] as { route?: string } | undefined;
+  return Boolean(top?.route) && barePath(top!.route!) === barePath(url);
+}
+
+export function switchTab(url: string): void {
+  // 已经在这一页时 switchTab 是一次空跳:开发工具里照样会走一遍路由回执,
+  // 正是 `routeDone … is not found` 最容易出现的地方。直接不跳。
+  if (isCurrent(url)) return;
+  const now = Date.now();
+  if (url === recentTab.url && now - recentTab.at < TAP_GAP) return;
+  if (!beginNav()) return;
+  recentTab = { url, at: now };
+  Taro.switchTab({ url }).then(
+    () => endNav(),
+    () => {
+      recentTab = { url: '', at: 0 };
+      endNav(0);
+      void Taro.showToast({ title: '页面切换失败，请重试', icon: 'none' });
+    }
+  );
+}
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function navigate(url: string, opts: { replace?: boolean } = {}): void {
   const now = Date.now();
   if (url === recent.url && now - recent.at < TAP_GAP) return;
+  if (!beginNav()) return;
   recent = { url, at: now };
   void run(url, opts.replace === true);
 }
@@ -39,19 +105,21 @@ async function run(url: string, replace: boolean): Promise<void> {
   const push = replace ? Taro.redirectTo : Taro.navigateTo;
   try {
     await push({ url });
+    endNav();
   } catch {
     // 先给对方一点时间:假失败的话,这一下之后栈顶就在目标页上了
     await sleep(300);
-    if (arrived(url)) return;
+    if (arrived(url)) {
+      endNav();
+      return;
+    }
     recent = { url: '', at: 0 }; // 放行下一次点击 —— 提示里让用户再点一下
+    endNav(0);
     void Taro.showToast({ title: '页面没打开,再点一次', icon: 'none' });
   }
 }
 
 /** timeout 可能是假的:页面起来了,只是 promise 先超时。栈顶对不对是唯一可信的判据 */
-const bare = (p: string) => p.replace(/^\/+/, '').split('?')[0];
 function arrived(url: string): boolean {
-  const stack = Taro.getCurrentPages?.() ?? [];
-  const top = stack[stack.length - 1] as { route?: string } | undefined;
-  return Boolean(top?.route) && bare(top!.route!) === bare(url);
+  return isCurrent(url);
 }

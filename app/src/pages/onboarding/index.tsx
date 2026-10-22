@@ -6,6 +6,8 @@ import Screen from '@/components/Screen';
 import { userApi } from '@/services';
 import { track, trackNow } from '@/services/analytics';
 import { toast } from '@/utils/ui';
+import { openBodyEditor } from '@/utils/profile-edit';
+import { switchTab } from '@/utils/nav';
 import './index.scss';
 
 const GOALS = [
@@ -51,6 +53,7 @@ export default function Onboarding() {
     setSaving(true);
     try {
       const payload = { type: goal, targetValue: value, unit, durationWeeks: weeks, isActive: true } as const;
+      const firstGoal = !goalIdRef.current;
       if (goalIdRef.current) {
         await userApi.updateGoal(goalIdRef.current, payload); // 修改已有目标,保留起始日期
         toast('目标已更新');
@@ -63,8 +66,25 @@ export default function Onboarding() {
       const fromNav = Taro.getCurrentInstance().router?.params?.from === 'nav';
       if (fromNav && Taro.getCurrentPages().length > 1) {
         Taro.navigateBack();
+      } else if (firstGoal) {
+        /**
+         * 新用户刚设完目标,最缺的其实是身体资料 —— 没有身高/体重/出生日期,
+         * 首页的消耗和评分永远算不出来,而他不会知道还要去「我的」里找。
+         * 这里直接把人送到编辑面板;不想填就关掉,不设成强制一步。
+         */
+        let incomplete = false;
+        try {
+          const p = await userApi.getProfile();
+          incomplete = !p.birthDate || p.heightCm == null || p.weightKg == null;
+        } catch { /* 查不到就当已填,不拦着进首页 */ }
+        if (incomplete) {
+          toast('目标已设置，再补身体资料就能算出每日消耗');
+          openBodyEditor();
+        } else {
+          switchTab('/pages/home/index');
+        }
       } else {
-        Taro.switchTab({ url: '/pages/home/index' });
+        switchTab('/pages/home/index');
       }
     } catch { toast('保存失败', 'error'); } finally { setSaving(false); }
   };

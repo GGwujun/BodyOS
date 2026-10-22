@@ -1,12 +1,20 @@
 import { useState } from 'react';
-import { Button, Text, View } from '@tarojs/components';
+import { Button, Image, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { track } from '@/services/analytics';
 import { addDays, mondayOf, todayStr } from '@/utils/date';
 import { navigate } from '@/utils/nav';
+import planIcon from '@/assets/icons/plan.png';
+import logIcon from '@/assets/icons/log.png';
+import statsIcon from '@/assets/icons/stats.png';
+import compassIcon from '@/assets/icons/compass.png';
+import timerIcon from '@/assets/icons/timer.png';
+import dumbbellIcon from '@/assets/icons/dumbbell.png';
+import heroBg from '@/assets/training-hero.png';
+import quoteBg from '@/assets/quote-bg.png';
 import {
-  STATE_EMOJI, STATE_TONE, TRAINING_LOGS_URL, TRAINING_PLAN_URL, digestView,
+  STATE_TONE, TRAINING_LOGS_URL, TRAINING_PLAN_URL, digestView,
   loadTrainingDigest, weekDotMap, type TrainingDigest, type WeekState
 } from '@/utils/training-digest';
 import { loadTrainingProgress, progressView, type TrainingProgress } from '@/utils/training-progress';
@@ -42,12 +50,12 @@ import './index.scss';
 const WEEK_LABELS = ['一', '二', '三', '四', '五', '六', '日'];
 const DOT_TONE: Record<WeekState, string> = { done: 'is-done', off: 'is-off', moved: 'is-moved' };
 
-/** 页尾那三格 —— 训练这摊事里除了「开练」之外最常去的三个地方 */
-const LINKS: { name: string; desc: string; url: string }[] = [
-  { name: '训练计划', desc: '这套怎么排的 · 改动作改组次', url: TRAINING_PLAN_URL },
-  { name: '训练记录', desc: '练过的每一次 · 请假的日子', url: TRAINING_LOGS_URL },
-  { name: '训练统计', desc: '打卡热力 · 纪录 · 力量曲线', url: '/pkg-exercise/stats/index' },
-  { name: '动作库', desc: '按部位 / 器械挑动作', url: '/pkg-exercise/library/index' }
+/** 页尾那几格 —— 训练这摊事里除了「开练」之外最常去的地方 */
+const LINKS: { name: string; desc: string; url: string; icon: string }[] = [
+  { name: '训练计划', desc: '这套怎么排的 · 改动作改组次', url: TRAINING_PLAN_URL, icon: planIcon },
+  { name: '训练记录', desc: '练过的每一次 · 请假的日子', url: TRAINING_LOGS_URL, icon: logIcon },
+  { name: '训练统计', desc: '打卡热力 · 纪录 · 力量曲线', url: '/pkg-exercise/stats/index', icon: statsIcon },
+  { name: '动作库', desc: '按部位 / 器械挑动作', url: '/pkg-exercise/library/index', icon: compassIcon }
 ];
 
 export default function Training() {
@@ -115,7 +123,7 @@ export default function Training() {
       {brief && (
         <View className="card tr-live" onClick={resume}>
           <View className="tr-live-main">
-            <Text className="tr-live-emoji">⏱</Text>
+            <View className="tr-live-icon-wrap"><Image className="tr-live-icon" src={timerIcon} mode="aspectFit" /></View>
             <View className="tr-live-copy">
               <Text className="tr-live-title">{brief.title || '上次那场'}还没练完</Text>
               <Text className="fs-mini text-secondary">
@@ -134,30 +142,27 @@ export default function Training() {
       {/* 今天这一套 —— 这一页的主角。话说的是 digestView 那一套(和首页同一份),
           下面那张动作表是这一页多出来的东西:首页那张卡摆不下它 */}
       <View className={`card tr-hero${STATE_TONE[state]}`}>
+        {/* 页头的叶子:只做背景。设计稿里它从右侧探进来,让这块渐变不是一张纯色卡 */}
+        <Image className="tr-hero-bg" src={heroBg} mode="widthFix" />
         <View className="tr-hero-head">
-          <Text className="tr-hero-emoji">{STATE_EMOJI[state]}</Text>
+          <View className="tr-hero-icon"><Image className="tr-hero-icon__img" src={dumbbellIcon} mode="aspectFit" /></View>
           <View className="tr-hero-copy">
-            <Text className="tr-hero-title">{view.title}</Text>
-            <Text className="tr-hero-sub">{view.sub}</Text>
+            <Text className="tr-hero-title">力量训练</Text>
+            <Text className="tr-hero-sub">
+              {[digest?.title, view.sub].filter(Boolean).join(' · ')}
+            </Text>
           </View>
         </View>
 
+        {/* 动作名压成一行 —— 首页那张卡摆不下,这一页给一句就够;详细的组次开练以后看 */}
         {items.length > 0 && (
-          <View className="tr-items">
-            <Text className="tr-items-h">
-              {state === 'done' ? `这套里的 ${items.length} 个动作` : `要练的 ${items.length} 个动作`}
-            </Text>
-            {items.map((name, i) => (
-              <View className="tr-item" key={`${name}-${i}`}>
-                <Text className="tr-item-no">{i + 1}</Text>
-                <Text className="tr-item-name">{name}</Text>
-              </View>
-            ))}
-          </View>
+          <Text className="tr-hero-items">
+            {items.slice(0, 3).join(' · ')}{items.length > 3 ? ` 等 ${items.length} 个动作` : ''}
+          </Text>
         )}
 
         <Button className="btn btn--primary btn--block tr-go" onClick={() => navigate(view.href)}>
-          {view.action}
+          {view.action} →
         </Button>
 
         {/* 今天该练、但今天练不了 —— 和首页那两条是同一件事、同一条路:
@@ -187,8 +192,8 @@ export default function Training() {
           未来那几格不画:轮转制下「下周三练什么」取决于你接下来练不练,算不出来 */}
       <View className="card tr-week">
         <View className="tr-week-head">
-          <Text className="fs-h1">这周</Text>
-          <Text className="fs-mini text-secondary">
+          <Text className="tr-week-title">本周运动</Text>
+          <Text className="tr-week-meta">
             {weekDone > 0 ? `练了 ${weekDone} 天` : '还没开张'}
           </Text>
         </View>
@@ -198,7 +203,9 @@ export default function Training() {
             return (
               <View className={`tr-day${d === today ? ' is-today' : ''}`} key={d}>
                 <Text className="tr-day-label">{WEEK_LABELS[i]}</Text>
-                <View className={`tr-day-dot${mark ? ' ' + DOT_TONE[mark] : ''}`} />
+                {/* 今天还没留下记号时画一个空心圈(设计稿里那一枚) ——
+                    它标的是「你在这儿」,不是「你练了」,所以不能和练过的实心点同形 */}
+                <View className={`tr-day-dot${mark ? ' ' + DOT_TONE[mark] : ''}${d === today && !mark ? ' is-today-ring' : ''}`} />
               </View>
             );
           })}
@@ -212,13 +219,24 @@ export default function Training() {
       <View className="card tr-links">
         {LINKS.map((l) => (
           <View className="tr-link" key={l.url} onClick={() => navigate(l.url)}>
+            <View className="tr-link-icon"><Image className="tr-link-icon__img" src={l.icon} mode="aspectFit" /></View>
             <View className="tr-link-copy">
               <Text className="tr-link-name">{l.name}</Text>
-              <Text className="fs-mini text-secondary">{l.desc}</Text>
+              <Text className="tr-link-desc">{l.desc}</Text>
             </View>
             <Text className="tr-link-arrow">›</Text>
           </View>
         ))}
+      </View>
+
+      {/* 页脚的一句 —— 训练页是「准备开练」的地方,留一句轻的比再摆一张卡好。
+          淡绿底上一幅小景,和首页同一套山水语言 */}
+      <View className="tr-quote-card">
+        <Image className="tr-quote-bg" src={quoteBg} mode="widthFix" />
+        <View className="tr-quote">
+          <Text className="tr-quote__title">真正的改变</Text>
+          <Text className="tr-quote__sub">始于坚持的每一次训练。</Text>
+        </View>
       </View>
     </Screen>
   );

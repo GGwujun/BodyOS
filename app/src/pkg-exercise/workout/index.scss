@@ -120,8 +120,8 @@
     font-size: $fs-nano;
     font-weight: $fw-bold;
     color: $color-warning;
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
+    background: $color-amber-bg;
+    border: 1px solid $color-warning-border;
   }
   .wk-ss {
     padding: 1px 8px;
@@ -130,7 +130,7 @@
     font-weight: $fw-bold;
     color: $color-info;
     background: $color-info-bg;
-    border: 1px solid #bfdbfe;
+    border: 1px solid $color-info-border;
   }
   /* 「不算进步」(这次不计入进阶)—— 和日志卡上那一枚同一身黄:同一个词在两处必须同一种长相 */
   .wk-noprog {
@@ -391,8 +391,8 @@
     margin-bottom: 6px;
     border-radius: $radius-sm;
     background: $color-warning-bg;
-    border: 1px solid #fde68a;
-    color: #92400e;
+    border: 1px solid $color-warning-border;
+    color: $color-amber-dark;
     line-height: 1.6;
   }
 
@@ -486,7 +486,7 @@
 .wk-mask {
   position: fixed;
   left: 0; top: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(23, 43, 41, 0.5);
   z-index: 130;
 }
 
@@ -505,7 +505,13 @@
   background: $color-bg-card;
   border-radius: $radius-lg $radius-lg 0 0;
 
-  .wk-sheet-emoji { font-size: $fs-mega; line-height: 1; }
+  .wk-sheet-icon {
+    width: 56px; height: 56px;
+    padding: 15px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: $color-primary-bg;
+  }
   .wk-sheet-title { font-size: $fs-num; font-weight: $fw-bold; color: $color-text-primary; }
 
   .wk-sheet-stats {

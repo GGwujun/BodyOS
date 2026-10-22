@@ -1,5 +1,7 @@
+import { themedColor } from '@/utils/theme';
 import { useState } from 'react';
-import { View, Text, Button, Input, Switch, Textarea } from '@tarojs/components';
+import { View, Text, Button, Image, Input, Switch, Textarea } from '@tarojs/components';
+import dumbbellIcon from '@/assets/icons/dumbbell.png';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { THEME } from '@/constants/theme';
@@ -181,7 +183,7 @@ export default function CoachPage() {
       title: '丢弃这份计划?',
       content: '不会保存,也不会动现在的计划。想再要一版,随时说一声。',
       confirmText: '丢弃',
-      confirmColor: '#ef4444'
+      confirmColor: THEME.danger
     });
     if (!confirm) return;
     const decided: CoachProposal = { ...p, status: 'dismissed' };
@@ -213,7 +215,7 @@ export default function CoachPage() {
       title: '撤回这次导入?',
       content: '会把计划恢复成导入前的那一份;导入之后你手动改过的地方也会一起恢复。',
       confirmText: '撤回',
-      confirmColor: '#ef4444'
+      confirmColor: THEME.danger
     });
     if (!confirm) return;
     savePlan(p.prevPlan);
@@ -487,7 +489,7 @@ export default function CoachPage() {
     <Screen className="coach-page">
       <View className="ch-header">
         <Text className="ch-back" onClick={backToPlan}>‹</Text>
-        <View className="ch-av"><Text>🏋️</Text></View>
+        <View className="ch-av"><Image className="ch-av-img" src={dumbbellIcon} mode="aspectFit" /></View>
         <View className="ch-hdr-copy">
           <Text className="ch-name">教练</Text>
           <Text className="ch-state">{state.pending ? '有一版等你决定' : '在这儿看你的计划'}</Text>
@@ -710,7 +712,7 @@ function ProposalCard(props: {
           <Text className="ch-sched-t">同时用这份周计划</Text>
           <Text className="ch-sched-s">换掉现在的周安排;这份没排的日子就是休息日。</Text>
         </View>
-        <Switch checked={useWeek} color={THEME.primary} onChange={(e) => setUseWeek(e.detail.value)} />
+        <Switch checked={useWeek} color={themedColor(THEME.primary)} onChange={(e) => setUseWeek(e.detail.value)} />
       </View>
 
       <Text className="ch-note">教练不是医生,也不做诊断。有疼痛先找专业人士。</Text>

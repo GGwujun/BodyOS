@@ -1,0 +1,42 @@
+{
+  "light": {
+    "navBgColor": "#F7F4EB",
+    "navTxtStyle": "black",
+    "bgColor": "#F7F4EB",
+    "bgTxtStyle": "dark",
+    "tabColor": "#8A958F",
+    "tabSelectedColor": "#176B55",
+    "tabBgColor": "#FFFEFA",
+    "tabBorderStyle": "black",
+    "iconHome": "assets/tabbar/home.png",
+    "iconHomeActive": "assets/tabbar/home-active.png",
+    "iconRecord": "assets/tabbar/record.png",
+    "iconRecordActive": "assets/tabbar/record-active.png",
+    "iconTrain": "assets/tabbar/train.png",
+    "iconTrainActive": "assets/tabbar/train-active.png",
+    "iconTrends": "assets/tabbar/trends.png",
+    "iconTrendsActive": "assets/tabbar/trends-active.png",
+    "iconProfile": "assets/tabbar/profile.png",
+    "iconProfileActive": "assets/tabbar/profile-active.png"
+  },
+  "dark": {
+    "navBgColor": "#131714",
+    "navTxtStyle": "white",
+    "bgColor": "#131714",
+    "bgTxtStyle": "light",
+    "tabColor": "#8A958F",
+    "tabSelectedColor": "#3FA584",
+    "tabBgColor": "#1C211D",
+    "tabBorderStyle": "white",
+    "iconHome": "assets/tabbar/home.png",
+    "iconHomeActive": "assets/tabbar/home-active-dark.png",
+    "iconRecord": "assets/tabbar/record.png",
+    "iconRecordActive": "assets/tabbar/record-active-dark.png",
+    "iconTrain": "assets/tabbar/train.png",
+    "iconTrainActive": "assets/tabbar/train-active-dark.png",
+    "iconTrends": "assets/tabbar/trends.png",
+    "iconTrendsActive": "assets/tabbar/trends-active-dark.png",
+    "iconProfile": "assets/tabbar/profile.png",
+    "iconProfileActive": "assets/tabbar/profile-active-dark.png"
+  }
+}

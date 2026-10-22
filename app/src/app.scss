@@ -1,3 +1,6 @@
+/* tokens 要排在最前:所有 $color-* 别名的值都是这里的 CSS 变量,
+   深色模式也是靠这份文件里的 @media 段整段切换 */
+@import './styles/tokens.scss';
 @import './styles/global.scss';
 
 /* ============ 启动遮罩 ============
@@ -16,20 +19,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* 品牌渐变,与主按钮/hero 一致 */
-  background: linear-gradient(160deg, #34d399, $color-primary-dark);
-  color: $color-text-inverse;
+  /* 暖纸底 + 深林绿标记 —— 先给品牌定调,再进页面 */
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255, 255, 255, .85) 0%, rgba(255, 255, 255, 0) 62%),
+    $color-bg;
+  color: $color-text-primary;
+}
+/* 深色底下那团白色光晕会像一盏顶灯 —— 换成主色系的微光 */
+@media (prefers-color-scheme: dark) {
+  .boot-splash {
+    background:
+      radial-gradient(120% 70% at 50% 0%, rgba(63, 165, 132, .16) 0%, rgba(63, 165, 132, 0) 62%),
+      $color-bg;
+  }
 }
 .boot-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 72px;
-  height: 72px;
-  margin-bottom: 16px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  width: 76px;
+  height: 76px;
+  margin-bottom: 18px;
+  border-radius: 26px;
+  background: $color-primary;
+  box-shadow: $shadow-hero;
 }
 .boot-logo-text {
   font-size: $fs-emoji;
@@ -37,29 +50,29 @@
   color: $color-text-inverse;
 }
 .boot-name {
-  font-size: $fs-num;
-  font-weight: 600;
-  letter-spacing: 2px;
-  color: $color-text-inverse;
+  font-size: $fs-h1;
+  font-weight: $fw-bold;
+  letter-spacing: 4px;
+  color: $color-text-primary;
 }
 .boot-slogan {
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: $fs-mini;
-  color: rgba(255, 255, 255, 0.85);
+  color: $color-text-secondary;
 }
 .boot-spinner {
-  width: 28px;
-  height: 28px;
-  margin-top: 40px;
+  width: 26px;
+  height: 26px;
+  margin-top: 44px;
   border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-top-color: $color-text-inverse;
+  border: 2px solid $color-primary-a20;
+  border-top-color: $color-primary;
   animation: boot-spin 0.8s linear infinite;
 }
 .boot-tip {
   margin-top: 10px;
   font-size: $fs-mini;
-  color: rgba(255, 255, 255, 0.8);
+  color: $color-text-tertiary;
 }
 @keyframes boot-spin {
   to {
@@ -71,7 +84,7 @@
 .weui-tabbar__item > span {
   width: 24px;
   height: 24px;
-  color: #8b95a3;
+  color: #8a958f;
   font-family: 'vant-icon', sans-serif;
   font-size: $fs-num;
   line-height: 24px;
@@ -93,7 +106,7 @@
   color: $color-text-inverse;
   font-size: $fs-display;
   line-height: 36px;
-  box-shadow: 0 5px 14px rgba(16, 185, 129, .28);
+  box-shadow: 0 5px 14px rgba(23, 107, 85, .28);
 }
 .weui-tabbar__item:nth-child(3) .weui-tabbar__label { display: none; }
 .weui-tabbar__item.weui-bar__item_on > span { color: $color-primary; }

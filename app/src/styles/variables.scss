@@ -1,70 +1,87 @@
 /**
  * 轻身记 视觉 Token
- * 设计基准 375×812,8pt spacing system,卡片圆角 16px,安全边距 16px
- * 品牌绿统一为 emerald(与 tabBar/Logo 一致),灰阶收敛为固定 slate 色板。
+ * 设计基准 375×812,8pt spacing system,卡片圆角 20px,安全边距 20px
+ *
+ * 2026-10 视觉升级:从「冷白 + 荧光翠绿」切到「暖纸底 + 深林绿」。
+ * 规范见 C:\Users\Lenovo\Desktop\轻身记\轻身记_UI设计风格规范.md
+ *
+ * 取色口径:
+ *  · 暖米白底 + 象牙白卡,让白不再是「打印纸白」
+ *  · 主色压深、降饱和 —— 亮翠绿是工具感,深林绿才是自然疗愈感
+ *  · 次要文字比规范色再压深一档(#788782 在 12px 上对比度不够)
+ *  · 阴影一律带暖色(23,43,41),冷蓝黑落在暖底上会发脏
  */
 
 /* ============ 色彩 ============ */
-/* 品牌主色 — emerald,与 tabBar 选中色/Logo 渐变一致 */
-$color-primary: #10b981;
-$color-primary-dark: #059669;
-$color-primary-light: #b5ecd6; /* 主色浅描边/浅边线(训练分包那几张选中卡的边) */
+/* 颜色的**值**全部住在 tokens.scss 的 CSS 变量里(深色模式靠它整段切换),
+   这边只是编译期别名 —— 57 个页面的 $color-* 写法一个不用动。
+   加新色:tokens.scss 写两份值(浅/深)+ 这里一个别名 */
+/* 品牌主色 —— 森林绿 */
+$color-primary: var(--color-primary);
+$color-primary-dark: var(--color-primary-dark);
+$color-primary-light: var(--color-primary-light); /* 主色浅描边/浅边线(训练分包那几张选中卡的边) */
+/* 辅助绿 —— 鼠尾草绿,只给图表/次级强调,不拿来当小字颜色 */
+$color-sage: var(--color-sage);
 /* 品牌浅底(选中态背景/高亮填充) */
-$color-primary-bg: #ecfdf5;
-/* 品牌渐变(主按钮/进度条) */
-$color-primary-gradient: linear-gradient(135deg, #34d399, #059669);
+$color-primary-bg: var(--color-primary-bg);
+/* 品牌渐变(进度条) —— 只保留极轻的明暗过渡,不再是荧光渐变 */
+$color-primary-gradient: var(--color-primary-gradient);
 
-/* 辅色 */
-$color-info: #3875ed;    /* 蓝色 — 数据/科技模块 */
-$color-warning: #f59e0b; /* 橙色 — 数值/强调 */
-$color-danger: #ef4444;  /* 红色 — 警示/未连接 */
-$color-danger-bg: #fef2f2;
+/* 辅色 —— 统一降饱和,避免在暖底上像警示贴纸 */
+$color-info: var(--color-info);    /* 蓝灰 — 数据/信息模块 */
+$color-warning: var(--color-warning); /* 琥珀 — 数值/强调 */
+$color-danger: var(--color-danger);  /* 砖红 — 警示/未连接 */
+$color-danger-bg: var(--color-danger-bg);
 
-/* 中性灰阶(slate,只允许从这里取) */
-$color-bg: #f5f7fa;        /* 页面基底(浅灰蓝,衬托白卡) */
-$color-bg-card: #ffffff;   /* 卡片基底 */
-$color-bg-soft: #f8fafc;   /* 卡片内浅填充/输入框底 */
-$color-fill: #eef1f5;      /* 浅灰填充/分割 */
-$color-border: #e8edf2;    /* 卡片描边 */
-$color-divider: #f0f2f5;   /* 行分割线 */
-$color-text-primary: #111827;
-$color-text-secondary: #6b7280;
-$color-text-tertiary: #94a3b8;
-$color-text-inverse: #ffffff;
-$color-text-disabled: #cbd5e1; /* 空值占位(「—」那种,比 tertiary 再淡一档) */
+/* 中性暖灰阶(只允许从这里取) */
+$color-bg: var(--color-bg);          /* 页面基底(暖米白) */
+$color-bg-card: var(--color-bg-card);   /* 卡片基底(象牙白) */
+$color-bg-soft: var(--color-bg-soft);   /* 卡片内浅填充/输入框底 */
+$color-fill: var(--color-fill);      /* 浅暖填充/分割 */
+$color-border: var(--color-border);    /* 卡片描边 */
+$color-divider: var(--color-divider);   /* 行分割线 */
+$color-text-primary: var(--color-text-primary);  /* 墨色 */
+$color-text-secondary: var(--color-text-secondary); /* 灰绿(比规范 #788782 深一档,照顾小字) */
+$color-text-tertiary: var(--color-text-tertiary);
+$color-text-inverse: var(--color-text-inverse);
+$color-text-disabled: var(--color-text-disabled); /* 空值占位(「—」那种) */
 
 /* 专题色 —— 一个主题一套(底 + 字)。别拿它们当通用灰/绿使:
    水的蓝、热量的琥珀、脂肪的玫红,各自只在那一类东西上出现 */
-$color-sky: #0284c7;
-/* 水分那一套的浅端(进度条渐变的两头)—— 同一个蓝的两档,收在一处才不会各写各的 */
-$color-sky-light: #0ea5e9;
-$color-sky-pale: #38bdf8;
+$color-sky: var(--color-sky);
+/* 水分那一套的浅端(进度条渐变的两头)—— 同一个蓝的两档 */
+$color-sky-light: var(--color-sky-light);
+$color-sky-pale: var(--color-sky-pale);
 /* 肌群量级色(练得多/练得少)—— 蓝紫这一支只给肌群统计用 */
-$color-muscle-high: #8b5cf6;
-$color-muscle-low: #3b82f6;
-$color-sky-dark: #0369a1;
-$color-sky-bg: #e0f2fe;
-$color-amber-dark: #b45309;
-$color-amber-bg: #fef3c7;
-$color-rose: #be123c;
+$color-muscle-high: var(--color-muscle-high);
+$color-muscle-low: var(--color-muscle-low);
+$color-sky-dark: var(--color-sky-dark);
+$color-sky-bg: var(--color-sky-bg);
+$color-amber-dark: var(--color-amber-dark);
+$color-amber-bg: var(--color-amber-bg);
+$color-rose: var(--color-rose);
 /* 灰阶里比 secondary 深、比 primary 浅的一档(读数区正文) */
-$color-slate-600: #475569;
+$color-slate-600: var(--color-slate-600);
 /* 虚线空态面板的描边 —— 实线那档($color-border)太淡,虚线会看不出来 */
-$color-border-dashed: #dbe2ea;
+$color-border-dashed: var(--color-border-dashed);
 /* 未勾选的圈(复选框/单选的描边)——比 $color-border 深,不然空心圈看不见 */
-$color-border-strong: #c3ccd6;
-/* 提示面板的两块软底(蓝=说明,琥珀=注意),训练那几个页面里反复出现 */
-$color-info-bg: #eff6ff;
-$color-warning-bg: #fffbeb;
+$color-border-strong: var(--color-border-strong);
+/* 提示面板的两块软底(蓝=说明,琥珀=注意) */
+$color-info-bg: var(--color-info-bg);
+$color-warning-bg: var(--color-warning-bg);
+/* 同色系浅描边 —— 标签/提示条那一圈,别再手写十六进制 */
+$color-primary-border: var(--color-primary-border);
+$color-info-border: var(--color-info-border);
+$color-warning-border: var(--color-warning-border);
+$color-danger-border: var(--color-danger-border);
 
-/* 语义色的半透明底(胶囊/Tag/浅底按钮)。和 $color-primary-bg 那种实底色并存,
-   是因为有些位置要叠在彩色卡上,半透明才不糊。写法统一收在这儿,别在页面里现配 rgba */
-$color-primary-a10: rgba(16, 185, 129, .10);
-$color-primary-a20: rgba(16, 185, 129, .20);
-$color-info-a12: rgba(56, 117, 237, .12);
-$color-sky-a12: rgba(14, 165, 233, .12);
-$color-warning-a12: rgba(245, 158, 11, .12);
-$color-danger-a10: rgba(239, 68, 68, .10);
+/* 语义色的半透明底(胶囊/Tag/浅底按钮)。写法统一收在这儿,别在页面里现配 rgba */
+$color-primary-a10: var(--color-primary-a10);
+$color-primary-a20: var(--color-primary-a20);
+$color-info-a12: var(--color-info-a12);
+$color-sky-a12: var(--color-sky-a12);
+$color-warning-a12: var(--color-warning-a12);
+$color-danger-a10: var(--color-danger-a10);
 
 /* 语义别名 */
 $color-success: $color-primary;
@@ -74,15 +91,13 @@ $color-link: $color-info;
 $font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue',
   Helvetica, 'Segoe UI', Arial, sans-serif;
 
-/* 字号梯子。它曾经只有 7 档,而实际写出来的有 12 种字号 —— 梯子没描述应用长成的样子,
-   于是「按梯子取值」和「看着合适取值」成了两件事。补齐到实际档位,之后新写的从这里取。
-   相邻两档至少差 1px,所以**别再插新档** —— 插了就说明该合并了。 */
+/* 字号梯子。相邻两档至少差 1px,所以**别再插新档** —— 插了就说明该合并了。 */
 $fs-mega: 40px;    /* 全页唯一的主读数(分数环)/大 emoji */
-$fs-emoji: 36px;   /* 空态/入口上那个大 emoji(装饰性字形,不参与字号比较) */
+$fs-emoji: 36px;   /* 保留旧档位兼容,新 UI 不再用 emoji 做图标 */
 $fs-display: 32px; /* 大数字(平均体重/工具结果) */
-$fs-hero: 26px;    /* 环里的读数 */
+$fs-hero: 26px;    /* 页首大标题/环里的读数 */
 $fs-title: 24px;   /* 页面主标题 */
-$fs-num: 22px;     /* 卡内中等读数 */
+$fs-num: 24px;     /* 卡内中等读数 */
 $fs-h1: 20px;      /* 模块标题 */
 $fs-h2: 18px;      /* 关键信息/数据标签 */
 $fs-body: 16px;    /* 正文 */
@@ -92,12 +107,15 @@ $fs-small: 13px;   /* 行内动作/次要正文 */
 $fs-mini: 12px;    /* 辅助说明 */
 $fs-nano: 11px;    /* 徽标/极小辅助文字 —— 这是下限,没有 $fs-10 那种东西 */
 
-$fw-bold: 600;     /* 苹方 Bold */
+$fw-bold: 600;     /* 苹方 Semibold —— 700 在中文里容易糊 */
 $fw-medium: 500;   /* 苹方 Medium */
 $fw-regular: 400;  /* 苹方 Regular */
 
 $line-height-base: 1.5;
 $line-height-tight: 1.25;
+
+/* 中文字距为 0;大数字收一点字距,读数才有「排过版」的感觉 */
+$ls-tight: -0.02em;
 
 /* ============ 间距(8pt system) ============ */
 $space-1: 4px;
@@ -110,18 +128,20 @@ $space-8: 32px;
 $space-10: 40px;
 $space-12: 48px;
 
-/* ============ 圆角(只允许这四档) ============ */
+/* ============ 圆角(只允许这几档) ============ */
 $radius-sm: 8px;
 $radius-md: 12px;
-$radius-card: 16px;   /* 卡片圆角 */
-$radius-lg: 20px;     /* 底部弹层顶部圆角 */
+$radius-panel: 14px;  /* 卡内面板/图标底 */
+$radius-card: 20px;   /* 卡片圆角 */
+$radius-lg: 24px;     /* 底部弹层顶部圆角 */
 $radius-pill: 9999px; /* 胶囊按钮/Tag */
 
-/* ============ 阴影 ============ */
-$shadow-card: 0 2px 8px rgba(15, 23, 42, 0.04);
-$shadow-elevated: 0 8px 24px rgba(15, 23, 42, 0.10);
-$shadow-primary: 0 4px 14px rgba(16, 185, 129, 0.28);
+/* ============ 阴影(暖色、低对比、柔和扩散;深色模式切纯黑基,见 tokens.scss) ============ */
+$shadow-card: var(--shadow-card);
+$shadow-elevated: var(--shadow-elevated);
+$shadow-primary: var(--shadow-primary);
+$shadow-hero: var(--shadow-hero);
 
 /* ============ 布局 ============ */
-$safe-margin: 16px; /* 页面左右安全边距 */
+$safe-margin: 20px; /* 页面左右安全边距 */
 $tabbar-height: 50px;

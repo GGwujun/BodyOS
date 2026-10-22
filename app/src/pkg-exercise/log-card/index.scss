@@ -40,8 +40,8 @@
   padding: 4px 8px;
   border-radius: $radius-sm;
   background: $color-warning-bg;
-  border: 1px solid #fde68a;
-  color: #92400e;
+  border: 1px solid $color-warning-border;
+  color: $color-amber-dark;
   line-height: 1.6;
 }
 

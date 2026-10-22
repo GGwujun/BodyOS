@@ -48,7 +48,7 @@
   }
   .timeline-pill {
     position: relative; padding: 4px 12px;
-    background: rgba(59, 130, 246, .1); color: #2563eb;
+    background: $color-sky-bg; color: $color-sky-dark;
     border-radius: $radius-pill; font-size: $fs-nano; font-weight: 600;
   }
   .progress-track {
@@ -82,7 +82,7 @@
   .meal-empty { font-size: $fs-mini; color: $color-text-tertiary; }
   .meal-recipe {
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    padding: 10px 12px; background: #f0fdf4; border: 1px solid #dcfce7;
+    padding: 10px 12px; background: $color-primary-bg; border: 1px solid $color-primary-light;
     border-radius: $radius-md;
   }
   .mr-main { display: flex; flex-direction: column; gap: 2px; }
@@ -94,7 +94,7 @@
 /* ---- 历史方案弹层(全屏遮罩,不能嵌在 .plan-page 内以免继承 padding) ---- */
 .pl-mask {
   position: fixed; inset: 0;
-  background: rgba(15, 23, 42, .45); z-index: 1000;
+  background: rgba(23, 43, 41, .45); z-index: 1000;
   display: flex; align-items: flex-end;
 }
 .pl-sheet {

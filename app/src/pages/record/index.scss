@@ -9,46 +9,71 @@
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
   gap: 14px;
 
-  /* 标题右边那条「一下记完」—— 它得比标题轻:这一页的主语是下面那一摞卡片,
+  /* 页头:左边两句、右边那条「一下记完」—— 它得比标题轻:这一页的主语是下面那一格一格,
      而它是去另一页的近路(速记页原先在 tabBar 中间那一格上,现在从这儿进) */
   .record-header {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
-    padding: 0 2px 2px;
-    font-size: $fs-title;
-    line-height: 1.35;
-    font-weight: $fw-bold;
-    color: $color-text-primary;
+    padding: 2px 2px 4px;
   }
-  .record-quick { flex-shrink: 0; font-size: $fs-mini; font-weight: $fw-medium; color: $color-info; }
+  .record-header-copy { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .record-title { font-size: 28px; line-height: 1.32; font-weight: $fw-bold; color: $color-text-primary; letter-spacing: -.7px; }
+  .record-quick {
+    flex-shrink: 0;
+    margin-top: 4px;
+    padding: 8px 2px;
+    color: $color-primary-dark;
+    font-size: $fs-caption;
+    font-weight: $fw-medium;
+    line-height: 1;
+    white-space: nowrap;
+  }
 
-  /* 三个入口卡 */
-  .entry-list { display: flex; flex-direction: column; gap: 10px; }
+  /* 入口:设计稿是一列整行的卡片 —— 图标、标题/说明、右侧箭头。
+     两列宫格更像工具面板,而这里每一行都是一个「要记的东西」,竖着读更快 */
+  .entry-list { display: flex; flex-direction: column; gap: 9px; }
   .entry-card {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
     background: $color-bg-card; border: 1px solid $color-border;
-    border-radius: $radius-card; padding: 16px;
-    display: flex; align-items: center;
+    border-radius: 17px; padding: 14px 15px;
+    display: flex; flex-direction: row; align-items: center; gap: 14px;
     box-shadow: $shadow-card;
+    transition: transform .12s ease, background .12s ease;
   }
+  /* 一列卡片都长得一样,按下时给一点沉降 —— 不然每一格点下去都没有回音 */
+  .entry-card:active { background: $color-bg-soft; transform: scale(.988); }
   .entry-icon {
-    width: 46px; height: 46px; border-radius: $radius-md;
+    width: 50px; height: 50px; border-radius: 17px;
     display: flex; align-items: center; justify-content: center;
-    font-size: $fs-num; margin-right: 14px; flex-shrink: 0;
+    flex-shrink: 0;
   }
-  .entry-icon.mint { background: #d9f6e9; color: $color-primary; }
-  .entry-icon.blue { background: #e8efff; color: $color-info; }
-  .entry-icon.dark { background: #e9edf2; color: $color-text-primary; }
-  .entry-icon.sky { background: $color-sky-bg; color: $color-sky-dark; }
-  .entry-icon.warm { background: #fef3e2; color: $color-amber-dark; }
-  .entry-emoji { font-size: $fs-h1; line-height: 1; }
-  .entry-copy { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-  .entry-name { font-size: $fs-body; font-weight: 700; color: $color-text-primary; }
-  .entry-desc { color: $color-text-secondary; font-size: $fs-mini; }
-  .entry-arrow { color: $color-text-tertiary; font-size: $fs-body; }
+  .entry-icon__img { width: 27px; height: 27px; display: block; }
+  .entry-icon.mint { background: $color-primary-bg; }
+  .entry-icon.blue { background: $color-info-bg; }
+  .entry-icon.dark { background: $color-amber-bg; }
+  .entry-icon.sky { background: $color-sky-bg; }
+  /* 「暖」= 米色,不是第二块薄荷绿:运动/体重这一列要和白卡有温差,
+     全用主色浅底会让左边那一排图标糊成同一种绿 */
+  .entry-icon.warm { background: #f3eee1; }
+  .entry-copy { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+  .entry-name { font-size: $fs-body; font-weight: $fw-bold; color: $color-text-primary; letter-spacing: -.1px; }
+  .entry-desc {
+    color: $color-text-tertiary; font-size: $fs-mini;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .entry-arrow {
+    flex-shrink: 0;
+    color: $color-text-tertiary; font-size: 15px;
+  }
 
-  .section-kicker { text-align: center; color: $color-text-tertiary; font-size: $fs-nano; letter-spacing: 3px; margin: 2px 0 -2px; }
+  .section-kicker {
+    color: $color-text-tertiary; font-size: $fs-nano;
+    letter-spacing: .08em; margin: 6px 2px -2px;
+  }
 
   /* 数据源卡 */
   .source-card, .recent-card {
@@ -63,13 +88,13 @@
     display: flex; align-items: center; justify-content: center;
     margin-right: 12px; color: $color-primary; background: $color-primary-bg; font-size: $fs-body;
   }
-  .source-icon.s1 { color: $color-info; background: #eef3ff; }
-  .source-icon.s2 { color: #6d5ae8; background: #f1eeff; }
-  .source-icon.s3 { color: #ef4961; background: #ffeef1; }
+  .source-icon.s1 { color: $color-info; background: $color-info-bg; }
+  .source-icon.s2 { color: $color-amber-dark; background: $color-amber-bg; }
+  .source-icon.s3 { color: $color-rose; background: $color-danger-bg; }
   .source-copy { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: $fs-caption; color: $color-text-primary; }
   .source-copy text:last-child, .source-copy taro-text-core:last-child { font-size: $fs-nano; color: $color-text-tertiary; }
   .source-ok { color: $color-primary; font-size: $fs-h2; }
-  .source-empty { width: 9px; height: 9px; border: 1.5px solid #b6c0cc; border-radius: 50%; margin-right: 3px; }
+  .source-empty { width: 9px; height: 9px; border: 1.5px solid $color-border-strong; border-radius: 50%; margin-right: 3px; }
 
   .record-empty { padding: 20px; text-align: center; color: $color-text-tertiary; font-size: $fs-mini; }
 
@@ -91,18 +116,24 @@
      (components/WeightSheet,速记页那一份也是它),所以下面只留遮罩和壳 */
   .mask {
     position: fixed; inset: 0;
-    background: rgba(15, 23, 42, .45); z-index: 1000;
+    background: rgba(23, 43, 41, .46); z-index: 1000;
     display: flex; align-items: flex-end;
   }
   .weight-sheet {
     width: 100%; background: $color-bg-card;
-    border-radius: $radius-lg $radius-lg 0 0;
+    border-radius: 24px 24px 0 0;
     padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
     box-sizing: border-box;
+    box-shadow: 0 -12px 40px -20px rgba(23, 43, 41, .4);
   }
   .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: $color-fill; margin: 0 auto 16px; }
   .sheet-title { display: block; font-size: $fs-h2; font-weight: 700; color: $color-text-primary; }
 
   /* 体重弹层的输入框/历史那一整套样式跟着组件走了 —— 见 components/WeightSheet/index.scss;
      喝水那一块同理,见 components/WaterQuickAdd/index.scss */
+}
+
+/* ---- 深色模式:米色图标底翻成暖深底,「温差」在深色里也得有 ---- */
+@media (prefers-color-scheme: dark) {
+  .record-page .entry-icon.warm { background: #2b2820; }
 }

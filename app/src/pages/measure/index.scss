@@ -24,7 +24,7 @@
     padding: 36px 20px;
     text-align: center;
   }
-  .mc-empty-emoji { font-size: $fs-emoji; }
+  .mc-empty-icon { width: 46px; height: 46px; display: block; }
   .mc-cta { margin-top: 10px; }
 
   /* 区块 */
@@ -120,7 +120,7 @@
 .mc-mask {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, .45);
+  background: rgba(23, 43, 41, .45);
   z-index: 1000;
   display: flex;
   align-items: flex-end;

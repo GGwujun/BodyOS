@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { View, Text, Button } from '@tarojs/components';
+import { View, Text, Button, Image } from '@tarojs/components';
+import planIcon from '@/assets/icons/plan.png';
 import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { track } from '@/services/analytics';
@@ -87,7 +88,7 @@ export default function PlanCreate() {
   return (
     <Screen className="pcreate-page">
       <View className="card pc-intro">
-        <Text className="pc-intro-emoji">📋</Text>
+        <View className="pc-intro-icon"><Image className="pc-intro-icon__img" src={planIcon} mode="aspectFit" /></View>
         <Text className="fs-h1">定制你的训练计划</Text>
         <Text className="fs-mini text-secondary">
           根据目标、经验与现有器械,从 1300+ 动作库编排属于你的每周安排

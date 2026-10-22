@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, Button } from '@tarojs/components';
+import { View, Text, Button, Image } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import statsIcon from '@/assets/icons/stats.png';
 import { track } from '@/services/analytics';
 import { addDays, todayStr } from '@/utils/date';
 import { loadLogs, loadPlan } from '../engine/store';
@@ -221,7 +222,7 @@ export default function Muscles() {
 
       {!hasLogs && (
         <View className="card ms-empty">
-          <Text className="ms-empty-emoji">📊</Text>
+          <Image className="ms-empty-icon" src={statsIcon} mode="aspectFit" />
           <Text className="fs-h1">还没有训练记录</Text>
           <Text className="fs-mini text-secondary">
             完成一次训练后,这里会显示每个部位的训练量与恢复进度

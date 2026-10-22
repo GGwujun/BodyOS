@@ -1,8 +1,13 @@
+import { themedColor } from '@/utils/theme';
 import { useEffect, useMemo, useState } from 'react';
-import { View, Text, Input } from '@tarojs/components';
+import { View, Text, Input, Image } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
+import { mediaUrl } from '@/services/training';
+import { demoUrl } from '../engine/ex-media';
 import { ArrowDown, Search } from '@taroify/icons';
 import Screen from '@/components/Screen';
+import { THEME } from '@/constants/theme';
+import dumbbellIcon from '@/assets/icons/dumbbell.png';
 import { track } from '@/services/analytics';
 import { param } from '@/utils/url-param';
 import { matchesQuery, nearMatches } from '../engine/search';
@@ -85,7 +90,14 @@ export default function ExerciseLibrary() {
   const [kw, setKw] = useState('');
   /** 哪一维筛正在展开(部位/器械/分类)—— 三排 chip 收成一条筛选栏后,选项在下面展开 */
   const [filterOpen, setFilterOpen] = useState<'' | 'bp' | 'eq' | 'cat'>('');
-  const [detail, setDetail] = useState<ExerciseEntry | null>(null);
+  /**
+   * 从「按肌肉看」点某个动作进来时(`?focus=<id>`)直接把详情铺开 ——
+   * 那一页只负责挑动作,用户已经选定了这一个,再让他在动作库里找一遍就是白走一趟。
+   */
+  const [detail, setDetail] = useState<ExerciseEntry | null>(() => {
+    const focus = param(params.focus);
+    return focus ? EXERCISES.find((e) => e.id === focus) ?? null : null;
+  });
   const [favs, setFavs] = useState<string[]>([]);
   const [favOnly, setFavOnly] = useState(false);
   /** 常用次数来自日志(算出来,不存) */
@@ -296,6 +308,13 @@ export default function ExerciseLibrary() {
     openPick();
   };
 
+  // 「探索肌肉」列表里的「＋ 计划」直接落到「加到哪一天」:用户已经在那一页选好了动作,
+  // 别再让他经过动作详情再点一次。只在打开那一瞬间跑一次(focus/plan 都是路由参数)。
+  useEffect(() => {
+    if (param(params.focus) && param(params.plan) === '1') openAdd();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   /**
    * 选好训练日之后的**第二步**:先把动作装进一份可改的草稿,让用户把组数、次数、
    * 重量、热身、休息、组型、渐进、备注都定下来,再写进计划。
@@ -407,8 +426,17 @@ export default function ExerciseLibrary() {
     // 只有前者的话,翻动作库和翻商品目录没区别 —— 挑了半天的那个动作,你不知道自己
     // 现在能做到什么份上(那个数原来只在训练页和历史里,偏偏挑的时候看不到)
     const bestText = best[e.id];
+    const url = demoUrl(e.id);
     return (
       <View className="ex-row" key={e.id} onClick={() => open(e)}>
+        {/* 缩略图跟着行一起给:挑动作是「看」的动作,一列纯文字让 1300 多条只剩名字。
+            图来自分包外的 /media/ex/(懒加载),自定义动作没有图就给一个占位。
+            每处显示演示图的地方都要带署名,见页面底部的版权行与 howto/HowTo.tsx。 */}
+        {url ? (
+          <Image className="ex-thumb" src={mediaUrl(url)} mode="aspectFit" lazyLoad />
+        ) : (
+          <View className="ex-thumb ex-thumb--none"><Text className="ex-thumb-t">＋</Text></View>
+        )}
         <View className="ex-row-body">
           <View className="ex-row-main">
             <Text className="ex-name">{e.nameZh}</Text>
@@ -442,13 +470,21 @@ export default function ExerciseLibrary() {
   };
 
   return <Screen className="exlib-page">
+    {/* 页头:参考项目把「标题 / 共 N 个动作」摆在搜索上面,先给一个「我在哪」,
+        再给「能搜什么」。标题沿用站内的「动作库」(「我的」里那个入口也叫这个名),
+        数据从分包现算,不写死条数 —— 自定义动作也会加进来。 */}
+    <View className="ex-head">
+      <Text className="ex-head-title">动作库</Text>
+      <Text className="ex-head-n">共 {all.length} 个动作</Text>
+    </View>
+
     {/* 搜索 + 一条筛选栏。
         占位符只留「能搜什么」:以前把「共 1524 个,中英文」也塞进去,搜索框被「按肌肉看」
         挤窄之后那句话一定被右边切掉 —— 讲不清一件事,还显得框是坏的。
         现在这句连 320 宽的老机器也放得下;中英文都能搜仍然成立,只是不必挤在框里说。 */}
     <View className="ex-search-row">
       <View className="ex-search">
-        <View className="ex-search-ico"><Search size={16} color="#94a3b8" /></View>
+        <View className="ex-search-ico"><Search size={16} color={themedColor(THEME.muted)} /></View>
         <Input
           className="ex-search-input"
           value={kw}
@@ -465,7 +501,7 @@ export default function ExerciseLibrary() {
       </View>
       {/* 「按肌肉看」—— 挑动作的第二个起点:不是「我叫什么名字」,是「我想练哪儿」。
           入口摆在这里(搜索框右边),因为它是和搜索并列的一种找法,不是列表里的一个筛子 */}
-      <Text className="ex-muscle" onClick={() => navigate('/pkg-exercise/muscles/index')}>
+      <Text className="ex-muscle" onClick={() => navigate('/pkg-exercise/muscle-explore/index')}>
         按肌肉看
       </Text>
     </View>
@@ -487,7 +523,7 @@ export default function ExerciseLibrary() {
                 用户知道哪个格子管哪一维;挤进「部位 全部」反而放不下「上肢功率车」这种长值 */}
             <Text className="ex-filter-v">{on ? zh(f.map, f.value) : `全部${f.label}`}</Text>
             <View className={`ex-filter-caret${open ? ' is-open' : ''}`}>
-              <ArrowDown size={12} color={on || open ? '#059669' : '#94a3b8'} />
+              <ArrowDown size={12} color={on || open ? THEME.primary : THEME.muted} />
             </View>
           </View>
         );
@@ -661,7 +697,7 @@ export default function ExerciseLibrary() {
       )}
       {!filtered.length && (
         <View className="ex-empty">
-          <Text className="ex-empty-emoji">🏋️</Text>
+          <Image className="ex-empty-icon" src={dumbbellIcon} mode="aspectFit" />
           <Text className="ex-empty-text">
             {nearList.length
               ? `「${kwTrim}」一个都没对上。这几个最像:`
@@ -824,5 +860,6 @@ export default function ExerciseLibrary() {
         </>}
       </View>
     </>}
+    <Text className="ex-credit">动作演示图 © Gym visual · gymvisual.com</Text>
   </Screen>;
 }

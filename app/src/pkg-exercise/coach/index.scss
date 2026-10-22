@@ -49,8 +49,8 @@
     justify-content: center;
     border-radius: 50%;
     background: $color-primary-bg;
-    font-size: 19px;
   }
+  .ch-av-img { width: 19px; height: 19px; display: block; }
   .ch-hdr-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
   .ch-name { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
   .ch-state { font-size: $fs-mini; color: $color-text-secondary; }
@@ -504,7 +504,7 @@
     right: 0;
     bottom: 0;
     z-index: 110;
-    background: rgba(15, 23, 42, 0.5);
+    background: rgba(23, 43, 41, 0.5);
   }
   .ch-sheet {
     position: fixed;
@@ -593,4 +593,9 @@
     line-height: 1.6;
     color: $color-text-secondary;
   }
+}
+
+/* ---- 深色模式:顶栏那块近白底翻成卡片底 ---- */
+@media (prefers-color-scheme: dark) {
+  .coach-page .ch-header { background: rgba(28, 33, 29, .97); }
 }

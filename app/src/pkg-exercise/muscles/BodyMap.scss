@@ -1,6 +1,6 @@
 @import '../../styles/variables.scss';
 
-/* ============ 身体肌群图(肌群页 + 统计页共用) ============ */
+/* ============ 身体肌群图(肌群页 + 统计页 + 探索页共用) ============ */
 /* 这套样式原先嵌在 `.ms-page` 里。统计页的「肌肉平衡」也要摆同一张图,
    再嵌一次就是两份 —— 两份的下场不是重复代码,是**同一个部位在两个页面上长得不一样**。
    所以跟着组件走:谁 import 了 BodyMap,谁就有这套样式。
@@ -12,57 +12,28 @@
   gap: 6px;
 }
 
+/* 解剖图比原来的方块人窄,给足高度让它立起来 */
 .bm-figure {
   position: relative;
-  width: 122px;
-  height: 196px;
+  width: 128px;
+  height: 202px;
+}
+
+/* Canvas 是原生组件,必须显式定宽高;背景透明,卡片底色透上来 */
+.bm-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 点击热区盖住整张图,真正的命中判断在 tsx 里按多边形算 */
+.bm-hit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
 }
 
 .bm-side { font-size: $fs-nano; color: $color-text-tertiary; }
-
-/* 头颈只是让人认得出这是个人,不参与统计 */
-.bm-head {
-  position: absolute;
-  left: 43%;
-  top: 0;
-  width: 14%;
-  height: 10%;
-  border-radius: 50%;
-  background: $color-border;
-}
-
-.bm-neck {
-  position: absolute;
-  left: 45.5%;
-  top: 8%;
-  width: 9%;
-  height: 6%;
-  background: $color-border;
-}
-
-.bm-part {
-  position: absolute;
-  border-radius: $radius-md;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease;
-
-  &--fresh { background: $color-primary; }
-  &--ok { background: $color-warning; }
-  &--tired { background: $color-danger; }
-  &--high { background: $color-muscle-high; }
-  &--low { background: $color-muscle-low; }
-  &--none { background: $color-border; }
-
-  &--active { box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.14); }
-}
-
-.bm-part-t {
-  font-size: $fs-nano;
-  font-weight: $fw-medium;
-  color: $color-text-inverse;
-  line-height: 1;
-}
-
-.bm-part--none .bm-part-t { color: #9ca3af; }

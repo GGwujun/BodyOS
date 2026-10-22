@@ -55,7 +55,7 @@ view, text {
   background: $color-bg-card;
   border: 1px solid $color-border;
   border-radius: $radius-card;
-  padding: $space-4;
+  padding: 18px;
   box-shadow: $shadow-card;
 }
 
@@ -69,14 +69,15 @@ view, text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 $space-4;
+  padding: 0 22px;
   margin: 0; /* 原生 button 相邻兄弟有 15px 上边距,并排按钮会被顶歪 */
-  height: 44px;
+  height: 48px;
   border-radius: $radius-pill;
-  font-size: $fs-body;
-  font-weight: $fw-medium;
+  font-size: $fs-medium;
+  font-weight: $fw-bold;
   border: none;
   line-height: 1;
+  letter-spacing: .02em;
 
   /* 原生那圈描边画在 ::after 上(border 清了它还在) */
   &::after { border: 0; }
@@ -88,9 +89,9 @@ view, text {
   }
 
   &--secondary {
-    background: $color-bg;
+    background: $color-primary-bg;
     color: $color-primary;
-    border: 1px solid $color-primary;
+    border: 1px solid $color-primary-light;
   }
 
   &--ghost {
@@ -101,8 +102,8 @@ view, text {
   /* 行内小按钮(列表行右侧那种)。以前这些位置写的是 `<Button size="mini">` ——
      `size` 只改原生的内边距和字号,底色和圆角还是原生的,和旁边的胶囊不是一套长相 */
   &--mini {
-    height: 32px;
-    padding: 0 14px;
+    height: 34px;
+    padding: 0 16px;
     font-size: $fs-mini;
   }
 
@@ -164,6 +165,29 @@ view, text {
  * 用透明度而不是换底色:这些容器的底色本来就各不相同(白卡、绿卡、灰卡),
  * 统一改底色会打架;变浅一点点在各种底色上都读得出来,也不会看成「禁用」。
  */
+.dashboard-card,
+.entry-card,
+.menu-row,
+.tb-item,
+.source-row,
+.recipe-card,
+.meal-recipe,
+.quick-more,
+.strip-day,
+.ph-cell,
+.as-row,
+.cache-row,
+.quick-weigh,
+.body-link,
+.chart-action,
+.train-off,
+.live-drop,
+.insight-regen,
+.insight-error,
+.water-reset {
+  transition: transform .12s ease, opacity .12s ease;
+}
+
 .dashboard-card:active,
 .entry-card:active,
 .menu-row:active,
@@ -186,11 +210,12 @@ view, text {
 .insight-regen:active,
 .insight-error:active,
 .water-reset:active {
-  opacity: 0.72;
+  opacity: .9;
+  transform: scale(.985);
 }
 /* 日期条上的未来那几天点不动(首页里 `!d.isFuture && switchDate(...)`)——
    它们不该跟着变浅,不然按下去像是坏了 */
-.strip-day.future:active { opacity: 1; }
+.strip-day.future:active { opacity: .35; transform: none; }
 
 /* ============ 空状态 ============ */
 .empty {

@@ -74,4 +74,22 @@
     margin-top: 2px; padding: 13px 12px;
     font-size: $fs-small; color: $color-text-secondary;
   }
+
+  /* 推送开关:和提醒页同款行布局,外加一行规矩说明 */
+  .push-card { display: flex; flex-direction: column; gap: 10px; }
+  .push-row { display: flex; align-items: center; justify-content: space-between; }
+  .push-row-text { display: flex; flex-direction: column; gap: 3px; padding-right: 12px; }
+  .push-row-title { font-size: $fs-medium; font-weight: $fw-bold; color: $color-text-primary; }
+  .push-note { color: $color-text-secondary; line-height: 1.6; }
+  .push-grant {
+    align-self: flex-start;
+    font-size: $fs-small; color: $color-primary;
+    padding: 4px 0;
+  }
+}
+
+/* ---- 深色模式:评分卡的渐变换成了亮苔绿,卡上的说明字从米白翻成近墨 ---- */
+@media (prefers-color-scheme: dark) {
+  .weekly-report-page .score-card .fs-mini,
+  .weekly-report-page .score-card .fs-caption { color: rgba(13, 33, 26, .8); }
 }

@@ -5,6 +5,26 @@
   background: $color-bg;
   gap: 10px;
 
+  /* ===== 页头 =====
+     参考项目首屏先是一句「练习 / 共 N 个动作」,然后才是搜索。
+     这一页原有的分组浏览、筛选栏都保留在下面,页头只负责把「这是哪儿、有多少」说清。 */
+  .ex-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 4px 2px 0;
+  }
+  .ex-head-title {
+    font-size: $fs-h1;
+    font-weight: $fw-bold;
+    color: $color-text-primary;
+  }
+  .ex-head-n {
+    font-size: $fs-mini;
+    color: $color-text-tertiary;
+  }
+
   /* ===== 搜索框 + 「按肌肉看」=====
      两种找法(叫什么 / 练哪儿)摆在同一个高度上:搜索是主入口,肌群是并列的另一条路,
      不是塞进筛选行里冒充第三个筛子 */
@@ -461,9 +481,10 @@
     gap: 10px;
     padding: 34px 0 18px;
 
-    .ex-empty-emoji {
-      font-size: $fs-emoji;
-      line-height: 1;
+    .ex-empty-icon {
+      width: 46px;
+      height: 46px;
+      display: block;
     }
 
     .ex-empty-text {
@@ -519,6 +540,22 @@
 
   &:active { opacity: .72; }
 
+  .ex-thumb {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: $radius-md;
+    background: $color-bg-soft;
+  }
+
+  .ex-thumb--none {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ex-thumb-t { font-size: 22px; line-height: 1; color: $color-text-tertiary; }
+
   .ex-row-body {
     display: flex;
     flex-direction: column;
@@ -560,7 +597,7 @@
   /* 我建的动作:和难度标签同一个绿色家族,但底更实一点(它不是「属性」,是身份) */
   .ex-tag-mine {
     color: $color-primary-dark;
-    background: #d8f5e8;
+    background: $color-primary-bg;
     border-color: $color-primary-light;
     font-weight: $fw-bold;
   }
@@ -613,7 +650,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(23, 43, 41, 0.5);
   z-index: 100;
 }
 
@@ -816,5 +853,12 @@
       background: $color-primary;
       font-weight: $fw-bold;
     }
+  }
+
+  /* 动作演示图的署名 —— 列表和探索肌肉页都用了这张图,每处显示都要带 */
+  .ex-credit {
+    padding: 6px 4px 18px;
+    font-size: $fs-nano;
+    color: $color-text-tertiary;
   }
 }

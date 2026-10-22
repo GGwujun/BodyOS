@@ -1,11 +1,17 @@
 @import '../../styles/variables.scss';
 
 .toolbox-page {
+  .toolbox-header { display: flex; flex-direction: column; gap: 5px; padding: 2px 2px 0; }
+  .toolbox-title { font-size: $fs-hero; line-height: $line-height-tight; font-weight: $fw-bold; color: $color-text-primary; letter-spacing: -.5px; }
+  .toolbox-subtitle { font-size: $fs-mini; color: $color-text-tertiary; }
+
+  .tb-section-title { font-size: 16px; font-weight: $fw-bold; color: $color-text-primary; }
+
   .tb-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px 0;
-    margin-top: 4px;
+    gap: 16px 0;
+    margin-top: 14px;
   }
 
   .tb-item {
@@ -14,33 +20,33 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 6px 4px;
+    gap: 5px;
+    padding: 2px 4px;
   }
 
   .tb-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: $radius-md;
-    background: $color-bg-soft;
-    border: 1px solid $color-fill;
-    font-size: $fs-h1;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: $color-primary-bg;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    box-sizing: border-box;
   }
+
+  .tb-icon__img { width: 24px; height: 24px; display: block; }
 
   .tb-name {
     font-size: $fs-mini;
-    font-weight: 500;
+    font-weight: $fw-bold;
     color: $color-text-primary;
     text-align: center;
   }
 
   .tb-desc {
-    font-size: $fs-nano;
-    color: #94a3b8;
+    font-size: 10px;
+    color: $color-text-tertiary;
     text-align: center;
     line-height: 1.4;
   }
@@ -49,5 +55,8 @@
     display: block;
     text-align: center;
     line-height: 1.6;
+    padding: 4px 8px 8px;
   }
 }
+
+@media (min-width: 600px) { .toolbox-page { max-width: 430px; margin: 0 auto; } }

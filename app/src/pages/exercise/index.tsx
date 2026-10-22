@@ -3,6 +3,7 @@ import { View, Text, Textarea, Button, Input, Picker } from '@tarojs/components'
 import Taro, { usePullDownRefresh } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { activityApi, dataSourceApi, userApi } from '@/services';
+import { track } from '@/services/analytics';
 import { useAsync } from '@/hooks/useAsync';
 import { confirmDelete, toast } from '@/utils/ui';
 import { todayStr, nowISO } from '@/utils/date';
@@ -67,6 +68,7 @@ export default function Exercise() {
       return;
     }
     setParsing(true);
+    track('ai_activity_parse_start', 'ai');
     try {
       const r = await activityApi.parseActivity(aiText);
       if (!r.activities.length) { toast('未识别到运动，请补充描述', 'none'); return; }
@@ -91,6 +93,7 @@ export default function Exercise() {
           source: 'ai_text'
         });
       }
+      track('ai_activity_parse_confirm', 'ai', { items: r.activities.length });
       toast(`已添加 ${r.activities.length} 条`);
       setAiText('');
       await load();

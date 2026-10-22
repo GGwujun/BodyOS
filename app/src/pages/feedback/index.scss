@@ -1,0 +1,218 @@
+@import '../../styles/variables.scss';
+
+/* ============ 意见反馈 ============
+   一个入口、两种类型(问题 / 建议)。表单全部在同一张卡里,
+   成功态原地替换整页 —— 反馈最怕的是「到底发出去没有」。 */
+.fb-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 24px;
+}
+
+.fb-intro-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $color-primary;
+}
+
+.fb-intro-copy { line-height: 1.7; margin-top: 6px; }
+
+.fb-form { display: flex; flex-direction: column; gap: 12px; }
+
+/* ===== 类型段选 ===== */
+.fb-kinds {
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  background: $color-bg-soft;
+  border-radius: $radius-pill;
+}
+
+.fb-kind {
+  flex: 1;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-pill;
+  transition: background 0.2s ease;
+
+  &.is-on {
+    background: $color-bg-card;
+    box-shadow: 0 2px 6px rgba(23, 43, 41, 0.08);
+  }
+}
+
+.fb-kind-name {
+  font-size: $fs-caption;
+  font-weight: $fw-medium;
+  color: $color-text-secondary;
+}
+
+.fb-kind.is-on .fb-kind-name { color: $color-primary-dark; font-weight: $fw-bold; }
+
+/* ===== 描述 ===== */
+.fb-textarea {
+  position: relative;
+  padding: 12px 14px 28px;
+  background: $color-bg-soft;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+
+  &.is-filled { border-color: $color-primary-light; }
+}
+
+.fb-textarea-input {
+  width: 100%;
+  min-height: 132px;
+  font-size: $fs-caption;
+  line-height: 1.7;
+  color: $color-text-primary;
+}
+
+.fb-placeholder { color: $color-text-tertiary; }
+
+.fb-count {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  font-size: $fs-nano;
+  color: $color-text-tertiary;
+
+  &.is-over { color: $color-danger; }
+}
+
+/* ===== 截图 ===== */
+.fb-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.fb-label { font-weight: $fw-medium; color: $color-text-primary; }
+
+.fb-shots { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.fb-shot {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: $radius-md;
+  overflow: visible;
+}
+
+.fb-shot-img {
+  width: 88px;
+  height: 88px;
+  border-radius: $radius-md;
+  background: $color-bg-soft;
+}
+
+.fb-shot-del {
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(23, 43, 41, 0.78);
+  color: $color-text-inverse;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.fb-shot-add {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: $radius-md;
+  border: 1px dashed $color-border-dashed;
+  background: $color-bg-soft;
+  color: $color-text-tertiary;
+
+  &.is-busy { opacity: 0.6; }
+}
+
+/* ===== 联系方式 ===== */
+.fb-contact {
+  padding: 10px 14px;
+  background: $color-bg-soft;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+.fb-contact-input {
+  width: 100%;
+  min-height: 36px;
+  font-size: $fs-caption;
+  line-height: 1.6;
+  color: $color-text-primary;
+}
+
+.fb-context {
+  font-size: $fs-nano;
+  line-height: 1.7;
+  color: $color-text-tertiary;
+}
+
+/* ===== 客服 ===== */
+.fb-service-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fb-service-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fb-service-btn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ===== 成功态 ===== */
+.fb-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 30px 20px 22px;
+  text-align: center;
+}
+
+.fb-done-icon {
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-size: 26px;
+}
+
+.fb-done-title { font-size: $fs-h1; font-weight: $fw-bold; }
+.fb-done-copy {
+  font-size: $fs-caption;
+  line-height: 1.7;
+  color: $color-text-secondary;
+  margin-bottom: 6px;
+}

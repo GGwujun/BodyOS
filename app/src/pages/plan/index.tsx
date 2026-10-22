@@ -14,6 +14,7 @@ import { BMI_NORMAL_RANGE, ageOf, bmiBand, bmiOf, calcBmr, calcTdee } from '@/ut
 import { localDayOf } from '@/utils/date';
 import './index.scss';
 import { navigate } from '@/utils/nav';
+import { openBodyEditor } from '@/utils/profile-edit';
 
 const GOAL_LABELS: Record<string, string> = { fat_loss: '减脂', muscle_gain: '增肌', maintain: '维持', endurance: '提升体能' };
 const UNIT_LABELS: Record<string, string> = { kg: '公斤', '分钟/周': '分钟/周' };
@@ -184,8 +185,8 @@ export default function PlanPage() {
             {bmr != null
               ? <Text className="info-note">基础代谢按 Mifflin-St Jeor 公式估算，随体重记录更新。</Text>
               : <>
-                <Text className="info-note">在我的 → 编辑身体信息中补全性别、出生日期、身高后可估算基础代谢。</Text>
-                <Text className="pending-link" onClick={() => Taro.switchTab({ url: '/pages/profile/index' })}>去完善身体信息 »</Text>
+                <Text className="info-note">补全出生日期、身高、体重后，才能估算基础代谢和每日消耗。</Text>
+                <Text className="pending-link" onClick={openBodyEditor}>去完善身体信息 »</Text>
               </>}
 
             <View className="plan-ops">
@@ -239,8 +240,8 @@ export default function PlanPage() {
             <Text className="fs-h1">每日摄入建议</Text>
             {suggestKcal == null ? (
               <>
-                <Text className="diet-note">在我的 → 编辑身体信息中补全性别、出生日期、身高后，可按基础代谢估算每日摄入并推荐食谱。</Text>
-                <Text className="pending-link" onClick={() => Taro.switchTab({ url: '/pages/profile/index' })}>去完善身体信息 »</Text>
+                <Text className="diet-note">补全出生日期、身高、体重后，可按基础代谢估算每日摄入并推荐食谱。</Text>
+                <Text className="pending-link" onClick={openBodyEditor}>去完善身体信息 »</Text>
               </>
             ) : (
               <>

@@ -11,9 +11,21 @@
  */
 export const THEME = {
   /** 品牌主色,对齐 $color-primary */
-  primary: '#10b981',
+  primary: '#176b55',
+  /** 数据/信息,$color-info */
+  info: '#4f7382',
   /** 数值/强调,$color-warning */
-  warning: '#f59e0b',
+  warning: '#b07a2a',
+  /** 另一条数据线(步数等),$color-sky */
+  sky: '#5a8ca0',
+  /** 力量训练/肌群强调,$color-muscle-high */
+  plum: '#8b7aa8',
+  /** 碳水/暖色数据,$color-amber-dark */
+  amber: '#8f6322',
+  /** 脂肪/玫瑰色数据,$color-rose */
+  rose: '#a94f5c',
+  /** 中性次要(图表空档、未激活图标),$color-text-tertiary */
+  muted: '#8a958f',
   /** 警示/破坏性动作,$color-danger */
-  danger: '#ef4444'
+  danger: '#b04a3f'
 } as const;

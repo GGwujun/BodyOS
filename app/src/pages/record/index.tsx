@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { View, Text, Button } from '@tarojs/components';
+import { View, Text, Button, Image } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
-import { ArrowRight, CartOutlined, FireOutlined, BalanceOutlined, Passed, ClockOutlined } from '@taroify/icons';
+import { ArrowRight, Passed, ClockOutlined } from '@taroify/icons';
 import Screen from '@/components/Screen';
+import foodIcon from '@/assets/icons/food.png';
+import runIcon from '@/assets/icons/run.png';
+import dumbbellIcon from '@/assets/icons/dumbbell.png';
+import scaleIcon from '@/assets/icons/scale.png';
+import rulerIcon from '@/assets/icons/ruler.png';
+import cameraIcon from '@/assets/icons/camera.png';
+import dropIcon from '@/assets/icons/drop.png';
+import recipeIcon from '@/assets/icons/recipe.png';
 import { RoutePath, TAB_PAGES } from '@/constants/routes';
 import WaterQuickAdd from '@/components/WaterQuickAdd';
 import WeightSheet from '@/components/WeightSheet';
@@ -12,7 +20,7 @@ import { useTabBarMask } from '@/hooks/useTabBarMask';
 import { todayStr } from '@/utils/date';
 import './index.scss';
 import { sourceStatusLabel } from '@/utils/sourceStatus';
-import { navigate } from '@/utils/nav';
+import { navigate, switchTab } from '@/utils/nav';
 
 /**
  * 力量训练那套在**分包**里(pkg-exercise),不走 RoutePath —— 那份常量表装的是主包的核心页
@@ -23,7 +31,7 @@ const TRAINING_ENTRY = '/pkg-exercise/plan-view/index';
 
 export default function Record() {
   const go = (p: RoutePath) => TAB_PAGES.includes(p)
-    ? Taro.switchTab({ url: `/${p}` })
+    ? switchTab(`/${p}`)
     : navigate(`/${p}`);
   /** 三种卡片:主包路由 / 分包入口(裸路径)/ 本页弹层 */
   const openEntry = (item: { path: RoutePath | null; href?: string; sheet: string | null }) => {
@@ -48,19 +56,19 @@ export default function Record() {
   useTabBarMask(showWeight || showWater);
   useDidShow(() => { load(); });
   const entries = [
-    { label: '饮食记录', desc: '记录你吃的食物和营养', path: RoutePath.Food, sheet: null, icon: <CartOutlined />, tone: 'mint' },
-    { label: '运动记录', desc: '记录运动和消耗', path: RoutePath.Exercise, sheet: null, icon: <FireOutlined />, tone: 'blue' },
+    { label: '饮食记录', desc: '记录你吃的食物和营养', path: RoutePath.Food, sheet: null, icon: <Image className="entry-icon__img" src={foodIcon} mode="aspectFit" />, tone: 'mint' },
+    { label: '运动记录', desc: '记录运动和消耗', path: RoutePath.Exercise, sheet: null, icon: <Image className="entry-icon__img" src={runIcon} mode="aspectFit" />, tone: 'warm' },
     /* 力量训练**不是**「运动记录」的一种:那边记的是一次运动 + 消耗(有氧那种记法),
        而这里是按计划练、逐组记重量次数、下次自动渐进 —— 两个数据模型,不是同一件事的两种入口。
        之前它只在工具箱里有一格,而记录页才是用户「今天练了没」会来的地方。 */
-    { label: '力量训练', desc: '按计划练 · 逐组渐进', path: null, href: TRAINING_ENTRY, sheet: null, icon: <Text className="entry-emoji">🏋️</Text>, tone: 'warm' },
-    { label: '体重记录', desc: '记录体重和身体数据', path: null, sheet: 'weight', icon: <BalanceOutlined />, tone: 'dark' },
-    { label: '围度记录', desc: '量腰胸臀臂腿的变化', path: RoutePath.Measure, sheet: null, icon: <Text className="entry-emoji">📐</Text>, tone: 'mint' },
+    { label: '力量训练', desc: '按计划练 · 逐组渐进', path: null, href: TRAINING_ENTRY, sheet: null, icon: <Image className="entry-icon__img" src={dumbbellIcon} mode="aspectFit" />, tone: 'mint' },
+    { label: '体重记录', desc: '记录体重和身体数据', path: null, sheet: 'weight', icon: <Image className="entry-icon__img" src={scaleIcon} mode="aspectFit" />, tone: 'warm' },
+    { label: '围度记录', desc: '量腰胸臀臂腿的变化', path: RoutePath.Measure, sheet: null, icon: <Image className="entry-icon__img" src={rulerIcon} mode="aspectFit" />, tone: 'mint' },
     /* 照片以前只在「我的 → 健康工具箱」里有一格 —— 但它是**记一笔**(拍一张),
        和围度是同一种东西:记在记录页,看变化在趋势页(那边身体那一行有入口) */
-    { label: '进度照片', desc: '拍一张 · 前后对比滑块', path: null, href: '/pages/photos/index', sheet: null, icon: <Text className="entry-emoji">📷</Text>, tone: 'sky' },
-    { label: '喝水打卡', desc: '记录每日饮水进度', path: null, sheet: 'water', icon: <Text className="entry-emoji">💧</Text>, tone: 'sky' },
-    { label: '推荐食谱', desc: '照着吃,一键记为一餐', path: RoutePath.Recipes, sheet: null, icon: <Text className="entry-emoji">🥗</Text>, tone: 'warm' }
+    { label: '进度照片', desc: '拍一张 · 前后对比照', path: null, href: '/pages/photos/index', sheet: null, icon: <Image className="entry-icon__img" src={cameraIcon} mode="aspectFit" />, tone: 'sky' },
+    { label: '喝水打卡', desc: '记录每日饮水进度', path: null, sheet: 'water', icon: <Image className="entry-icon__img" src={dropIcon} mode="aspectFit" />, tone: 'sky' },
+    { label: '推荐食谱', desc: '照着吃 · 一键记一餐', path: RoutePath.Recipes, sheet: null, icon: <Image className="entry-icon__img" src={recipeIcon} mode="aspectFit" />, tone: 'warm' }
   ];
 
   /**
@@ -76,11 +84,15 @@ export default function Record() {
         变的只是入口 —— 而这一页顶上就是它该在的地方:进来补水/称重的人
         和进来记饮食/运动的人,第一步是同一个决定。 */}
     <View className="record-header">
-      <Text>今天要记录什么？</Text>
-      <Text className="record-quick" onClick={() => navigate(`/${RoutePath.QuickRecord}`)}>一下记完 ›</Text>
+      <View className="record-header-copy">
+        <Text className="record-title">今天要记录什么？</Text>
+      </View>
+      <Text className="record-quick" onClick={() => navigate(`/${RoutePath.QuickRecord}`)}>一键记录 ›</Text>
     </View>
     <View className="entry-list">{entries.map((item) => <View key={item.label} className="entry-card" onClick={() => openEntry(item)}>
-      <View className={`entry-icon ${item.tone}`}>{item.icon}</View><View className="entry-copy"><Text className="entry-name">{item.label}</Text><Text className="entry-desc">{item.desc}</Text></View><ArrowRight className="entry-arrow" />
+      <View className={`entry-icon ${item.tone}`}>{item.icon}</View>
+      <View className="entry-copy"><Text className="entry-name">{item.label}</Text><Text className="entry-desc">{item.desc}</Text></View>
+      <ArrowRight className="entry-arrow" />
     </View>)}</View>
     <Text className="section-kicker">自动采集数据</Text>
     {loading&&<Text className="record-empty">正在加载记录和数据源…</Text>}

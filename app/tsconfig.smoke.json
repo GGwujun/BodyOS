@@ -48,6 +48,7 @@
     "src/pkg-exercise/engine/types.ts",
     "src/constants/theme.ts",
     "src/utils/date.ts",
+    "src/utils/health.ts",
     "src/utils/chart.ts",
     "src/utils/weekly-weight.ts",
     "src/utils/duration.ts",

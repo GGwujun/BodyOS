@@ -11,5 +11,8 @@ export * as trendsApi from './trends';
 export * as aiApi from './ai';
 export * as dataSourceApi from './dataSources';
 export * as waterApi from './water';
+export * as sleepApi from './sleep';
 export * as ingredientApi from './ingredient';
 export * as trainingApi from './training';
+export * as weeklyPushApi from './weeklyPush';
+export * as feedbackApi from './feedback';

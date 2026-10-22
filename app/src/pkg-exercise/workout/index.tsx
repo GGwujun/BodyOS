@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, Button, Switch, Textarea } from '@tarojs/components';
+import { View, Text, Button, Image, Switch, Textarea } from '@tarojs/components';
+import checkIcon from '@/assets/icons/check.png';
 import Taro, { useDidShow, useDidHide } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 /* 体重弹层是**主包**那个组件(体重页/方案页也用同一个)—— 重量的取值与校验只有那一处 */
@@ -1870,7 +1871,7 @@ export default function Workout() {
         <>
           <View className="wk-mask" onClick={closeSummary} catchMove />
           <View className="wk-sheet" catchMove>
-            <Text className="wk-sheet-emoji">🎉</Text>
+            <Image className="wk-sheet-icon" src={checkIcon} mode="aspectFit" />
             <Text className="wk-sheet-title">训练完成!</Text>
             <View className="wk-sheet-stats">
               {/* 改时长时这一格跟着走(改的是同一条记录),不然「上面 45 分钟、下面 72 分」 */}

@@ -24,11 +24,11 @@ export interface EffortBand {
 }
 
 export const EFFORT_BANDS: EffortBand[] = [
-  { rir: 0, max: 0.5, color: '#7c3aed', label: '力竭', feel: '一个都做不动了' },
+  { rir: 0, max: 0.5, color: THEME.plum, label: '力竭', feel: '一个都做不动了' },
   { rir: 1, max: 1.5, color: THEME.danger, label: '剩 1 次', feel: '大概还能做 1 次' },
   { rir: 2, max: 2.5, color: THEME.warning, label: '剩 2 次', feel: '还能做 2 次' },
   { rir: 3, max: 3.5, color: THEME.primary, label: '剩 3 次', feel: '还能做 3 次,刚刚好' },
-  { rir: 4, max: Infinity, color: '#94a3b8', label: '很轻松', feel: '还能做很多次,可以加重' }
+  { rir: 4, max: Infinity, color: THEME.muted, label: '很轻松', feel: '还能做很多次,可以加重' }
 ];
 
 /** 选择器上按顺序展示的档位(力竭在前,和色带方向一致) */

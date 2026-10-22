@@ -46,7 +46,7 @@
     font-weight: $fw-bold;
     color: $color-info;
     background: $color-info-bg;
-    border: 1px solid #bfdbfe;
+    border: 1px solid $color-info-border;
   }
   .pe-toggle {
     padding: 5px 13px;
@@ -140,7 +140,7 @@
 .pe-mask {
   position: fixed;
   left: 0; top: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(23, 43, 41, 0.5);
   z-index: 110;
 }
 

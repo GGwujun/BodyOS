@@ -1,16 +1,24 @@
-import { View, Text } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import { View, Text, Image } from '@tarojs/components';
 import Screen from '@/components/Screen';
 import { QA_BANK } from '@/data/qa';
 import { FOOD_LIBRARY } from '@/data/foods';
 import { ASSESSMENTS } from '@/data/assessments';
+import foodIcon from '@/assets/icons/food.png';
+import scaleIcon from '@/assets/icons/scale.png';
+import statsIcon from '@/assets/icons/stats.png';
+import cameraIcon from '@/assets/icons/camera.png';
+import rulerIcon from '@/assets/icons/ruler.png';
+import planIcon from '@/assets/icons/plan.png';
+import recipeIcon from '@/assets/icons/recipe.png';
+import checkIcon from '@/assets/icons/check.png';
+import compassIcon from '@/assets/icons/compass.png';
 import './index.scss';
 import { navigate } from '@/utils/nav';
 
 interface ToolItem {
   name: string;
   desc: string;
-  emoji: string;
+  icon: string;
   url: string;
 }
 
@@ -34,10 +42,10 @@ const SECTIONS: { title: string; items: ToolItem[] }[] = [
   {
     title: '食物工具',
     items: [
-      { name: '食物库', desc: `${FOOD_LIBRARY.length} 种食物热量`, emoji: '🥗', url: '/pages/food/index' },
-      { name: '食物对比', desc: '对比 · 估重 · 红黑榜', emoji: '⚖️', url: '/pages/food-tools/index' },
-      { name: '食物排行', desc: '高糖高脂 · 奶茶换算', emoji: '📊', url: '/pages/food-rank/index' },
-      { name: '配料识别', desc: '拍配料表看懂成分', emoji: '🧾', url: '/pages/ingredient/index' }
+      { name: '食物库', desc: `${FOOD_LIBRARY.length} 种食物热量`, icon: foodIcon, url: '/pages/food/index' },
+      { name: '食物对比', desc: '对比 · 估重 · 红黑榜', icon: scaleIcon, url: '/pages/food-tools/index' },
+      { name: '食物排行', desc: '高糖高脂 · 奶茶换算', icon: statsIcon, url: '/pages/food-rank/index' },
+      { name: '配料识别', desc: '拍配料表看懂成分', icon: cameraIcon, url: '/pages/ingredient/index' }
     ]
   },
   {
@@ -46,16 +54,16 @@ const SECTIONS: { title: string; items: ToolItem[] }[] = [
        留下来的这几格是算的、查的、测的,放哪儿都不像有家。 */
     title: '身体与计划',
     items: [
-      { name: '身体指标', desc: 'BMI 与体脂率估算', emoji: '📏', url: '/pages/tools/index' },
-      { name: '体重管理方案', desc: '方案 · 代谢 · 食谱', emoji: '🗂', url: '/pages/plan/index' },
-      { name: '推荐食谱', desc: '三餐照着吃', emoji: '🍱', url: '/pages/recipes/index' },
-      { name: '健康测评', desc: `${ASSESSMENTS.length} 套健康测评`, emoji: '📋', url: '/pages/assessment/index' }
+      { name: '身体指标', desc: 'BMI 与体脂率估算', icon: rulerIcon, url: '/pages/tools/index' },
+      { name: '体重管理方案', desc: '方案 · 代谢 · 食谱', icon: planIcon, url: '/pages/plan/index' },
+      { name: '推荐食谱', desc: '三餐照着吃', icon: recipeIcon, url: '/pages/recipes/index' },
+      { name: '健康测评', desc: `${ASSESSMENTS.length} 套健康测评`, icon: checkIcon, url: '/pages/assessment/index' }
     ]
   },
   {
     title: '学点知识',
     items: [
-      { name: '每日一答', desc: `${QA_BANK.length} 问减脂百科`, emoji: '💡', url: '/pages/qa/index' }
+      { name: '每日一答', desc: `${QA_BANK.length} 问减脂百科`, icon: compassIcon, url: '/pages/qa/index' }
     ]
   }
 ];
@@ -66,13 +74,17 @@ export default function Toolbox() {
 
   return (
     <Screen className="toolbox-page">
+      <View className="toolbox-header">
+        <Text className="toolbox-title">健康工具箱</Text>
+        <Text className="toolbox-subtitle">算一算、查一查、测一测。</Text>
+      </View>
       {SECTIONS.map((sec) => (
         <View className="card" key={sec.title}>
-          <Text className="fs-h1">{sec.title}</Text>
+          <Text className="tb-section-title">{sec.title}</Text>
           <View className="tb-grid">
             {sec.items.map((it) => (
               <View className="tb-item" key={it.name} onClick={() => go(it.url)}>
-                <View className="tb-icon">{it.emoji}</View>
+                <View className="tb-icon"><Image className="tb-icon__img" src={it.icon} mode="aspectFit" /></View>
                 <Text className="tb-name">{it.name}</Text>
                 <Text className="tb-desc">{it.desc}</Text>
               </View>

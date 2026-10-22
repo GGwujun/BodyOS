@@ -1,19 +1,32 @@
 import { useState } from 'react';
-import { Text, View } from '@tarojs/components';
+import { Image, Picker, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import dropIcon from '@/assets/icons/drop.png';
+import scaleIcon from '@/assets/icons/scale.png';
+import timerIcon from '@/assets/icons/timer.png';
 import WaterQuickAdd from '@/components/WaterQuickAdd';
 import WeightSheet from '@/components/WeightSheet';
 import { RoutePath } from '@/constants/routes';
-import { bodyApi } from '@/services';
+import { bodyApi, sleepApi } from '@/services';
 import { track } from '@/services/analytics';
 import { useTabBarMask } from '@/hooks/useTabBarMask';
 import { localDayOf, todayStr } from '@/utils/date';
+import { switchTab } from '@/utils/nav';
 import type { BodyMeasurement } from '@/services/types';
+import { toast } from '@/utils/ui';
 import './index.scss';
 
+/** 睡眠档位:0–12 小时,半小时一格。0 是「没睡」(通宵也是一条值得记的数据) */
+const SLEEP_HOURS = Array.from({ length: 25 }, (_, i) => i / 2);
+const sleepLabel = (h: number) => (h === 0 ? '没睡' : `${h} 小时`);
+const fmtHours = (minutes: number) => {
+  const h = minutes / 60;
+  return Number.isInteger(h) ? String(h) : h.toFixed(1);
+};
+
 /**
- * 速记 —— **不离开这一页就能记完的那两件事**:喝水、体重。
+ * 速记 —— **不离开这一页就能记完的那三件事**:喝水、体重、睡眠。
  *
  * 挑它们的理由是「记一笔的心理成本」:喝水发生在手上有水杯的那一刻,称体重发生在刚站上秤的那一刻,
  * 那两下最贵的是时间 —— 点一下、记完,两步走人。记录页是**目录**(饮食/运动/围度/食谱
@@ -35,6 +48,23 @@ export default function QuickRecord() {
   /* 读失败和「今天确实还没称」以前共用同一个 null —— 接口挂了也照样劝他「站上秤记一下」。
      同一页的喝水卡早就分了三态,这张没有,于是同一屏上两套口径。 */
   const [weightFailed, setWeightFailed] = useState(false);
+  /** 昨晚睡眠(分钟)。null = 还没读到;0 有两种可能(没记/真没睡),界面上都只当「还没记」处理 */
+  const [sleepMinutes, setSleepMinutes] = useState<number | null>(null);
+  const loadSleep = () => {
+    sleepApi.getSleep(today)
+      .then((r) => setSleepMinutes(r.minutes))
+      .catch(() => setSleepMinutes(null));
+  };
+  const pickSleep = (idx: number) => {
+    const hours = SLEEP_HOURS[idx] ?? 7.5;
+    sleepApi.setSleep(Math.round(hours * 60))
+      .then(() => {
+        setSleepMinutes(Math.round(hours * 60));
+        track('quick_sleep_save', 'other', { hours });
+        toast('已记上');
+      })
+      .catch(() => toast('没记上,请重试', 'error'));
+  };
   useTabBarMask(showWeight);
 
   const loadWeight = () => {
@@ -52,17 +82,18 @@ export default function QuickRecord() {
     track('quick_record_view', 'other');
     setWaterToken((n) => n + 1);
     loadWeight();
+    loadSleep();
   });
 
   return <Screen className="quick-page">
     <View className="quick-header">
       <Text className="quick-title">今天记一笔</Text>
-      <Text className="quick-sub">喝水和体重不用翻页 —— 一下记完</Text>
+      <Text className="quick-sub">喝水、体重、睡眠不用翻页 —— 一下记完</Text>
     </View>
 
     <View className="quick-card">
       <View className="quick-card__head">
-        <Text className="quick-card__emoji">💧</Text>
+        <View className="quick-card__icon"><Image className="quick-card__icon-img" src={dropIcon} mode="aspectFit" /></View>
         <Text className="quick-card__title">喝水</Text>
         <Text className="quick-card__hint">点一下就记上</Text>
       </View>
@@ -71,7 +102,7 @@ export default function QuickRecord() {
 
     <View className="quick-card">
       <View className="quick-card__head">
-        <Text className="quick-card__emoji">⚖️</Text>
+        <View className="quick-card__icon"><Image className="quick-card__icon-img" src={scaleIcon} mode="aspectFit" /></View>
         <Text className="quick-card__title">体重</Text>
         {!weightFailed && todayWeight?.weightKg != null && <Text className="quick-card__hint">{fmtTime(todayWeight.measuredAt)} 记过</Text>}
       </View>
@@ -94,9 +125,42 @@ export default function QuickRecord() {
       )}
     </View>
 
+    <View className="quick-card">
+      <View className="quick-card__head">
+        <View className="quick-card__icon"><Image className="quick-card__icon-img" src={timerIcon} mode="aspectFit" /></View>
+        <Text className="quick-card__title">睡眠</Text>
+        {!!sleepMinutes && <Text className="quick-card__hint">昨晚的时长</Text>}
+      </View>
+      {!!sleepMinutes ? (
+        <View className="quick-weigh is-done">
+          <Text className="quick-weigh__value">{fmtHours(sleepMinutes)}<Text className="quick-weigh__unit"> 小时</Text></Text>
+          <Picker
+            mode="selector"
+            range={SLEEP_HOURS.map(sleepLabel)}
+            value={Math.min(24, Math.round(sleepMinutes / 30))}
+            onChange={(e) => pickSleep(Number(e.detail.value))}
+          >
+            <Text className="quick-weigh__again">改一下 ›</Text>
+          </Picker>
+        </View>
+      ) : (
+        <Picker
+          mode="selector"
+          range={SLEEP_HOURS.map(sleepLabel)}
+          value={15}
+          onChange={(e) => pickSleep(Number(e.detail.value))}
+        >
+          <View className="quick-weigh">
+            <Text className="quick-weigh__empty">昨晚睡了多久?选一下就记上</Text>
+            <Text className="quick-weigh__cta">记睡眠 ›</Text>
+          </View>
+        </Picker>
+      )}
+    </View>
+
     {/* 其余的记录各自是一整套流程(选食物、选运动类型、量几处围度),翻页才说得清,
         所以它们的入口留在记录页 —— 这里只给一条明确的路,不再摆一排卡片 */}
-    <View className="quick-more" onClick={() => Taro.switchTab({ url: `/${RoutePath.Record}` })}>
+    <View className="quick-more" onClick={() => switchTab(`/${RoutePath.Record}`)}>
       <Text className="quick-more__text">饮食 · 运动 · 围度 · 力量训练</Text>
       <Text className="quick-more__action">去记录页 ›</Text>
     </View>

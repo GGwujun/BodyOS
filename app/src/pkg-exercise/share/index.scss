@@ -61,7 +61,7 @@
     padding-bottom: 40px;
   }
 
-  .sh-empty-emoji { font-size: $fs-mega; }
+  .sh-empty-icon { width: 52px; height: 52px; display: block; }
   /* 空态得给个去处(和计划页那颗同一套做法),不然这一页就是个死胡同 */
   .sh-empty-cta { margin-top: 10px; }
 }
