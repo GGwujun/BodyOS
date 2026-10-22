@@ -4,9 +4,8 @@ import { getUserId } from '../lib/currentUser';
 import { ok } from '../lib/http';
 import { toDate, todayStr, toDateStr, addDays, ageFromBirth } from '../lib/date';
 import { recomputeDaily } from '../engine';
-import { calcBMR, calcTDEE } from '../engine/energy';
-import { calcMacroTarget } from '../engine/nutrition';
-import { hasEnergyProfile } from '../engine/dataAvailability';
+import { macroTargetView } from '../engine/nutrition';
+import { detectPlateau } from '../engine/plateau';
 import { countRecordedDays } from '../lib/recordedDays';
 import { observedWeightChange } from '../lib/weightChange';
 import { measurementWindow } from '../lib/trendWindow';
@@ -38,7 +37,7 @@ trendsRouter.get('/', async (req, res, next) => {
   // 确保今天有汇总
   await recomputeDaily(getUserId(res), end);
 
-  const [summaries, measurements, foodDates, activityDates, latestWeight, profile, goal] = await Promise.all([
+  const [summaries, measurements, foodDates, activityDates, latestWeight, profile, goal, plateauWeights] = await Promise.all([
     prisma.dailySummary.findMany({
       where: { userId: getUserId(res), date: { in: days } },
       orderBy: { date: 'asc' }
@@ -63,6 +62,12 @@ trendsRouter.get('/', async (req, res, next) => {
       where: { userId: getUserId(res), isActive: true },
       orderBy: { createdAt: 'desc' },
       select: { type: true, unit: true, targetValue: true }
+    }),
+    // 平台期判定看的是「最近三周」这个固定窗口,跟上面的 range 无关 ——
+    // range=7 时曲线只画七天,但「这三周没掉秤」照样该提示。单独查一份
+    prisma.bodyMeasurement.findMany({
+      where: { userId: getUserId(res), weightKg: { not: null }, measuredAt: measurementWindow(addDays(end, -20), end) },
+      orderBy: { measuredAt: 'asc' }
     })
   ]);
 
@@ -71,31 +76,21 @@ trendsRouter.get('/', async (req, res, next) => {
     .map((m) => ({ date: toDateStr(m.measuredAt), weightKg: m.weightKg as number }));
 
   /**
-   * 每日宏量目标(该吃多少蛋白/碳水/脂肪)。
-   *
-   * 客户端只拿它做对比(「日均蛋白 82g / 目标 105g」),不自己算 —— 这个数取决于
-   * 体重、目标类型和活动水平,公式在引擎里。资料不全时**返回 null 而不是按默认体重猜**:
-   * 猜出来的目标会让用户以为 App 知道该吃多少,而它其实只知道个身高都没有。
+   * 每日宏量目标(该吃多少蛋白/碳水/脂肪)—— 公式收在 engine/nutrition.macroTargetView,
+   * daily-summary 也返回同一份,两条路由不能各算各的(口径注释见那边)。
    */
-  const energyProfile = {
-    gender: (profile?.gender ?? '') as string,
-    age: ageFromBirth(profile?.birthDate ?? null),
-    heightCm: profile?.heightCm ?? null,
-    weightKg: profile?.weightKg ?? null
-  };
-  const macroTarget =
-    goal && hasEnergyProfile(energyProfile)
-      ? (() => {
-          const tdee = calcTDEE(calcBMR(energyProfile as { gender: string; age: number; heightCm: number; weightKg: number }), profile?.activityLevel ?? 'moderate');
-          const t = calcMacroTarget({ tdee, goalType: goal.type, weightKg: energyProfile.weightKg as number });
-          return {
-            calories: Math.round(t.targetCalories),
-            proteinG: Math.round(t.targetProteinG),
-            carbG: Math.round(t.targetCarbG),
-            fatG: Math.round(t.targetFatG)
-          };
-        })()
-      : null;
+  const macroTarget = goal
+    ? macroTargetView(
+        {
+          gender: (profile?.gender ?? '') as string,
+          age: ageFromBirth(profile?.birthDate ?? null),
+          heightCm: profile?.heightCm ?? null,
+          weightKg: profile?.weightKg ?? null
+        },
+        profile?.activityLevel ?? 'moderate',
+        goal.type
+      )
+    : null;
 
   // 聚合统计
   const currentWeight =
@@ -120,12 +115,18 @@ trendsRouter.get('/', async (req, res, next) => {
       burnCalories: s.burnCalories,
       netCalories: s.netCalories,
       steps: s.steps,
+      sleepMinutes: s.sleepMinutes,
       nutrition: macroOf(s.nutrition)
     })),
     weights,
     macroTarget,
     // 趋势页要按目标方向决定「掉秤」是好事还是坏事(增肌掉秤不该标绿)
     goal,
+    /** 平台期(纯规则判定,见 engine/plateau.ts):null = 没卡住或数据不够,不下结论 */
+    plateau: detectPlateau(
+      plateauWeights.map((m) => ({ date: toDateStr(m.measuredAt), weightKg: m.weightKg as number })),
+      goal?.type ?? null
+    ),
     stats: {
       avgScore: avgScore == null ? null : Math.round(avgScore),
       currentWeight,

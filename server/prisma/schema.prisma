@@ -23,10 +23,13 @@ model User {
   profile       UserProfile?
   goals         Goal[]
   foodLogs      FoodLog[]
+  customFoods   CustomFood[]
   activities    ActivityRecord[]
   summaries     DailySummary[]
   measurements  BodyMeasurement[]
   dataSources   DataSource[]
+  sleepLogs     SleepLog[]
+  weeklyPush    WeeklyPushSetting?
   conversations AIConversation[]
   analytics     AnalyticsEvent[]
   authTokens    AuthToken[]
@@ -34,6 +37,7 @@ model User {
   waterLogs     WaterLog[]
   trainingDocs  TrainingDoc[]
   reminder      TrainingReminder?
+  feedback      Feedback[]
 }
 
 /// 登录令牌(不透明随机串;签发后 30 天过期,客户端存本地)
@@ -64,6 +68,8 @@ model UserProfile {
   trainingPref    String?
   /// 每日饮水目标(毫升)
   waterGoalMl     Int      @default(1500)
+  /// 每日步数目标。以前写死 8000:老人小孩练家子全一个数,进度条天天差一截还以为是自己懒
+  stepGoal        Int      @default(8000)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -104,6 +110,26 @@ model FoodLog {
 
   @@index([userId, date])
   @@index([userId, meal])
+}
+
+/// 我的食物 —— 用户显式存下来的条目(手动记的、识别后核对过的)。
+/// 和 FoodLog 的区别:那是「某天吃了什么」的流水,这是「下次还想一键再吃」的收藏。
+model CustomFood {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  amount    String   @default("")
+  calories  Float
+  proteinG  Float    @default(0)
+  carbG     Float    @default(0)
+  fatG      Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// 同名同份量只留一条:再存就是改(按最新那次核对过的数字来)
+  @@unique([userId, name, amount])
+  @@index([userId, createdAt])
 }
 
 model ActivityRecord {
@@ -153,6 +179,8 @@ model DailySummary {
   exerciseCalories Float    @default(0)
   /// 当日水分摄入合计(毫升),来自 WaterLog
   waterMl          Int      @default(0)
+  /// 昨晚睡眠时长(分钟),来自 SleepLog。没记过就是 0 —— 和 waterMl 同一口径
+  sleepMinutes     Int      @default(0)
   nutrition        Json     @default("{\"proteinG\":0,\"carbG\":0,\"fatG\":0,\"fiberG\":0}")
   engineVersion    String   @default("v1")
   recalculatedAt   DateTime @default(now())
@@ -167,6 +195,19 @@ model WaterLog {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date      DateTime @db.Date
   amountMl  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+}
+
+/// 睡眠 —— 一天一条,记的是「昨晚睡了多少分钟」。手动记,不给作息当裁判
+model SleepLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  minutes   Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -259,6 +300,25 @@ model WeeklyReport {
   @@unique([userId, weekStart])
 }
 
+/// 周报推送设置 —— 每周一早上把上周摘要推给用户(订阅消息)。
+/// 额度规则和训练提醒(TrainingReminder)同一套:一次授权发一条,发完要再领。
+model WeeklyPushSetting {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled     Boolean  @default(false)
+  /// 订阅消息剩余额度:授权一次 +1,发出一条 -1
+  grants      Int      @default(0)
+  /// 最后一次发送对应的**那个周一**的用户本地日期 —— 一周最多一条,按它去重
+  lastSentOn  String?
+  /// 客户端时区相对 UTC 的分钟数(东八区 = 480)
+  tzOffsetMin Int      @default(480)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([enabled])
+}
+
 /// 训练域文档云端镜像(计划/渐进/日志/备注/器材/照片索引/请假条)。
 /// 客户端原本只存在本机 storage,换设备即丢;这里按「文档」粒度存:
 /// plan/progress/notes/kit/daynotes 各一个文档,每条训练日志单独一个文档 —— 合并时不必解开大 blob,
@@ -309,4 +369,33 @@ model TrainingReminder {
   updatedAt   DateTime @updatedAt
 
   @@index([enabled])
+}
+
+
+/// 用户意见反馈 / 功能建议。
+/// 只有用户主动填写的内容,不附带任何健康数据 —— 上下文只收页面路径和版本/机型这类
+/// 排障信息(字段收集口径见 routes/feedback.ts)。
+model Feedback {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// bug = 问题反馈,idea = 功能建议
+  kind       String
+  content    String
+  /// 选填的联系方式(微信号/邮箱),M1 里唯一的回复通道
+  contact    String?
+  /// 截图 URL 数组(最多 3 张,指向 /media/...)
+  images     Json?
+  pagePath   String?
+  appVersion String?
+  sdkVersion String?
+  platform   String?
+  /// open | replied | closed
+  status     String   @default("open")
+  adminNote  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
 }

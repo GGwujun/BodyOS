@@ -11,6 +11,7 @@ import { randomBytes } from 'node:crypto';
 import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
 import { env } from '../env';
+import { logWarn } from './log';
 
 /** 本地开发用户(无登录时的回落,也是历史 MVP 数据归属) */
 export const DEV_USER_ID = 'u_1';
@@ -50,11 +51,21 @@ export async function attachUser(req: Request, res: Response, next: NextFunction
   try {
     const auth = await prisma.authToken.findUnique({ where: { token } });
     if (!auth || auth.expiresAt.getTime() < Date.now()) {
+      // 令牌内容本身绝不进日志;只记「有这个头但查不到/已过期」
+      logWarn('auth', '令牌无效或已过期', {
+        path: req.path,
+        found: Boolean(auth),
+        expired: auth ? auth.expiresAt.getTime() < Date.now() : null
+      });
       res.status(401).json({ code: 401, message: '登录已过期，请重新进入小程序', data: null });
       return;
     }
-    (res.locals as Record<string, unknown>).userId = auth.userId;
-    (res.locals as Record<string, unknown>).sessionKey = auth.sessionKey;
+    const locals = res.locals as Record<string, unknown>;
+    locals.userId = auth.userId;
+    locals.sessionKey = auth.sessionKey;
+    // 微信 session_key 在每次 code2session 时都会轮换;记下签发时间,
+    // 同步日志里能看出「这次解密用的是哪一版会话」,但不会泄露 key 本身。
+    locals.sessionIssuedAt = auth.createdAt.toISOString();
     next();
   } catch (error) {
     next(error);

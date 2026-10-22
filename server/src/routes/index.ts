@@ -4,6 +4,7 @@ import meRoutes from './me';
 import profileRoutes from './profile';
 import goalsRoutes from './goals';
 import foodRoutes from './food';
+import customFoodRoutes from './customFoods';
 import activityRoutes from './activity';
 import bodyRoutes from './body';
 import summaryRoutes from './summary';
@@ -12,8 +13,11 @@ import dataSourcesRoutes from './dataSources';
 import analyticsRoutes from './analytics';
 import authRoutes from './auth';
 import waterRoutes from './water';
+import sleepRoutes from './sleep';
 import trainingRoutes from './training';
 import reminderRoutes from './reminder';
+import weeklyPushRoutes from './weeklyPush';
+import feedbackRoutes, { feedbackAdminRouter } from './feedback';
 import { attachUser } from '../lib/currentUser';
 
 const router = Router();
@@ -26,6 +30,10 @@ const router = Router();
  */
 router.use('/auth', authRoutes);
 
+// 反馈的管理端查询必须在鉴权之前:运营/开发者用 ADMIN_API_KEY 查,不该先拿一个小程序令牌。
+// 这个 router 只注册了 GET/PATCH,POST /feedback 会继续走到下面用户侧的 router。
+router.use('/feedback', feedbackAdminRouter);
+
 // 鉴权:Bearer 令牌解析为 res.locals.userId
 router.use(attachUser);
 
@@ -34,6 +42,7 @@ router.use('/me', meRoutes);
 router.use('/profile', profileRoutes);
 router.use('/goals', goalsRoutes);
 router.use('/food-logs', foodRoutes);
+router.use('/custom-foods', customFoodRoutes);
 router.use('/activities', activityRoutes);
 router.use('/body-measurements', bodyRoutes);
 router.use('/daily-summary', summaryRoutes);
@@ -41,8 +50,11 @@ router.use('/trends', trendsRoutes);
 router.use('/data-sources', dataSourcesRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/water', waterRoutes);
+router.use('/sleep', sleepRoutes);
 router.use('/training', trainingRoutes);
 // 提醒设置比 /training 更具体,挂在它后面:docs/media 不匹配时会继续往下走
 router.use('/training/reminder', reminderRoutes);
+router.use('/weekly-push', weeklyPushRoutes);
+router.use('/feedback', feedbackRoutes);
 
 export default router;

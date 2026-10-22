@@ -3,6 +3,8 @@ import cors from 'cors';
 import { isAbsolute, resolve } from 'node:path';
 import { env } from './env';
 import { startReminderTicker } from './lib/reminderRunner';
+import { startWeeklyTicker } from './lib/weeklyRunner';
+import { logError, logInfo, logWarn } from './lib/log';
 import routes from './routes';
 
 const app = express();
@@ -19,12 +21,44 @@ app.use('/media', express.static(mediaDir, { maxAge: '365d', immutable: true, in
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
+/**
+ * 请求日志:线上排查唯一靠谱的入口。
+ *
+ * nginx 只记了路径和状态码,应用内部的失败原因(解密失败/Prisma 异常)它看不见;
+ * 这里把方法、路径、状态、耗时、用户和 `err()` 给出的错误文案串成一行。
+ * 查询串一律不记(可能带敏感参数),令牌/请求体也不记。
+ */
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api/')) return next();
+  const startedAt = Date.now();
+  // 必须在进路由前取路径:finish 时 req.url 已被 Express 按挂载点改写过
+  const path = req.originalUrl.split('?')[0];
+  res.on('finish', () => {
+    const detail = {
+      method: req.method,
+      path,
+      status: res.statusCode,
+      ms: Date.now() - startedAt,
+      userId: (res.locals as Record<string, unknown>).userId ?? null,
+      error: (res.locals as Record<string, unknown>).errorMessage ?? undefined
+    };
+    if (res.statusCode >= 500) logError('http', '请求失败', undefined, detail);
+    else if (res.statusCode >= 400) logWarn('http', '请求被拒绝', detail);
+    else logInfo('http', '请求完成', detail);
+  });
+  next();
+});
+
 // 业务 + AI 路由,统一挂在 /api/v1
 app.use('/api/v1', routes);
 
 app.use(
-  (err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-    console.error('[BodyOS Server] error:', err);
+  (err: unknown, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    logError('http', '未捕获异常', err, {
+      method: req.method,
+      path: req.originalUrl.split('?')[0],
+      userId: (res.locals as Record<string, unknown>).userId ?? null
+    });
     res.status(500).json({ code: 500, message: '服务器内部错误', data: null });
   }
 );
@@ -40,4 +74,6 @@ app.listen(env.port, () => {
   }
   // 训练提醒:小程序没有本地通知,到点提醒只能由服务端发订阅消息
   startReminderTicker();
+  // 周报推送:每周一早上把上周摘要推给开通了的用户(另一个模板、另一份额度)
+  startWeeklyTicker();
 });

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "UserProfile" ADD COLUMN     "stepGoal" INTEGER NOT NULL DEFAULT 8000;

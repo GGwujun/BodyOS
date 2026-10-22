@@ -2,8 +2,10 @@ import { Router } from 'express';
 import { prisma } from '../db';
 import { getUserId } from '../lib/currentUser';
 import { ok, err } from '../lib/http';
-import { toDate, todayStr, isValidDateStr } from '../lib/date';
+import { toDate, todayStr, isValidDateStr, ageFromBirth } from '../lib/date';
 import { recomputeDaily } from '../engine';
+import { missingEnergyFields } from '../engine/dataAvailability';
+import { macroTargetView } from '../engine/nutrition';
 import { summaryNeedsRefresh } from '../lib/summaryFreshness';
 import { wrap } from '../lib/asyncHandler';
 
@@ -38,7 +40,10 @@ router.get('/', wrap(async (req, res) => {
   });
 
   const isToday = dateStr === todayStr();
-  const profile = await prisma.userProfile.findUnique({where:{userId},select:{updatedAt:true}});
+  const profile = await prisma.userProfile.findUnique({
+    where: { userId },
+    select: { updatedAt: true, birthDate: true, heightCm: true, weightKg: true, gender: true, activityLevel: true, stepGoal: true }
+  });
   // 无汇总 → 必须重算;今日且超过 TTL → 重算保持新鲜;其余直接用缓存值
   if (summaryNeedsRefresh(summary?.recalculatedAt ?? null, profile?.updatedAt ?? null, isToday, recentlyRecomputed(userId, dateStr))) {
     summary = await recomputeDaily(userId, dateStr);
@@ -51,7 +56,36 @@ router.get('/', wrap(async (req, res) => {
     orderBy: { createdAt: 'desc' }
   });
 
-  return ok(res, { ...summary, goal });
+  /**
+   * 分数/消耗为空时,客户端得说得出**为什么**:
+   * 「记录饮食、运动后可查看」对没填身高体重的人是句错话 —— 他记了也不会有。
+   * 这里把还缺哪几项一并返回,首页据此把用户直接送去补资料。
+   */
+  const missingProfile = missingEnergyFields({
+    age: ageFromBirth(profile?.birthDate ?? null),
+    heightCm: profile?.heightCm ?? null,
+    weightKg: profile?.weightKg ?? null
+  });
+
+  /**
+   * 每日宏量目标 —— 和 /trends 同一份公式(engine/nutrition.macroTargetView)。
+   * 饮食页的「今天的营养」卡要拿它对当日摄入,不能只在趋势页给回顾视角。
+   * goal 的 type 直接用上面查到的那条 active goal。
+   */
+  const macroTarget = goal
+    ? macroTargetView(
+        {
+          gender: (profile?.gender ?? '') as string,
+          age: ageFromBirth(profile?.birthDate ?? null),
+          heightCm: profile?.heightCm ?? null,
+          weightKg: profile?.weightKg ?? null
+        },
+        profile?.activityLevel ?? 'moderate',
+        goal.type
+      )
+    : null;
+
+  return ok(res, { ...summary, goal, profileReady: missingProfile.length === 0, missingProfile, macroTarget, stepGoal: profile?.stepGoal ?? 8000 });
 }));
 
 export default router;

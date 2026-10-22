@@ -10,7 +10,7 @@ import { recognizeAndCalculate } from '../ai/foodRecognition';
 import { presentDataSource } from '../sync/registry';
 import { buildCoachContext, ChatInputSchema } from '../ai/coachContext';
 import { completeCoachTurn } from '../ai/coachTurn';
-import { hasEnergyProfile } from './dataAvailability';
+import { hasEnergyProfile, missingEnergyFields } from './dataAvailability';
 import { ProfileSchema } from '../lib/profileValidation';
 import { summaryNeedsRefresh } from '../lib/summaryFreshness';
 import { countRecordedDays } from '../lib/recordedDays';
@@ -94,9 +94,16 @@ test('profile rejects invalid measurements and future birth dates', () => {
 
 test('energy estimates require real complete profile fields', () => {
   assert.equal(hasEnergyProfile({gender:'male',age:30,heightCm:175,weightKg:70}),true);
-  for(const partial of [{age:null},{heightCm:null},{weightKg:null},{gender:'other'},{weightKg:0},{heightCm:NaN}]) {
+  // 性别不影响「能不能算」:未提供/其他走中性常数,不能因此把消耗永远留空
+  assert.equal(hasEnergyProfile({gender:'other',age:30,heightCm:175,weightKg:70}),true);
+  for(const partial of [{age:null},{heightCm:null},{weightKg:null},{weightKg:0},{heightCm:NaN}]) {
     assert.equal(hasEnergyProfile({gender:'male',age:30,heightCm:175,weightKg:70,...partial}),false);
   }
+  assert.deepEqual(
+    missingEnergyFields({age:null,heightCm:null,weightKg:null}),
+    ['birthDate','heightCm','weightKg']
+  );
+  assert.deepEqual(missingEnergyFields({age:30,heightCm:175,weightKg:null}),['weightKg']);
 });
 
 test('failed AI turn does not persist a partial conversation', async () => {
@@ -177,6 +184,8 @@ test('food recognition rejects malformed AI amounts instead of substituting 100g
 test('calcBMR applies Mifflin-St Jeor for male and female profiles', () => {
   assert.equal(calcBMR({ gender: 'male', age: 30, heightCm: 175, weightKg: 70 }), 1648.75);
   assert.equal(calcBMR({ gender: 'female', age: 30, heightCm: 175, weightKg: 70 }), 1482.75);
+  // 未提供/其他:男女常数的中点(+5 与 -161 之间),不是按男性算
+  assert.equal(calcBMR({ gender: 'other', age: 30, heightCm: 175, weightKg: 70 }), 1565.75);
 });
 
 test('calcEnergy uses BMR plus observed activity without double-counting TDEE', () => {

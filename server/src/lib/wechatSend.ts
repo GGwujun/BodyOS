@@ -15,12 +15,68 @@
  * 改 REMIND_FIELDS 这一处即可** —— 别的地方不出现字段名。
  */
 import { env } from '../env';
+import { addDays } from './date';
 
 const TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token';
 const SEND_URL = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send';
 
 /** 用户点提醒后落在小程序里的页面 */
 export const REMIND_PAGE = 'pkg-exercise/plan-view/index';
+
+/** 周报推送点进去落在周报页(不带参数 = 本周;上周摘要自己就是默认视图的上一页) */
+export const WEEKLY_PAGE = 'pages/weekly-report/index';
+
+/**
+ * 周报模板字段名 → 我们填什么。和 REMIND_FIELDS 同一条规矩:**必须和后台模板逐字对应**。
+ * 后台「每周报告提醒」类模板按五字段布局:
+ *   报告周期 {{thing1}} / 综合评分 {{thing2}} / 体重变化 {{thing3}}
+ *   记录情况 {{thing4}} / 本周亮点 {{thing5}}
+ * 选的模板字段名不同就改这一处。
+ */
+export const WEEKLY_FIELDS = {
+  /** 报告周期:10月13日-10月19日 */
+  range: 'thing1',
+  /** 综合评分:本周均分 */
+  score: 'thing2',
+  /** 体重变化:整周涨跌 */
+  weight: 'thing3',
+  /** 记录情况:几天有记录 */
+  days: 'thing4',
+  /** 本周亮点:一句好话(没有就给一句中性的) */
+  note: 'thing5'
+} as const;
+
+export interface WeeklyInput {
+  /** 要报告的那一周的周一(YYYY-MM-DD) */
+  weekStart: string;
+  /** 本周均分(没有评分的天不算) */
+  avgScore: number | null;
+  /** 整周体重变化 kg(称过才有,否则 null) */
+  weightChangeKg: number | null;
+  /** 有记录的天数 / 7 */
+  recordedDays: number;
+  /** 亮点一句(已生成的周报里挑第一条 win;没有就空串,由这里兜底) */
+  highlight: string;
+}
+
+/** 周报五个字段的取值。thing* 一律走 clip(20 字上限是微信的,不是我们的) */
+export function weeklyData(input: WeeklyInput): Record<string, { value: string }> {
+  const [, m, d] = input.weekStart.split('-');
+  // 周期终点按日历算,别拿日期数字 +6(月底会写出「10月32日」)
+  const [, em, ed] = addDays(input.weekStart, 6).split('-');
+  const range = `${Number(m)}月${Number(d)}日-${Number(em)}月${Number(ed)}日`;
+  const score = input.avgScore != null ? `本周均分 ${Math.round(input.avgScore)}` : '本周还没有评分';
+  const weight = input.weightChangeKg != null
+    ? `体重 ${input.weightChangeKg > 0 ? '+' : ''}${input.weightChangeKg.toFixed(1)}kg`
+    : '本周没称体重';
+  return {
+    [WEEKLY_FIELDS.range]: { value: clip(range) },
+    [WEEKLY_FIELDS.score]: { value: clip(score) },
+    [WEEKLY_FIELDS.weight]: { value: clip(weight) },
+    [WEEKLY_FIELDS.days]: { value: clip(`记录 ${input.recordedDays}/7 天`) },
+    [WEEKLY_FIELDS.note]: { value: clip(input.highlight || '新的一周,继续记录就有报告看') }
+  };
+}
 
 /**
  * 模板字段名 → 我们填什么。**必须和后台模板逐字对应**:
@@ -153,13 +209,17 @@ export interface SendResult {
 /**
  * 发一条订阅消息。openid 为空(本地开发用户)或未配模板 → skipped,不报错。
  * 其余情况一律不抛异常:发不出去不该让整个 tick 崩掉,调用方按 errcode 决定要不要清额度。
+ * opts 不传 = 训练提醒那套(默认模板、默认落地页);周报传自己的 templateId + page。
  */
 export async function sendSubscribeMessage(
   openid: string | null | undefined,
-  data: Record<string, { value: string }>
+  data: Record<string, { value: string }>,
+  opts?: { templateId?: string; page?: string }
 ): Promise<SendResult> {
+  const templateId = opts?.templateId ?? env.wechatTmplTraining;
+  const page = opts?.page ?? REMIND_PAGE;
   if (!openid) return { ok: false, skipped: true };
-  if (!env.wechatTmplTraining) return { ok: false, skipped: true };
+  if (!templateId) return { ok: false, skipped: true };
   if (!env.wechatAppId || !env.wechatAppSecret) return { ok: false, skipped: true };
 
   try {
@@ -170,8 +230,8 @@ export async function sendSubscribeMessage(
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         touser: openid,
-        template_id: env.wechatTmplTraining,
-        page: REMIND_PAGE,
+        template_id: templateId,
+        page,
         miniprogram_state: 'formal',
         lang: 'zh_CN',
         data

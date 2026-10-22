@@ -19,6 +19,8 @@ export const env = {
   // 训练提醒的订阅消息模板 id(小程序后台"订阅消息"里申请后填到这里)
   // 未配置时:定时发送整条链路空转,小程序内提醒照常 —— 用户点授权也收不到,故如实告知
   wechatTmplTraining: process.env.WECHAT_TMPL_TRAINING || '',
+  // 周报推送的订阅消息模板 id(同样是后台申请后填进来;和训练提醒是两个模板、两条额度)
+  wechatTmplWeekly: process.env.WECHAT_TMPL_WEEKLY || '',
 
   // 平台指标接口(/analytics/metrics)的管理密钥;生产未配置时该接口返回 404
   adminApiKey: process.env.ADMIN_API_KEY || '',

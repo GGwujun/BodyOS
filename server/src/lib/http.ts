@@ -20,6 +20,8 @@ export function err(
   message: string,
   opts: { affectsData?: boolean; code?: number } = {}
 ) {
+  // 给请求日志留一份错误文案(只写进 res.locals,不额外下发)
+  (res.locals as Record<string, unknown>).errorMessage = message;
   const body: ApiEnvelope<null> = {
     code: opts.code ?? status,
     message,

@@ -24,13 +24,17 @@ export interface EnergyResult {
  * BMR — Mifflin-St Jeor 公式
  * 男: 10*kg + 6.25*cm - 5*age + 5
  * 女: 10*kg + 6.25*cm - 5*age - 161
+ *
+ * 「未提供 / 其他」取男女常数的中点(-78):不替用户假定性别,
+ * 也不因此让消耗和身体评分永远空着。这仍是估算 —— 这一屏所有消耗数字都是估算。
  */
 export function calcBMR(input: Pick<EnergyInput, 'gender' | 'age' | 'heightCm' | 'weightKg'>): number {
   const kg = input.weightKg ?? DEFAULT_WEIGHT_KG;
   const cm = input.heightCm ?? DEFAULT_HEIGHT_CM;
   const age = input.age ?? DEFAULT_AGE;
   const base = 10 * kg + 6.25 * cm - 5 * age;
-  return input.gender === 'female' ? base - 161 : base + 5;
+  const sexConstant = input.gender === 'male' ? 5 : input.gender === 'female' ? -161 : -78;
+  return base + sexConstant;
 }
 
 /** TDEE = BMR × 活动系数 */

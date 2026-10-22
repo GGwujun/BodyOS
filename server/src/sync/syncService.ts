@@ -2,6 +2,7 @@ import { prisma } from '../db';
 import { toDateStr, toDate } from '../lib/date';
 import { recomputeDaily } from '../engine';
 import { getAdapter, providerName } from './registry';
+import { logError, logInfo, logWarn } from '../lib/log';
 import type { NormalizedRecord } from './types';
 
 /**
@@ -26,9 +27,11 @@ export async function runSync(userId: string, provider: string): Promise<{
 
   try {
     // 1. adapter.sync(带重试)
+    logInfo('sync', '拉取式同步开始', { provider, userId, cursor: ds.cursor ?? null });
     const result = await withRetry(() => adapter.sync(ds!.cursor ?? undefined));
     return await persistSyncRecords(userId, provider, result.records, result.cursor);
   } catch (e) {
+    logError('sync', '拉取式同步失败', e, { provider, userId });
     await markError(ds.id, (e as Error).message);
     return errorResult((e as Error).message);
   }
@@ -49,9 +52,24 @@ export async function runPushSync(
   error?: string;
 }> {
   await ensureDataSourceRow(userId, provider);
+  logInfo('sync.push', '推送式同步开始', {
+    provider,
+    userId,
+    records: records.length,
+    firstExternalId: records[0]?.externalId ?? null,
+    lastExternalId: records[records.length - 1]?.externalId ?? null
+  });
   try {
-    return await persistSyncRecords(userId, provider, records);
+    const result = await persistSyncRecords(userId, provider, records);
+    logInfo('sync.push', '推送式同步完成', {
+      provider,
+      userId,
+      syncedCount: result.syncedCount,
+      lastSyncAt: result.lastSyncAt
+    });
+    return result;
   } catch (e) {
+    logError('sync.push', '推送式同步失败', e, { provider, userId, records: records.length });
     const ds = await prisma.dataSource.findUnique({
       where: { userId_provider: { userId, provider } }
     });
@@ -122,9 +140,14 @@ async function persistSyncRecords(userId: string, provider: string, records: Nor
     affectedDates.add(dateStr);
   }
 
-  // 重算受影响日期
+  // 重算受影响日期(逐日包一层:失败时能直接看出是哪一天、哪条链路炸的)
   for (const d of affectedDates) {
-    await recomputeDaily(userId, d);
+    try {
+      await recomputeDaily(userId, d);
+    } catch (e) {
+      logError('sync', '重算每日汇总失败', e, { userId, provider, date: d });
+      throw e;
+    }
   }
 
   // 更新 cursor
@@ -139,10 +162,18 @@ async function persistSyncRecords(userId: string, provider: string, records: Nor
     }
   });
 
+  logInfo('sync', '入库与重算完成', {
+    provider,
+    userId,
+    upserted,
+    affectedDates: [...affectedDates].sort()
+  });
+
   return { status: 'synced' as const, lastSyncAt: now.toISOString(), syncedCount: upserted };
 }
 
 async function markError(dsId: string, message: string) {
+  logWarn('sync', '数据源标记为异常', { dataSourceId: dsId, error: message });
   await prisma.dataSource.update({
     where: { id: dsId },
     data: { status: 'error', lastError: message }

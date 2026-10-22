@@ -11,6 +11,7 @@ import { prisma } from '../db';
 import { env } from '../env';
 import { ok, err } from '../lib/http';
 import { issueToken, DEV_USER_ID } from '../lib/currentUser';
+import { logError, logInfo, logWarn } from '../lib/log';
 
 const router = Router();
 
@@ -58,7 +59,7 @@ router.post('/wechat', async (req, res, next) => {
     const session = await code2Session(parsed.data.code);
     if (!session.openid || session.errcode) {
       // 微信 errmsg 含 rid 等服务端调试串,只留日志,客户端统一文案
-      console.error('微信 code2session 失败:', session.errcode, session.errmsg);
+      logWarn('auth', 'code2session 失败', { errcode: session.errcode ?? null, errmsg: session.errmsg ?? null });
       return err(res, 401, '微信登录失败，请重新进入小程序', { affectsData: false });
     }
 
@@ -71,8 +72,18 @@ router.post('/wechat', async (req, res, next) => {
     const isNewUser = user.createdAt.getTime() > Date.now() - 60 * 1000;
 
     const token = await issueToken(user.id, session.session_key);
+    // 每次登录都会轮换 session_key —— 线上同步失败时,先看这里是不是刚轮换过
+    logInfo('auth', '微信登录成功', {
+      userId: user.id,
+      isNewUser,
+      sessionKeyPresent: Boolean(session.session_key),
+      sessionKeyLength: session.session_key ? session.session_key.length : 0
+    });
     return ok(res, { token, userId: user.id, isNewUser });
-  } catch (error) { next(error); }
+  } catch (error) {
+    logError('auth', '登录处理异常', error);
+    next(error);
+  }
 });
 
 export default router;

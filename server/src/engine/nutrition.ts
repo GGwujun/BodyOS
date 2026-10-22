@@ -1,4 +1,6 @@
 import { GOAL_CALORIE_ADJUST, MACRO_SPLIT, KCAL_PER_GRAM, PROTEIN_PER_KG } from './constants';
+import { calcBMR, calcTDEE } from './energy';
+import { hasEnergyProfile } from './dataAvailability';
 
 export interface NutritionAggregate {
   proteinG: number;
@@ -33,6 +35,41 @@ export function calcMacroTarget(params: {
   const targetFatG = (remainingKcal * split.fat) / KCAL_PER_GRAM.fat;
 
   return { targetCalories, targetProteinG, targetCarbG, targetFatG };
+}
+
+/** 给客户端看的宏量目标(整数克数 + 整数千卡)—— trends 和 daily-summary 都返回这个形状 */
+export interface MacroTargetView {
+  calories: number;
+  proteinG: number;
+  carbG: number;
+  fatG: number;
+}
+
+/**
+ * 每日宏量目标(该吃多少蛋白/碳水/脂肪),给客户端做「吃了多少 vs 该吃多少」的对比。
+ *
+ * 客户端不自己算 —— 这个数取决于体重、目标类型和活动水平,公式在引擎里;
+ * 客户端再写一份「1.2~1.6 克/公斤」,引擎调了系数就悄悄分叉,用户会在两页看到两个目标。
+ * 资料不全时**返回 null 而不是按默认体重猜**:猜出来的目标会让用户以为 App 知道
+ * 该吃多少,而它其实连身高都没有(trends 首版注释,口径原样搬过来 —— 现在两个路由共用)。
+ */
+export function macroTargetView(
+  energyProfile: { gender: string; age: number | null; heightCm: number | null; weightKg: number | null },
+  activityLevel: string,
+  goalType: string
+): MacroTargetView | null {
+  if (!hasEnergyProfile(energyProfile)) return null;
+  const tdee = calcTDEE(
+    calcBMR(energyProfile as { gender: string; age: number; heightCm: number; weightKg: number }),
+    activityLevel
+  );
+  const t = calcMacroTarget({ tdee, goalType, weightKg: energyProfile.weightKg as number });
+  return {
+    calories: Math.round(t.targetCalories),
+    proteinG: Math.round(t.targetProteinG),
+    carbG: Math.round(t.targetCarbG),
+    fatG: Math.round(t.targetFatG)
+  };
 }
 
 /** 营养评分(0-100):蛋白达标度 60% + 宏量均衡 40% */
