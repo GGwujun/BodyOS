@@ -14,6 +14,9 @@ import {
 import { canFilterHard, HARD_RIR } from '../engine/effort';
 import { effortStat } from '../engine/history';
 import { READY_AT, recoveryOf, recoveryTone, recoveryVerdict, relevant } from '../engine/recovery';
+import {
+  groupStrength, isFaded, keptText, strengthRows, strengthTone, STRENGTH_KEPT
+} from '../engine/strength';
 import type { WorkoutLog } from '../engine/types';
 import BodyMap, { type Tone } from './BodyMap';
 import './index.scss';
@@ -22,7 +25,7 @@ import { navigate } from '@/utils/nav';
 const WEEK = 7;
 
 /** 图上配色档 → 图例文案 */
-const LEGEND: Record<'recovery' | 'volume', Array<[Tone, string]>> = {
+const LEGEND: Record<'recovery' | 'volume' | 'strength', Array<[Tone, string]>> = {
   recovery: [
     ['fresh', '已恢复'],
     ['ok', '还差一点'],
@@ -34,6 +37,13 @@ const LEGEND: Record<'recovery' | 'volume', Array<[Tone, string]>> = {
     ['fresh', '量正合适'],
     ['high', '练得偏多'],
     ['none', '没练到']
+  ],
+  /* 这一档的「没练到」不是没练,是练的动作都估不出成绩(自重/助力/超 12 次) —— 文案得把话说对 */
+  strength: [
+    ['fresh', '保持住了'],
+    ['ok', '掉了一截'],
+    ['tired', '掉得多'],
+    ['none', '没攒下成绩']
   ]
 };
 
@@ -41,7 +51,7 @@ const LEGEND: Record<'recovery' | 'volume', Array<[Tone, string]>> = {
 export default function Muscles() {
   const [logs, setLogs] = useState<WorkoutLog[]>([]);
   const [planned, setPlanned] = useState<MuscleStat[]>([]);
-  const [mode, setMode] = useState<'recovery' | 'volume'>('recovery');
+  const [mode, setMode] = useState<'recovery' | 'volume' | 'strength'>('recovery');
   const [picked, setPicked] = useState<MuscleGroup | null>(null);
   /** 用户想按有效组看 —— 能不能真按(评分覆盖率够不够)由 canHard 说了算,见下面 */
   const [wantHard, setWantHard] = useState(false);
@@ -92,6 +102,12 @@ export default function Muscles() {
   /** 推拉/上下肢的可见性同理:这一项按有效组算恰好是 0 组时,卡片还得在(上面的数就是 0) */
   const balAny = metric === 'all' ? bal : balanceOf(windowLogs, 'all');
   const hasLogs = logs.length > 0;
+  /**
+   * 「看力量」那一份 —— 每个动作的历史最好成绩 × 停练衰减,再按部位归并
+   * (见 engine/strength.ts 的 groupStrength)。它和上面那两个口径**不是一个时间窗**:
+   * 恢复/容量看最近 7 天,力量看的是「最好的那次」和「最后一次」,7 天的开关管不到它。
+   */
+  const sGroups = groupStrength(strengthRows(logs));
 
   /**
    * 「练得和计划一样吗」—— **只在「全部组」下摆**。
@@ -123,6 +139,10 @@ export default function Muscles() {
       const t = recoveryTone(r.recovered);
       return t === 'fresh' ? 'fresh' : t === 'ok' ? 'ok' : 'tired';
     }
+    if (mode === 'strength') {
+      const s = sGroups[g];
+      return s ? strengthTone(s.retained) : 'none';
+    }
     const s = week.find((x) => x.group === g);
     if (!s || s.sets === 0) return 'none';
     const t = volumeVerdict(g, s.sets).tone;
@@ -141,6 +161,17 @@ export default function Muscles() {
       return r.etaHours === 0
         ? `已恢复 ${r.recovered}%,今天可以练`
         : `只恢复了 ${r.recovered}%,大约还需 ${r.etaHours} 小时`;
+    }
+    if (mode === 'strength') {
+      const s = sGroups[g];
+      if (!s || !s.rows.length) {
+        return '还没攒下能估成绩的动作 —— 带重量的动作练过之后这里才有数(自重和助力器械估不出 1RM)';
+      }
+      const pct = Math.round(s.retained * 100);
+      if (s.retained >= STRENGTH_KEPT) return `${s.rows.length} 个动作攒下了成绩,整体保持住了(约剩 ${pct}%)`;
+      // 掉了的部位要说清是哪个动作拖的 —— 「胸掉了」的下一步永远是「卧推停了多久」
+      const worst = s.rows.reduce((a, b) => (b.retained < a.retained ? b : a));
+      return `${s.rows.length} 个动作攒下了成绩,整体约剩 ${pct}% —— 掉得最多的是「${worst.nameZh}」:${keptText(worst)}`;
     }
     const s = week.find((x) => x.group === g);
     const all = weekAll.find((x) => x.group === g);
@@ -167,21 +198,25 @@ export default function Muscles() {
     metric === 'hard' && n === 0
       ? `按有效组算,${who}这 7 天一组都没有`
       : '样本还少,多练几次再看';
+  /** 「看力量」点开的那个部位的动作清单 —— 提出来是因为 JSX 里重复索引 TS 收窄不了 */
+  const exRows = picked && mode === 'strength' ? sGroups[picked]?.rows ?? [] : [];
 
   return (
     <Screen className="ms-page">
       <View className="card ms-intro">
         <Text className="fs-h1">肌群与恢复</Text>
         <Text className="fs-mini text-secondary">
-          按最近 7 天算每个部位练了多少组(主动肌算 1 组、协同肌算半组),以及现在缓过来没有。
+          按最近 7 天算每个部位练了多少组(主动肌算 1 组、协同肌算半组),以及现在缓过来没有;
+          「看力量」那一档不一样,看的是每个动作最好的成绩停练后还剩几成。
           练得勤不如练得准 —— 同一个部位连着两天上强度,长的是疲劳不是肌肉。
         </Text>
       </View>
 
       {/* 组数怎么算 —— 这个口径管着下面三块(肌群配色、练了多少、练得均衡吗),
           所以它自己占一行摆在这三块**上面**:口径变了而界面不说,用户只会觉得数在乱跳。
-          「缓过来没有」不受它影响(那一栏按每组离力竭有多远算疲劳,不是数组数)。 */}
-      {hasWindow && (
+          「缓过来没有」不受它影响(那一栏按每组离力竭有多远算疲劳,不是数组数);
+          「看力量」也不受它影响(那一份按成绩和停练天数算,不数组)。 */}
+      {hasWindow && mode !== 'strength' && (
         <View className="card ms-block ms-metric">
           <View className="ms-block-head">
             <Text className="fs-h1">组数怎么算</Text>
@@ -254,6 +289,12 @@ export default function Muscles() {
               >
                 看训练量
               </Text>
+              <Text
+                className={`ms-mode${mode === 'strength' ? ' ms-mode--on' : ''}`}
+                onClick={() => setMode('strength')}
+              >
+                看力量
+              </Text>
             </View>
           </View>
 
@@ -292,16 +333,63 @@ export default function Muscles() {
               </>
             ) : (
               <Text className="fs-mini text-secondary">
-                点身体上的部位,看它最近练了多少、缓过来没有
+                {mode === 'strength'
+                  ? '点身体上的部位,看这块的力量还剩几成'
+                  : '点身体上的部位,看它最近练了多少、缓过来没有'}
               </Text>
             )}
           </View>
+
+          {/* 「看力量」点开部位后的动作清单 —— 上面那句话只说整体,「是哪个动作拖的」
+              要一排行才说得清;整行能按,送进那个动作自己的记录页(曲线和掉力都在那边) */}
+          {mode === 'strength' && picked && exRows.length > 0 && (
+            <View className="bm-exrows">
+              {exRows.slice(0, 8).map((r) => {
+                const tone = strengthTone(r.retained);
+                return (
+                  <View
+                    className="bm-exrow"
+                    key={r.exerciseId}
+                    onClick={() => {
+                      track('training_muscles_to_history', 'other', { exercise: r.exerciseId });
+                      navigate(`/pkg-exercise/exercise-history/index?exerciseId=${r.exerciseId}`);
+                    }}
+                  >
+                    <View className="bm-exrow-copy">
+                      <Text className="bm-exrow-name">{r.nameZh}</Text>
+                      <Text className="fs-mini text-secondary">最好 {r.bestE1rm}kg · {r.bestDate.slice(5)}</Text>
+                    </View>
+                    <View className="ms-bar">
+                      <View
+                        className={`ms-bar-fill ms-bar-fill--${tone}`}
+                        style={{ width: `${Math.round(r.retained * 100)}%` }}
+                      />
+                    </View>
+                    <View className="ms-row-right">
+                      <Text className={`ms-row-pct ms-row-pct--${tone}`}>{r.currentE1rm}kg</Text>
+                      <Text className="fs-mini text-secondary">
+                        {isFaded(r) ? `剩 ${Math.round(r.retained * 100)}%` : '保持住了'}
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })}
+              {exRows.length > 8 && (
+                <Text className="fs-mini text-secondary">
+                  还有 {exRows.length - 8} 个动作没列出来,都按同样口径折算。
+                </Text>
+              )}
+            </View>
+          )}
 
           <Text className="fs-mini text-secondary ms-foot">
             {/* 配色口径跟着上面那个开关走 —— 「看训练量」这一档尤其要说,不然用户会以为
                 切了有效组而图没变 */}
             {mode === 'volume' && metric === 'hard' ? `配色按有效组算(只看练到还剩 ${HARD_RIR} 次以内的组)。` : ''}
-            图是示意,位置对了就行。颜色分档只反映最近的训练安排,不是身体好坏的评价。
+            {mode === 'strength'
+              ? '「力量」按每个动作的历史最好成绩和停练时长折保持率:两周内不掉,之后每四周掉一半,最低算一半;'
+                + '按主动肌/协同肌和大重量加权归到部位,是「今天大约还行多重」的起步参考,不是精确值。'
+              : '图是示意,位置对了就行。颜色分档只反映最近的训练安排,不是身体好坏的评价。'}
           </Text>
         </View>
       )}

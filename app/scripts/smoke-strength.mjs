@@ -178,5 +178,50 @@ ok('空/脏日志不炸', S.strengthRows([null, {}, { entries: null }, { date: '
 ok('缺 sets 的动作不炸', S.strengthRows([{ date: '2026-10-15', entries: [{ exerciseId: 'a' }] }]).length === 0);
 ok('没有 nameZh 就用 id 顶上', S.strengthRows([{ date: '2026-10-15', entries: [{ exerciseId: 'a', sets: [{ weightKg: 50, reps: 1 }] }] }], T)[0].nameZh === 'a');
 
+/* ================= 按部位归并(身体图「看力量」) =================
+   真库 id:'0025' 杠铃卧推(胸主 + 手臂/肩协同)、'0308' 哑铃飞鸟(胸主 + 肩协同)、
+   '0032' 杠铃硬拉(臀腿主 + 背协同;股绳肌同归臀腿,去重后不加权)。 */
+section('按部位归并');
+{
+  // 卧推 100×1 今天练 → 胸保持 100%;手臂和肩是协同,也各记半份
+  const gs = S.groupStrength(S.strengthRows([log(T, [['0025', [[100, 1]]]])], T));
+  ok('胸:一行、保持 100%、今天大约还是 100', gs.chest.rows.length === 1
+    && gs.chest.retained === 1 && gs.chest.topE1rm === 100);
+  ok('协同肌也出现(卧推记半份手臂、半份肩)', gs.arm.rows.length === 1 && gs.shoulder.rows.length === 1);
+  ok('没练到的部位是 null(不是编一行 0)', gs.back === null && gs.leg === null && gs.calf === null);
+}
+{
+  // 胸里两个动作:卧推 100 今天练(保持 1)、飞鸟 20 停 75 天(压到 0.5 下限)
+  // → 胸 = (100×1 + 20×0.5) / 120 = 0.92 —— 大重量主项主导,小的掉了也不至于把整块拖红
+  const logs = [
+    log(T, [['0025', [[100, 1]]]]),
+    log('2026-08-01', [['0308', [[20, 1]]]])
+  ];
+  const gs = S.groupStrength(S.strengthRows(logs, T));
+  ok('计权保持率按「主动/协同 × 历史最好」加权', gs.chest.retained === 0.92, String(gs.chest.retained));
+  ok('0.92 落在「掉了一截」档', S.strengthTone(gs.chest.retained) === 'ok');
+  ok('清单按今天大约的成绩从高到低', gs.chest.rows[0].exerciseId === '0025'
+    && gs.chest.rows[1].exerciseId === '0308', gs.chest.rows.map((r) => r.exerciseId).join());
+  ok('肩 = (50×1 + 10×0.5) / 60 ≈ 0.92(两边都是半份权)', gs.shoulder.retained === 0.92, String(gs.shoulder.retained));
+  ok('手臂只有卧推半份 → 保持 100%', gs.arm.retained === 1);
+}
+{
+  // 硬拉:臀腿主、下背协同 —— 一个动作同时出现在两组里
+  const gs = S.groupStrength(S.strengthRows([log(T, [['0032', [[140, 1]]]])], T));
+  ok('臀腿(主)和背(协同)各有一行', gs.leg.rows.length === 1 && gs.back.rows.length === 1
+    && gs.leg.retained === 1 && gs.back.retained === 1);
+}
+{
+  // 动作库里查不到的 id:成绩行在,但归不进任何组 —— 不猜它练哪
+  const gs = S.groupStrength(S.strengthRows([log(T, [['zzz', [[50, 1]]]])], T));
+  ok('查不到的动作不上身体图', ['chest','back','shoulder','arm','core','leg','calf']
+    .every((g) => gs[g] === null));
+  ok('空清单也不炸', S.groupStrength([]).chest === null);
+}
+section('配色档刻度');
+ok('95% 及以上算保持住了(和 isFaded 同一条线)', S.strengthTone(1) === 'fresh' && S.strengthTone(0.95) === 'fresh');
+ok('85%-95% 算掉了一截', S.strengthTone(0.94) === 'ok' && S.strengthTone(0.85) === 'ok');
+ok('85% 以下算掉得多(约停练一个月)', S.strengthTone(0.84) === 'tired' && S.strengthTone(0.5) === 'tired');
+
 console.log(`\n${fail ? `❌ ${fail} 个用例失败` : '✅ 全部通过'}`);
 process.exit(fail ? 1 : 0);

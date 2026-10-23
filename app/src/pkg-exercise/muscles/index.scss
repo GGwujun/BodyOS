@@ -190,6 +190,33 @@
     &:active { opacity: 0.6; }
   }
 
+  /* 「看力量」点开部位后的动作清单 —— 动作名比肌群名长得多,
+     不能沿用 .ms-row 那套 62px 定宽:名字一栏自己伸缩、条定宽 */
+  .bm-exrows { display: flex; flex-direction: column; gap: 10px; }
+  .bm-exrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &:active { opacity: 0.6; }   /* 整行能按:送进这个动作自己的记录页 */
+  }
+  .bm-exrow-copy {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .bm-exrow-name {
+    font-size: $fs-small;
+    font-weight: $fw-medium;
+    color: $color-text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bm-exrow .ms-bar { flex: 0 0 52px; }
+
   .ms-actions { display: flex; flex-direction: column; gap: 10px; }
   .ms-link {
     text-align: center;

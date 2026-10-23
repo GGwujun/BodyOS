@@ -4,6 +4,7 @@ import { View, Text } from '@tarojs/components';
 import { userApi } from '@/services';
 import { ensureLogin } from '@/services/login';
 import { flush } from '@/services/analytics';
+import { installErrorReport } from '@/services/errorReport';
 // taroify 图标样式:本地化副本(字体 base64 内联),不再依赖远程 CDN 字体
 import '@/styles/taroify-icons.scss';
 import './app.scss';
@@ -20,6 +21,8 @@ function App({ children }: PropsWithChildren<unknown>) {
 
   useLaunch(() => {
     if (bootHidden) return;
+    // 全局报错钩子要抢在一切业务之前挂上 —— 启动阶段的异常也是异常
+    installErrorReport();
     const boot = async () => {
       // 静默登录(weapp):拿 token,失败不阻塞,后续请求走无 token 回落。
       await ensureLogin();

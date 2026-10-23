@@ -22,7 +22,7 @@ import './index.scss';
 import { THEME } from '@/constants/theme';
 import { navigate } from '@/utils/nav';
 
-type Metric = 'topKg' | 'bestE1rm' | 'volumeKg' | 'reps' | 'holdSec';
+type Metric = 'topKg' | 'bestE1rm' | 'volumeKg' | 'reps' | 'holdSec' | 'avgRir';
 
 const METRICS: { k: Metric; label: string; unit: string }[] = [
   { k: 'topKg', label: '最大重量', unit: 'kg' },
@@ -31,7 +31,10 @@ const METRICS: { k: Metric; label: string; unit: string }[] = [
   { k: 'reps', label: '最重一组次数', unit: '次' },
   // 计时型动作的唯一条曲线(见 engine/timed.ts)。别的动作这一列恒为 0,
   // 会被下面的 usable 筛掉,不会多出一个点了没反应的选项。
-  { k: 'holdSec', label: '最长保持', unit: '秒' }
+  { k: 'holdSec', label: '最长保持', unit: '秒' },
+  // 强度走 RIR:重量曲线答「举了多少」,这条答「离极限多近」——
+  // 同一个重量 RIR 从 2 爬到 5,也是进步,而重量那条线是平的。
+  { k: 'avgRir', label: '强度 RIR', unit: ' 次' }
 ];
 
 type Span = '90' | '180' | '365' | 'all';
@@ -89,13 +92,18 @@ export default function ExerciseHistory() {
   );
 
   /** 只留真有数据的指标 —— 自重动作没有重量、助力动作没有 1RM,画一条 0 的线没意义。
-      看的是**窗口里**有没有数:缩到 3 个月之后,那个区间没练过的指标就不该再摆出来 */
+      看的是**窗口里**有没有数:缩到 3 个月之后,那个区间没练过的指标就不该再摆出来。
+      RIR 是唯一例外:0 不是「没数」(0 = 刚好做到力竭),判据得用「评没评」而不是「大于 0」 */
   const metrics = METRICS.map((m) => (m.k === 'topKg' ? { ...m, label: `最大${noun}` } : m));
-  const usable = metrics.filter((m) => winPoints.some((p) => (p[m.k] as number) > 0));
+  const usable = metrics.filter((m) => (m.k === 'avgRir'
+    ? winPoints.some((p) => p.avgRir != null)
+    : winPoints.some((p) => (p[m.k] as number) > 0)));
   const active = usable.some((m) => m.k === metric) ? metric : (usable[0]?.k ?? 'volumeKg');
   const cfg = metrics.find((m) => m.k === active) as typeof METRICS[number];
+  /** RIR 只画评过强度的那几次;别的口径每次训练都是一个点 */
+  const srcPoints = active === 'avgRir' ? winPoints.filter((p) => p.avgRir != null) : winPoints;
   // 次数这条曲线也跟着折成每侧 —— 否则曲线上的点是下面列表里的两倍,同一个数看着像对不上
-  const series = winPoints.map((p) => ({
+  const series = srcPoints.map((p) => ({
     label: p.date.slice(5),
     value: active === 'reps' ? repsVal(p.reps) : (p[active] as number)
   }));
@@ -103,16 +111,25 @@ export default function ExerciseHistory() {
   /**
    * 曲线画不出来时那句话。空窗口和「只有一次」是两种不同的处境,该说的话不一样:
    * 空窗口要指出去哪儿找(用户缩得太狠了),而不是让他以为记录没了 —— 所以只在**还能往外缩**时提这句。
+   * RIR 的空又是另一种:练了但没评过 —— 那句「没有练过这个动作」会把人指去翻训练记录,
+   * 可他的记录就在下面,缺的是每组结束后的那一下评分。
    */
   const canZoom = span === 'all' ? '' : '换个更长的区间能看到之前练的。';
-  const curveEmpty = hasTrend(winPoints)
+  const onRir = active === 'avgRir';
+  const curveEmpty = hasTrend(srcPoints)
     ? ''
-    : winPoints.length === 0
-      ? `${spanLabel}没有练过这个动作。${canZoom}`
+    : srcPoints.length === 0
+      ? onRir
+        ? `${spanLabel}没有评过强度的组 —— 每组做完在「还能再做几次」里选一下,评过的次数才画得上这条线。${canZoom}`
+        : `${spanLabel}没有练过这个动作。${canZoom}`
       : span === 'all'
-        ? '只有一次记录,再练一次就能看到走势。同一动作连着练,曲线才有参考价值。'
+        ? onRir
+          ? '只有一次评过强度,再多评几次就能看到走势。'
+          : '只有一次记录,再练一次就能看到走势。同一动作连着练,曲线才有参考价值。'
         /* 窗口里只有一次、但更早还练过 —— 这话不能说成「再练一次就有了」,他有的是记录,只是不在这个窗口里 */
-        : `${spanLabel}只练过这一次。${canZoom}`;
+        : onRir
+          ? `${spanLabel}只有这一次评过强度。${canZoom}`
+          : `${spanLabel}只练过这一次。${canZoom}`;
 
   const last = points.length ? points[points.length - 1] : null;
   const prev = points.length > 1 ? points[points.length - 2] : null;
@@ -239,11 +256,25 @@ export default function ExerciseHistory() {
             ) : (
               <>
                 {/* 首末日期画在图里了(见 components/LineChart),下面只留「这是什么数、几次、最近一条」——
-                    区间写在这一行而不是只写在头上的选择器里:横轴只有两个日期,用户看不出这张图是多久的 */}
-                <LineChart canvasId="eh-chart" points={series} height={170} color={THEME.primary} unit={cfg.unit} />
+                    区间写在这一行而不是只写在头上的选择器里:横轴只有两个日期,用户看不出这张图是多久的。
+                    RIR 用琥珀色和重量曲线区分开:同一条绿线一会儿是「举了多少」一会儿是「离极限多近」,读不动
+                    (深色提亮 LineChart 内部自己会做,传浅色那套就行) */}
+                <LineChart
+                  canvasId="eh-chart"
+                  points={series}
+                  height={170}
+                  color={onRir ? THEME.warning : THEME.primary}
+                  unit={cfg.unit}
+                />
                 <Text className="fs-mini text-secondary eh-foot">
-                  {cfg.label} · {spanLabel} {winPoints.length} 次 · 最近 {series[series.length - 1].value}{cfg.unit}
+                  {cfg.label} · {spanLabel} {srcPoints.length} 次 · 最近 {series[series.length - 1].value}{cfg.unit}
                 </Text>
+                {onRir && (
+                  <Text className="fs-mini text-secondary eh-foot">
+                    RIR = 那次结束后平均还剩几次力气:0 是刚好力竭,数字越大越轻松。
+                    曲线往下走是好事 —— 同样的负担越来越接近极限,或者重量加了。
+                  </Text>
+                )}
               </>
             )}
           </View>

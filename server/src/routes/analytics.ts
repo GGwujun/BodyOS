@@ -110,4 +110,36 @@ router.get('/metrics', wrap(async (req, res) => {
   return ok(res, metrics);
 }));
 
+/**
+ * GET /analytics/client-errors — 最近的客户端报错(排查用)。
+ *
+ * 小程序端的 onError/onUnhandledRejection/onPageNotFound 都汇成 `client_error`
+ * 事件落在这里(见 app/src/services/errorReport.ts);没有这个接口,
+ * 那张表里的报错只能登库裸查。鉴权同 /metrics:须配置 ADMIN_API_KEY
+ * 并携带 x-admin-key,生产未配置则 404。
+ */
+router.get('/client-errors', wrap(async (req, res) => {
+  if (env.adminApiKey) {
+    if (req.headers['x-admin-key'] !== env.adminApiKey) return err(res, 403, '无权访问');
+  } else if (env.nodeEnv === 'production') {
+    return err(res, 404, '接口不存在');
+  }
+
+  const today = toDate(todayStr());
+  const since = new Date(today);
+  since.setDate(since.getDate() - 7);
+
+  const [total, recent] = await Promise.all([
+    prisma.analyticsEvent.count({ where: { name: 'client_error', occurredAt: { gte: since } } }),
+    prisma.analyticsEvent.findMany({
+      where: { name: 'client_error', occurredAt: { gte: since } },
+      orderBy: { occurredAt: 'desc' },
+      take: 100,
+      select: { occurredAt: true, userId: true, props: true }
+    })
+  ]);
+
+  return ok(res, { days: 7, total, recent });
+}));
+
 export default router;

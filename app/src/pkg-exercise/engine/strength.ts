@@ -24,6 +24,7 @@
  */
 import { dayDiff, todayStr } from '../../utils/date';
 import { liftE1rm } from './load';
+import { GROUP_ORDER, groupsOf, type MuscleGroup } from './muscles';
 import { isSided } from './sided';
 import { entryCounts, type WorkoutLog } from './types';
 
@@ -123,6 +124,74 @@ export function strengthRows(logs: WorkoutLog[], today = todayStr()): StrengthRo
 /** 单个动作那一行(没有可用成绩就是 null) */
 export function strengthOf(logs: WorkoutLog[], exerciseId: string, today = todayStr()): StrengthRow | null {
   return strengthRows(logs, today).find((r) => r.exerciseId === exerciseId) ?? null;
+}
+
+/* ================= 按部位归并 ================= */
+
+/** 肌群页「看力量」的配色档刻度(和 isFaded 的 0.95 同一条线,别各写一个数) */
+export const STRENGTH_KEPT = 0.95;
+/** 掉到这个比例以下(约停练一个月)算「掉得多」 */
+export const STRENGTH_LOW = 0.85;
+
+/** 保持率 → 身体图配色档(和恢复/容量那两档共用 fresh/ok/tired 三色) */
+export function strengthTone(retained: number): 'fresh' | 'ok' | 'tired' {
+  if (retained >= STRENGTH_KEPT) return 'fresh';
+  if (retained < STRENGTH_LOW) return 'tired';
+  return 'ok';
+}
+
+export interface GroupStrength {
+  group: MuscleGroup;
+  /** 这个部位名下攒下过成绩的动作(按今天的预估成绩从高到低) */
+  rows: StrengthRow[];
+  /** 计权保持率:每个动作按「主动/协同 × 历史最好」加权 —— 大重量的主项才代表这个部位的力气 */
+  retained: number;
+  /** 这个部位今天大约还能举起的最大数(名下最强那个动作的预估成绩) */
+  topE1rm: number;
+}
+
+/**
+ * 力量保持按七个大组归并 —— 身体图「看力量」那一档的数据。
+ *
+ * 归并权重 = `groupsOf` 的主动 1 / 协同 0.5,再乘历史最好成绩:
+ * 100kg 的卧推比 20kg 的侧平举更能代表上肢的力气,而且「掉一半」
+ * 对大重量动作掉的公斤也多 —— 数和权都该跟着重量走。
+ * 一个动作可以同时出现在几个组里(卧推记胸、也记半份手臂),这和
+ * 「这周的组数怎么算到七个大组上」是同一套规矩的另一半。
+ */
+export function groupStrength(rows: StrengthRow[]): Record<MuscleGroup, GroupStrength | null> {
+  const sum = new Map<MuscleGroup, { w: number; kept: number }>();
+  const byGroup = new Map<MuscleGroup, StrengthRow[]>();
+  for (const r of rows) {
+    for (const { group, w } of groupsOf(r.exerciseId)) {
+      // 动作库里查不到的动作(旧自定义)归不进任何组,自然不出现 —— 不猜它练哪
+      const weight = w * r.bestE1rm;
+      const cur = sum.get(group) ?? { w: 0, kept: 0 };
+      cur.w += weight;
+      cur.kept += weight * r.retained;
+      sum.set(group, cur);
+      const list = byGroup.get(group);
+      if (list) list.push(r);
+      else byGroup.set(group, [r]);
+    }
+  }
+  const out = {} as Record<MuscleGroup, GroupStrength | null>;
+  for (const g of GROUP_ORDER) {
+    const a = sum.get(g);
+    const list = byGroup.get(g) ?? [];
+    if (!a || !list.length) {
+      out[g] = null;
+      continue;
+    }
+    const sorted = [...list].sort((x, y) => y.currentE1rm - x.currentE1rm);
+    out[g] = {
+      group: g,
+      rows: sorted,
+      retained: Math.round((a.kept / a.w) * 100) / 100,
+      topE1rm: sorted[0].currentE1rm
+    };
+  }
+  return out;
 }
 
 /**
