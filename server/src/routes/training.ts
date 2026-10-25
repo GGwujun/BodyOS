@@ -33,7 +33,7 @@ const MAX_DOCS_PER_PULL = 2000;
  * favs = 收藏的动作,custom = 自己建的动作;服务端同样只当哑存储,不解释内容。
  * 两者是**两份**文档,别合并 —— 语义不同(见客户端 engine/dayassign.ts)。
  */
-const KINDS = ['plan', 'progress', 'logs', 'notes', 'kit', 'photos', 'maxes', 'daynotes', 'dayassign', 'favs', 'custom'] as const;
+const KINDS = ['plan', 'progress', 'logs', 'notes', 'kit', 'photos', 'maxes', 'daynotes', 'dayassign', 'favs', 'custom', 'girth'] as const;
 
 export const DocSchema = z.object({
   kind: z.enum(KINDS),

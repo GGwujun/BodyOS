@@ -64,6 +64,29 @@
     transition: width 0.3s ease;
   }
 
+  /* 动作进度条:每个动作一粒编号(灰=没做/淡绿=做了一半/实心绿=做完),
+     当前那粒描边,超级组成员带一条蓝杠。横着滚,点一粒跳到那张卡 */
+  .wk-steps { display: block; width: 100%; white-space: nowrap; }
+  .wk-steps-track { display: inline-flex; gap: 6px; padding: 4px 0 6px; }
+  .wk-steps-chip {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: $fs-nano;
+    font-weight: $fw-medium;
+    background: $color-fill;
+    color: $color-text-tertiary;
+    box-sizing: border-box;
+  }
+  .wk-steps-chip.is-part { background: $color-primary-a10; color: $color-primary-dark; }
+  .wk-steps-chip.is-done { background: $color-primary; color: #fff; }
+  /* 超级组成员:底下压一条蓝杠 —— 谁和谁交替做,在这一排里也要认得出 */
+  .wk-steps-chip.is-ss { box-shadow: inset 0 -4px 0 $color-info; }
+  .wk-steps-chip.is-done.is-ss { box-shadow: inset 0 -4px 0 rgba(255, 255, 255, 0.65); }
+  /* 当前动作:整圈描边,做没做都描 */
+  .wk-steps-chip.is-now { outline: 2px solid $color-primary-dark; outline-offset: 1px; }
+
   /* 练前上称:一行安静的入口,不占一张卡(清单才是这一屏的主角) */
   .wk-weigh {
     display: block;
@@ -131,6 +154,17 @@
     color: $color-info;
     background: $color-info-bg;
     border: 1px solid $color-info-border;
+  }
+  /* 超级组进度句(块首卡片顶上)— 和标签同一套 info 蓝系,但它是整行句子不是徽标:
+     左边一条 3px 的竖线把它和下面的动作名隔开,不用再包一层底色(卡片自己就是底) */
+  .wk-ssflow {
+    display: block;
+    padding: 0 0 6px 8px;
+    margin-bottom: 6px;
+    border-left: 3px solid $color-info-border;
+    line-height: 18px;
+    font-size: $fs-mini;
+    color: $color-info;
   }
   /* 「不算进步」(这次不计入进阶)—— 和日志卡上那一枚同一身黄:同一个词在两处必须同一种长相 */
   .wk-noprog {
@@ -466,9 +500,9 @@
   .wk-rest-ops {
     display: flex;
     justify-content: center;
-    gap: 26px;
+    gap: 16px;
   }
-  /* 休息条上那三个键(暂停 / +15s / 跳过):以前只有字那么大的命中区,
+  /* 休息条上那几个键(暂停 / −15s / +15s / 跳过):以前只有字那么大的命中区,
      而它们是「歇着的这几十秒里唯一会按的东西」*/
   .wk-rest-op {
     display: flex; align-items: center;
@@ -480,6 +514,10 @@
   &.is-paused .wk-rest-label { color: $color-info; }
   &.is-paused .wk-rest-time { color: $color-text-secondary; }
   &.is-paused .wk-rest-fill { background: $color-text-tertiary; transition: none; }
+  /* 歇够了:整条换成主题色 —— 「该开始了」是全场唯一一件要他做的事,值得亮一点 */
+  &.is-ready .wk-rest-label { color: $color-primary-dark; font-weight: $fw-bold; }
+  &.is-ready .wk-rest-time { color: $color-primary-dark; font-weight: $fw-bold; }
+  &.is-ready .wk-rest-fill { background: $color-primary; transition: none; }
 }
 
 /* ============ 完成汇总弹层(fixed,页面类作用域外) ============ */
@@ -644,6 +682,21 @@
   .wk-focus-name { font-size: $fs-hero; font-weight: $fw-bold; color: $color-text-primary; line-height: 1.3; }
   .wk-focus-sub { line-height: 1.6; }
 
+  /* 超级组流程条(专注模式)— 一行说清「第几轮、下一个是谁」。
+     「下一个」是入口(点了切过去),用主色;「轮到这个」是状态,用超级组标签那套 info 蓝 */
+  .wk-focus-ss {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    background: $color-info-bg;
+    border: 1px solid $color-info-border;
+    border-radius: $radius-card;
+  }
+  .wk-focus-ss-r { font-size: $fs-mini; font-weight: $fw-medium; color: $color-info; }
+  .wk-focus-ss-now { font-size: $fs-mini; font-weight: $fw-medium; color: $color-info; }
+  .wk-focus-ss-next { font-size: $fs-mini; font-weight: $fw-medium; color: $color-primary-dark; }
+
   /* 专注模式的大号休息计时 */
   .wk-focus-rest {
     display: flex;
@@ -663,9 +716,11 @@
     line-height: 1.1;
   }
   .wk-focus-rest-k { text-align: center; }
-  .wk-focus-rest-ops { display: flex; gap: 26px; padding-top: 4px; }
+  .wk-focus-rest-ops { display: flex; justify-content: center; gap: 16px; padding-top: 4px; }
   /* 同上:专注模式这一屏只有这个计时在动,停了就得看得出来 */
   .wk-focus-rest.is-paused .wk-focus-rest-t { color: $color-text-secondary; }
+  .wk-focus-rest.is-ready .wk-focus-rest-t { color: $color-primary-dark; }
+  .wk-focus-rest.is-ready .wk-focus-rest-k { color: $color-primary-dark; }
 
   .wk-focus-sets { display: flex; flex-direction: column; gap: 10px; }
   .wk-fset {

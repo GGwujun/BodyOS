@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Input, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
+import HoldText from '@/components/HoldText';
 import { track } from '@/services/analytics';
 import {
   BAR_DEFAULT_KG, DUMBBELL_PRESETS, KIT_EQUIPMENT, PLATE_SIZES, PROFILE_MAX, PROFILE_NAME_MAX,
@@ -295,9 +296,9 @@ export default function KitPage() {
             <View className="kt-row" key={eq}>
               <Text className="kt-row-k">{kitLabel(eq)}</Text>
               <View className="kt-stepper">
-                <Text className="kt-step" onClick={() => setBarKg(eq, Math.max(0, Math.round((val - 1) * 2) / 2))}>−</Text>
+                <HoldText className="kt-step" onStep={() => setBarKg(eq, Math.max(0, Math.round((val - 1) * 2) / 2))}>−</HoldText>
                 <Text className="kt-step-v">{kg(val)}<Text className="kt-row-u">kg</Text></Text>
-                <Text className="kt-step" onClick={() => setBarKg(eq, Math.min(50, Math.round((val + 1) * 2) / 2))}>＋</Text>
+                <HoldText className="kt-step" onStep={() => setBarKg(eq, Math.min(50, Math.round((val + 1) * 2) / 2))}>＋</HoldText>
               </View>
               {own != null && (
                 <Text className="kt-row-clear" onClick={() => setBarKg(eq, null)}>默认</Text>

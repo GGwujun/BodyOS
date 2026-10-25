@@ -556,6 +556,25 @@ export function accessFor(kit: Kit): 'body' | 'dumbbell' | 'home' | 'gym' {
   return 'body';
 }
 
+/**
+ * 计划里有哪些动作按「我的器材」做不了,把它们缺的器械名列出来(去重)。
+ * 空清单 → 没有答案:没登记等于不筛,不是「家里什么都没有」;
+ * 自建动作(库里查不到)和动作库之外的器械值 → 不拦,拦了用户就找不回自己的动作。
+ */
+export function missingKitOf(kit: Kit, exercises: (ExerciseEntry | null | undefined)[]): string[] {
+  const have = kit.equipment;
+  if (!have?.length) return [];
+  const out = new Set<string>();
+  for (const ex of exercises) {
+    if (!ex || availableWith(kit, ex)) continue;
+    if (ex.equipment !== 'body weight' && inLibrary(ex.equipment) && !have.includes(ex.equipment)) {
+      out.add(kitLabel(ex.equipment));
+    }
+    for (const a of accessoriesOf(ex)) if (!have.includes(a)) out.add(kitLabel(a));
+  }
+  return [...out];
+}
+
 /** 我的器材一句话摘要(设置卡/计划页用) */
 export function kitSummary(kit: Kit): string {
   const bits: string[] = [];

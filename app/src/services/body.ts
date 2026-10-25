@@ -22,6 +22,8 @@ export interface BodyInput {
   hipCm?: number | null;
   armCm?: number | null;
   thighCm?: number | null;
+  /** 自建部位的值(厘米):键是 `x-` 开头的部位键,和 utils/girth-prefs.ts 里自建的定义对上 */
+  extras?: Record<string, number>;
 }
 /**
  * 激活埋点挂在这里(见 utils/activation.ts):但只有**真填了体重**才算「第一次记体重」——

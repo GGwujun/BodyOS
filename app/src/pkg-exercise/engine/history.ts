@@ -380,6 +380,68 @@ export function personalRecords(logs: WorkoutLog[]): PrEntry[] {
     .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 }
 
+/* ============ 这一场里破纪录的动作 ============ */
+
+/** 一个动作一场里的「成绩」:最好一组的 1RM 估算,和撑得最久的一组(秒)。 */
+interface ExScore {
+  e1: number;
+  sec: number;
+}
+
+const scoreOf = (exerciseId: string, sets: WorkoutLog['entries'][number]['sets']): ExScore => {
+  const sided = isSided(exerciseId);
+  let e1 = 0;
+  let sec = 0;
+  for (const s of sets) {
+    if (!didSet(s)) continue;
+    e1 = Math.max(e1, liftE1rm(exerciseId, s.reps, s.weightKg ?? 0, sided));
+    sec = Math.max(sec, Math.round(s.sec ?? 0));
+  }
+  return { e1: round2(e1), sec };
+};
+
+/** a 严格好过 b:配重动作比 1RM;两边都没有 1RM(计时型/自重)才轮到秒数 */
+const beats = (a: ExScore, b: ExScore): boolean =>
+  a.e1 > 0 ? a.e1 > b.e1 : b.e1 === 0 && a.sec > b.sec;
+
+/**
+ * 一场训练里哪些动作「这次破了自己的纪录」。
+ *
+ * 不存进日志、每次展开现算(和 `bestOf`/`personalRecords` 一样是派生量):判定口径以后
+ * 要是调整(比如助力器械再排除掉一类),老记录上的徽标跟着改,不用迁移数据。
+ * 「之前」按**日期**比(比这场早的、以及同一天的别的场),不看那条日志是什么时候录入的 ——
+ * 补录一场更早且更好的成绩,今天这场就不再算纪录,这才是「破纪录」本来的意思。
+ *
+ * 门和别处同一套:整场补录/「不算进步」的那场拿不到徽标(它自己就说了不算),
+ * 之前的历史里那些场同样不进「之前的最好」。第一次练某个动作不算 —— 没有纪录可破。
+ */
+export function prsOfLog(log: WorkoutLog, logs: WorkoutLog[]): string[] {
+  if (!countsForProgress(log)) return [];
+  // 之前(按日期)每个动作的最好成绩,以及「之前真的练过它」—— 没练过就没有纪录可破
+  const prior = new Map<string, { score: ExScore; seen: boolean }>();
+  for (const other of logs) {
+    if (other.id === log.id || other.date > log.date) continue;
+    if (!countsForProgress(other)) continue;
+    for (const e of other.entries) {
+      if (e.noProg) continue;
+      const cur = prior.get(e.exerciseId);
+      const score = scoreOf(e.exerciseId, e.sets);
+      prior.set(e.exerciseId, {
+        score: cur ? (beats(score, cur.score) ? score : cur.score) : score,
+        seen: true
+      });
+    }
+  }
+  const out: string[] = [];
+  for (const e of log.entries) {
+    if (e.noProg) continue;
+    const before = prior.get(e.exerciseId);
+    if (!before?.seen) continue;   // 第一次练:再重也是「第一次」,不是「破纪录」
+    if (beats(scoreOf(e.exerciseId, e.sets), before.score)) out.push(e.exerciseId);
+  }
+  return out;
+}
+
 /* ============ 一组旁边的「上次 / 最好」 ============ */
 
 export interface RefLine {

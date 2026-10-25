@@ -15,7 +15,9 @@ const CAP = 600;
 export type MarkKind =
   'plan' | 'progress' | 'logs' | 'notes' | 'kit' | 'photos' | 'maxes' | 'daynotes' | 'favs' | 'custom'
   /** 按天改练(哪一天练哪一套)—— 和 daynotes(请假条)是两份,别合并见 engine/dayassign.ts */
-  | 'dayassign';
+  | 'dayassign'
+  /** 围度部位偏好(自建部位 + 显隐)—— 在主包 utils/girth-prefs.ts,但跟着这份同步走 */
+  | 'girth';
 
 export function loadMarks(): Record<string, string> {
   const raw = Taro.getStorageSync(KEY);

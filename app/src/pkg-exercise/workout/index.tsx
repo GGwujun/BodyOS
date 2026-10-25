@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, Button, Image, Switch, Textarea } from '@tarojs/components';
+import { View, Text, Button, Image, Picker, ScrollView, Switch, Textarea } from '@tarojs/components';
 import checkIcon from '@/assets/icons/check.png';
 import Taro, { useDidShow, useDidHide } from '@tarojs/taro';
 import Screen from '@/components/Screen';
+/* 长按连发的步进按钮(主包组件):轻点一格、按住一直走 —— 组数次数从 0 调到 40 不用点 40 下 */
+import HoldText from '@/components/HoldText';
 /* 体重弹层是**主包**那个组件(体重页/方案页也用同一个)—— 重量的取值与校验只有那一处 */
 import WeightSheet from '@/components/WeightSheet';
 import { track } from '@/services/analytics';
@@ -14,23 +16,26 @@ import { EFFORT_PRESETS, effortColor, effortVerdict } from '../engine/effort';
 import { findExercise, patternPool, buildItem } from '../engine/generator';
 import { refLine, refText } from '../engine/history';
 import { demoUrl } from '../engine/ex-media';
+import { customImage } from '../engine/custom';
 import { PATTERNS } from '../engine/patterns';
 import { applyCycle, cycleSummary } from '../engine/cycle';
 import { GROUP_ZH, groupsOf } from '../engine/muscles';
 import { canMoveWorkoutRow, cleanUnits, inUnit, insertWorkoutRow, moveWorkoutRow } from '../engine/order';
 import { READY_AT, recoveryOf } from '../engine/recovery';
 import {
-  EXTEND_SEC, extendRest as extendRestTimer, restOver, restPct, restRemain as remainOf,
-  restStart, toggleRestPause as togglePause, type RestTimer
+  EXTEND_SEC, REST_ADJUST, extendRest as extendRestTimer, restOver, restPct, restRemain as remainOf,
+  restStart, restToReady, setRestRemain as setRemainTimer, shortenRest as shortenRestTimer,
+  toggleRestPause as togglePause, type RestTimer
 } from '../engine/rest';
 import { loadMaxes, pctOfWeight, syncMaxesFromLogs, tmOf, type MaxMap } from '../engine/max';
 import { loadKit, loadHint, snappedByPlates, stepOwned, usesBar, type Kit } from '../engine/kit';
+import { blockOf, flowOf, type SupersetFlow } from '../engine/superset';
 import { EQUIPMENT_ZH, MUSCLE_ZH, type ExerciseEntry } from '../data/exercises';
 import { appendLog, loadPlan, loadProgress, loadLogs, savePlan, saveProgress, loadNotes, setNote, updateLog, type ExerciseNotes } from '../engine/store';
 import { loadFavs, sortedByFav, usageOf } from '../engine/fav';
 import { ALERT_DEFAULT, buzz, isTickSecond, keepAwake, loadAlert, type AlertPrefs } from '../engine/alert';
 import { loadDayAssigns, resolveDayKey } from '../engine/dayassign';
-import ExHowTo, { DemoImage, FigureImage } from '../howto';
+import ExHowTo, { DemoImage, FigureImage, MineImage } from '../howto';
 import { figureUrl } from '../engine/ex-figure';
 import {
   HOLD_MAX_SEC, HOLD_STEP_SEC, clampHoldSec, holdRangeText, holdSecOfSets, holdText
@@ -113,6 +118,13 @@ const roundHalf = (n: number) => Math.round(n * 2) / 2;
 const fmtW = (n: number | null) => (n == null ? '自重' : `${n % 1 === 0 ? n : n.toFixed(1)}kg`);
 /** 休息处方:0 秒是「不休息」(超级组、拉伸),不是「休息 0s」—— 与计划的念法一致(见 utils/duration) */
 const restText = (sec: number) => fmtDuration(sec, '不休息');
+/** 休息改时的预设念法(90 秒不折成 1.5 分钟 —— 「九十秒」比「一点五分钟」好念) */
+const restPickLabel = (sec: number) => (sec < 60 || sec === 90 ? `${sec} 秒` : `${sec / 60} 分钟`);
+/** 选择器默认停在最接近当前剩余的那一档 */
+const nearestRestIdx = (remain: number) => {
+  const i = REST_ADJUST.findIndex((s) => s >= remain);
+  return i < 0 ? REST_ADJUST.length - 1 : i;
+};
 
 /** 一句话说清「上次那场还剩多少」—— 这里和首页那张「继续」卡用同一份数(draftBrief) */
 const draftProgress = (d: WorkoutDraft) => {
@@ -638,13 +650,18 @@ export default function Workout() {
     const prefs = loadAlert();
     alertRef.current = prefs;
     keepAwake(true, prefs);
-    // 回到前台:定时器若在后台被系统清除,这里至少能判定"已过点"并收掉休息条。
+    // 回到前台:定时器若在后台被系统清除,这里至少能判定"已过点"。
+    // 过点的那份**停进「歇够了」**而不是直接消失:回来的人第一眼要的答案是「歇够了没有」,
+    // 一条还挂在屏上的「歇够了 · 可以开始下一组」就是那个答案,消失反而要他猜。
     // **这一路刻意不震**:那一震的信号是「你正看着,它到点了」,而这一路正是你不在的时候
-    // 过去的(锁屏、切去了别的页面),回来再补一下是惊吓不是提示;而且人已经回到页面上了,
-    // 休息条消失本身就是他要的那个变化。见 engine/alert.ts 模块头。
-    // 暂停中的那份要留住:`pausedAt` 一冻结,`endsAt` 就落到了过去,不排掉的话
-    // 「回到前台」这一路会把暂停中的计时当成到点收掉(用户回来一看,暂停没了)—— `restOver` 里
-    setRest((r) => (r && restOver(r, Date.now()) ? null : r));
+    // 过去的(锁屏、切去了别的页面),回来再补一下是惊吓不是提示。见 engine/alert.ts 模块头。
+    // 暂停中的那份要留住:`pausedAt` 一冻结,`endsAt` 就落到了过去 ——
+    // 「回到前台」这一路不能把暂停中的计时当成到点处理(用户回来一看,暂停没了)—— `restOver` 里
+    setRest((r) => {
+      if (!r) return r;
+      if (r.readyAt != null || r.pausedAt != null) return r;
+      return restOver(r, Date.now()) ? restToReady(r, Date.now()) : r;
+    });
 
     // 回到前台时,上一轮撑到一半就切走了 —— **按切走的那一刻结账**。
     // 不能拿「现在」当结束时间:切走去接了个电话、十分钟后回来,那一组会记成
@@ -718,6 +735,12 @@ export default function Workout() {
       tickedRef.current = 0;
       return;
     }
+    // Ready(歇够了):表停住等处置 —— 数字钉在 0,不再走表也不再震(提示在转进来那一刻给过)
+    if (rest.readyAt != null) {
+      if (restTimer.current) { clearInterval(restTimer.current); restTimer.current = null; }
+      setRestRemain(0);
+      return;
+    }
     if (rest.pausedAt != null) {
       // 停表:定时器要真的停掉,不能只是不刷新画面 —— 否则恢复时那几秒已经溜走
       if (restTimer.current) { clearInterval(restTimer.current); restTimer.current = null; }
@@ -729,7 +752,10 @@ export default function Workout() {
       const remain = remainOf(rest, Date.now());
       if (remain <= 0) {
         buzz('restEnd', alertRef.current);
-        setRest(null);
+        // 到点不收表:停进「歇够了」。收不收、要不要再歇一段,留给他自己按 ——
+        // 他可能正低着头换鞋、找耳机,一声长震已经说完了「歇够了」,这条还在的表是同一句话的书面版
+        setRest(restToReady(rest, Date.now()));
+        setRestRemain(0);
         return;
       }
       if (remain !== tickedRef.current) {
@@ -741,9 +767,9 @@ export default function Workout() {
     tick();
     restTimer.current = setInterval(tick, 250); // 250ms 保证秒数跳动及时,不累积漂移
     return () => { if (restTimer.current) { clearInterval(restTimer.current); restTimer.current = null; } };
-    // pausedAt 也要在依赖里:按下暂停时 endsAt 没变,只挂着 endsAt 的话这个 effect 不会重跑,
-    // 表也就停不下来
-  }, [rest?.endsAt, rest?.pausedAt]);
+    // pausedAt / readyAt 也要在依赖里:按下暂停或到点停住时 endsAt 没变,
+    // 只挂着 endsAt 的话这个 effect 不会重跑,表也就停不下来
+  }, [rest?.endsAt, rest?.pausedAt, rest?.readyAt]);
   useEffect(() => () => { if (restTimer.current) clearInterval(restTimer.current); }, []);
 
   /** 每个动作练过几次 —— 换动作面板里「常练的」排在前面(日志本来就在手上,不必再读一遍 storage) */
@@ -762,6 +788,21 @@ export default function Workout() {
   }, [refIds, logs]);
   const totalSets = useMemo(() => rows.reduce((a, r) => a + r.sets.length, 0), [rows]);
   const doneSets = useMemo(() => rows.reduce((a, r) => a + r.sets.filter((s) => s.done).length, 0), [rows]);
+  /**
+   * 每个超级组块的进度句(键 = 块首行号)——「第几轮 / 下一个是哪个」。
+   * 交替这件事引擎一直在算(勾完一组找同伴那条),但界面只给过一闪而过的 toast;
+   * 练到一半「这轮做完该换哪个」全靠人记。块首那行常驻这一句,专注模式另有自己的一份。
+   */
+  const ssFlow = useMemo(() => {
+    const map = new Map<number, SupersetFlow>();
+    rows.forEach((row, ri) => {
+      if (!row.superset) return;
+      if (blockOf(rows, ri)[0] !== ri) return;      // 只在块首挂,块里其余行看标签「超级组」就够
+      const f = flowOf(rows, ri);
+      if (f) map.set(ri, f);
+    });
+    return map;
+  }, [rows]);
   /**
    * 现在练到哪一段了 —— 第一个还没做完的动作。这一屏有十来个动作、几十行组,
    * 而其中**只有一行是当下要做的**:以前它和其余每张卡长得一模一样,
@@ -904,6 +945,22 @@ export default function Workout() {
   /** +15 秒(算术在 `engine/rest.ts` 的 `extendRest`) */
   const extendRest = () => {
     setRest((r) => (r ? extendRestTimer(r, EXTEND_SEC, Date.now()) : null));
+  };
+
+  /** −15 秒:减穿底会拿到 null,这条休息就算完了(和「跳过」同一条路) */
+  const shortenRest = () => {
+    setRest((r) => (r ? shortenRestTimer(r, EXTEND_SEC, Date.now()) : null));
+  };
+
+  /** 点倒计时数字改剩余秒 —— 预设档见 `engine/rest.ts` 的 REST_ADJUST */
+  const pickRestSec = (sec: number) => {
+    setRest((r) => (r ? setRemainTimer(r, sec, Date.now()) : null));
+  };
+
+  /** 点进度条的编号滚到那张卡。滚不到(卡片被折叠/选择器没找到)就退回大字模式切过去 */
+  const gotoRow = (ri: number) => {
+    if (focus != null) return setFocus(ri);
+    Taro.pageScrollTo({ selector: `#wk-row-${ri}`, duration: 300 }).catch(() => setFocus(ri));
   };
 
   /**
@@ -1150,6 +1207,35 @@ export default function Workout() {
       <View className="wk-progress">
         <View className="wk-progress-fill" style={{ width: `${totalSets ? (doneSets / totalSets) * 100 : 0}%` }} />
       </View>
+
+      {/* 动作进度条 —— 每个动作一粒编号:灰=没做、半填=做了一半、全填=做完,当前那粒描边。
+          超级组块内同一色带,谁和谁交替做一眼可辨;点一粒滚到那张卡(滚不到就大字切过去)。
+          十几个动作的课,练到后半段「下一个是什么动作、还剩几个」靠翻屏数卡片太慢。
+          练到哪粒,条自己滚过去把那粒露出来 —— 别让「当前在第 11 个」只能靠手动划 */}
+      <ScrollView
+        className="wk-steps"
+        scrollX
+        scrollWithAnimation
+        scrollIntoView={currentRi > 0 ? `wk-step-${currentRi}` : ''}
+      >
+        <View className="wk-steps-track">
+          {rows.map((row, ri) => {
+            const done = row.sets.filter((s) => s.done).length;
+            const full = row.sets.length > 0 && done === row.sets.length;
+            const inSs = blockOf(rows, ri).length >= 2;
+            return (
+              <Text
+                key={`${row.exerciseId}-${ri}`}
+                id={`wk-step-${ri}`}
+                className={`wk-steps-chip${full ? ' is-done' : done > 0 ? ' is-part' : ''}${ri === currentRi ? ' is-now' : ''}${inSs ? ' is-ss' : ''}`}
+                onClick={() => gotoRow(ri)}
+              >
+                {ri + 1}
+              </Text>
+            );
+          })}
+        </View>
+      </ScrollView>
       {recoverWarn && <Text className="wk-warn">{recoverWarn}</Text>}
 
       {/* 练前上称 — 健身房的秤就在更衣室门口,而体重那套口径要的正是「固定时间、同一台秤」。
@@ -1173,7 +1259,24 @@ export default function Workout() {
         const folded = row.sets.length > 0 && row.sets.every((s) => s.done) && !doneOpen[ri];
         const unfold = () => setDoneOpen((m) => ({ ...m, [ri]: true }));
         return (
-          <View className={`card wk-ex${folded ? ' wk-ex--fold' : ''}${ri === currentRi ? ' wk-ex--now' : ''}`} key={`${row.exerciseId}-${ri}`}>
+          <View className={`card wk-ex${folded ? ' wk-ex--fold' : ''}${ri === currentRi ? ' wk-ex--now' : ''}`} key={`${row.exerciseId}-${ri}`} id={`wk-row-${ri}`}>
+            {/* 超级组进度句 — 挂在块首卡片的顶上(块内交替引擎在算,这里常驻说给人听)。
+                放在折叠开关的外面:块首那行先做完折起来时,同伴还剩几轮这句话不该跟着消失 */}
+            {(() => {
+              const f = ssFlow.get(ri);
+              if (!f) return null;
+              const nxt = f.nextRi != null ? rows[f.nextRi] : null;
+              return (
+                <Text className="wk-ssflow">
+                  超级组 · 第 {f.round}/{f.totalRounds} 轮
+                  {nxt == null
+                    ? ' · 全部做完 ✓'
+                    : f.nextRi === ri
+                      ? ' · 现在从这行开始'
+                      : ` · 接着做:${nxt.nameZh} 第 ${(f.nextSi ?? 0) + 1} 组`}
+                </Text>
+              );
+            })()}
             <View className="wk-ex-head">
               <View className="wk-ex-title" onClick={() => (folded ? unfold() : setFocus(ri))}>
                 <Text className="wk-ex-name">{row.nameZh}</Text>
@@ -1206,13 +1309,14 @@ export default function Workout() {
                 其余的动作照旧走 ⋯ 那条路 —— 一页里留一处看图,其余地方留给组。 */}
             {ri === currentRi && (() => {
               const demo = demoUrl(row.exerciseId);
-              /* 没有演示图的动作退到「练哪儿」那张。**写的字要跟着换** ——
-                 底下摆的是肌群图,入口还写「看这个动作怎么练」就是骗人点开
-                 (点开发现不是「怎么做」,下次真的那张他也不点了)。
-                 两张都没有(自定义动作没填肌群)才是真的不摆这一块。 */
-              const hasFigure = !demo && !!figureUrl(ex?.target);
-              if (!demo && !hasFigure) return null;
-              const entry = demo ? '看这个动作怎么练 ›' : '这个动作练哪儿 ›';
+              /* 自建动作传过配图的话排在肌群示意图前面(同一条优先级链,见 howto/HowTo) */
+              const mine = demo ? undefined : customImage(row.exerciseId);
+              /* 三张都没有(自定义动作没传配图也没填肌群)才是真的不摆这一块。
+                 入口那行字要跟着底下摆的是哪张换 —— 摆的是肌群图还写
+                 「看这个动作怎么练」就是骗人点开,下次真的那张他也不点了。 */
+              const hasFigure = !demo && !mine && !!figureUrl(ex?.target);
+              if (!demo && !mine && !hasFigure) return null;
+              const entry = demo ? '看这个动作怎么练 ›' : mine ? '自己传的配图 ›' : '这个动作练哪儿 ›';
               if (demoShut[ri]) {
                 return (
                   <Text className="fs-mini wk-demo-open" onClick={() => setDemoShut((m) => ({ ...m, [ri]: false }))}>
@@ -1222,7 +1326,7 @@ export default function Workout() {
               }
               return (
                 <View className="wk-demo">
-                  {demo ? <DemoImage url={demo} /> : <FigureImage target={ex?.target} />}
+                  {demo ? <DemoImage url={demo} /> : mine ? <MineImage url={mine} /> : <FigureImage target={ex?.target} />}
                   <Text className="fs-mini wk-demo-shut" onClick={() => setDemoShut((m) => ({ ...m, [ri]: true }))}>收起 ▴</Text>
                 </View>
               );
@@ -1316,34 +1420,34 @@ export default function Workout() {
                         </>
                       ) : (
                         <>
-                          <Text className="wk-btn" onClick={(e) => { e.stopPropagation(); stepHoldSec(ri, si, -1); }}>−</Text>
+                          <HoldText className="wk-btn" onStep={() => stepHoldSec(ri, si, -1)}>−</HoldText>
                           <Text className="wk-val">
                             {s.sec != null ? holdText(s.sec) : holdRangeText(row.holdSec.min, row.holdSec.max)}
                             <Text className="wk-unit">{s.sec != null ? '' : '目标'}</Text>
                           </Text>
-                          <Text className="wk-btn" onClick={(e) => { e.stopPropagation(); stepHoldSec(ri, si, 1); }}>＋</Text>
+                          <HoldText className="wk-btn" onStep={() => stepHoldSec(ri, si, 1)}>＋</HoldText>
                         </>
                       )}
                     </View>
                   );
                 })() : (
                 <View className="wk-ctrl">
-                  <Text className="wk-btn" onClick={() => stepReps(ri, si, -1)}>−</Text>
+                  <HoldText className="wk-btn" onStep={() => stepReps(ri, si, -1)}>−</HoldText>
                   {/* 单侧动作显示「每侧几次」—— 他数的是每侧,不是两侧加起来的数 */}
                   <Text className="wk-val">
                     {row.sided ? sideRepsText(s.reps) : s.reps}
                     <Text className="wk-unit">{row.sided ? '次/侧' : '次'}</Text>
                   </Text>
-                  <Text className="wk-btn" onClick={() => stepReps(ri, si, 1)}>＋</Text>
+                  <HoldText className="wk-btn" onStep={() => stepReps(ri, si, 1)}>＋</HoldText>
                 </View>
                 )}
                 <View className="wk-ctrl">
                   {s.weightKg != null ? <>
-                    <Text className="wk-btn" onClick={() => stepWeight(ri, si, -row.weightStepKg)}>−</Text>
+                    <HoldText className="wk-btn" onStep={() => stepWeight(ri, si, -row.weightStepKg)}>−</HoldText>
                     <Text className="wk-val">
                       {loadPrefix(row.exerciseId)}{s.weightKg}<Text className="wk-unit">kg</Text>
                     </Text>
-                    <Text className="wk-btn" onClick={() => stepWeight(ri, si, row.weightStepKg)}>＋</Text>
+                    <HoldText className="wk-btn" onStep={() => stepWeight(ri, si, row.weightStepKg)}>＋</HoldText>
                   </> : <Text className="wk-val wk-val-bw">自重</Text>}
                 </View>
                 {/* 自感强度:未评显示浅灰短横,已评显示档位数字并着色 */}
@@ -1458,26 +1562,65 @@ export default function Workout() {
               {doneN}/{row.sets.length} 组 · 组间休息 {restText(row.restSec)}
               {notes[row.exerciseId] ? ` · ${notes[row.exerciseId]}` : ''}
             </Text>
+            {/* 超级组流程条 — 专注模式是最该有它的地方:全屏只看这一个动作,
+                「轮到没轮到、下一个是谁」不写出来就只能靠记。下一个的名字点得动:
+                直接把专注切过去,等价于底部「下一个」(两个动作的块里它们本来就是一步之隔) */}
+            {(() => {
+              const f = flowOf(rows, focus);
+              if (!f) return null;
+              return (
+                <View className="wk-focus-ss">
+                  <Text className="wk-focus-ss-r">超级组 · 第 {f.round}/{f.totalRounds} 轮</Text>
+                  {f.nextRi == null ? (
+                    /* 三支同位置的 Text 必须一样「有没有事件」(Taro 3.6 那个坑,见 utils/taro-events):
+                       前两支本来就点不动,补一个空函数占位,不是真的想让人点 */
+                    <Text className="fs-mini text-secondary" onClick={() => {}}>这一块全部做完 ✓</Text>
+                  ) : f.nextRi === focus ? (
+                    <Text className="wk-focus-ss-now" onClick={() => {}}>← 轮到这个</Text>
+                  ) : (
+                    <Text className="wk-focus-ss-next" onClick={() => setFocus(f.nextRi ?? 0)}>
+                      下一个:{rows[f.nextRi]?.nameZh} ›
+                    </Text>
+                  )}
+                </View>
+              );
+            })()}
             {/* 同一句话,这里给一次比列表页里更值 —— 专注模式就是「两组之间盯着这一屏」的时刻。
                 放在休息计时**上面**:计时是这一屏的主角,底下那行字不该跟着它忽上忽下。 */}
             {refs[row.exerciseId] && <Text className="fs-mini wk-ref wk-focus-ref">{refs[row.exerciseId]}</Text>}
 
             {/* 专注模式下把休息计时放大到主角位置 */}
             {rest && (
-              <View className={`wk-focus-rest${rest.pausedAt != null ? ' is-paused' : ''}`}>
-                <Text className="wk-focus-rest-t">{fmtDuration(restRemain)}</Text>
+              <View className={`wk-focus-rest${rest.pausedAt != null ? ' is-paused' : ''}${rest.readyAt != null ? ' is-ready' : ''}`}>
+                {/* 点数字直接改剩余(预设档见 REST_ADJUST)—— 练到半路想说「就歇 30 秒」,
+                    不该逼人连按 N 次 −15;歇够了之后点它同样是另起一段 */}
+                <Picker
+                  mode="selector"
+                  range={REST_ADJUST.map(restPickLabel)}
+                  value={nearestRestIdx(restRemain)}
+                  onChange={(e) => pickRestSec(REST_ADJUST[Number(e.detail.value)] ?? 60)}
+                >
+                  <Text className="wk-focus-rest-t">{rest.readyAt != null ? '歇够了 ⌄' : `${fmtDuration(restRemain)} ⌄`}</Text>
+                </Picker>
                 <Text className="fs-mini wk-focus-rest-k">
                   {/* 暂停中必须**说出来**:数字停住不动,不说的话看起来就是表坏了 */}
-                  {rest.pausedAt != null ? '已暂停' : '休息中'} · 下一组 {row.sided
+                  {rest.pausedAt != null ? '已暂停' : rest.readyAt != null ? '可以开始下一组了' : '休息中'} · 下一组 {row.sided
                     ? `每侧 ${sideRepsText(row.sets[curIdx]?.reps ?? 0)}`
                     : (row.sets[curIdx]?.reps ?? 0)} 次
                 </Text>
                 <View className="wk-focus-rest-ops">
-                  <Text className="wk-rest-op" onClick={toggleRestPause}>
-                    {rest.pausedAt != null ? '继续' : '暂停'}
-                  </Text>
-                  <Text className="wk-rest-op" onClick={extendRest}>+15s</Text>
-                  <Text className="wk-rest-op" onClick={() => setRest(null)}>跳过</Text>
+                  {/* 歇够了就不给「暂停 / −15s」:没有可停的表,也没有可减的剩余 ——
+                      这时候的两个决定是「再歇一段」和「收掉」 */}
+                  {rest.readyAt == null && (
+                    <>
+                      <Text className="wk-rest-op" onClick={toggleRestPause}>
+                        {rest.pausedAt != null ? '继续' : '暂停'}
+                      </Text>
+                      <Text className="wk-rest-op" onClick={shortenRest}>−15s</Text>
+                    </>
+                  )}
+                  <Text className="wk-rest-op" onClick={extendRest}>{rest.readyAt != null ? '再歇 15 秒' : '+15s'}</Text>
+                  <Text className="wk-rest-op" onClick={() => setRest(null)}>{rest.readyAt != null ? '收掉' : '跳过'}</Text>
                 </View>
               </View>
             )}
@@ -1504,33 +1647,33 @@ export default function Workout() {
                             </>
                           ) : (
                             <>
-                              <Text className="wk-fset-btn" onClick={(e) => { e.stopPropagation(); stepHoldSec(focus, si, -1); }}>−</Text>
+                              <HoldText className="wk-fset-btn" onStep={() => stepHoldSec(focus, si, -1)}>−</HoldText>
                               <Text className="wk-fset-v">
                                 {s.sec != null ? holdText(s.sec) : holdRangeText(row.holdSec.min, row.holdSec.max)}
                                 <Text className="wk-fset-u">{s.sec != null ? '' : '目标'}</Text>
                               </Text>
-                              <Text className="wk-fset-btn" onClick={(e) => { e.stopPropagation(); stepHoldSec(focus, si, 1); }}>＋</Text>
+                              <HoldText className="wk-fset-btn" onStep={() => stepHoldSec(focus, si, 1)}>＋</HoldText>
                             </>
                           )}
                         </View>
                       );
                     })() : (
                     <View className="wk-fset-line">
-                      <Text className="wk-fset-btn" onClick={() => stepReps(focus, si, -1)}>−</Text>
+                      <HoldText className="wk-fset-btn" onStep={() => stepReps(focus, si, -1)}>−</HoldText>
                       <Text className="wk-fset-v">
                         {row.sided ? sideRepsText(s.reps) : s.reps}
                         <Text className="wk-fset-u">{row.sided ? '次/侧' : '次'}</Text>
                       </Text>
-                      <Text className="wk-fset-btn" onClick={() => stepReps(focus, si, 1)}>＋</Text>
+                      <HoldText className="wk-fset-btn" onStep={() => stepReps(focus, si, 1)}>＋</HoldText>
                     </View>
                     )}
                     <View className="wk-fset-line">
                       {s.weightKg != null ? <>
-                        <Text className="wk-fset-btn" onClick={() => stepWeight(focus, si, -row.weightStepKg)}>−</Text>
+                        <HoldText className="wk-fset-btn" onStep={() => stepWeight(focus, si, -row.weightStepKg)}>−</HoldText>
                         <Text className="wk-fset-v">
                           {loadPrefix(row.exerciseId)}{s.weightKg}<Text className="wk-fset-u">kg</Text>
                         </Text>
-                        <Text className="wk-fset-btn" onClick={() => stepWeight(focus, si, row.weightStepKg)}>＋</Text>
+                        <HoldText className="wk-fset-btn" onStep={() => stepWeight(focus, si, row.weightStepKg)}>＋</HoldText>
                       </> : <Text className="wk-fset-v wk-fset-bw">自重</Text>}
                     </View>
                     {(() => {
@@ -1579,9 +1722,17 @@ export default function Workout() {
 
       {/* 休息倒计时条(专注模式自带计时,这里不重复出现) */}
       {rest && focus == null && (
-        <View className={`wk-rest${rest.pausedAt != null ? ' is-paused' : ''}`} catchMove>
-          <Text className="wk-rest-label">{rest.pausedAt != null ? '已暂停' : '休息中'}</Text>
-          <Text className="wk-rest-time">{fmtDuration(restRemain)}</Text>
+        <View className={`wk-rest${rest.pausedAt != null ? ' is-paused' : ''}${rest.readyAt != null ? ' is-ready' : ''}`} catchMove>
+          <Text className="wk-rest-label">{rest.pausedAt != null ? '已暂停' : rest.readyAt != null ? '歇够了' : '休息中'}</Text>
+          {/* 点数字改剩余 —— 和专注模式那块同一个选择器、同一档预设;歇够了之后点它是另起一段 */}
+          <Picker
+            mode="selector"
+            range={REST_ADJUST.map(restPickLabel)}
+            value={nearestRestIdx(restRemain)}
+            onChange={(e) => pickRestSec(REST_ADJUST[Number(e.detail.value)] ?? 60)}
+          >
+            <Text className="wk-rest-time">{rest.readyAt != null ? '可以开始下一组 ⌄' : `${fmtDuration(restRemain)} ⌄`}</Text>
+          </Picker>
           <View className="wk-rest-bar">
             <View
               className="wk-rest-fill"
@@ -1589,11 +1740,16 @@ export default function Workout() {
             />
           </View>
           <View className="wk-rest-ops">
-            <Text className="wk-rest-op" onClick={toggleRestPause}>
-              {rest.pausedAt != null ? '继续' : '暂停'}
-            </Text>
-            <Text className="wk-rest-op" onClick={extendRest}>+15s</Text>
-            <Text className="wk-rest-op" onClick={() => setRest(null)}>跳过</Text>
+            {rest.readyAt == null && (
+              <>
+                <Text className="wk-rest-op" onClick={toggleRestPause}>
+                  {rest.pausedAt != null ? '继续' : '暂停'}
+                </Text>
+                <Text className="wk-rest-op" onClick={shortenRest}>−15s</Text>
+              </>
+            )}
+            <Text className="wk-rest-op" onClick={extendRest}>{rest.readyAt != null ? '再歇 15 秒' : '+15s'}</Text>
+            <Text className="wk-rest-op" onClick={() => setRest(null)}>{rest.readyAt != null ? '收掉' : '跳过'}</Text>
           </View>
         </View>
       )}

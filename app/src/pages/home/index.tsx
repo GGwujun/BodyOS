@@ -1,7 +1,7 @@
 import { themedColor } from '@/utils/theme';
 import { useState } from 'react';
 import { Image, Picker, Text, View } from '@tarojs/components';
-import Taro, { useDidShow, usePullDownRefresh } from '@tarojs/taro';
+import Taro, { useDidShow, usePullDownRefresh, useShareAppMessage, useShareTimeline } from '@tarojs/taro';
 import { ArrowRight, ArrowDown } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import { RoutePath, TAB_PAGES } from '@/constants/routes';
@@ -17,7 +17,7 @@ import foodIcon from '@/assets/icons/food.png';
 import runIcon from '@/assets/icons/run.png';
 import dumbbellIcon from '@/assets/icons/dumbbell.png';
 import scaleIcon from '@/assets/icons/scale.png';
-import heroBg from '@/assets/home-hero.png';
+import heroBg from '@/assets/home-hero.jpg';
 import {
   STATE_TONE, TRAINING_LOGS_URL, TRAINING_PLAN_URL, digestView, loadTrainingDigest, weekDotMap,
   type TrainingDigest, type TrainingState
@@ -91,6 +91,11 @@ export default function Home() {
   const [viewDate, setViewDate] = useState(today);
   const isToday = viewDate === today;
   const { data, loading, error, refresh } = useAsync(() => summaryApi.getDailySummary(viewDate), [viewDate]);
+
+  /* 转发/分享到朋友圈 —— 右上角菜单默认没有这两个口子,挂上钩子才有。
+     落地页固定是首页:被分享进来的人第一眼看到的是「这是个记录工具」,不是某张海报 */
+  useShareAppMessage(() => ({ title: '轻身记 · 记录，是改变的开始', path: '/pages/home/index' }));
+  useShareTimeline(() => ({ title: '轻身记 · 记录，是改变的开始' }));
 
   /** 步数目标:服务端档案里的值 + 本地即时回显(改完不等重拉就变)。1000 一档,4k~20k 盖住从散步到暴走 */
   const STEP_GOAL_OPTIONS = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 12000, 15000, 20000];
@@ -545,6 +550,13 @@ export default function Home() {
           <Text className="overview-note is-action" onClick={() => go(RoutePath.Record)}>
             {dayLabel}还没有能量记录，点击去记一笔 ›
           </Text>
+        )}
+        {/* 每日分享卡的入口:这张卡晒的就是上面的数,从这儿进最顺。
+            只有「正在看今天」时才给 —— 卡上印的是今天的成绩单,回看别的日子进去对不上 */}
+        {isToday && (
+          <View className="overview-share" onClick={() => navigate('/pkg-exercise/daily-share/index')}>
+            <Text className="overview-share__text">把今天做成分享卡 ›</Text>
+          </View>
         )}
       </View>
 

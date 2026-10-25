@@ -16,6 +16,7 @@ import { trainingApi } from '@/services';
 import type { TrainingDocDto } from '@/services/training';
 import { markTouched, touchedAt } from '@/utils/sync-marks';
 import { loadPhotos, pendingUploads, savePhotos, setPhotoUrl, type PhotoEntry } from '@/utils/photos';
+import { loadGirthPrefs, sanitizeGirthPrefs, saveGirthPrefs } from '@/utils/girth-prefs';
 import { allCustom, saveCustom } from './custom';
 import { applyKitDoc, kitDocEmpty, loadKitDoc } from './kit';
 import { loadDayNotes, sanitizeDayNotes, saveDayNotes } from './daynote';
@@ -126,6 +127,14 @@ export function collectDocs(): SyncDoc[] {
     docs.push({ kind: 'maxes', docKey: 'main', payload: maxes, clientUpdatedAt: maxesAt ?? EPOCH });
   }
 
+  // 围度部位偏好(自建部位 + 显隐):换台设备要是没把它带过去,那边围度记录里
+  // extras 那张键值表就成了没人认领的列 —— 数还在,但哪个数是哪个部位再没人说得清
+  const girthPrefs = loadGirthPrefs();
+  const girthAt = touchedAt('girth', 'main');
+  if (girthAt || girthPrefs.custom.length || girthPrefs.hidden.length) {
+    docs.push({ kind: 'girth', docKey: 'main', payload: girthPrefs, clientUpdatedAt: girthAt ?? EPOCH });
+  }
+
   for (const log of loadLogs()) {
     docs.push({
       kind: 'logs', docKey: log.id, payload: log,
@@ -213,6 +222,12 @@ export function applyDocs(docs: SyncDoc[]): void {
     // saveCustom 里再清洗一遍:云端那份可能是别的版本写的,形状不对的记录直接丢
     saveCustom(customDoc.payload);
     markTouched('custom', customDoc.docKey, customDoc.clientUpdatedAt);
+  }
+
+  const girthDoc = pick('girth');
+  if (girthDoc) {
+    saveGirthPrefs(sanitizeGirthPrefs(girthDoc.payload));
+    markTouched('girth', girthDoc.docKey, girthDoc.clientUpdatedAt);
   }
 
   // 日志:整批合一次再写 —— 一条一次 setStorageSync 的话,几百条日志就是几百次整份序列化

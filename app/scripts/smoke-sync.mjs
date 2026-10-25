@@ -349,6 +349,28 @@ ok('没记过修改时间的当最旧:不会覆盖云端更新的那份', (() =>
   return r.docs[0].payload.v === 'new';
 })());
 
+/* ================= 围度部位偏好:自建部位 + 显隐 随同步走 ================= */
+section('围度部位偏好(自建部位 + 显隐)');
+{
+  const GP = require('../.smoke/utils/girth-prefs.js');
+  use('A');
+  const added = GP.addCustomSite('左上臂');
+  ok('A 机加上自建部位', added.ok && GP.loadGirthPrefs().custom[0].name === '左上臂');
+  GP.toggleSiteKey('thighCm');
+  const doc = S.collectDocs().find((x) => x.kind === 'girth');
+  ok('collectDocs 带上了 girth 文档(自建 + 显隐都在 payload 里)',
+    doc?.docKey === 'main' && doc.payload.custom.length === 1 && doc.payload.hidden.includes('thighCm'));
+  await S.syncNow();
+  use('B');
+  ok('B 机同步前还不知道这些', GP.loadGirthPrefs().custom.length === 0);
+  await S.syncNow();
+  const onB = GP.loadGirthPrefs();
+  ok('B 机拉到了自建部位(名字原样)和藏起来的大腿围',
+    onB.custom.length === 1 && onB.custom[0].name === '左上臂' && onB.hidden.includes('thighCm'));
+  ok('B 机拿到的 id 和 A 一致(extras 里挂的数据靠它对上)',
+    onB.custom[0].id.length >= 4 && /^[a-z0-9]+$/.test(onB.custom[0].id));
+}
+
 console.log(`\n${fail ? `❌ ${fail} 个用例失败` : '✅ 全部通过'}`);
 process.exit(fail ? 1 : 0);
 

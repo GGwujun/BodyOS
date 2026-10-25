@@ -173,5 +173,71 @@ s = R.toggleRestPause(s, at(560));         // 器材空出来了
 ok('④ 继续,剩余 95', R.restRemain(s, at(560)) === 95);
 ok('⑤ 走到第 95 秒才到点', R.restOver(s, at(560 + 94)) === false && R.restOver(s, at(560 + 95)) === true);
 
+/* ================= −15 秒 ================= */
+section('−15 秒(shortenRest)');
+{
+  const cut = R.shortenRest(t90, 15, at(10));
+  ok('第 10 秒 −15 → 剩 65', cut != null && R.restRemain(cut, at(10)) === 65);
+  ok('分母不缩回(已经歇掉的不算没歇)', cut.total === 90);
+  ok('…所以条子是 72%,不是满格', Math.round(R.restPct(cut, at(10))) === 72, String(R.restPct(cut, at(10))));
+  // 剩 8 秒时按 −15:减穿底 → null,这条休息就算完了,和「跳过」同一条路
+  ok('剩 8 秒时 −15 → null(不造「剩 0 秒」的中间态)', R.shortenRest(R.restStart(23, T0), 15, at(15)) === null);
+  ok('正好减到底 → 也是 null(≤ 都算不剩)', R.shortenRest(t90, 15, at(75)) === null);
+  // 暂停中减:基准是冻结那一刻,不是墙钟 —— 和加时间是同一条规矩
+  const cutPaused = R.shortenRest(paused, 15, at(320));   // 冻结时剩 70
+  ok('暂停中 −15 → 剩 55(拿 pausedAt 当基准)', cutPaused != null && R.restRemain(cutPaused, at(320)) === 55);
+  ok('暂停中减完还挂着暂停', cutPaused.pausedAt === at(20));
+  ok('暂停中减穿底(剩 10 时 −15)→ null', R.shortenRest(R.toggleRestPause(R.restStart(30, T0), at(20)), 15, at(999)) === null);
+  // 减完再继续,走的是减过的表
+  ok('减完继续:剩 55', R.restRemain(R.toggleRestPause(cutPaused, at(400)), at(400)) === 55);
+  // 加了再减、减了再加,分母始终是「曾经最长」(第 10 秒做:本来剩 80,+15 → 95,−15 → 又剩 80)
+  const mix = R.shortenRest(R.extendRest(t90, 15, at(10)), 15, at(10));
+  ok('+15 再 −15 → 剩回 80,但 total 记得曾到过 95', mix != null && R.restRemain(mix, at(10)) === 80 && mix.total === 95);
+}
+
+/* ================= 点数字改时 ================= */
+section('点数字改时(setRestRemain)');
+{
+  const set60 = R.setRestRemain(t90, 60, at(10));
+  ok('剩 80 时直接改成 60 秒', set60 != null && R.restRemain(set60, at(10)) === 60);
+  ok('改短:分母不动(90)', set60.total === 90);
+  const set180 = R.setRestRemain(t90, 180, at(10));
+  ok('改长到 180:剩余和分母一起到 180(顶破了就抬,和加时间同一条规矩)', set180.total === 180 && R.restRemain(set180, at(10)) === 180);
+  ok('改完接着走,到点时刻也跟着挪', R.restOver(set60, at(69)) === false && R.restOver(set60, at(70)) === true);
+  // 暂停中改:从冻结那一刻起数 N 秒 —— 「接着还要歇多久」说的是剩余,和墙钟无关
+  const setPaused = R.setRestRemain(paused, 60, at(320));   // 冻结时剩 70
+  ok('暂停中改成 60 → 冻结基准上数 60', setPaused != null && R.restRemain(setPaused, at(320)) === 60 && setPaused.pausedAt === at(20));
+  ok('暂停中改 120 → 顶破老分母,total 到 120', R.setRestRemain(paused, 120, at(320)).total === 120);
+  ok('0 秒 → null(改 0 等于不歇了)', R.setRestRemain(t90, 0, at(10)) === null);
+  ok('预设表 9 档,从 15 秒到 5 分钟', R.REST_ADJUST.length === 9 && R.REST_ADJUST[0] === 15 && R.REST_ADJUST[8] === 300);
+  ok('预设表是升序(页面拿它当选择器的档位)', R.REST_ADJUST.every((v, i, a) => i === 0 || a[i - 1] < v));
+}
+
+/* ================= 歇够了(Ready 态) ================= */
+section('到点停住等处置(restToReady / readyAt)');
+{
+  const ready = R.restToReady(R.restStart(90, T0), at(95));   // 第 95 秒到点(过点 5 秒才发现也停住)
+  ok('到点 → 停进 Ready,剩余钉在 0(等多久都是 0)', R.restRemain(ready, at(95)) === 0 && R.restRemain(ready, at(9999)) === 0);
+  ok('Ready 态不算「到点等收」:不会被回前台那一路清掉', R.restOver(ready, at(9999)) === false);
+  ok('分母原样保留(条子走完了就是走完了)', ready.total === 90);
+  ok('进度条 0%', R.restPct(ready, at(95)) === 0);
+
+  const again = R.extendRest(ready, 15, at(100));
+  ok('歇够了再 +15 = 另起一段新的:剩余 15、分母 15(不接旧分母)', R.restRemain(again, at(100)) === 15 && again.total === 15);
+  ok('新的一段不再是 Ready,也不是暂停', again.readyAt == null && again.pausedAt == null);
+  ok('新的一段会正常到点', R.restOver(again, at(100)) === false && R.restOver(again, at(115)) === true);
+
+  const pick = R.setRestRemain(ready, 60, at(100));
+  ok('歇够了点数字改 60 秒 = 同样另起一段:分母 60', pick != null && R.restRemain(pick, at(100)) === 60 && pick.total === 60);
+
+  ok('歇够了按 −15 → null(剩余是 0,减就是收表)', R.shortenRest(ready, 15, at(100)) === null);
+  const frozen = R.toggleRestPause(ready, at(100));
+  ok('歇够了没有暂停这回事:原样返回', frozen === ready || (frozen.readyAt === ready.readyAt && frozen.pausedAt == null));
+
+  // 到点的那一刻:还是同一条到点判定在管,readyAt 是页面 tick 拍下来的
+  const t = R.restStart(30, T0);
+  ok('没进 Ready 前到点判定照常(页面据此转进 Ready)', R.restOver(t, at(29)) === false && R.restOver(t, at(30)) === true);
+}
+
 console.log(fail ? `\n${fail} 项失败` : '\n全部通过');
 process.exit(fail ? 1 : 0);

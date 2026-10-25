@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Input, Button, Picker, Textarea, Image } from '@tarojs/components';
-import Taro, { useDidShow } from '@tarojs/taro';
-import { UserOutlined, ArrowRight, Aim, RecordsOutlined, CalendarOutlined, LikeOutlined, InfoOutlined, AppsOutlined, Award, GuideOutlined, BagOutlined, SettingOutlined, ChatOutlined, PhoneOutlined, BillOutlined } from '@taroify/icons';
+import Taro, { useDidShow, useShareAppMessage, useShareTimeline } from '@tarojs/taro';
+import { UserOutlined, ArrowRight, Aim, RecordsOutlined, CalendarOutlined, LikeOutlined, InfoOutlined, AppsOutlined, Award, GuideOutlined, BagOutlined, SettingOutlined, ChatOutlined, PhoneOutlined, BillOutlined, WechatMoments } from '@taroify/icons';
 import { useAsync } from '@/hooks/useAsync';
 import { useTabBarMask } from '@/hooks/useTabBarMask';
 import Screen from '@/components/Screen';
@@ -15,7 +15,7 @@ import { todayStr } from '@/utils/date';
 import { navigate, switchTab } from '@/utils/nav';
 import { consumeBodyEditRequest } from '@/utils/profile-edit';
 import { statusBarHeight } from '@/utils/status-bar';
-import heroLeaves from '@/assets/profile-leaves.png';
+import heroLeaves from '@/assets/profile-leaves.jpg';
 
 const STATUS_BAR = statusBarHeight();
 
@@ -25,6 +25,9 @@ const ACTIVITY=[{key:'sedentary',label:'久坐'},{key:'light',label:'轻度活�
 const goalLabel:Record<string,string>={fat_loss:'减脂',muscle_gain:'增肌',maintain:'维持',endurance:'耐力'};
 export default function ProfilePage(){
   const go=(p:RoutePath)=>TAB_PAGES.includes(p)?switchTab(`/${p}`):navigate(`/${p}`);
+  /* 挂上转发/朋友圈钩子:右上角菜单里这两个口子默认是灰的 */
+  useShareAppMessage(()=>({title:'轻身记 · 记录，是改变的开始',path:'/pages/home/index'}));
+  useShareTimeline(()=>({title:'轻身记 · 记录，是改变的开始'}));
   const {data:profile,refresh:refreshProfile}=useAsync<Profile>(()=>userApi.getProfile(),[]);
   const {data:goals,refresh:refreshGoals}=useAsync<Goal[]>(()=>userApi.listGoals(),[]);
   const {data:me,refresh:refreshMe}=useAsync(()=>userApi.getMe(),[]);
@@ -100,6 +103,8 @@ export default function ProfilePage(){
       {label:'我的目标',icon:<Aim/>,value:goal?goalLabel[goal.type]??goal.type:'未设置',onTap:()=>navigate('/pages/onboarding/index?from=nav')},
       {label:'身体数据',icon:<RecordsOutlined/>,value:profile?.weightKg?`${profile.weightKg} kg`:'未填写',onTap:openEdit},
       {label:'本周报告',icon:<CalendarOutlined/>,onTap:()=>go(RoutePath.WeeklyReport)},
+      /* 每日分享卡 —— 发朋友圈的那张图,和「本周报告」同一性质(把记录变成能晒的东西) */
+      {label:'每日分享卡',icon:<WechatMoments/>,value:'晒今天 · 发朋友圈',onTap:()=>navigate('/pkg-exercise/daily-share/index')},
       {label:'饮食偏好',icon:<LikeOutlined/>,value:profile?.dietPreference||'未设置',onTap:openDiet}
     ]},
     /* 训练那两格。**它们是这一页最该有、却一直没有的东西**:「有哪些动作可练」「我手上有什么器械」

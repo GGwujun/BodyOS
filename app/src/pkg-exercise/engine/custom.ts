@@ -31,6 +31,11 @@ export const NAME_MAX = 24;
  *  但也不该被一个随手定的数字卡住 —— 这个上限是防脏数据把 storage 和同步撑爆的,不是产品规则。 */
 export const CUSTOM_CAP = 200;
 
+/** 配图地址只认上传接口给的那种形状(`/media/` 下一层文件名)。
+ *  和服务端 feedback 管理那条校验是同一个正则 —— 两边谁多认一点,脏数据就从那边进来 */
+const RE_IMAGE = /^\/media\/[A-Za-z0-9._-]+$/;
+const validImage = (v: unknown): v is string => typeof v === 'string' && RE_IMAGE.test(v);
+
 export interface CustomExercise {
   /** `c-` + 8 位 —— 和动作库那套 4 位数字 id 天然分得开,永远不会撞 */
   id: string;
@@ -50,6 +55,10 @@ export interface CustomExercise {
   assisted: boolean;
   /** 是不是计时型(平板支撑、靠墙静蹲这类按时长而不是次数记的,见 engine/timed.ts) */
   timed: boolean;
+  /** 用户自己传的配图(那台器械长什么样)—— 站点相对地址,上传接口给的 `/media/<hash>.<ext>`。
+   *  可选:没传的动作在「怎么做」里退到肌群示意图(和以前一样),传了的优先显示这张。
+   *  只认我们自己上传那种形状,外链一律不存 —— 渲染层拿它直接拼地址,不能放任意串 */
+  image?: string;
   createdAt: string;
   /** 退场时间:设了就不再出现在任何选择列表,但历史与统计仍然认识这个 id */
   deletedAt?: string;
@@ -118,6 +127,7 @@ export function sanitizeCustom(raw: unknown): CustomExercise[] {
       sided: o.sided === true,
       assisted: o.assisted === true,
       timed: o.timed === true,
+      ...(validImage(o.image) ? { image: o.image } : {}),
       createdAt: typeof o.createdAt === 'string' ? o.createdAt : new Date().toISOString(),
       ...(typeof o.deletedAt === 'string' && o.deletedAt ? { deletedAt: o.deletedAt } : {})
     });
@@ -178,6 +188,16 @@ export function findCustom(id: string): CustomExercise | undefined {
  */
 export const isCustomId = (id: string): boolean => id.startsWith('c-');
 
+/**
+ * 这个动作的用户配图地址(站点相对)—— 渲染层问的入口,优先级定在这里:
+ * 动作库的演示图(ex-media 的 GIF)> 这张 > 肌群示意图兜底。
+ * 库里的动作没有这回事(演示图那套按 id 查表),所以非 `c-` 开头的一律 undefined。
+ */
+export function customImage(id: string): string | undefined {
+  if (!isCustomId(id)) return undefined;
+  return findCustom(id)?.image;
+}
+
 /** 换成动作库那个形状 —— 认得出 id 的每一层就都能认它(见文件头) */
 export function asEntry(c: CustomExercise): ExerciseEntry {
   return {
@@ -214,6 +234,9 @@ export interface CustomDraft {
   sided?: boolean;
   assisted?: boolean;
   timed?: boolean;
+  /** 配图。编辑表单送来的永远是**完整状态**:合法地址 = 就用这张,空串/null = 没图
+   *  (在表单上删掉配图再保存要走「清掉」,不能当成「没改」)。 */
+  image?: string | null;
 }
 
 export type CustomResult = { ok: true; ex: CustomExercise } | { ok: false; why: string };
@@ -275,6 +298,7 @@ export function addCustom(draft: CustomDraft): CustomResult {
     bodyPart: draft.bodyPart,
     equipment: draft.equipment,
     ...draftFields(draft),
+    ...(validImage(draft.image) ? { image: draft.image } : {}),
     createdAt: new Date().toISOString()
   };
   write([ex, ...list]);
@@ -293,6 +317,10 @@ export function updateCustom(id: string, draft: CustomDraft): CustomResult {
     equipment: draft.equipment,
     ...draftFields(draft)
   };
+  /* 配图以表单那份为准:传了合法地址就换,空/不合法就清掉 —— `...cur` 带过来的旧图
+   *  不能留着(表单上「删掉配图」再保存,结果图还在,那这个按钮就是骗人的) */
+  if (validImage(draft.image)) next.image = draft.image;
+  else delete next.image;
   write(read().map((c) => (c.id === id ? next : c)));
   return { ok: true, ex: next };
 }

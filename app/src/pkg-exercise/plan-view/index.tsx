@@ -14,7 +14,7 @@ import { applyCycle, advanceCycle, cycleSummary, cycleWeeks, CYCLE_ZH } from '..
 import { loadText } from '../engine/load';
 import LogCard from '../log-card';
 import { loadMaxes, pctOfWeight, tmOf, type MaxMap } from '../engine/max';
-import { loadKit, loadHint, type Kit } from '../engine/kit';
+import { loadKit, loadHint, missingKitOf, type Kit } from '../engine/kit';
 import { findExercise } from '../engine/generator';
 import { loadCoach } from '../engine/coach';
 import { gapText, nudgeFor } from '../engine/nudge';
@@ -230,6 +230,15 @@ export default function PlanView() {
 
   const sched = scheduleOf(plan);
   const rot = rotationState(plan, logs, today);
+  /**
+   * 计划里有动作按「我的器材」做不了 —— 列缺哪些器械,给一条去补登记的路。
+   * 只在登记过清单时说(没登记 = 不筛,不是「家里什么都没有」);自建动作不拦。
+   * 放在两个 tab 都看得见的位置:这是「照计划练」的前提,不是日程那一栏的私事。
+   */
+  const missingKit = missingKitOf(
+    kit,
+    plan.days.flatMap((d) => d.items.map((it) => findExercise(it.exerciseId)))
+  );
   const resolved = resolveDayKey(plan, logs, assigns, today);
   const todayKeys = splitDayKey(resolved);
   const todayDay = dayOfKey(plan, resolved);
@@ -405,6 +414,26 @@ export default function PlanView() {
           {coachPending && <View className="pv-coach-dot" />}
         </View>
       </View>
+
+      {/* 缺器材 —— 照着计划走到器械前才发现做不了,是最扫兴的一种卡壳;开练前就提一句 */}
+      {missingKit.length > 0 && (
+        <View className="card pv-misskit">
+          <View className="pv-misskit-head">
+            <Text className="pv-misskit-title">有几个动作缺器材</Text>
+            <Text className="fs-mini text-secondary">{missingKit.join('、')}</Text>
+          </View>
+          <Text className="fs-mini text-secondary">
+            按你登记的「我的器材」,这几个动作现在做不了。练不了的那几条先空着,
+            或者把器材清单补上 —— 计划照旧,不会因为缺一样就重排。
+          </Text>
+          <Button
+            className="btn btn--secondary btn--block pv-misskit-btn"
+            onClick={() => navigate('/pkg-exercise/kit/index')}
+          >
+            去「我的器材」看看
+          </Button>
+        </View>
+      )}
 
       {/* 日程 / 日常 —— 两个视图管的是两件事:什么时候练,和练什么 */}
       <View className="pv-tabs">

@@ -11,8 +11,8 @@ import statsIcon from '@/assets/icons/stats.png';
 import compassIcon from '@/assets/icons/compass.png';
 import timerIcon from '@/assets/icons/timer.png';
 import dumbbellIcon from '@/assets/icons/dumbbell.png';
-import heroBg from '@/assets/training-hero.png';
-import quoteBg from '@/assets/quote-bg.png';
+import heroBg from '@/assets/training-hero.jpg';
+import quoteBg from '@/assets/quote-bg.jpg';
 import {
   STATE_TONE, TRAINING_LOGS_URL, TRAINING_PLAN_URL, digestView,
   loadTrainingDigest, weekDotMap, type TrainingDigest, type WeekState

@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
+import Taro from '@tarojs/taro';
 import { View, Text, Image } from '@tarojs/components';
 import { mediaUrl } from '@/services/training';
-import { isCustomId } from '../engine/custom';
+import { customImage, isCustomId } from '../engine/custom';
 import { demoUrl } from '../engine/ex-media';
 import { figureUrl, figureView } from '../engine/ex-figure';
 import {
@@ -21,7 +22,8 @@ import './index.scss';
  *
  * 自定义动作(`c-` 开头)没有库里的教学文字:`steps` 是空的,分类/难度/发力/结构也是空的
  * (那几格是动作库那套「编排」属性)—— 它只有用户自己写的备注,所以 `note` 由调用方决定
- * 传不传(没有东西可显示时不留一个空标题)。演示图同理:它也是「库里才有的东西」。
+ * 传不传(没有东西可显示时不留一个空标题)。演示图同理是「库里才有的东西」;自定义动作
+ * 传过配图的话,顶上那块摆的是用户那张(见下面的 MineImage),不是演示图。
  */
 
 /** 中文映射查表 — 数据里的 key 是 string,各 ZH 表是窄字面量联合,统一在这里收口,查不到回退原值 */
@@ -58,6 +60,32 @@ export function DemoImage({ url }: { url: string }) {
 }
 
 /**
+ * 自建动作的用户配图 —— 用户自己拍/选的那张(见 ex-new 表单的「配图」)。
+ * 长得和上面的演示图一个模子,但有两处**故意不一样**:
+ *   ① **没有署名行** —— `howto-demo__credit` 那行是 Gym visual 许可的要求,只属于那批图;
+ *     摆在用户自己的照片下面就成了「这张图是 Gym visual 的」,那是错的。
+ *   ② **点得开** —— 静态图放大了能看清插销在哪个孔;演示图那张是 GIF,微信的 Image 停不了
+ *     也放不大,所以那边干脆不做点击。底部那句把自己的身份说清楚(「自己传的」),
+ *     不然和演示图长得一样,用户分不清哪张是库里的教学、哪张是自己拍的。
+ */
+export function MineImage({ url }: { url: string }) {
+  const preview = () => {
+    void Taro.previewImage({ current: mediaUrl(url), urls: [mediaUrl(url)] });
+  };
+  return (
+    <View className="howto-demo" onClick={preview}>
+      <View className="howto-demo__stage">
+        {/* aspectFit:机器照片多半不是方的,方框里按比例塞进去,不裁边 */}
+        <Image className="howto-demo__img" src={mediaUrl(url)} mode="aspectFit" />
+      </View>
+      <View className="howto-demo__bar">
+        <Text className="howto-demo__pos">自己传的配图 · 点开放大</Text>
+      </View>
+    </View>
+  );
+}
+
+/**
  * 「练哪儿」示意图 —— 没有演示图的动作,详情最上面那块摆这个。
  *
  * 为什么不干脆空着:那一块是整页最先看到的,空着读起来像「这个页面没做完」。
@@ -73,9 +101,9 @@ export function FigureImage({ target }: { target?: string }) {
     <View className="howto-figure">
       {/* 明说一句「没有演示图」——不写的话,这块看上去像是**演示图加载坏了**:
           用户知道自己点开的是「怎么做」,却看到一张不动的身体图,只能理解成出错。
-          这一句只在这个组件里写(它**只**作为演示图的替补出现,见上面 ExHowTo 的
-          `demo ? <DemoImage/> : <FigureImage/>`)。库里的动作都有演示图,所以
-          这句话基本只对自定义动作可见 —— 而那正是最该说清楚的一类 */}
+          这一句只在这个组件里写(它只作为图的那条优先级链的**最后一环**出现,
+          见上面 ExHowTo 那段)。库里的动作都有演示图,所以这句话基本只对
+          没传配图的自定义动作可见 —— 而那正是最该说清楚的一类 */}
       <Text className="howto-figure__note">这个动作还没有演示图 · 下面是它练哪儿</Text>
       {/* aspectFit 而不是 widthFix:高度由样式封顶(见 index.scss 那一段) */}
       <Image className="howto-figure__img" src={mediaUrl(url)} mode="aspectFit" />
@@ -91,12 +119,15 @@ export function FigureImage({ target }: { target?: string }) {
 
 export default function ExHowTo({ ex, note }: { ex: ExerciseEntry; note?: string }) {
   const demo = useMemo(() => demoUrl(ex.id), [ex.id]);
+  const mine = useMemo(() => customImage(ex.id), [ex.id]);
   return (
     <>
       {/* 图放最前 —— 训练中打开速查栏多半就是「忘了怎么做,给我看一眼」。
-          库里 1324 条**每条都有 GIF**,所以走的几乎永远是上面那支;下面那支只接住
-          自定义动作(和将来可能的缺图)—— 见 engine/ex-media 的文件头 */}
-      {demo ? <DemoImage url={demo} /> : <FigureImage target={ex.target} />}
+          库里 1324 条**每条都有 GIF**,所以走的几乎永远是上面那支;中间那支只接住
+          自建动作里用户自己传了配图的(优先于肌群示意图 —— 拍的就是那台机器,
+          比「它练哪儿」更能回答「我该站成什么样」);最下面兜肌群示意图。
+          三支的优先级定在 engine/custom 的 customImage 注释里,两处渲染不改口径 */}
+      {demo ? <DemoImage url={demo} /> : mine ? <MineImage url={mine} /> : <FigureImage target={ex.target} />}
 
       <View className="howto-chips">
         <Text className="howto-chip howto-chip-bp">{zh(BODYPART_ZH, ex.bodyPart)}</Text>

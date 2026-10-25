@@ -506,5 +506,49 @@ ok('采样和趋势都不改传进去的日志', (() => {
 })());
 ok('同一份日志连算两次一模一样', JSON.stringify(tOf(four)) === JSON.stringify(tOf(four)));
 
+/* ================= 这一场里破纪录的动作(prsOfLog) ================= */
+section('破纪录徽标(prsOfLog)');
+{
+  const benchE = (r, w) => ({ exerciseId: '0025', nameZh: '杠铃卧推', sets: [set(r, w)] });
+  const plank = (sec) => ({ exerciseId: '0180', nameZh: '平板支撑', sets: [{ reps: 0, sec }] });
+  const l1 = log('2026-10-01', [benchE(8, 60)]);
+
+  ok('第一次练:再重也不是破纪录(没有纪录可破)', H.prsOfLog(l1, [l1]).length === 0);
+  ok('比之前重 → 破纪录', H.prsOfLog(log('2026-10-08', [benchE(8, 62.5)]), [l1]).includes('0025'));
+  ok('和之前一样 → 不算', H.prsOfLog(log('2026-10-08', [benchE(8, 60)]), [l1]).length === 0);
+  ok('比之前轻 → 不算', H.prsOfLog(log('2026-10-08', [benchE(8, 57.5)]), [l1]).length === 0);
+  ok('同重量多做了两次 → 1RM 更高,算', H.prsOfLog(log('2026-10-08', [benchE(10, 60)]), [l1]).includes('0025'));
+
+  ok('整场补录(manual):成绩再好也不发徽标',
+    H.prsOfLog(log('2026-10-08', [benchE(8, 100)], { manual: true }), [l1]).length === 0);
+  ok('整场「不算进步」:同样不发',
+    H.prsOfLog(log('2026-10-08', [benchE(8, 100)], { noProg: true }), [l1]).length === 0);
+
+  const prior2 = [l1, log('2026-10-02', [{ exerciseId: '0043', nameZh: '杠铃深蹲', sets: [set(5, 100)] }])];
+  const mixed = log('2026-10-08', [
+    { exerciseId: '0025', nameZh: '杠铃卧推', sets: [set(8, 100)], noProg: true },
+    { exerciseId: '0043', nameZh: '杠铃深蹲', sets: [set(5, 105)] }
+  ]);
+  const mixedPrs = H.prsOfLog(mixed, prior2);
+  ok('标了「不算」的那个动作不发徽标,同场别的动作照发',
+    !mixedPrs.includes('0025') && mixedPrs.includes('0043'));
+
+  ok('之前只有补录:没有可破的纪录(补录不进纪录)',
+    H.prsOfLog(log('2026-10-08', [benchE(8, 60)]), [log('2026-10-01', [benchE(8, 100)], { manual: true })]).length === 0);
+
+  const p1 = log('2026-10-01', [plank(60)]);
+  ok('计时型:撑得比之前久 → 破纪录', H.prsOfLog(log('2026-10-08', [plank(90)]), [p1]).includes('0180'));
+  ok('计时型:撑得短了 → 不算', H.prsOfLog(log('2026-10-08', [plank(45)]), [p1]).length === 0);
+
+  ok('更晚的那场成绩再高,也不抢走这一天该有的徽标(按日期比,不看录入顺序)',
+    H.prsOfLog(log('2026-10-08', [benchE(8, 62.5)]), [l1, log('2026-10-20', [benchE(8, 80)])]).includes('0025'));
+  ok('后来补录了一场更早且更好的:这场就不再算破纪录',
+    H.prsOfLog(log('2026-10-08', [benchE(8, 62.5)]), [l1, log('2026-10-07', [benchE(8, 70)])]).length === 0);
+
+  const ap1 = log('2026-10-01', [{ exerciseId: '0017', nameZh: '助力引体', sets: [set(8, 30)] }]);
+  ok('助力器械:数字再大也不发(它的重量是替你分担的力,不进纪录)',
+    H.prsOfLog(log('2026-10-08', [{ exerciseId: '0017', nameZh: '助力引体', sets: [set(8, 60)] }]), [ap1]).length === 0);
+}
+
 console.log(fail ? `\n${fail} 项未通过` : '\n全部通过');
 process.exit(fail ? 1 : 0);

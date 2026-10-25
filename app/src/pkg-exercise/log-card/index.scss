@@ -47,3 +47,56 @@
 
 .lc-ops { display: flex; gap: 18px; padding: 8px 0 2px; }
 .lc-op { font-size: $fs-mini; color: $color-info; font-weight: $fw-medium; padding: 2px 0; }
+
+/* ===== 逐组明细(只读) ===== */
+/* 展开入口和三个操作同色系但更轻 —— 它是「看」,那三个是「做」 */
+.lc-toggle {
+  display: block;
+  padding: 4px 0 2px;
+  font-size: $fs-mini;
+  color: $color-text-secondary;
+  font-weight: $fw-medium;
+}
+.lc-detail {
+  margin-top: 4px;
+  padding: 8px 10px;
+  border-radius: $radius-md;
+  background: $color-bg-soft;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* 超级组整块标一行,块内成员再各列各的 —— 和「复制成文字」同一刀切法 */
+.lc-unit-tag {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 1px 6px;
+  border-radius: $radius-pill;
+  font-size: $fs-nano;
+  color: $color-info;
+  background: $color-info-bg;
+}
+.lc-ex { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.lc-ex-name-line { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+/* 动作名点得动(进它的历史曲线)—— 颜色和三个操作同源的链接蓝,文案里的 › 暗示能进 */
+.lc-ex-name { font-size: $fs-mini; color: $color-info; font-weight: $fw-medium; }
+/* 这一场破了自己的纪录 —— 金的,和补录(灰)/不算进步(琥珀)区分开:纪录是奖杯不是提醒 */
+.lc-tag-pr {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: $radius-pill;
+  font-size: $fs-nano;
+  color: $color-amber-dark;
+  background: $color-warning-bg;
+  border: 1px solid $color-warning-border;
+}
+/* 每组一粒小灰底胶囊:60kg × 8 / 自重 × 每侧 10 / 20kg · 45 秒 · RIR 2 */
+.lc-sets { display: flex; flex-wrap: wrap; gap: 4px; }
+.lc-set {
+  padding: 2px 7px;
+  border-radius: $radius-sm;
+  font-size: $fs-mini;
+  color: $color-text-primary;
+  background: $color-fill;
+}
+.lc-set--skip { color: $color-text-tertiary; background: transparent; }

@@ -228,5 +228,28 @@ ok('裸 Kit 是空的 → 空', K.kitDocEmpty({}));
 ok('v2 doc 里**非当前**那套有东西也算不空', !K.kitDocEmpty({ v: 2, list: [{ id: 'k-a', name: 'A', kit: {} }, { id: 'k-b', name: 'B', kit: { dumbbells: [10] } }], current: 'k-a' }));
 ok('garbage(字符串/数组)→ 当空,不崩', K.kitDocEmpty('nope') && K.kitDocEmpty([1, 2]));
 
+console.log('--- missingKitOf:计划页那张「缺器材」警示卡的口径 ---');
+{
+  // 造几个最小动作条目:availableWith 走 equipment + 名字里的卧推凳/单杠。
+  // 名字别带 bench/pull-up 这些词 —— 那会额外触发附件判定,底下单有一条测它
+  const squat = { name: 'Barbell Back Squat', equipment: 'barbell' };
+  const pushup = { name: 'Push-up', equipment: 'body weight' };     // 自重永远可用
+  const dbRow = { name: 'Dumbbell Row', equipment: 'dumbbell' };
+  const inclineDb = { name: 'Incline Dumbbell Press', equipment: 'dumbbell' }; // 名字带 incline → 还要卧推凳
+  ok('没登记清单 → 没有警示(没登记不等于没有)', K.missingKitOf({}, [squat, dbRow]).length === 0);
+  ok('空数组清单 → 同样不说', K.missingKitOf({ equipment: [] }, [squat]).length === 0);
+  ok('有杠铃有哑铃 → 这几条都做得了', K.missingKitOf({ equipment: ['barbell', 'dumbbell'] }, [squat, dbRow, pushup]).length === 0);
+  const onlyDb = K.missingKitOf({ equipment: ['dumbbell'] }, [squat, dbRow, pushup]);
+  ok('只有哑铃 → 缺的是杠铃(去重后一个名字)', onlyDb.length === 1 && onlyDb[0] === '杠铃', JSON.stringify(onlyDb));
+  const needBench = K.missingKitOf({ equipment: ['dumbbell'] }, [inclineDb]);
+  ok('上斜动作还要卧推凳(名字读出来的附件也算缺)', needBench.length === 1 && needBench[0] === '卧推凳', JSON.stringify(needBench));
+  const both = K.missingKitOf({ equipment: ['dumbbell'] }, [squat, inclineDb]);
+  ok('缺两样 → 两个名字都在(杠铃 + 卧推凳)', both.length === 2 && both.includes('杠铃') && both.includes('卧推凳'), JSON.stringify(both));
+  ok('自重动作在任何清单下都不缺', K.missingKitOf({ equipment: [] }, [pushup]).length === 0 && !K.missingKitOf({ equipment: ['dumbbell'] }, [pushup]).includes('自重'));
+  ok('库里查不到的动作(自建)→ 不拦', K.missingKitOf({ equipment: ['dumbbell'] }, [null, undefined]).length === 0);
+  ok('动作库之外的器械值 → 不拦(拦了用户找不回自己的动作)',
+    K.missingKitOf({ equipment: [] }, [{ name: 'X', equipment: '魔法器械' }]).length === 0);
+}
+
 console.log(fail ? `\n${fail} 项失败` : '\n全部通过');
 process.exit(fail ? 1 : 0);

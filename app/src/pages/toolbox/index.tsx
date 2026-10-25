@@ -1,4 +1,5 @@
 import { View, Text, Image } from '@tarojs/components';
+import { useShareAppMessage, useShareTimeline } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { QA_BANK } from '@/data/qa';
 import { FOOD_LIBRARY } from '@/data/foods';
@@ -71,6 +72,9 @@ const SECTIONS: { title: string; items: ToolItem[] }[] = [
 /** 健康工具箱 — 全部小工具的统一入口(宫格) */
 export default function Toolbox() {
   const go = (url: string) => navigate(url);
+  /* 挂上转发/朋友圈钩子:右上角菜单里这两个口子默认是灰的 */
+  useShareAppMessage(() => ({ title: '轻身记 · 记录，是改变的开始', path: '/pages/home/index' }));
+  useShareTimeline(() => ({ title: '轻身记 · 记录，是改变的开始' }));
 
   return (
     <Screen className="toolbox-page">

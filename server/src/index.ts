@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import { isAbsolute, resolve } from 'node:path';
 import { env } from './env';
+import { prisma } from './db';
+import { healthCheck } from './lib/health';
+import { getMediaDir } from './lib/mediaDir';
 import { startReminderTicker } from './lib/reminderRunner';
 import { startWeeklyTicker } from './lib/weeklyRunner';
 import { logError, logInfo, logWarn } from './lib/log';
@@ -16,10 +18,20 @@ app.use(express.json({ limit: '8mb' })); // 食物图片 base64 体积较大
 // ② ex/ 下的动作演示图(随版本发布,文件名固定)—— 两类都是内容永不变化,可以放心长缓存。
 // 演示图在前端是 <Image src> 直接加载的**网络地址**,要走微信后台的 downloadFile 白名单
 // (和 request 白名单是两个列表,域名同一个)。
-const mediaDir = isAbsolute(env.mediaDir) ? env.mediaDir : resolve(process.cwd(), env.mediaDir);
+const mediaDir = getMediaDir();
 app.use('/media', express.static(mediaDir, { maxAge: '365d', immutable: true, index: false, dotfiles: 'deny' }));
 
-app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+/**
+ * 存活探针:真的做一遍最要紧的两件事(查数据库、写媒体目录,见 lib/health.ts)再答话。
+ * 探针失败回 503 —— 外面的监控(容器健康检查、宝塔/阿里云的拨测)靠状态码判断,
+ * 回 200 带 error 字段它们看不懂。
+ */
+app.get('/health', async (_req, res) => {
+  const r = await healthCheck(mediaDir, () => prisma.$queryRaw`SELECT 1`);
+  if (r.ok) return res.json({ status: 'ok' });
+  logError('http', '健康检查失败', undefined, { probe: r.why });
+  res.status(503).json({ code: 503, message: '服务不健康', data: null });
+});
 
 /**
  * 请求日志:线上排查唯一靠谱的入口。

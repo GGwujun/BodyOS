@@ -10,6 +10,11 @@ app/.swc/
 app/.smoke/
 # 身体图预览(scripts/preview-body-map.mjs 生成,开发时看看形状有没有解析坏)
 app/scripts/.preview/
+# 背景图选型预览(gen-art-*.py 生成,几轮方案图+拼贴,几十 MB 的中间产物;
+# 定稿的 JPG 已拷进 src/assets/,这些目录只留本机翻档用)
+app/scripts/art-preview/
+app/scripts/art-preview-ai/
+app/scripts/art-preview-v3/
 
 # 环境变量与密钥（.env.example 保留作为模板）
 server/.env

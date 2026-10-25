@@ -1,8 +1,13 @@
+import { useMemo, useState } from 'react';
 import { Text, View } from '@tarojs/components';
-import Taro from '@tarojs/taro';
 import { fmtSpan } from '@/utils/duration';
 import { volumeText } from '../engine/share-card';
-import type { WorkoutLog } from '../engine/types';
+import { orderUnits } from '../engine/order';
+import { sidedInPlan } from '../engine/sided';
+import { prsOfLog } from '../engine/history';
+import { loadLogs, loadPlan } from '../engine/store';
+import { setText } from '../engine/workout-text';
+import { didSet, type WorkoutLog } from '../engine/types';
 import './index.scss';
 import { navigate } from '@/utils/nav';
 
@@ -14,11 +19,22 @@ import { navigate } from '@/utils/nav';
  * 而这两处说的是**同一条历史**;更要紧的是容量那一行(见 volumeText)必须处处同一个口径,
  * 不然用户会以为哪边算错了。
  *
- * 三件事都能走通:照这次再来一遍(把这次的重量次数铺进下一次训练)、改这条记录
- * (补录页也是「改记录」,没有 id 就是新补一条)、把它做成分享卡。
+ * 四件事都能走通:展开看这次每个动作每组怎么练的(只读)、照这次再来一遍(把这次的
+ * 重量次数铺进下一次训练)、改这条记录(补录页也是「改记录」,没有 id 就是新补一条)、
+ * 把它做成分享卡。**看和改分开**:展开在卡片里就地摊开,「修改记录」始终是明确点一下
+ * 才进的编辑页 —— 以前想看一眼每组多少,只能进编辑表单,看着看着就动了不该动的数据。
  * 页面级埋点在**目的地**(log-edit / share 各自进入时上报),这里不重复报。
  */
 export default function LogCard({ log }: { log: WorkoutLog }) {
+  /** 展开全部动作:逐组明细摊在本卡里。默认收着 —— 一行摘要能答「那天练没练」,细看的人才展开 */
+  const [open, setOpen] = useState(false);
+  const entries = log.entries ?? [];
+  const units = open ? orderUnits(entries) : [];
+  /* 计划只读一次(每个动作都要问它单侧开关,逐组去读就太密了)。收起时不读 */
+  const plan = open ? loadPlan() : null;
+  /* 这场里破纪录的动作 —— 也是展开才算(要把全部日志扫一遍,收着的卡不需要) */
+  const prs = useMemo(() => (open ? prsOfLog(log, loadLogs()) : []), [open, log]);
+
   return (
     <View className="lc-row">
       <View className="lc-head">
@@ -47,6 +63,61 @@ export default function LogCard({ log }: { log: WorkoutLog }) {
         </View>
       </View>
       {log.note && <Text className="fs-mini lc-note-line">感受:{log.note}</Text>}
+
+      {/* ===== 逐组明细(只读) ===== */}
+      <Text className="lc-toggle" onClick={() => setOpen((v) => !v)}>
+        {open ? '收起动作 ▴' : `展开全部动作(${entries.length} 个) ▾`}
+      </Text>
+      {open && (
+        <View className="lc-detail">
+          {units.map((unit, ui) => (
+            <View className="lc-unit" key={ui}>
+              {/* 只有同组号且相邻的才算一块(和「复制成文字」同一刀);块里只剩一个成员
+                  (另一个动作当时删掉了)就不标 —— 标了反而像少写了一个 */}
+              {unit.length > 1 && <Text className="lc-unit-tag">超级组</Text>}
+              {unit.map((i) => {
+                const e = entries[i];
+                // 和文字版同一条判据:次数>0 或秒数>0 才算练了;跳过的组灰在最后报个数
+                const done = e.sets.filter(didSet);
+                const skipped = e.sets.length - done.length;
+                return (
+                  <View className="lc-ex" key={`${e.exerciseId}-${i}`}>
+                    <View className="lc-ex-name-line">
+                      {/* 点动作名进它的历史曲线 —— 从「这一场里它练成什么样」直接接到
+                          「这个动作一路是怎么练过来的」,不用先退出去再从动作库找它 */}
+                      <Text
+                        className="lc-ex-name"
+                        onClick={() => navigate(`/pkg-exercise/exercise-history/index?exerciseId=${e.exerciseId}`)}
+                      >
+                        {e.nameZh}
+                        {e.noProg ? '(不算进步)' : ''} ›
+                      </Text>
+                      {/* 这一场里它破了自己的纪录(见 prsOfLog):和「补录/不算进步」一样
+                          是用户该看见的事实,金色而不只是文字 —— 纪录是这套数据里唯一的奖杯 */}
+                      {prs.includes(e.exerciseId) && <Text className="lc-tag-pr">破纪录</Text>}
+                    </View>
+                    <View className="lc-sets">
+                      {done.map((s, si) => (
+                        <Text className="lc-set" key={si}>
+                          {/* 每组的念法和分享卡/编辑页同一套原子(setText:自重/每侧 N/秒数)。
+                              单侧判定带计划:用户在计划里关过单侧开关的,这里不能被名字规则翻回来 */}
+                          {setText(e.exerciseId, s, sidedInPlan(plan, e.exerciseId))}
+                          {s.rir != null ? ` · RIR ${s.rir}` : ''}
+                        </Text>
+                      ))}
+                      {skipped > 0 && <Text className="lc-set lc-set--skip">跳过 {skipped} 组</Text>}
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          ))}
+          {!entries.length && (
+            <Text className="fs-mini text-secondary">这条是老记录,逐组明细没存下来 —— 摘要看上面那行。</Text>
+          )}
+        </View>
+      )}
+
       <View className="lc-ops">
         <Text
           className="lc-op"

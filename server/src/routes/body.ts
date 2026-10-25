@@ -12,6 +12,13 @@ const router = Router();
 /** 围度字段同名同规则:厘米,10-300 之间(量错一位数能挡掉) */
 const girth = () => z.number().finite().min(10, '围度看起来不对').max(300, '围度看起来不对').nullable().optional();
 
+/** 自建部位的值:键是客户端发的 `x-` 开头部位键,值和围度同规则;
+ *  条数上限跟着客户端的自建部位上限(CUSTOM_CAP=12)再放一点余量 */
+const extras = z.record(
+  z.string().regex(/^x-[a-z0-9]{4,10}$/, '自定义部位的键不对'),
+  z.number().finite().min(10, '围度看起来不对').max(300, '围度看起来不对').nullable()
+).refine(o => Object.keys(o).length <= 16, '自定义部位太多了');
+
 export const CreateBodySchema = z.object({
   measuredAt: z.string().datetime().refine(value => new Date(value).getTime() <= Date.now(), '测量时间不能晚于当前时间'),
   // 和资料里的体重同一个范围:以前这里只挡 >0,450kg 能直接写进档案,
@@ -23,10 +30,12 @@ export const CreateBodySchema = z.object({
   chestCm: girth(),
   hipCm: girth(),
   armCm: girth(),
-  thighCm: girth()
+  thighCm: girth(),
+  extras: extras.nullable().optional()
 }).refine(
   value => [value.weightKg, value.bodyFatPct, value.muscleKg, value.waistCm, value.chestCm, value.hipCm, value.armCm, value.thighCm]
-    .some(item => item != null),
+    .some(item => item != null)
+    || (value.extras != null && Object.keys(value.extras).length > 0),
   '至少填写一项身体测量数据'
 );
 
@@ -80,7 +89,8 @@ router.post('/', async (req, res, next) => {
       chestCm: parsed.data.chestCm ?? null,
       hipCm: parsed.data.hipCm ?? null,
       armCm: parsed.data.armCm ?? null,
-      thighCm: parsed.data.thighCm ?? null
+      thighCm: parsed.data.thighCm ?? null,
+      extras: parsed.data.extras && Object.keys(parsed.data.extras).length ? parsed.data.extras : undefined
     }
   });
 

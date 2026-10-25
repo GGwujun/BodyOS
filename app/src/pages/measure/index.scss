@@ -7,6 +7,13 @@
 
   .mc-intro { display: flex; flex-direction: column; gap: 6px; }
   .mc-intro .fs-caption { line-height: 1.7; }
+  /* 部位管理的入口:一句话说清能干什么,不只是一个齿轮图标 */
+  .mc-manage {
+    align-self: flex-end;
+    font-size: $fs-mini;
+    color: $color-primary-dark;
+    padding-top: 2px;
+  }
   .mc-hint {
     display: block;
     text-align: center;
@@ -174,3 +181,94 @@
   .mc-field-unit { font-size: $fs-mini; color: $color-text-secondary; }
 }
 .mc-save { margin-top: 18px; }
+
+/* 录入表单一格部位都不剩:不给空表单,先带去管理 */
+.mc-none {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 26px 0 10px;
+}
+.mc-none-btn { color: $color-primary-dark; padding: 2px 8px; }
+
+/* ============ 部位管理弹层 ============ */
+.mc-sheet--manage .mc-mg-label {
+  display: block;
+  font-size: $fs-caption;
+  font-weight: $fw-bold;
+  color: $color-text-primary;
+  margin: 16px 0 4px;
+}
+.mc-mg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid $color-divider;
+}
+.mc-mg-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mc-mg-name {
+  font-size: $fs-caption;
+  color: $color-text-primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 显隐开关:一颗胶囊(是/否那种),点了整行主区都在切换 —— 不用原生 Switch 是为了和
+   新建动作页那颗同一张脸,而且文字态「显示中/已藏」不看颜色也读得懂 */
+.mc-sw {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: $radius-pill;
+  font-size: $fs-nano;
+  color: $color-text-secondary;
+  background: $color-fill;
+
+  &.on {
+    background: $color-primary-bg;
+    color: $color-primary-dark;
+    font-weight: $fw-medium;
+  }
+}
+.mc-mg-del {
+  flex: none;
+  font-size: $fs-mini;
+  color: $color-danger;
+  padding: 4px 6px;
+}
+.mc-mg-empty { display: block; padding: 8px 0; }
+.mc-mg-add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.mc-mg-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: $radius-md;
+  background: $color-bg-soft;
+  border: 1px solid $color-border;
+  font-size: $fs-caption;
+  color: $color-text-primary;
+}
+.mc-mg-ph { color: $color-text-tertiary; }
+.mc-mg-addbtn {
+  flex: none;
+  font-size: $fs-caption;
+  color: $color-primary-dark;
+  font-weight: $fw-medium;
+  padding: 8px 12px;
+
+  &.is-dim { opacity: .45; }
+}
+.mc-mg-foot { display: block; line-height: 1.6; margin-top: 10px; }

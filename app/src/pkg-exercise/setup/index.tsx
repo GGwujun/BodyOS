@@ -1,4 +1,5 @@
 import { Input, Text, View } from '@tarojs/components';
+import HoldText from '@/components/HoldText';
 import { canSetProgression, canSetSetType } from '../engine/editor';
 import { loadHint, type Kit } from '../engine/kit';
 import { isAssisted, weightNoun } from '../engine/load';
@@ -40,9 +41,9 @@ function Step(props: {
   const { value, unit, step = 1, min = 1, max = 99, text, onChange } = props;
   return (
     <View className="set-step">
-      <Text className="set-step-btn" onClick={() => onChange(Math.max(min, value - step))}>−</Text>
+      <HoldText className="set-step-btn" onStep={() => onChange(Math.max(min, value - step))}>−</HoldText>
       <Text className="set-step-v">{text ?? <>{value}<Text className="set-step-u">{unit}</Text></>}</Text>
-      <Text className="set-step-btn" onClick={() => onChange(Math.min(max, value + step))}>＋</Text>
+      <HoldText className="set-step-btn" onStep={() => onChange(Math.min(max, value + step))}>＋</HoldText>
     </View>
   );
 }

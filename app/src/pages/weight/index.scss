@@ -87,6 +87,9 @@
 
   /* 曲线卡(Screen 自带 16px 卡片间距) */
   .chart-card { display: flex; flex-direction: column; gap: 10px; }
+  /* 卡片头:标题在左,区间选择在右(和围度页/动作历史页同一摆法) */
+  .wc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .wc-span { font-size: $fs-mini; color: $color-text-secondary; font-weight: 500; }
   .chart-empty {
     padding: 30px 12px; text-align: center;
     font-size: $fs-mini; color: $color-text-tertiary; line-height: 1.7;

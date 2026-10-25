@@ -47,6 +47,7 @@ export default defineAppConfig({
         'sync/index',
         'backup/index',
         'share/index',
+        'daily-share/index',
         'reminder/index',
         'coach/index'
       ]

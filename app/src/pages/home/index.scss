@@ -295,6 +295,14 @@
 .overview-note { display: block; margin-top: 10px; font-size: $fs-mini; line-height: 1.5; color: $color-text-tertiary; }
 .overview-note.is-action { color: $color-primary-dark; font-weight: $fw-bold; }
 
+/* 每日分享卡的入口行:压一条发丝线,和上面的读数分开 */
+.overview-share {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid $color-border;
+}
+.overview-share__text { font-size: $fs-mini; font-weight: $fw-medium; color: $color-primary-dark; }
+
 .overview-dims { display: flex; gap: 8px; margin-top: 14px; }
 .overview-dim {
   flex: 1; display: flex; flex-direction: column; gap: 4px;

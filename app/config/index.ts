@@ -33,7 +33,9 @@ export default defineConfig(async (merge) => {
         // tabBar 图标不经过 webpack 编译,直接复制到产物目录(app.config.ts 引用)
         { from: 'src/assets/tabbar/', to: 'dist/assets/tabbar/', ignore: ['*.html'] },
         // theme.json 原样拷到 dist 根 —— app.config.ts 里 themeLocation 指的是它
-        { from: 'src/theme.json', to: 'dist/theme.json' }
+        { from: 'src/theme.json', to: 'dist/theme.json' },
+        // sitemap.json(搜一搜收录规则)也走同一条路:微信只认包根的这份文件
+        { from: 'src/sitemap.json', to: 'dist/sitemap.json' }
       ],
       options: {}
     },

@@ -1,6 +1,6 @@
 import { themedColor } from '@/utils/theme';
 import { useEffect, useState } from 'react';
-import { Button, Text, View } from '@tarojs/components';
+import { Button, Picker, Text, View } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import LineChart from '@/components/LineChart';
@@ -9,6 +9,7 @@ import { useWeightPlan } from '@/hooks/useWeightPlan';
 import { track } from '@/services/analytics';
 import { mondayOf, todayStr } from '@/utils/date';
 import { BMI_NORMAL_MAX, BMI_NORMAL_RANGE, bmiBand, bmiOf } from '@/utils/health';
+import { BODY_SPANS, spanFilter, type BodySpan } from '@/utils/girth';
 import { weekDelta, weeklyWeights, weeksApart } from '@/utils/weekly-weight';
 import './index.scss';
 import { THEME } from '@/constants/theme';
@@ -22,6 +23,8 @@ const WEEK_ROWS = 6;
 export default function WeightPage() {
   const { plan, loading, error, refresh } = useWeightPlan();
   const [sheetOpen, setSheetOpen] = useState(false);
+  /** 曲线看多远(只管两张曲线图;进度环、周均值看的是全程,不跟着窗口缩) */
+  const [span, setSpan] = useState<BodySpan>('all');
   useEffect(() => { track('weight_view', 'other'); }, []);
   // 从「查看方案」删除/重置目标返回后,进度环与曲线不再显示已删数据
   useDidShow(() => { void refresh(); });
@@ -32,11 +35,15 @@ export default function WeightPage() {
   const bmi = bmiOf(latestWeight, heightCm);
   const band = bmi != null ? bmiBand(bmi) : null;
 
-  // 曲线取最近 30 条,点过多在窄屏不可读
-  const recent = (plan?.records ?? []).slice(-30);
-  const weightPoints = recent.map((r) => ({ label: r.date.slice(5), value: r.weightKg }));
+  // 曲线画区间里的记录(默认「全部」= 一条不藏;以前固定截最近 30 条,现在把远近交给用户)。
+  // 周均值、目标进度这些数字看的仍是全程
+  const today = todayStr();
+  const spanLabel = BODY_SPANS.find((s) => s.k === span)?.label ?? '全部';
+  const windowed = spanFilter(plan?.records ?? [], span, today);
+  const hasAnyRecord = (plan?.records ?? []).length > 0;
+  const weightPoints = windowed.map((r) => ({ label: r.date.slice(5), value: r.weightKg }));
   const bmiPoints = heightCm
-    ? recent.map((r) => ({ label: r.date.slice(5), value: Math.round(((bmiOf(r.weightKg, heightCm)) as number) * 10) / 10 }))
+    ? windowed.map((r) => ({ label: r.date.slice(5), value: Math.round(((bmiOf(r.weightKg, heightCm)) as number) * 10) / 10 }))
     : [];
 
   const goal = plan?.goal ?? null;
@@ -158,7 +165,18 @@ export default function WeightPage() {
       )}
 
       <View className="card chart-card">
-        <Text className="fs-h1">体重变化曲线</Text>
+        {/* 区间只管两张曲线图,摆卡片头上 —— 和围度页、动作历史页同一摆法 */}
+        <View className="wc-head">
+          <Text className="fs-h1">体重变化曲线</Text>
+          <Picker
+            mode="selector"
+            range={BODY_SPANS.map((s) => s.label)}
+            value={BODY_SPANS.findIndex((s) => s.k === span)}
+            onChange={(e) => setSpan(BODY_SPANS[Number(e.detail.value)]?.k ?? 'all')}
+          >
+            <Text className="wc-span">{spanLabel} ⌄</Text>
+          </Picker>
+        </View>
         {weightPoints.length
           ? (
             <LineChart
@@ -170,29 +188,41 @@ export default function WeightPage() {
               target={plan?.targetWeight != null ? { value: plan.targetWeight, label: '目标' } : null}
             />
           )
-          /* 有目标 / 没目标合成**同一个** Text:两个分支同标签、一个有 onClick 一个没有,
-             React 会当成同一个节点改 props,设完目标那一刻就把 onClick 摘掉 ——
-             那一步会让整棵子树崩掉(见 utils/taro-events)。
-             外层那支(<LineChart> 对 <Text>)标签不同,是卸载+挂载,不受影响 */
+          /* 空窗 / 有目标 / 没目标合成**同一个** Text:同标签分支一个有 onClick 一个没有,
+             React 会当成同一个节点改 props,把 onClick 摘掉那一步会让整棵子树崩掉
+             (见 utils/taro-events)。外层那支(<LineChart> 对 <Text>)标签不同,是卸载+挂载,不受影响 */
           : (
             <Text
               className="chart-empty"
               onClick={onIf(!goal, () => navigate('/pages/onboarding/index?from=nav'))}
             >
-              {goal
-                ? '暂无体重记录，点上方「更新最新体重」开始记录'
-                : '设置目标后开始记录体重，去设置目标 ›'}
+              {hasAnyRecord && !windowed.length
+                ? '这段时间没有体重记录，换长一点的区间能看到之前的。'
+                : goal
+                  ? '暂无体重记录，点上方「更新最新体重」开始记录'
+                  : '设置目标后开始记录体重，去设置目标 ›'}
             </Text>
           )}
         {!!weightPoints.length && (
           <Text className="chart-note fs-mini">
-            ▲ 体重 (kg) · 最近 {weightPoints.length} 次记录{head ? '(单日数字,含水分波动;看趋势请用上面的周均值)' : ''}
+            ▲ 体重 (kg) · {spanLabel} · {weightPoints.length} 次记录{head ? '(单日数字,含水分波动;看趋势请用上面的周均值)' : ''}
           </Text>
         )}
       </View>
 
       <View className="card chart-card">
-        <Text className="fs-h1">BMI 变化曲线</Text>
+        <View className="wc-head">
+          <Text className="fs-h1">BMI 变化曲线</Text>
+          {/* 和体重曲线同一个区间、同一个选择器 —— 两张图一起缩放,不用各调一遍 */}
+          <Picker
+            mode="selector"
+            range={BODY_SPANS.map((s) => s.label)}
+            value={BODY_SPANS.findIndex((s) => s.k === span)}
+            onChange={(e) => setSpan(BODY_SPANS[Number(e.detail.value)]?.k ?? 'all')}
+          >
+            <Text className="wc-span">{spanLabel} ⌄</Text>
+          </Picker>
+        </View>
         {!heightCm
           ? <Text className="chart-empty">完善身高资料后可查看 BMI 曲线（我的 → 编辑身体信息）</Text>
           : bmiPoints.length
@@ -205,14 +235,14 @@ export default function WeightPage() {
                 target={{ value: BMI_NORMAL_MAX, label: '正常上限' }}
               />
             )
-            : <Text className="chart-empty">暂无体重记录，记录后即可查看 BMI 变化</Text>}
+            : <Text className="chart-empty">{hasAnyRecord && !windowed.length ? '这段时间没有体重记录，换个区间能看到之前的。' : '暂无体重记录，记录后即可查看 BMI 变化'}</Text>}
         {!!heightCm && <Text className="chart-note fs-mini">按当前身高计算；BMI 正常范围 {BMI_NORMAL_RANGE}（中国成人标准）</Text>}
       </View>
 
       <View className="card chart-card">
         <Text className="fs-h1">围度记录</Text>
         <Text className="chart-empty fs-mini">体重只说明重了多少,围度才说明变在哪 —— 减脂期体重没动、腰围细了两厘米,是常有的事。</Text>
-        <Button className="btn btn--secondary btn--block" onClick={() => navigate('/pages/measure/index')}>量一次腰胸臀</Button>
+        <Button className="btn btn--secondary btn--block" onClick={() => navigate('/pages/measure/index')}>量一次围度和体脂</Button>
       </View>
 
       <WeightSheet open={sheetOpen} onClose={() => setSheetOpen(false)} onSaved={() => { track('weight_record_save', 'other'); void refresh(); }} />

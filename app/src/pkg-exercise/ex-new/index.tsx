@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Input, Text, View } from '@tarojs/components';
+import { Button, Image, Input, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import Screen from '@/components/Screen';
 import { track } from '@/services/analytics';
+import { mediaUrl, uploadMedia } from '@/services/training';
+import { fileToBase64 } from '@/utils/file';
 import { setLeaveGuard } from '@/utils/leave-guard';
 import { confirmDelete, toast } from '@/utils/ui';
 import { param } from '@/utils/url-param';
@@ -46,6 +48,10 @@ export default function ExerciseNewPage() {
   const [sided, setSided] = useState(false);
   const [assisted, setAssisted] = useState(false);
   const [note, setNoteText] = useState('');
+  /** 配图(上传完拿到的 `/media/...` 相对地址,空串 = 没图)—— 选图那一刻就传,
+   *  不等「保存」:传失败了当场能换一张重试,保存时只剩记一个地址 */
+  const [image, setImage] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState('');
   /** 用户自己点过肌群 → 不再跟着部位自动改(别把他选的顶掉) */
   const [muscleTouched, setMuscleTouched] = useState(false);
@@ -67,6 +73,7 @@ export default function ExerciseNewPage() {
       setSecondary(ex.secondary);
       setSided(ex.sided);
       setAssisted(ex.assisted);
+      setImage(ex.image ?? '');
       setNoteText(loadNotes()[ex.id] ?? '');
       setMuscleTouched(true);
       setReady(true);
@@ -86,7 +93,7 @@ export default function ExerciseNewPage() {
    * 只拦我们自己那个底栏,不给原生返回加询问 —— 表单是几分钟的东西,原生返回是用户
    * 明确的动作(训练页不同:那一场丢了就没法复原,那边两条路都拦)。
    */
-  const draftKey = JSON.stringify([name, bp, eq, target, secondary, sided, assisted, note]);
+  const draftKey = JSON.stringify([name, bp, eq, target, secondary, sided, assisted, note, image]);
   const baseRef = useRef('');
   const dirtyRef = useRef(false);
   dirtyRef.current = ready && baseRef.current !== '' && draftKey !== baseRef.current;
@@ -121,8 +128,33 @@ export default function ExerciseNewPage() {
     setSecondary((s) => (s.includes(k) ? s.filter((m) => m !== k) : [...s, k]));
   };
 
+  /** 选一张配图并立刻上传(流程同反馈页的截图:chooseMedia → base64 → /training/media)。
+   *  取消不算错,不弹提示;真失败说一句人话,原图不动 —— 换一张再试就行 */
+  const pickImage = async () => {
+    if (uploading) return;
+    try {
+      const media = await Taro.chooseMedia({
+        count: 1,
+        mediaType: ['image'],
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera']
+      });
+      const f = (media.tempFiles ?? [])[0];
+      if (!f) return;
+      setUploading(true);
+      const r = await uploadMedia(await fileToBase64(f.tempFilePath));
+      setImage(r.url);
+    } catch (e) {
+      const msg = String((e as { errMsg?: string; message?: string })?.errMsg
+        ?? (e as { message?: string })?.message ?? '');
+      if (!msg.includes('cancel')) toast('配图没传上去,再试一次', 'none');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const save = () => {
-    const draft: CustomDraft = { name, bodyPart: bp, equipment: eq, target, secondary, sided, assisted };
+    const draft: CustomDraft = { name, bodyPart: bp, equipment: eq, target, secondary, sided, assisted, image: image || null };
     const r = editId ? updateCustom(editId, draft) : addCustom(draft);
     if (!r.ok) {
       setErr(r.why);
@@ -198,6 +230,33 @@ export default function ExerciseNewPage() {
       />
       <Text className="fs-mini text-secondary xn-hint">
         起个你自己认得出的名字就行 —— 训练页那一行、历史记录里显示的都是它。
+      </Text>
+    </View>
+
+    <View className="card xn-block">
+      <Text className="xn-label">配图(可留空)</Text>
+      {image ? (
+        <View className="xn-pic">
+          {/* 点图放大:拍的常常是整台器械,缩略图里插销在哪个孔看不清 */}
+          <Image
+            className="xn-pic-img"
+            src={mediaUrl(image)}
+            mode="aspectFit"
+            onClick={() => { void Taro.previewImage({ current: mediaUrl(image), urls: [mediaUrl(image)] }); }}
+          />
+          <View className="xn-pic-ops">
+            <Text className="xn-pic-btn" onClick={pickImage}>换一张</Text>
+            <Text className="xn-pic-btn xn-pic-btn--del" onClick={() => setImage('')}>删掉</Text>
+          </View>
+        </View>
+      ) : (
+        <Text className={`xn-pic-add${uploading ? ' is-busy' : ''}`} onClick={pickImage}>
+          {uploading ? '正在上传…' : '+ 拍下那台器械 / 从相册选一张'}
+        </Text>
+      )}
+      <Text className="fs-mini text-secondary xn-hint">
+        自定义动作没有库里的演示图 —— 传一张之后,「怎么做」和训练中那一块优先显示这张
+        (没传才退到肌群示意图)。跟着账号同步走,只进你自己的动作库。
       </Text>
     </View>
 

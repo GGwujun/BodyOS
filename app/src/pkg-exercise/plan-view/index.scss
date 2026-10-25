@@ -454,6 +454,25 @@
     background: $color-bg-soft;
     border-left: 4px solid $color-info;
   }
+
+  /* 缺器材警示 —— 和请假条同一种「有事要说」的卡,但走琥珀色:
+     请假是用户自己的决定,这个是照计划练之前该知道的对不上 */
+  .pv-misskit {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: $color-warning-bg;
+    border-left: 4px solid $color-warning;
+  }
+  .pv-misskit-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pv-misskit-title { font-size: $fs-h2; font-weight: $fw-bold; color: $color-text-primary; }
+  .pv-misskit-btn { margin-top: 2px; }
   .pv-off-head {
     display: flex;
     align-items: baseline;

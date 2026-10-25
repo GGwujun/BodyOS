@@ -141,6 +141,8 @@ export interface BodyMeasurement {
   hipCm?: number | null;
   armCm?: number | null;
   thighCm?: number | null;
+  /** 自建部位的值(厘米):键是 `x-` 开头的部位键。内置部位各有自己的列,自建的住这张表 */
+  extras?: Record<string, number> | null;
 }
 
 /* ============ 每日汇总 ============ */

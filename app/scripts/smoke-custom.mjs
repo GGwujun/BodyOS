@@ -142,6 +142,39 @@ ok('撤销退场能回来', C.reviveCustom(chest.id) && C.listCustom().some((c) 
 ok('撤销也是幂等的', C.reviveCustom(chest.id) === false);
 ok('没退场过的说话不响', C.reviveCustom(benchId) === false);
 
+/* ===================== ②½ 配图 ===================== */
+/* 只认上传接口给的 `/media/<hash>.<ext>`:渲染层拿它直接拼地址,存了任意串(外链、
+   相对页路径)就是一个能被人塞东西进去的口子。建/改/清洗三处必须是同一个判定。 */
+section('配图:存的是上传接口给的地址,别的串一律当没有');
+
+ok('合法地址(/media/<hash>.<ext>)原样保留', (() => {
+  const c = C.sanitizeCustom([{ id: 'c-1', name: 'a', bodyPart: 'chest', equipment: 'barbell', image: '/media/0123abcddeadbeef.jpg' }])[0];
+  return c.image === '/media/0123abcddeadbeef.jpg';
+})());
+ok('外链不存', !('image' in C.sanitizeCustom([{ id: 'c-1', name: 'a', bodyPart: 'chest', equipment: 'barbell', image: 'https://x.com/a.jpg' }])[0]));
+ok('带路径分隔符的不存(演示图那种 /media/ex/x.gif 不是用户上传的形状)', !('image' in C.sanitizeCustom([{ id: 'c-1', name: 'a', bodyPart: 'chest', equipment: 'barbell', image: '/media/ex/x.gif' }])[0]));
+ok('非字符串(数字/true)不存', (() => {
+  const a = C.sanitizeCustom([{ id: 'c-1', name: 'a', bodyPart: 'chest', equipment: 'barbell', image: 42 }])[0];
+  const b = C.sanitizeCustom([{ id: 'c-1', name: 'a', bodyPart: 'chest', equipment: 'barbell', image: true }])[0];
+  return !('image' in a) && !('image' in b);
+})());
+
+const picEx = mk({ name: '带配图的机', image: '/media/pic1.webp' });
+eq('建的时候带上配图', C.findCustom(picEx.id).image, '/media/pic1.webp');
+ok('建的时候给了不合法的 → 当没图(配图不是必填,别让它挡住建动作)', !('image' in C.findCustom(mk({ name: '坏配图的机', image: 'javascript:alert(1)' }).id)));
+C.updateCustom(picEx.id, draft({ name: '带配图的机', image: '/media/pic2.png' }));
+eq('改成另一张', C.findCustom(picEx.id).image, '/media/pic2.png');
+C.updateCustom(picEx.id, draft({ name: '带配图的机' }));
+ok('改的时候没传配图 = 清掉(表单送的是完整状态:「删掉配图」再保存,图不该还在)', !('image' in C.findCustom(picEx.id)));
+C.updateCustom(picEx.id, draft({ name: '带配图的机', image: 'http://evil/' }));
+ok('改成不合法的也清掉(不是保留旧图 —— 用户那个动作明明点过换图)', !('image' in C.findCustom(picEx.id)));
+
+/* customImage 是渲染层问「这个动作有没有用户配图」的唯一入口(优先级:演示图 > 它 > 肌群示意图) */
+eq('customImage:有图的给地址', C.customImage(mk({ name: '问图的机', image: '/media/ask.jpg' }).id), '/media/ask.jpg');
+ok('customImage:没图的自定义动作 → undefined', C.customImage(picEx.id) === undefined);
+ok('customImage:库里动作没有这回事(非 c- 开头一律 undefined)', C.customImage(benchId) === undefined);
+ok('customImage:认不出的自定义 id 也不炸', C.customImage('c-nope') === undefined);
+
 /* ===================== ③ 口径层:单侧 / 助力 / 负重 ===================== */
 section('口径层:按 id 走的那一整套都认它');
 
@@ -335,6 +368,13 @@ eq('本机这份被整份换掉了', C.allCustom()[0].name, '同步过来的动�
 eq('覆盖不记修改时间(否则本机会永远比云端新,云端那份再也拉不下来)', mem.get('bodyos.sync.marks')?.['custom|main'], stampBefore);
 C.saveCustom(null);
 eq('覆盖成空 = 真的空(备份的 replace 模式要用)', C.allCustom().length, 0);
+C.saveCustom([
+  { id: 'c-img', name: '带图的', bodyPart: 'chest', equipment: 'barbell', image: '/media/rt.jpg' },
+  { id: 'c-img2', name: '坏图的', bodyPart: 'chest', equipment: 'barbell', image: 'http://evil' }
+]);
+eq('云同步/备份那条路:合法配图落地', C.findCustom('c-img').image, '/media/rt.jpg');
+ok('云同步/备份那条路:不合法的配图落地时被洗掉(和本机建/改是同一个判定)',
+  !('image' in C.findCustom('c-img2')));
 
 /* ===================== ⑨ 撤销删除:摘掉的几格按 id 还回去 ===================== */
 /* 为什么值得单独一节:删除**不是**少一行列表 —— 计划里那几处编排、力量基准(下次开多重

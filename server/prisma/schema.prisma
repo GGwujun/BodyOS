@@ -228,6 +228,8 @@ model BodyMeasurement {
   hipCm      Float?
   armCm      Float?
   thighCm    Float?
+  /// 用户自建部位的值(键值表:键 = `x-` 开头的部位键,值 = 厘米)—— 内置部位各有列,自建的没有
+  extras     Json?
   createdAt  DateTime @default(now())
 
   @@index([userId, measuredAt])
@@ -398,4 +400,21 @@ model Feedback {
 
   @@index([status, createdAt])
   @@index([userId, createdAt])
+}
+
+/// 每日分享卡的金句库(第二模板)。按日期确定性轮换,全站当天同一条;
+/// 空表时服务端自动种入默认 30 条(lib/dailyQuotes.ts),后台可整体替换不用发版。
+model DailyQuote {
+  id        Int      @id @default(autoincrement())
+  /// 主句(扎心句),卡面上的大字
+  text      String
+  /// 出路句,永远指向「记录/看清」这个产品动作
+  sub       String
+  /// 情绪进食/拖延开始/节食反弹/借口合集/体重焦虑/记录的力量/生活方式/鼓励
+  category  String   @default("general")
+  /// 下架开关:留历史但当天不再轮到它
+  active    Boolean  @default(true)
+  /// 轮换顺序,小的在前
+  sort      Int      @default(0)
+  createdAt DateTime @default(now())
 }

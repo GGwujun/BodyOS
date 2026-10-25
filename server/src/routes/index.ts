@@ -18,6 +18,8 @@ import trainingRoutes from './training';
 import reminderRoutes from './reminder';
 import weeklyPushRoutes from './weeklyPush';
 import feedbackRoutes, { feedbackAdminRouter } from './feedback';
+import dailyQuoteRoutes, { dailyQuoteAdminRouter } from './dailyQuote';
+import wxacodeRoutes from './wxacode';
 import { attachUser } from '../lib/currentUser';
 
 const router = Router();
@@ -33,6 +35,9 @@ router.use('/auth', authRoutes);
 // 反馈的管理端查询必须在鉴权之前:运营/开发者用 ADMIN_API_KEY 查,不该先拿一个小程序令牌。
 // 这个 router 只注册了 GET/PATCH,POST /feedback 会继续走到下面用户侧的 router。
 router.use('/feedback', feedbackAdminRouter);
+
+// 金句库管理端同理:运营换文案不该先拿小程序用户令牌
+router.use('/daily-quote', dailyQuoteAdminRouter);
 
 // 鉴权:Bearer 令牌解析为 res.locals.userId
 router.use(attachUser);
@@ -55,6 +60,8 @@ router.use('/training', trainingRoutes);
 // 提醒设置比 /training 更具体,挂在它后面:docs/media 不匹配时会继续往下走
 router.use('/training/reminder', reminderRoutes);
 router.use('/weekly-push', weeklyPushRoutes);
+router.use('/daily-quote', dailyQuoteRoutes);
+router.use('/wxacode', wxacodeRoutes);
 router.use('/feedback', feedbackRoutes);
 
 export default router;
