@@ -15,7 +15,6 @@
  * 改 REMIND_FIELDS 这一处即可** —— 别的地方不出现字段名。
  */
 import { env } from '../env';
-import { addDays } from './date';
 
 const TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token';
 const SEND_URL = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send';
@@ -28,22 +27,21 @@ export const WEEKLY_PAGE = 'pages/weekly-report/index';
 
 /**
  * 周报模板字段名 → 我们填什么。和 REMIND_FIELDS 同一条规矩:**必须和后台模板逐字对应**。
- * 后台「每周报告提醒」类模板按五字段布局:
- *   报告周期 {{thing1}} / 综合评分 {{thing2}} / 体重变化 {{thing3}}
- *   记录情况 {{thing4}} / 本周亮点 {{thing5}}
- * 选的模板字段名不同就改这一处。
+ * 后台「申请新模板」过审的是「周报生成通知」(编号 15915,类目 健康管理),四个字段:
+ *   周报日期 {{time1}} / 打卡天数 {{number2}}
+ *   体重变化 {{character_string6}} / 备注 {{thing7}}
+ * 类型比预想的紧:number 只吃纯数字、character_string 不让带汉字,
+ * 原本五个 thing 的内容(周期文字/均分)塞不下,评分和亮点只能挤进 thing7 一个坑。
  */
 export const WEEKLY_FIELDS = {
-  /** 报告周期:10月13日-10月19日 */
-  range: 'thing1',
-  /** 综合评分:本周均分 */
-  score: 'thing2',
-  /** 体重变化:整周涨跌 */
-  weight: 'thing3',
-  /** 记录情况:几天有记录 */
-  days: 'thing4',
-  /** 本周亮点:一句好话(没有就给一句中性的) */
-  note: 'thing5'
+  /** 周报日期:报的是哪一周,用那一周的周一(time 必须带时刻,「10月12日-18日」这种区间放不进) */
+  range: 'time1',
+  /** 打卡天数:纯数字(number 不吃文字,「记录 6/7 天」写不了) */
+  days: 'number2',
+  /** 体重变化:character_string 禁汉字,只能裸值「-0.8kg」;没称过给「--」 */
+  weight: 'character_string6',
+  /** 备注:20 字短文本,亮点 > 均分 > 中性兜底 */
+  note: 'thing7'
 } as const;
 
 export interface WeeklyInput {
@@ -59,22 +57,22 @@ export interface WeeklyInput {
   highlight: string;
 }
 
-/** 周报五个字段的取值。thing* 一律走 clip(20 字上限是微信的,不是我们的) */
+/** 周报四个字段的取值(格式硬约束见 WEEKLY_FIELDS 的注释;thing* 一律走 clip) */
 export function weeklyData(input: WeeklyInput): Record<string, { value: string }> {
-  const [, m, d] = input.weekStart.split('-');
-  // 周期终点按日历算,别拿日期数字 +6(月底会写出「10月32日」)
-  const [, em, ed] = addDays(input.weekStart, 6).split('-');
-  const range = `${Number(m)}月${Number(d)}日-${Number(em)}月${Number(ed)}日`;
-  const score = input.avgScore != null ? `本周均分 ${Math.round(input.avgScore)}` : '本周还没有评分';
+  // 周报日期:那周的周一 00:00 —— time 字段必须「YYYY年M月D日 HH:mm」,区间文字放不进
+  const when = scheduleText(input.weekStart, '00:00');
+  // 体重变化:涨带 +,跌自带 -,没称过给「--」(字符类型的空档,微信不留空值)
   const weight = input.weightChangeKg != null
-    ? `体重 ${input.weightChangeKg > 0 ? '+' : ''}${input.weightChangeKg.toFixed(1)}kg`
-    : '本周没称体重';
+    ? `${input.weightChangeKg > 0 ? '+' : ''}${input.weightChangeKg.toFixed(1)}kg`
+    : '--';
+  // 备注只有 20 字:先给亮点(具体的赢最勾人),没有再报均分,都没有就中性一句
+  const note = input.highlight
+    || (input.avgScore != null ? `本周均分${Math.round(input.avgScore)}分` : '周报已生成,点击查看');
   return {
-    [WEEKLY_FIELDS.range]: { value: clip(range) },
-    [WEEKLY_FIELDS.score]: { value: clip(score) },
-    [WEEKLY_FIELDS.weight]: { value: clip(weight) },
-    [WEEKLY_FIELDS.days]: { value: clip(`记录 ${input.recordedDays}/7 天`) },
-    [WEEKLY_FIELDS.note]: { value: clip(input.highlight || '新的一周,继续记录就有报告看') }
+    [WEEKLY_FIELDS.range]: { value: when },
+    [WEEKLY_FIELDS.weight]: { value: weight },
+    [WEEKLY_FIELDS.days]: { value: String(input.recordedDays) },
+    [WEEKLY_FIELDS.note]: { value: clip(note) }
   };
 }
 

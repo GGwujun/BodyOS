@@ -27,24 +27,24 @@ test('同一时刻,不同时区用户的「周一」不一样', () => {
   assert.equal(dueWeeklyMonday(now, 0), null, 'UTC 用户此刻是周日 00:00');
 });
 
-test('weeklyData:五个字段的文案与兜底', () => {
+test('weeklyData:四个字段的文案与兜底(模板 15915)', () => {
   const data = weeklyData({ weekStart: '2026-10-12', avgScore: 82.4, weightChangeKg: -0.5, recordedDays: 6, highlight: '' });
-  assert.equal(data[WEEKLY_FIELDS.range]?.value, '10月12日-10月18日');
-  assert.equal(data[WEEKLY_FIELDS.score]?.value, '本周均分 82');
-  assert.equal(data[WEEKLY_FIELDS.weight]?.value, '体重 -0.5kg');
-  assert.equal(data[WEEKLY_FIELDS.days]?.value, '记录 6/7 天');
-  assert.equal(data[WEEKLY_FIELDS.note]?.value, '新的一周,继续记录就有报告看', '没有亮点时给中性的话');
+  assert.equal(data[WEEKLY_FIELDS.range]?.value, '2026年10月12日 00:00', 'time 字段是那周的周一,不是区间文字');
+  assert.equal(data[WEEKLY_FIELDS.days]?.value, '6', 'number 只吃纯数字,「6/7 天」写不了');
+  assert.equal(data[WEEKLY_FIELDS.weight]?.value, '-0.5kg', 'character_string 禁汉字,只能是裸值');
+  assert.equal(data[WEEKLY_FIELDS.note]?.value, '本周均分82分', '没亮点时备注退到均分');
 });
 
-test('weeklyData:没评分/没称重/涨体重/跨月周期', () => {
+test('weeklyData:没评分/没称重/涨体重', () => {
   const data = weeklyData({ weekStart: '2026-09-28', avgScore: null, weightChangeKg: null, recordedDays: 0, highlight: '坚持记录了两周' });
-  assert.equal(data[WEEKLY_FIELDS.range]?.value, '9月28日-10月4日', '跨月要进位,不能写出 9月34日');
-  assert.equal(data[WEEKLY_FIELDS.score]?.value, '本周还没有评分');
-  assert.equal(data[WEEKLY_FIELDS.weight]?.value, '本周没称体重');
-  assert.equal(data[WEEKLY_FIELDS.days]?.value, '记录 0/7 天');
-  assert.equal(data[WEEKLY_FIELDS.note]?.value, '坚持记录了两周');
+  assert.equal(data[WEEKLY_FIELDS.range]?.value, '2026年9月28日 00:00', '月份不补零');
+  assert.equal(data[WEEKLY_FIELDS.weight]?.value, '--', '没称过给字符空档,不能给空串');
+  assert.equal(data[WEEKLY_FIELDS.days]?.value, '0');
+  assert.equal(data[WEEKLY_FIELDS.note]?.value, '坚持记录了两周', '有亮点时优先亮点');
   const up = weeklyData({ weekStart: '2026-10-12', avgScore: 70, weightChangeKg: 0.5, recordedDays: 7, highlight: '' });
-  assert.equal(up[WEEKLY_FIELDS.weight]?.value, '体重 +0.5kg', '涨的体重要带 + 号');
+  assert.equal(up[WEEKLY_FIELDS.weight]?.value, '+0.5kg', '涨的体重要带 + 号');
+  const none = weeklyData({ weekStart: '2026-10-12', avgScore: null, weightChangeKg: null, recordedDays: 0, highlight: '' });
+  assert.equal(none[WEEKLY_FIELDS.note]?.value, '周报已生成,点击查看', '亮点均分都没有时给中性一句');
 });
 
 test('weeklyData:超长亮点要截到 20 字(微信会整条拒发)', () => {
